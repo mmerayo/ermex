@@ -1,3 +1,4 @@
+#labels Phase-Implementation
 = DEVELOPMENT GUIDE =
 
 == SVN Folders ==
@@ -21,12 +22,19 @@
 == WORKFLOW ==
 
   # Request the current iteration tasks available list to the admin. *MANAGEMENT TO BE DISCUSSED IN THE FUTURE*  
-  # Branch from the version specified in the task under _WorkingTrunks_ to _tasks_branches_ with format: ISSUE-<NUM>_TITLE_OF_THE_ISSUE
+  # Branch from the version specified in the task under _WorkingTrunks_ to _tasks_branches_ with format: ISSUE-NUM_TITLE_OF_THE_ISSUE
   # Develop in this branch. Merge from your source trunk frequently
-  # Commit your code to your branch _with comments_ using the format "ISSUE<NUM>:" as prefix of the comment
+  # Commit your code to your branch _with comments_ using the format "ISSUE-NUM:" as prefix of the comment
   # if your task is *MERGEABLE* _(see mergeable tasks below)_ Merge it to the source trunk under _WorkingTrunks_
   # Move your branch to _attic_. It will stay there until is verified and it will be deleted by the project admin
 
 ---
 
 == WHAT IS A MERGEABLE TASK ==
+
+A mergeable task is a task that(Request info about how to run these in in your local machine in one step):
+  * All tests run sucessfully in release mode for every platform
+  * The Acceptance tests run sucessfully in your local machine
+  * Other tasks run sucessfully(TODO)
+
+If everything went fine, then you can merge your code
