@@ -1,0 +1,185 @@
+// /*---------------------------------------------------------------------------------------*/
+// If you viewing this code.....
+// The current code is under construction.
+// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
+// This is not a final product yet.
+// /*---------------------------------------------------------------------------------------*/
+using System;
+using NUnit.Framework;
+using ermeX.ConfigurationManagement.Settings;
+using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
+using ermeX.DAL.DataAccess.DataSources;
+using ermeX.DAL.DataAccess.Helpers;
+using ermeX.Entities.Base;
+using ermeX.Tests.Common.DataAccess;
+using ermeX.Tests.Common.SettingsProviders;
+
+namespace ermeX.Tests.DAL.Integration.DataSources
+{
+    //[Category(TestCategories.CoreUnitTest)]
+    //[TestFixture]
+    internal abstract class DataSourceTesterBase<TDataSource, TModel>:DataAccessTestBase 
+        where TDataSource : DataSource<TModel>
+        where TModel : ModelBase, new()
+    {
+        
+        protected abstract string IdFieldName { get; }
+        protected abstract string TableName { get; }
+       
+
+        [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
+        public void SetsVersion_When_New(DbEngineType engine)
+        {
+            DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
+            dataAccessTestHelper.QueryTestHelper.ExecuteNonQuery(String.Format("Delete From {0}.{1}", SchemaName, TableName));
+
+            TModel expected = GetExpected(engine);
+            expected.ComponentOwner = LocalComponentId;
+            Assert.IsTrue(expected.Version == DateTime.MinValue.Ticks, "implementation of GetExpected must set version to 0");
+
+            TDataSource target = GetDataSourceTarget(engine);
+            target.Save(expected);
+
+            Assert.IsTrue(expected.Version > DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 10)).Ticks);
+
+            Assert.IsTrue(expected.Version <= DateTime.UtcNow.Ticks);
+
+            var actual = dataAccessTestHelper.QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
+            Assert.AreEqual(expected, actual);
+        }
+
+
+        [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
+        public void Updates_Version_When_Existing_With_Local(DbEngineType engine)
+        {
+            int id = InsertRecord(engine);
+            TDataSource target = GetDataSourceTarget(engine);
+            TModel expected = target.GetById(id);
+            Assert.IsTrue(expected.Version != DateTime.MinValue.Ticks);
+
+            expected = GetExpectedWithChanges(expected);
+            long expVersion = expected.Version;
+            target.Save(expected);
+            DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
+            var actual = dataAccessTestHelper.QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
+
+            Assert.AreNotEqual(expVersion, actual.Version);
+            Assert.IsTrue(expVersion < actual.Version);
+        }
+
+
+        [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
+        public void DontChange_Version_When_IsFromOtherComponent(DbEngineType engine)
+        {
+            int id = InsertRecord(engine);
+            TDataSource target = GetDataSourceTarget(engine);
+            TModel item = target.GetById(id);
+            Assert.IsTrue(item.Version != DateTime.MinValue.Ticks);
+            TModel expected = GetExpectedWithChanges(item);
+            expected.ComponentOwner = Guid.NewGuid();
+            target.Save(expected);
+            DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
+            var actual =dataAccessTestHelper.QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
+            Assert.AreEqual(expected.Version, actual.Version);
+        }
+
+
+        [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
+        public void CanAddRecord(DbEngineType engine)
+        {
+            DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
+            dataAccessTestHelper.QueryTestHelper.ExecuteNonQuery(String.Format("Delete From {0}.{1}", SchemaName, TableName));
+
+            TModel expected = GetExpected(engine);
+
+            TDataSource target = GetDataSourceTarget(engine);
+
+            target.Save(expected);
+
+            Assert.IsTrue(expected.Id > 0);
+
+            var actual = dataAccessTestHelper.QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
+            Assert.AreEqual(expected, actual);
+        }
+
+
+        [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
+        public void CanUpdateRecord(DbEngineType engine)
+        {
+            int id = InsertRecord(engine);
+            TDataSource target = GetDataSourceTarget(engine);
+            TModel item = target.GetById(id);
+            TModel expected = GetExpectedWithChanges(item);
+
+            target.Save(expected);
+            DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
+            var actual =dataAccessTestHelper. QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        protected abstract TModel GetExpectedWithChanges(TModel source);
+
+        protected string GetByIdSqlQuery(TModel expected)
+        {
+            return string.Format("Select * from {3}.{0} where {1}={2}", TableName, IdFieldName, expected.Id, SchemaName);
+        }
+
+        [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
+        public void CanDeleteByProperty(DbEngineType engine)
+        {
+            int id = InsertRecord(engine);
+            DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
+            var numRecords =
+                dataAccessTestHelper.QueryTestHelper.ExecuteScalar<int>(string.Format("Select count(*) from {3}.{0} where {1}={2}",
+                                                                    TableName, IdFieldName, id, SchemaName));
+            Assert.IsTrue(numRecords == 1);
+
+            TDataSource target = GetDataSourceTarget(engine);
+            target.RemoveByProperty("Id", id.ToString());
+            numRecords =
+                dataAccessTestHelper.QueryTestHelper.ExecuteScalar<int>(string.Format("Select count(*) from {3}.{0} where {1}={2}",
+                                                                                      TableName, IdFieldName, id, SchemaName));
+            Assert.IsTrue(numRecords == 0);
+        }
+
+
+        [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
+        public void CanDelete(DbEngineType engine)
+        {
+            int id = InsertRecord(engine);
+
+            TDataSource target = GetDataSourceTarget(engine);
+            TModel actual = target.GetById(id);
+            Assert.IsNotNull(actual);
+            target.Remove(actual);
+            DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
+            var numRecords =
+                dataAccessTestHelper.QueryTestHelper.ExecuteScalar<int>(string.Format("Select count(*) from {3}.{0} where {1}={2}",
+                                                                    TableName, IdFieldName, id, SchemaName));
+            Assert.IsTrue(numRecords == 0);
+        }
+
+        [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
+        public void CanGetById(DbEngineType engine)
+        {
+            int id = InsertRecord(engine);
+
+            TDataSource target = GetDataSourceTarget(engine);
+            TModel actual = target.GetById(id);
+            Assert.IsNotNull(actual);
+
+            CheckInsertedRecord(actual);
+        }
+
+
+        protected abstract int InsertRecord(DbEngineType engine);
+
+
+        protected abstract void CheckInsertedRecord(TModel record);
+
+        protected abstract TModel GetExpected(DbEngineType engine);
+
+        protected abstract TDataSource GetDataSourceTarget(DbEngineType engine);
+    }
+}
