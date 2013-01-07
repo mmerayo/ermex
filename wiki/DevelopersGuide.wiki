@@ -16,7 +16,7 @@
 
   # The issues page is only used to report defects and to collect feedback from users to be organized into iterations
   # The new requirements and other discussions are discussed in the *FORUM*(TO BE CREATED)
-
+  # Develop only the task you have picked: Id another tasks identified you can create an issue on the issues page that will be translated to a proper task in further iterations
 ---
 
 == WORKFLOW ==
