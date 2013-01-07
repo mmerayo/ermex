@@ -1,8 +1,9 @@
-#development workflow.
+#Development workflow.
 
-= Introduction =
+= SVN Folders =
 
-Add your content here.
+*_blessed_: this is the main trunk, and is intended to be used for merging/branching *ONLY* by the project admins
+
 
 
 = Details =
