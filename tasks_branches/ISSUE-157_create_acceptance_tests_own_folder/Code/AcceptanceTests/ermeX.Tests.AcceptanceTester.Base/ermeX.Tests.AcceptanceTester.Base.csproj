@@ -82,13 +82,13 @@
     <Reference Include="System.Xml" />
     <Reference Include="ermeX">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath Condition="'$(Platform)' == 'x64'">..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x64\ermeX.dll</HintPath>
-      <HintPath Condition="'$(Platform)' == 'x86'">..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x86\ermeX.dll</HintPath>
+      <HintPath Condition="'$(Platform)' == 'x64'">..\..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x64\ermeX.dll</HintPath>
+      <HintPath Condition="'$(Platform)' == 'x86'">..\..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x86\ermeX.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.SQLite">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath Condition="'$(Platform)' == 'x64'">..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x64\System.Data.SQLite.dll</HintPath>
-      <HintPath Condition="'$(Platform)' == 'x86'">..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x86\System.Data.SQLite.dll</HintPath>
+      <HintPath Condition="'$(Platform)' == 'x64'">..\..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x64\System.Data.SQLite.dll</HintPath>
+      <HintPath Condition="'$(Platform)' == 'x86'">..\..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x86\System.Data.SQLite.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
