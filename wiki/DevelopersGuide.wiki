@@ -7,7 +7,7 @@
   *_tasks_branches_ it contains all the branches currently under development
   *_attic_ contains the branches created for tasks already merged. The purpose of this folder is to store the branch after merge until the task is verified.
   *_wiki_ wiki
-  *_WorkingTrunks_ Contains the trunk for each version where to branch from. the current version under development will contain the suffix *CURRENT*
+  *_WorkingTrunks_ Contains the trunk for each version where to branch from. the current version under development will contain the suffix *CURRENT*. Notice that all this trunks are branches from _blessed_ 
 
 
 ---
