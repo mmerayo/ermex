@@ -32,9 +32,11 @@
 
 == WHAT IS A MERGEABLE TASK ==
 
-A mergeable task is a task that(Request info about how to run these in in your local machine in one step):
+A mergeable task is a task that after merged locally(Request info about how to run these in in your local machine in one step):
   * All tests run sucessfully in release mode for every platform
   * The Acceptance tests run sucessfully in your local machine
   * Other tasks run sucessfully(TODO)
+
+A mergeable task can be commited to the trunk
 
 If everything went fine, then you can merge your code
