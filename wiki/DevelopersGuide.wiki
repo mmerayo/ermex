@@ -12,17 +12,21 @@
 ---
 
 == ISSUES & NEW REQUIREMENTS ==
-  #The issues page is only used to report defects
 
+  # The issues page is only used to report defects and to collect feedback from users to be organized into iterations
+  # The new requirements and other discussions are discussed in the *FORUM*(TO BE CREATED)
 
 ---
 
 == WORKFLOW ==
 
-  #Request the current iteration tasks available list to the admin  
-  #Pick a task with status *ACCEPTED* from ISSUES at https://code.google.com/p/ermex/issues/list
+  # Request the current iteration tasks available list to the admin. *MANAGEMENT TO BE DISCUSSED IN THE FUTURE*  
+  # Branch from the version specified in the task under _WorkingTrunks_ to _tasks_branches_ with format: ISSUE-<NUM>_TITLE_OF_THE_ISSUE
+  # Develop in this branch. Merge from your source trunk frequently
+  # Commit your code to your branch _with comments_ using the format "ISSUE<NUM>:" as prefix of the comment
+  # if your task is *MERGEABLE* _(see mergeable tasks below)_ Merge it to the source trunk under _WorkingTrunks_
+  # Move your branch to _attic_. It will stay there until is verified and it will be deleted by the project admin
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+---
+
+== WHAT IS A MERGEABLE TASK ==
