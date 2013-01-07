@@ -5,7 +5,7 @@
 
   <PropertyGroup>
     <MSBuildExtensionsPath>$(MSBuildProjectDirectory)\..\Packages\msBuildTaskExtensions</MSBuildExtensionsPath>
-    <ermeXProjectDir>$(MSBuildProjectDirectory)\..\..\Code\ermeX</ermeXProjectDir>
+    <ermeXProjectDir>$(MSBuildProjectDirectory)\..\..\Code\Main\ermeX</ermeXProjectDir>
     <MergedBinFolder>$(MergedFolder)</MergedBinFolder>
 	<TargetFrameworkVersion>v$(frameworkVersion)</TargetFrameworkVersion>	
    </PropertyGroup>
@@ -58,7 +58,7 @@
 	<CallTarget Targets="CleanLastBuild" />
     <CallTarget Targets="CreateOutputDirectories" />
     
-	<MSBuild Projects="$(MSBuildProjectDirectory)\..\..\Code\ermeX.sln" />
+	<MSBuild Projects="$(MSBuildProjectDirectory)\..\..\Code\Main\ermeX.sln" />
 	<Message Text="The build version is: $(BuildVersion)"/> 
 	<CallTarget Targets="MergeOutput" />
 	
@@ -95,7 +95,7 @@
 
   <Target Name="SetVersionPrefix">
     <ItemGroup>
-      <VersionFile Include="$(ermeXProjectDir)\..\..\Build\VersionPrefix.txt" />
+      <VersionFile Include="$(ermeXProjectDir)\..\..\..\Build\VersionPrefix.txt" />
       <AssemblyInfoFiles Include="$(ermeXProjectDir)\Properties\ProjectInfo.cs" />
     </ItemGroup>
 
