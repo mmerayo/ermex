@@ -2,7 +2,10 @@
 
 = SVN Folders =
 
-*_blessed_: this is the main trunk, and is intended to be used for merging/branching *ONLY* by the project admins
+  *_blessed_: this is the main trunk, and is intended to be used for merging/branching *ONLY* by the project admins
+  *_tasks_branches_: it contains all the branches currently under development
+  *_attic_: contains the branches created for tasks already merged. The purpose of this folder is to store the branch after merge until the task is verified.
+  *_wiki_:wiki
 
 
 
