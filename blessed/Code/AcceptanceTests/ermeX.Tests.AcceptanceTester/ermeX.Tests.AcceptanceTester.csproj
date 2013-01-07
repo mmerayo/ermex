@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -116,19 +116,19 @@
   <ItemGroup>
     <Reference Include="Common.Logging">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath Condition="'$(Platform)' == 'x64'">..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x64\Common.Logging.dll</HintPath>
-      <HintPath Condition="'$(Platform)' == 'x86'">..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x86\Common.Logging.dll</HintPath>
+      <HintPath Condition="'$(Platform)' == 'x64'">..\..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x64\Common.Logging.dll</HintPath>
+      <HintPath Condition="'$(Platform)' == 'x86'">..\..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x86\Common.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Common.Logging.Log4Net1211">
-      <HintPath>..\packages\Common.Logging.Log4Net1211.2.1.2\lib\net40\Common.Logging.Log4Net1211.dll</HintPath>
+      <HintPath>..\..\Main\packages\Common.Logging.Log4Net1211.2.1.2\lib\net40\Common.Logging.Log4Net1211.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.0\lib\net40-client\log4net.dll</HintPath>
+      <HintPath>..\..\Main\packages\log4net.2.0.0\lib\net40-client\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath Condition="'$(Platform)' == 'x64'">..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x64\Ninject.dll</HintPath>
-      <HintPath Condition="'$(Platform)' == 'x86'">..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x86\Ninject.dll</HintPath>
+      <HintPath Condition="'$(Platform)' == 'x64'">..\..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x64\Ninject.dll</HintPath>
+      <HintPath Condition="'$(Platform)' == 'x86'">..\..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x86\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -154,8 +154,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>if $(PlatformName) == x64 xcopy /i /y "$(ProjectDir)..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x64\SQLite.Interop.dll" "$(TargetDir)*.*"
-if $(PlatformName) == x86 xcopy /i /y "$(ProjectDir)..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x86\SQLite.Interop.dll" "$(TargetDir)*.*"
+    <PostBuildEvent>if $(PlatformName) == x64 xcopy /i /y "$(ProjectDir)..\..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x64\SQLite.Interop.dll" "$(TargetDir)*.*"
+if $(PlatformName) == x86 xcopy /i /y "$(ProjectDir)..\..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x86\SQLite.Interop.dll" "$(TargetDir)*.*"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
