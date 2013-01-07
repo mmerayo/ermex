@@ -5,4 +5,4 @@ these are the current available builds:
   * Configurations: Debug, Release
 
 
-= TO BE CONTINUE... :) =
+= TO BE CONTINUED... :) =
