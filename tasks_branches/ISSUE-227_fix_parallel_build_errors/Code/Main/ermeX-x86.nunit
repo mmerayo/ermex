@@ -1,0 +1,11 @@
+<NUnitProject>
+  <Settings activeconfig="Release x86" />
+  <Config name="Release x86" binpathtype="Auto">
+    <assembly path="ermeX.Tests\bin\x86\Release\ermeX.Tests.dll" />
+	<assembly path="ermeX.Tests.DAL.Integration\bin\x86\Release\ermeX.Tests.DAL.Integration.dll" />
+  </Config>
+  <Config name="Debug x86" binpathtype="Auto">
+    <assembly path="ermeX.Tests\bin\x86\Debug\ermeX.Tests.dll" />
+	<assembly path="ermeX.Tests.DAL.Integration\bin\x86\Debug\ermeX.Tests.DAL.Integration.dll" />
+  </Config>
+</NUnitProject>
