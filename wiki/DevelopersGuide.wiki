@@ -25,7 +25,7 @@
   # Branch from the version specified in the task under _WorkingTrunks_ to _tasks_branches_ with format: ISSUE-NUM_TITLE_OF_THE_ISSUE
   # Develop in this branch. Merge from your source trunk frequently
   # Commit your code to your branch _with comments_ using the format "ISSUE-NUM:" as prefix of the comment
-  # if your task is *MERGEABLE* _(see mergeable tasks below)_ Merge it to the source trunk under _WorkingTrunks_
+  # if your task is *MERGEABLE* _(see mergeable tasks below)_ Merge it to the source trunk under _WorkingTrunks_. In the case the source trunk is not the current, them merge to that one and merge the revision trunk by trunk until the current. Ensure every merge commit is *MERGEABLE* 
   # Move your branch to _attic_. It will stay there until is verified and it will be deleted by the project admin
 
 ---
