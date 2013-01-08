@@ -44,7 +44,7 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
+            var c1Port = new TestPort(10001);
             
             using (var component1 = TestComponent.GetComponent(true))
             {
@@ -56,7 +56,7 @@ namespace ermeX.Tests.Acceptance
                 registeredEvent.WaitOne(TimeSpan.FromSeconds(10));
 
                 var target = component1.GetServiceProxy<ITestService1>();
-                Assert.DoesNotThrow(target.EmptyMethod);
+                target.EmptyMethod();
                 finishedEvent.WaitOne(TimeSpan.FromSeconds(5));
 
                 Assert.IsTrue(component1.Tracker.EmptyMethodCalled == 1);
@@ -69,7 +69,7 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
+            var c1Port = new TestPort(10000);
             
             using (var component1 = TestComponent.GetComponent(true))
             {
@@ -83,7 +83,7 @@ namespace ermeX.Tests.Acceptance
                 var target = component1.GetServiceProxy<ITestService1>();
                 var expected = new AcceptanceMessageType1();
 
-                Assert.DoesNotThrow(() => target.EmptyMethodWithOneParameter(expected));
+                target.EmptyMethodWithOneParameter(expected);
                 finishedEvent.WaitOne(TimeSpan.FromSeconds(5));
 
                 Assert.IsTrue(component1.Tracker.EmptyMethodWithOneParameterCalled == 1);
@@ -97,7 +97,7 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
+            var c1Port = new TestPort(10000);
             
             using (var component1 = TestComponent.GetComponent(true))
             {
@@ -112,7 +112,7 @@ namespace ermeX.Tests.Acceptance
                 var expected1 = new AcceptanceMessageType1();
                 var expected2 = new AcceptanceMessageType2();
 
-                Assert.DoesNotThrow(() => target.EmptyMethodWithSeveralParameters(expected1, expected2));
+                target.EmptyMethodWithSeveralParameters(expected1, expected2);
                 finishedEvent.WaitOne(TimeSpan.FromSeconds(5));
 
                 Assert.IsTrue(component1.Tracker.EmptyMethodWithSeveralParametersCalled == 1);
@@ -128,7 +128,7 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
+            var c1Port = new TestPort(10000);
             
             using (var component1 = TestComponent.GetComponent(true))
             {
@@ -154,7 +154,7 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
+            var c1Port = new TestPort(10000);
             
             using (var component1 = TestComponent.GetComponent(true))
             {
@@ -183,7 +183,7 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
+            var c1Port = new TestPort(10000);
             
             using (var component1 = TestComponent.GetComponent(true))
             {
@@ -215,7 +215,7 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
+            var c1Port = new TestPort(10000);
             
             using (var component1 = TestComponent.GetComponent(true))
             {
@@ -246,7 +246,7 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
+            var c1Port = new TestPort(10000);
             
             using (var component1 = TestComponent.GetComponent(true))
             {
@@ -276,8 +276,8 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
             
             using (var component1 = TestComponent.GetComponent())
             using (var component2 = TestComponent.GetComponent(true))
@@ -291,7 +291,7 @@ namespace ermeX.Tests.Acceptance
                 registeredEvent.WaitOne(TimeSpan.FromSeconds(10));
 
                 var target = component2.GetServiceProxy<ITestService1>();
-                Assert.DoesNotThrow(target.EmptyMethod);
+                target.EmptyMethod();
                 finishedEvent.WaitOne(TimeSpan.FromSeconds(5));
 
                 Assert.IsTrue(component2.Tracker.EmptyMethodCalled == 1);
@@ -304,8 +304,8 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
             
             using (var component1 = TestComponent.GetComponent())
             using (var component2 = TestComponent.GetComponent(true))
@@ -321,7 +321,7 @@ namespace ermeX.Tests.Acceptance
                 var target = component2.GetServiceProxy<ITestService1>();
                 var expected = new AcceptanceMessageType1();
 
-                Assert.DoesNotThrow(() => target.EmptyMethodWithOneParameter(expected));
+                target.EmptyMethodWithOneParameter(expected);
                 finishedEvent.WaitOne(TimeSpan.FromSeconds(5));
 
                 Assert.IsTrue(component2.Tracker.EmptyMethodWithOneParameterCalled == 1);
@@ -335,8 +335,8 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
             
             using (var component1 = TestComponent.GetComponent())
             using (var component2 = TestComponent.GetComponent(true))
@@ -353,7 +353,7 @@ namespace ermeX.Tests.Acceptance
                 var expected1 = new AcceptanceMessageType1();
                 var expected2 = new AcceptanceMessageType2();
 
-                Assert.DoesNotThrow(() => target.EmptyMethodWithSeveralParameters(expected1, expected2));
+                target.EmptyMethodWithSeveralParameters(expected1, expected2);
                 finishedEvent.WaitOne(TimeSpan.FromSeconds(5));
 
                 Assert.IsTrue(component2.Tracker.EmptyMethodWithSeveralParametersCalled == 1);
@@ -369,8 +369,8 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
             
             using (var component1 = TestComponent.GetComponent())
             using (var component2 = TestComponent.GetComponent(true))
@@ -398,8 +398,8 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
             
             using (var component1 = TestComponent.GetComponent())
             using (var component2 = TestComponent.GetComponent(true))
@@ -430,8 +430,8 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
             
             using (var component1 = TestComponent.GetComponent())
             using (var component2 = TestComponent.GetComponent(true))
@@ -464,8 +464,8 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
 
             using (var component1 = TestComponent.GetComponent())
             using (var component2 = TestComponent.GetComponent(true))
@@ -498,8 +498,8 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
 
             using (var component1 = TestComponent.GetComponent()) 
             using (var component2 = TestComponent.GetComponent(true))
@@ -531,7 +531,7 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            ushort c1Port = new TestPort(10000,10100);
+            ushort c1Port = new TestPort(9000);
 
             using (var component1 = TestComponent.GetComponent(true))            
             {
@@ -547,8 +547,8 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
 
             using (var component2 = TestComponent.GetComponent(true))
             {
@@ -576,8 +576,8 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
 
             using (var component1 = TestComponent.GetComponent())
             using (var component2 = TestComponent.GetComponent(true))
@@ -600,8 +600,8 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
 
             using (var component1 = TestComponent.GetComponent())
             using (var component2 = TestComponent.GetComponent(true))
@@ -614,8 +614,8 @@ namespace ermeX.Tests.Acceptance
                 var finishedEvent2 = new AutoResetEvent(false);
                 var registeredEvent2 = new AutoResetEvent(false);
 
-                Assert.DoesNotThrow(()=>component1.RegisterService<ITestService3>(0, registeredEvent1, finishedEvent1));
-                Assert.DoesNotThrow(() => component2.RegisterService<ITestService3>(0, registeredEvent2, finishedEvent2));
+                component1.RegisterService<ITestService3>(0, registeredEvent1, finishedEvent1);
+                component2.RegisterService<ITestService3>(0, registeredEvent2, finishedEvent2);
             }
         }
       
@@ -624,8 +624,8 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
 
             using (var component1 = TestComponent.GetComponent())
             using (var component2 = TestComponent.GetComponent(true))
@@ -646,13 +646,12 @@ namespace ermeX.Tests.Acceptance
                 var target1 = component2.GetServiceProxy<ITestService1>();
                 var target2 = component2.GetServiceProxy<ITestService2>();
 
-                Assert.DoesNotThrow(target1.EmptyMethod);
+                target1.EmptyMethod();
 
                 Assert.IsTrue(component2.Tracker.EmptyMethodCalled == 1);
                 Assert.IsTrue(component2.Tracker.ParametersLastCall.Count == 0);
 
-
-                Assert.DoesNotThrow(target2.EmptyMethod);
+                target2.EmptyMethod();
 
                 WaitHandle.WaitAll(new[] { finishedEvent1, finishedEvent2 }, TimeSpan.FromSeconds(10));
 
@@ -669,9 +668,9 @@ namespace ermeX.Tests.Acceptance
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
-            const ushort c1Port = 10001;
-            const ushort c2Port = 10002;
-            const ushort c3Port = 10003;
+            var c1Port = new TestPort(10000);
+            var c2Port = new TestPort(11000);
+            var c3Port = new TestPort(12000);
 
             using (var component1 = TestComponent.GetComponent())
             using (var component2 = TestComponent.GetComponent())

@@ -56,7 +56,7 @@ namespace ermeX.Biz
             StatusManager = statusManager;
             Register = register;
 
-            Register.CreateLocalSetOfData(Settings.Port);
+            Register.CreateLocalSetOfData(Settings.TcpPort);
         }
 
         private IBizSettings Settings { get; set; }

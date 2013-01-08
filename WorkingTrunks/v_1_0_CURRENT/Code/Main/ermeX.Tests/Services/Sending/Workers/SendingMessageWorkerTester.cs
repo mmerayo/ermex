@@ -90,28 +90,8 @@ namespace ermeX.Tests.Services.Sending.Workers
             return target;
         }
 
-        private readonly Dictionary<DbEngineType, DataAccessExecutor> _dataAccessExecutors = new Dictionary<DbEngineType, DataAccessExecutor>();
-        private DataAccessExecutor GetdataAccessExecutor(DbEngineType engineType)
-        {
-            if (!_dataAccessExecutors.ContainsKey(engineType))
-            {
-                var dataAccessExecutor = new DataAccessExecutor(GetDataHelper(engineType).DataAccessSettings);
-                _dataAccessExecutors.Add(engineType, dataAccessExecutor);
-            }
-            return _dataAccessExecutors[engineType];
-        }
-        private readonly Dictionary<DbEngineType,BusMessageDataSource> _busMessageDataSources=new Dictionary<DbEngineType, BusMessageDataSource>(); 
-        private BusMessageDataSource GetBusMessageDataSource(DbEngineType engineType)
-        {
-            if (!_busMessageDataSources.ContainsKey(engineType))
-            {
-                var dataAccessExecutor = GetdataAccessExecutor(engineType);
-                var busMessageDataSource = new BusMessageDataSource(dataAccessExecutor.DalSettings, LocalComponentId,
-                                                                    dataAccessExecutor);
-                _busMessageDataSources.Add(engineType, busMessageDataSource);
-            }
-            return _busMessageDataSources[engineType];
-        }
+       
+       
 
         private SendingMessageWorker GetTarget(DbEngineType engineType, out DummyServiceProxy proxy,
                                                out OutgoingMessagesDataSource dataSource)

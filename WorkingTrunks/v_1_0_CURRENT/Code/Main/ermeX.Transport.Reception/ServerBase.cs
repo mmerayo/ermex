@@ -27,6 +27,7 @@ using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.Entities.Entities;
+using ermeX.Exceptions;
 using ermeX.Interfaces;
 using ermeX.LayerMessages;
 using ermeX.Transport.Interfaces;
@@ -59,7 +60,7 @@ namespace ermeX.Transport.Reception
             DataSourceServices = dataSourceServices;
             ChunkedServiceRequestMessageDataSource = chunkedServiceRequestMessageDataSource;
             if (Networking.PortIsBusy((ushort) serverInfo.Port))
-                throw new ArgumentException(String.Format("The given port #{0} is busy ", serverInfo.Port));
+                throw new ermeXTcpException(String.Format("The given port #{0} is busy ", serverInfo.Port));
         }
 
         public ServerInfo ServerInfo { get; set; }

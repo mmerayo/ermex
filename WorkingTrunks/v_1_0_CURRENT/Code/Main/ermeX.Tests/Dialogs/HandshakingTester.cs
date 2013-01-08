@@ -79,7 +79,7 @@ namespace ermeX.Tests.Dialogs
                 {
                     var serviceLayerSettingsSource = TestSettingsProvider.GetServiceLayerSettingsSource(
                         LocalComponentId, dbEngine, SchemasToApply)
-                        .RequestJoinTo(Networking.GetLocalhostIp(), remotePort, RemoteComponentId).ListeningToPort(localPort);
+                        .RequestJoinTo(Networking.GetLocalhostIp(), remotePort, RemoteComponentId).ListeningToTcpPort(localPort);
                     WorldGate.ConfigureAndStart(serviceLayerSettingsSource);
 
                     eventDone.WaitOne(_timeSpanWait);
@@ -106,7 +106,7 @@ namespace ermeX.Tests.Dialogs
             {
                 var serviceLayerSettingsSource = TestSettingsProvider.GetServiceLayerSettingsSource(
                     LocalComponentId, dbEngine, SchemasToApply)
-                    .RequestJoinTo(Networking.GetLocalhostIp(), remotePort, RemoteComponentId).ListeningToPort(localPort);
+                    .RequestJoinTo(Networking.GetLocalhostIp(), remotePort, RemoteComponentId).ListeningToTcpPort(localPort);
                 WorldGate.ConfigureAndStart(serviceLayerSettingsSource);
 
                 eventDone.WaitOne(_timeSpanWait);
@@ -131,7 +131,7 @@ namespace ermeX.Tests.Dialogs
             //Arrange
             var localPort = new TestPort(2000);
             var serviceLayerSettingsSource = TestSettingsProvider.GetServiceLayerSettingsSource(
-                RemoteComponentId, dbEngine, SchemasToApply).ListeningToPort(localPort);
+                RemoteComponentId, dbEngine, SchemasToApply).ListeningToTcpPort(localPort);
             WorldGate.ConfigureAndStart(serviceLayerSettingsSource);
 
             ServiceRequestMessage request;
@@ -208,7 +208,7 @@ namespace ermeX.Tests.Dialogs
 
                     //Join network
                     var layerSettingsSource = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine, SchemasToApply);
-                    serviceLayerSettingsSource = layerSettingsSource.RequestJoinTo(Networking.GetLocalhostIp(), remotePortFriend, RemoteComponentId).ListeningToPort(localPort);
+                    serviceLayerSettingsSource = layerSettingsSource.RequestJoinTo(Networking.GetLocalhostIp(), remotePortFriend, RemoteComponentId).ListeningToTcpPort(localPort);
                     WorldGate.ConfigureAndStart(serviceLayerSettingsSource);
 
                     eventDoneThird.WaitOne(_timeSpanWait);

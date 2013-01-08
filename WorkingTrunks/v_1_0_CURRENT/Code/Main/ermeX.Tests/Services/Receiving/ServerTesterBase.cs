@@ -69,7 +69,7 @@ namespace ermeX.Tests.Services
                                  {
                                      Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
                                      IsLocal = false,
-                                     Port = new TestPort(10000, 11000),
+                                     Port = new TestPort(9000),
                                      ServerId = Guid.NewGuid()
                                  };
 
@@ -118,7 +118,7 @@ namespace ermeX.Tests.Services
                                  {
                                      Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
                                      IsLocal = false,
-                                     Port = new TestPort(10000, 11000),
+                                     Port = new TestPort(9000),
                                      ServerId = Guid.NewGuid()
                                  };
 
@@ -255,7 +255,7 @@ namespace ermeX.Tests.Services
                                  {
                                      Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
                                      IsLocal = localServer,
-                                     Port = new TestPort(10000, 11000),
+                                     Port = new TestPort(9000),
                                      ServerId = Guid.NewGuid()
                                  };
             Guid callingContextId = Guid.NewGuid();
@@ -295,7 +295,7 @@ namespace ermeX.Tests.Services
                                  {
                                      Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
                                      IsLocal = localServer,
-                                     Port = new TestPort(10000, 11000),
+                                     Port = new TestPort(9000),
                                      ServerId = Guid.NewGuid()
                                  };
             Guid callingContextId = Guid.NewGuid();

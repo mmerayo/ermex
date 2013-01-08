@@ -73,7 +73,7 @@ namespace ermeX.ConfigurationManagement
                                      MaxDelayDueToLatencySeconds = 60,
                                      MaxMessageKbBeforeChunking = 1024,
                                      //3MB
-                                     Port = 8135,
+                                     TcpPort = 8135,
 
                                      DevLoggingActive= false
                                  };
@@ -137,14 +137,14 @@ namespace ermeX.ConfigurationManagement
             return this;
         }
 
-        public Configuration ListeningToPort(ushort port)
+        public Configuration ListeningToTcpPort(ushort tcpPort)
         {
-            if (port <= 1023)
-                throw new ArgumentOutOfRangeException("port",
+            if (tcpPort <= 1023)
+                throw new ArgumentOutOfRangeException("tcpPort",
                                                       "The selected port cannot be in the range of the well-known ports");
 
 
-            _configuration.Port = port;
+            _configuration.TcpPort = tcpPort;
             return this;
         }
 
@@ -366,7 +366,7 @@ namespace ermeX.ConfigurationManagement
 
             public int MaxMessageKbBeforeChunking { get; set; }
 
-            public ushort Port { get; set; }
+            public ushort TcpPort { get; set; }
 
             #endregion
 

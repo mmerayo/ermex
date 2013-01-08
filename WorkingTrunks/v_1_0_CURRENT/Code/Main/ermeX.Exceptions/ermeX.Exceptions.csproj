@@ -88,6 +88,8 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
+    <Compile Include="ermeXTcpException.cs" />
+    <Compile Include="ermeXException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ermeXComponentNotAvailableException.cs" />
     <Compile Include="ermeXServiceNotAvailableException.cs" />

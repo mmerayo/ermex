@@ -20,7 +20,7 @@ using System;
 
 namespace ermeX.Exceptions
 {
-    public class ermeXServiceRequestReturnedErrors : Exception
+    public class ermeXServiceRequestReturnedErrors : ermeXException
     {
         public ermeXServiceRequestReturnedErrors(string interfaceName, string methodName) : this(interfaceName, methodName, null) { }
         public ermeXServiceRequestReturnedErrors(string interfaceName, string methodName, Exception innerException) : this(interfaceName, methodName, innerException, null) { }

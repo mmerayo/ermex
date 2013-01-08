@@ -32,8 +32,8 @@ namespace ermeX.LayerMessages
     [ProtoContract(SkipConstructor = true)]
     internal sealed class BizMessage: SystemMessage
     {
-        protected string _jsonMessage;
-        protected object _data = null;
+        private string _jsonMessage;
+        private object _data = null;
 
         public BizMessage(object data) : base()
         {
