@@ -64,10 +64,25 @@
 	
 	<Message Text="CompileTask:End" />
   </Target>
-  
+  <!--http://www.msbuildextensionpack.com/help/4.0.5.0/html/b9e622d0-2888-4ba5-a042-889adac0e220.htm-->
   <Target Name="RunTests" Condition=" '$(TaskIdName)' == 'UnitTests' ">
 	<Message Text="RunTests:Start" />	
-    <NUnit Assemblies="$(OutputPath)*.Tests.dll" ToolPath="$(nUnitPath)" Framework="$(nUnitFramework)" OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml" />
+	<PropertyGroup>		
+		<Is32 Condition="'$(Platform)' == 'x86'" >true</Is32>
+		<Is32 Condition="'$(Platform)' == 'x64'" >false</Is32>
+	</PropertyGroup>
+	<!--<CreateProperty Value="'$(Platform)' == 'x86'">
+      <Output PropertyName="Is32" TaskParameter="Value"/>
+    </CreateProperty>-->
+	<Message Text="Is32: $(Is32)" />
+	<ItemGroup>
+      <AssembliesToTest Include="$(OutputPath)*Tests*.dll"/>
+    </ItemGroup>
+    <NUnit Assemblies="@(AssembliesToTest)" 
+		ToolPath="$(nUnitPath)" 
+		Framework="$(nUnitFramework)" 
+		OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml"
+		Use32Bit="$(Is32)"/>
 	<Message Text="RunTests:End" />
   </Target>
   <Target Name="CreatePackageTask" Condition=" $(TaskIdName) == 'Pack' ">
