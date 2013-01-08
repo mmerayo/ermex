@@ -72,7 +72,7 @@
   </Target>
   <Target Name="CreatePackageTask" Condition=" $(TaskIdName) == 'Pack' ">
 	<Message Text="CreatePackage:Start" />	
-	<Message Text="The build tag is: $(BuildTag)"/> 
+	<Message Text="Creating package $(BuildReportsFolder)\ermeX_$(BuildTag).zip from: $(MergedBinFolder)"/> 
     <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="$(MergedBinFolder)\*.*" ZipFileName="$(BuildReportsFolder)\ermeX_$(BuildTag).zip" RemoveRoot="$(MergedBinFolder)" />
 	<Message Text="CreatePackage:End" />
   </Target>
