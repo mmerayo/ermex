@@ -1,6 +1,8 @@
 #labels Phase-Implementation
 = DEVELOPMENT GUIDE =
 
+_please feedback_
+
 == SVN Folders ==
 
   *_blessed_ this is the main trunk, and is intended to be used for merging/branching *ONLY* by the project admins
