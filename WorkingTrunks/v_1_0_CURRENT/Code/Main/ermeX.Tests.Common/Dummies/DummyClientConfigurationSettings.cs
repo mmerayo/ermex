@@ -68,7 +68,7 @@ namespace ermeX.Tests.Common.Dummies
 
         public int MaxMessageKbBeforeChunking { get; set; }
 
-        public ushort Port
+        public ushort TcpPort
         {
             get { throw new NotImplementedException(); }
         }

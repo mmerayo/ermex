@@ -26,6 +26,6 @@ namespace ermeX.ConfigurationManagement.Settings
     internal interface ITransportSettings:IComponentSettings
     {
         int MaxMessageKbBeforeChunking { get; }
-        ushort Port { get; }
+        ushort TcpPort { get; }
     }
 }

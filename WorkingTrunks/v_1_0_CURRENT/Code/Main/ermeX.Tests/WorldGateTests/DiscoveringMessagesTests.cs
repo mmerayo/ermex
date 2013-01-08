@@ -29,6 +29,7 @@ using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.Entities.Entities;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.Dummies;
+using ermeX.Tests.Common.Networking;
 using ermeX.Tests.Common.SettingsProviders;
 using ermeX.Tests.SupportTypes.Handlers;
 using ermeX.Tests.SupportTypes.Messages;
@@ -156,6 +157,8 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_Late_Subscribe_To_Messages_When_Handler_In_Other_Assemblies(DbEngineType dbEngine)
         {
+            
+
             var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
                                                                          new List<DataSchemaType>(){DataSchemaType.ClientComponent})
                 .DiscoverSubscriptors(new[] {typeof (MessageA).Assembly},

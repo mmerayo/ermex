@@ -120,7 +120,7 @@ namespace ermeX.Transport
                                               ComponentOwner = Settings.ComponentId,
                                               Ip = ip,
                                               IsLocal = isLocal,
-                                              Port = Settings.Port
+                                              Port = Settings.TcpPort
                                           };
             ConnectionsDs.Save(connectivityDetails);
         }
