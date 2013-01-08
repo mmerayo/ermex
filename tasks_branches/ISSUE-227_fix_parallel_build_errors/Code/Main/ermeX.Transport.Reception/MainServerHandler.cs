@@ -30,7 +30,7 @@ namespace ermeX.Transport.Reception
 
         public byte[] Execute(byte[] input)
         {
-            object result = null;
+            ServiceResult result = null;
             try
             {
 

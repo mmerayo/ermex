@@ -176,7 +176,7 @@ namespace ermeX.Tests.Services.Sending
         {
             Guid s = Guid.NewGuid();
 
-            int freePort = new TestPort(10000, 11000);
+            int freePort = new TestPort(9000);
             using (
                 var server = GetDummyTestServer<ServiceRequestMessage>(false, null, freePort, s))
             {
@@ -190,13 +190,13 @@ namespace ermeX.Tests.Services.Sending
 
        
         [Test]
-        public void CanSendMessageWithLongResponse([Values(10, 50, 100, 200, 500, 1500, 5000, 10000,50000,100000)] int items)
+        public void CanSendMessageWithLongResponse([Values(10, 50, 100)] int items)
         {
             if(items>200)
                 Assert.Inconclusive("protobuf to support this or workaround boxing valuetypes");
             Guid s = Guid.NewGuid();
 
-            int freePort = new TestPort(10000, 11000);
+            int freePort = new TestPort(9000);
             AutoResetEvent eventDone = new AutoResetEvent(false);
 
             var response = new DummyDomainEntity() { Id = OperationIdentifiers.InternalMessagesOperationIdentifier, Dummies = new List<DummyDomainEntity>(items) };
@@ -220,7 +220,7 @@ namespace ermeX.Tests.Services.Sending
         public void CanSendMessageToLocalMachine()
         {
             Guid s = Guid.NewGuid();
-            int freePort = new TestPort(10000, 11000);
+            int freePort = new TestPort(9000);
             var eventDone = new AutoResetEvent(false);
             using (
                 var server = GetDummyTestServer<ServiceRequestMessage>(true, eventDone,freePort, s))
@@ -235,17 +235,17 @@ namespace ermeX.Tests.Services.Sending
         }
 
         [Test(Description = "Tests to send a big file")]
-        public void Can_Send_Chunked_Message([Values(1, 10, 25, 100, 256, 1024)] int mBytes)
+        public void Can_Send_Chunked_Message([Values(1, 10,20)] int mBytes)
         {
-            if (mBytes > 10)
-                Assert.Inconclusive("TODO avoid the out of memory exceptions");
+            if (mBytes > 20)
+                Assert.Inconclusive("TODO: extablish a limit where the data must be a BLOB");
             //Assert.Fail("Need to pass a memory profiler and optimize as this test is not working for " + mBytes);
 
             Guid s = Guid.NewGuid();
 
             var expected = new DummyDomainEntity { Id = Guid.NewGuid(), FileBytes = GenerateRandomBytes(mBytes * 1024) };
 
-            int freePort = new TestPort(10000, 11000);
+            int freePort = new TestPort(9000);
             var eventDone = new AutoResetEvent(false);
 
             using (
@@ -270,7 +270,7 @@ namespace ermeX.Tests.Services.Sending
 
             var expected = new DummyDomainEntity { Id = Guid.NewGuid(), FileBytes = GenerateRandomBytes(mBytes * 1024) };
 
-            int freePort = new TestPort(10000, 11000);
+            int freePort = new TestPort(9000);
             var eventDone = new AutoResetEvent(false);
 
             using (var s1 = GetDummyTestServer<ServiceRequestMessage>(true, eventDone, freePort, s))
@@ -288,7 +288,7 @@ namespace ermeX.Tests.Services.Sending
         public void CantSendToWrongIp()
         {
             Guid s = Guid.NewGuid();
-            int freePort = new TestPort(10000, 11000);
+            int freePort = new TestPort(9000);
             using (
                 MockTestServerBase<DummyDomainEntity> server = GetDummyTestServer<DummyDomainEntity>(false, null,
                                                                                                      freePort, s))
@@ -316,7 +316,7 @@ namespace ermeX.Tests.Services.Sending
         public void ClientChoosesMostSuitableIpForSendingMessage([Values(true, false)] bool secondIsLocal)
         {
             Guid s = Guid.NewGuid();
-            int freePort = new TestPort(10000, 11000);
+            int freePort = new TestPort(9000);
             using (var server = GetDummyTestServer<ServiceRequestMessage>(secondIsLocal, null, freePort, s))
             {
                 var expected = new DummyDomainEntity { Id = Guid.NewGuid() };

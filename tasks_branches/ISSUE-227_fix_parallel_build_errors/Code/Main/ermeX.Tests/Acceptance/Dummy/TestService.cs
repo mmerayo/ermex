@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using ermeX.Common;
 using ermeX.Tests.Acceptance.Dummy;
@@ -27,8 +28,10 @@ namespace ermeX.Tests.Acceptance.Dummy
 {
     internal class TestService :MarshalByRefObject, ITestService1, ITestService2,ITestService3
     {
-        private static readonly string fileName = Path.Combine(PathUtils.GetApplicationFolderPath(),
-                                                               "TestTracker.delete");
+        private static readonly string FileName = Path.Combine(PathUtils.GetApplicationFolderPath(),
+                                                               string.Format("TestTracker.{1}.{0}.delete",
+                                                                             Environment.Is64BitProcess ? "x64" : "x86",
+                                                                                 RuntimeEnvironment.GetSystemVersion()));
 
 
         private static TrackerData tr = new TrackerData();
@@ -154,14 +157,14 @@ namespace ermeX.Tests.Acceptance.Dummy
 
         public static void Refresh()
         {
-            tr = ObjectSerializer.DeserializeObjectWithoutOptimization<TrackerData>(fileName);
+            tr = ObjectSerializer.DeserializeObjectWithoutOptimization<TrackerData>(FileName);
         }
 
         private static void SerializeTracker()
         {
-            if (File.Exists(fileName))
-                File.Delete(fileName);
-            ObjectSerializer.SerializeObjectWithoutOptimization(fileName, Tracker);
+            if (File.Exists(FileName))
+                File.Delete(FileName);
+            ObjectSerializer.SerializeObjectWithoutOptimization(FileName, Tracker);
         }
 
         public static void Reset()

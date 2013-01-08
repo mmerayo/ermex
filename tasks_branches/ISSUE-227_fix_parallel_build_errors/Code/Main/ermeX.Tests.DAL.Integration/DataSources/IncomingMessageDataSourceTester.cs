@@ -116,19 +116,10 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
             IDalSettings dataAccessSettings =dataAccessTestHelper. DataAccessSettings;
             var dataAccessExecutor = new DataAccessExecutor(dataAccessSettings);
-            BusMessageDataSource busMessageDataSource = GetBusMessageDataSource(dataAccessExecutor, dataAccessSettings);
+            BusMessageDataSource busMessageDataSource = GetBusMessageDataSource(engine);
             return new IncomingMessagesDataSource(busMessageDataSource,  dataAccessSettings, ownerCompId,dataAccessExecutor);
         }
 
-        private BusMessageDataSource GetBusMessageDataSource(DbEngineType engineType)
-        {
-            var dataAccessExecutor = new DataAccessExecutor(GetDataHelper(engineType).DataAccessSettings);
-            return new BusMessageDataSource(dataAccessExecutor.DalSettings, LocalComponentId, dataAccessExecutor);
-        }
-
-        protected BusMessageDataSource GetBusMessageDataSource(DataAccessExecutor dataAccessExecutor, IDalSettings dataAccessSettings)
-        {
-            return new BusMessageDataSource(dataAccessSettings,ownerCompId,dataAccessExecutor);
-        }
+       
     }
 }

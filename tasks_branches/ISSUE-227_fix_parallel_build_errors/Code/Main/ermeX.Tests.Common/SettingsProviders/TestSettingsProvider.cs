@@ -32,6 +32,7 @@ using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.Tests.Common.DataAccess;
+using ermeX.Tests.Common.Networking;
 
 namespace ermeX.Tests.Common.SettingsProviders
 {
@@ -89,7 +90,8 @@ namespace ermeX.Tests.Common.SettingsProviders
                                                                   List<DataSchemaType> schemasToApply,bool devLoggingOn=false)
         {
 
-            Configuration result = Configuration.Configure(componentId).SendMessagesExpirationTime(TimeSpan.FromMinutes(5));
+            Configuration result = Configuration.Configure(componentId).SendMessagesExpirationTime(TimeSpan.FromMinutes(5))
+                .ListeningToTcpPort(new TestPort(20000));
             switch(engine)
             {
                 case DbEngineType.SqlServer2008:
@@ -196,7 +198,7 @@ namespace ermeX.Tests.Common.SettingsProviders
                 set { _maxMessageKbBeforeChunking = value; }
             }
 
-            public ushort Port
+            public ushort TcpPort
             {
                 get { throw new NotImplementedException(); }
             }

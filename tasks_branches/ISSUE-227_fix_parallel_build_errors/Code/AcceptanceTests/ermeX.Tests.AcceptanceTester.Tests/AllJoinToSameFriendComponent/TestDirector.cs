@@ -264,7 +264,7 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
 
             var cfg = Configuration.Configure(_currentComponentId)
                 .DiscoverServicesToPublish(new[] {this.GetType().Assembly}, new[] {typeof (ITesterService)})
-                .ListeningToPort(_portFrom);
+                .ListeningToTcpPort(_portFrom);
             cfg = _watcherOn ? cfg.SetSqlServerDb(connStr) : cfg.SetInMemoryDb();
 
             WorldGate.ConfigureAndStart(cfg);

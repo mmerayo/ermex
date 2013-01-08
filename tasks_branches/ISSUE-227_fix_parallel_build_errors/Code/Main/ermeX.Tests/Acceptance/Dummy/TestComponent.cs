@@ -94,7 +94,7 @@ namespace ermeX.Tests.Acceptance.Dummy
         public void Start(DbEngineType engineType, string dbConnString, ushort listeningPort)
         {
             Configuration cfg = Configuration.Configure(ComponentId)
-                .ListeningToPort(listeningPort);
+                .ListeningToTcpPort(listeningPort);
             switch (engineType)
             {
                 case DbEngineType.SqlServer2008:
@@ -118,8 +118,9 @@ namespace ermeX.Tests.Acceptance.Dummy
 
         public void Start(DbEngineType engineType,string dbConnString, ushort listeningPort, Guid joinToComponentId, ushort jointToPort)
         {
+
             Configuration cfg = Configuration.Configure(ComponentId)
-                .ListeningToPort(listeningPort)
+                .ListeningToTcpPort(listeningPort)
                 .RequestJoinTo(Networking.GetLocalhostIp(), jointToPort, joinToComponentId);
             switch (engineType)
             {

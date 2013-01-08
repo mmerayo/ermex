@@ -27,6 +27,8 @@ namespace ermeX.Common
     //TODO: INJECTABLE
     public static class ObjectSerializer
     {
+        private const PrefixStyle PrefixStyleInPlace = PrefixStyle.Fixed32;
+
         public static void SerializeObject<TSerialize>(string fileName, TSerialize source)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -92,7 +94,7 @@ namespace ermeX.Common
             using (var memoryStream = new MemoryStream(source))
             {
                 memoryStream.Position = 0;
-                result = Serializer.Deserialize<TResult>(memoryStream);
+                result = Serializer.DeserializeWithLengthPrefix<TResult>(memoryStream,PrefixStyleInPlace);
             }
 
             return result;
@@ -102,7 +104,7 @@ namespace ermeX.Common
         {
             var memoryStream = new MemoryStream();
 
-            Serializer.Serialize(memoryStream, source);
+            Serializer.SerializeWithLengthPrefix(memoryStream, source,PrefixStyleInPlace);
             memoryStream.Position = 0;
             return memoryStream;
         }
@@ -132,10 +134,10 @@ namespace ermeX.Common
                         result = true;
                     }
             }
-            else if (!metaType.GetSubtypes().Any(x => x.DerivedType.Type == typeToAppend))
+            else if (metaType.GetSubtypes().All(x => x.DerivedType.Type != typeToAppend))
             {
                 lock (SyncLock)
-                    if (!metaType.GetSubtypes().Any(x => x.DerivedType.Type == typeToAppend))
+                    if (metaType.GetSubtypes().All(x => x.DerivedType.Type != typeToAppend))
                     {
                         int max = metaType.GetSubtypes().Max(x => x.FieldNumber);
                         metaType.AddSubType(max + 100, typeToAppend);

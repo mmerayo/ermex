@@ -25,6 +25,6 @@ namespace ermeX.ConfigurationManagement.Settings
 {
     internal interface IBizSettings:IComponentSettings
     {
-        ushort Port { get; }
+        ushort TcpPort { get; }
     }
 }

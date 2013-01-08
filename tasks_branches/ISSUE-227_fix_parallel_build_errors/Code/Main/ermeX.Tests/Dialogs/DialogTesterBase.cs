@@ -135,7 +135,7 @@ namespace ermeX.Tests.Dialogs
                 Single(
                     x => x.ServerId == remoteComponentId);
 
-            var localPort = new TestPort(20000, 20100);
+            var localPort = new TestPort(9000);
 
             request = new ServiceRequestMessage
                           {
@@ -162,7 +162,7 @@ namespace ermeX.Tests.Dialogs
             
             eventDone = new AutoResetEvent(false);
 
-            remotePort = new TestPort(20000, 20100);
+            remotePort = new TestPort(9000);
 
             //the connectivity details
             DataAccessTestHelper dataAccessTestHelper = GetDataHelper(dbEngine);
