@@ -9,7 +9,6 @@ set nunitFramework=net-%frameworkVersion%
 set frameworkFolder=%WINDIR%\Microsoft.NET\Framework\v4.0.30319
 set configuration=%CI_Configuration%
 
-
 REM COMMON TO ALL BUILDS
 set artifactsFolder=%CD%\..\BuildArtifacts
 set outputBinFolder=%artifactsfolder%\Binaries\%frameworkVersion%\%buildType%\%configuration%
