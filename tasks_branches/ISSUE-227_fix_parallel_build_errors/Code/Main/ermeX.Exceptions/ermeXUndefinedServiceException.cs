@@ -20,7 +20,7 @@ using System;
 
 namespace ermeX.Exceptions
 {
-    public class ermeXUndefinedServiceException : Exception
+    public class ermeXUndefinedServiceException : ermeXException
     {
         public ermeXUndefinedServiceException(string interfaceName,string methodName):this(interfaceName,methodName,null) {}
         public ermeXUndefinedServiceException(string interfaceName,string methodName,Guid? destinationComponent)

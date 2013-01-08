@@ -23,7 +23,7 @@ using System.Text;
 
 namespace ermeX.Exceptions
 {
-    public class ermeXComponentNotAvailableException : Exception
+    public class ermeXComponentNotAvailableException : ermeXException
     {
         public ermeXComponentNotAvailableException(Guid remoteComponentId)
             : base(string.Format("The component: {0} is not available at the moment. Ensure the settings are correct",remoteComponentId)){    }
