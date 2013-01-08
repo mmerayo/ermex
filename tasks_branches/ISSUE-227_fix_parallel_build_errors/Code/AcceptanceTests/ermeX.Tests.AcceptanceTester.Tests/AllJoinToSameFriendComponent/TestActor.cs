@@ -193,7 +193,7 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
             }
 
             var cfg = Configuration.Configure(_currentComponentId)
-                .ListeningToPort(_port)
+                .ListeningToTcpPort(_port)
                 .DiscoverServicesToPublish(new[] {this.GetType().Assembly}, new[] {typeof (IDirectorService)})
                 .DiscoverSubscriptors(new[] {this.GetType().Assembly}, null)
                 .RequestJoinTo(Networking.GetLocalhostIp(), _friendPort, _friendComponentId);

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -121,6 +121,10 @@
     <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
       <Name>ermeX.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Exceptions\ermeX.Exceptions.csproj">
+      <Project>{6A23DFD5-8894-4ABA-BA81-7AB2A7DAD552}</Project>
+      <Name>ermeX.Exceptions</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Interfaces\ermeX.Interfaces.csproj">
       <Project>{A67BD599-72DF-40F6-B632-AFB22B4B3D18}</Project>

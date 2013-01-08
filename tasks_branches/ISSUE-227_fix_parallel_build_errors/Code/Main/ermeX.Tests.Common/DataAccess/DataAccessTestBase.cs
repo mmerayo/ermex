@@ -22,6 +22,8 @@ using NUnit.Framework;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
+using ermeX.DAL.DataAccess.DataSources;
+using ermeX.DAL.DataAccess.Helpers;
 
 namespace ermeX.Tests.Common.DataAccess
 {
@@ -101,6 +103,45 @@ namespace ermeX.Tests.Common.DataAccess
         [TestFixtureSetUp]
         public virtual void OnFixtureSetup()
         {
+        }
+
+        private readonly Dictionary<DbEngineType, DataAccessExecutor> _dataAccessExecutors = new Dictionary<DbEngineType, DataAccessExecutor>();
+        protected DataAccessExecutor GetdataAccessExecutor(DbEngineType engineType)
+        {
+            if (!_dataAccessExecutors.ContainsKey(engineType))
+            {
+                var dataAccessExecutor = new DataAccessExecutor(GetDataHelper(engineType).DataAccessSettings);
+                _dataAccessExecutors.Add(engineType, dataAccessExecutor);
+            }
+            return _dataAccessExecutors[engineType];
+        }
+
+        //TODO: MOVE THE FOLLOWING METHODS TO A GENERIC PROVIDER
+
+        private readonly Dictionary<DbEngineType, BusMessageDataSource> _busMessageDataSources = new Dictionary<DbEngineType, BusMessageDataSource>();
+        protected BusMessageDataSource GetBusMessageDataSource(DbEngineType engineType)
+        {
+            if (!_busMessageDataSources.ContainsKey(engineType))
+            {
+                var dataAccessExecutor = GetdataAccessExecutor(engineType);
+                var busMessageDataSource = new BusMessageDataSource(dataAccessExecutor.DalSettings, LocalComponentId,
+                                                                    dataAccessExecutor);
+                _busMessageDataSources.Add(engineType, busMessageDataSource);
+            }
+            return _busMessageDataSources[engineType];
+        }
+
+        private readonly Dictionary<DbEngineType, ChunkedServiceRequestMessageDataSource> _chunkDataSources = new Dictionary<DbEngineType, ChunkedServiceRequestMessageDataSource>();
+        protected ChunkedServiceRequestMessageDataSource GetChunkedServiceRequestMessageDataSource(DbEngineType engineType)
+        {
+            if (!_chunkDataSources.ContainsKey(engineType))
+            {
+                var dataAccessExecutor = GetdataAccessExecutor(engineType);
+                var ds = new ChunkedServiceRequestMessageDataSource(dataAccessExecutor.DalSettings, LocalComponentId,
+                                                                    dataAccessExecutor);
+                _chunkDataSources.Add(engineType, ds);
+            }
+            return _chunkDataSources[engineType];
         }
     }
 }

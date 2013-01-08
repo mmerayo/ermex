@@ -49,14 +49,7 @@ namespace ermeX.Tests.Services.Receiving.Handlers.InternalMessagesHandling
             return transportMessage;
         }
 
-        //TODO: IT would be better having a provider for the dataSources
-        private BusMessageDataSource GetBusMessageDataSourceTarget(DbEngineType engine)
-        {
-            IDalSettings dataAccessSettings = GetDataHelper(engine).DataAccessSettings;
-            var dataAccessExecutor = new DataAccessExecutor(dataAccessSettings);
-            return new BusMessageDataSource(dataAccessSettings, LocalComponentId, dataAccessExecutor);
-        }
-
+      
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void CanHandleMessage(DbEngineType engineType)
         {
@@ -65,7 +58,7 @@ namespace ermeX.Tests.Services.Receiving.Handlers.InternalMessagesHandling
             var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
             
             Assert.IsFalse(processorWorker.NewItemArrivedFlagged);
-            IBusMessageDataSource busManager = GetBusMessageDataSourceTarget(engineType);
+            IBusMessageDataSource busManager = GetBusMessageDataSource(engineType);
             using (var target = new InternalMessageHandler(processorWorker, dispatcherWorker, busManager,  settings))
             {
                 target.StartWorkers();
@@ -94,7 +87,7 @@ namespace ermeX.Tests.Services.Receiving.Handlers.InternalMessagesHandling
             Assert.IsFalse(dispatcherWorker.Started);
 
             using (
-                var target = new InternalMessageHandler(processorWorker, dispatcherWorker,GetBusMessageDataSourceTarget(engineType),
+                var target = new InternalMessageHandler(processorWorker, dispatcherWorker,GetBusMessageDataSource(engineType),
                                                         TestSettingsProvider.GetClientConfigurationSettingsSource()))
                 target.StartWorkers();
 

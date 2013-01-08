@@ -28,10 +28,14 @@ using ermeX.Tests.Common.DataAccess;
 using Network = ermeX.Common.Networking;
 namespace ermeX.Tests.Common.Networking
 {
-    internal sealed class TestPort:IDisposable
+    internal sealed class TestPort : IDisposable
     {
         private const string DbName = "PortBooking";
         private const string LockDbCreationMutexName = "ermeX.Tests.Common.Networking.SharedPorts";
+
+        private const string CreateTableQuery =
+            "CREATE TABLE IF NOT EXISTS PortsBooked (PortNumber INT PRIMARY KEY ASC UNIQUE, CreatedDateUtc INTEGER NOT NULL );";
+
         private static readonly SqliteDbEngine SqliteDbEngine;
         private static readonly QueryHelper QueryHelper;
 
@@ -41,40 +45,40 @@ namespace ermeX.Tests.Common.Networking
             {
                 mutex.WaitOne(TimeSpan.FromSeconds(10));
 
-                SqliteDbEngine = new SqliteDbEngine(DbName,false,"d:\\");//TODO: get THE db FOLDER from A CONFIG FILE, it must be shared between al builds
+                SqliteDbEngine = new SqliteDbEngine(DbName, false, "d:\\");
+                    //TODO: get THE db FOLDER from A CONFIG FILE, it must be shared between al builds
                 SqliteDbEngine.CreateDatabase();
                 QueryHelper = QueryHelper.GetHelper(DbEngineType.SqliteInMemory,
                                                     SqliteDbEngine.GetConnectionString());
                 QueryHelper.ExecuteNonQuery(
-                    "CREATE TABLE IF NOT EXISTS PortsBooked (PortNumber INT PRIMARY KEY ASC UNIQUE );");
+                    CreateTableQuery);
             }
         }
 
 
-        public TestPort(ushort bottomRange, ushort topRange)
+        private TestPort(ushort bottomRange, ushort topRange)
         {
             BookPort(bottomRange, topRange);
         }
 
-        public TestPort(ushort bottomRange):this(bottomRange,ushort.MaxValue){}
+        public TestPort(ushort bottomRange) : this(bottomRange, ushort.MaxValue)
+        {
+        }
 
         private void BookPort(ushort bottomRange, ushort topRange)
         {
             bool booked = false;
 
-            ushort candidatePort=0;
+            ushort candidatePort = 0;
             do
             {
                 try
                 {
-                    using (var mutex = new Mutex(false, LockDbCreationMutexName))
-                    {
-                        candidatePort = Network.GetFreePort(bottomRange, topRange);
+                    candidatePort = Network.GetFreePort(bottomRange, topRange);
 
-                        mutex.WaitOne(TimeSpan.FromSeconds(10));
-                        QueryHelper.ExecuteNonQuery(string.Format("INSERT INTO PortsBooked (PortNumber) VALUES ({0})",
-                                                                  candidatePort));
-                    }
+                    QueryHelper.ExecuteNonQuery(
+                        string.Format("INSERT INTO PortsBooked (PortNumber,CreatedDateUtc) VALUES ({0}, {1})",
+                                      candidatePort, DateTime.UtcNow.Ticks));
                     booked = true;
                 }
                 catch (SQLiteException ex)
@@ -85,13 +89,12 @@ namespace ermeX.Tests.Common.Networking
                             bottomRange = (ushort) (candidatePort + 1);
                             break;
                         case SQLiteErrorCode.Error:
-                            using (var mutex = new Mutex(false, LockDbCreationMutexName))
-                            {
-                                mutex.WaitOne(TimeSpan.FromSeconds(10));
-                                SqliteDbEngine.CreateDatabase();
-                                QueryHelper.ExecuteNonQuery(
-                                    "CREATE TABLE IF NOT EXISTS PortsBooked (PortNumber INT PRIMARY KEY ASC UNIQUE );");
-                            }
+                            //using (var mutex = new Mutex(false, LockDbCreationMutexName))
+                            //{
+                            //    mutex.WaitOne(TimeSpan.FromSeconds(10));
+                            //    SqliteDbEngine.CreateDatabase();
+                            //    QueryHelper.ExecuteNonQuery(CreateTableQuery);
+                            //}
                             break;
 
                         default:
@@ -118,30 +121,21 @@ namespace ermeX.Tests.Common.Networking
             }
             //unmanaged
 
-
-            using (var mutex = new Mutex(false, LockDbCreationMutexName))
+            try
             {
-                mutex.WaitOne(TimeSpan.FromSeconds(10));
-                try
+                QueryHelper.ExecuteNonQuery(string.Format("DELETE FROM PortsBooked WHERE CreatedDateUtc<{0}",
+                                                          DateTime.UtcNow.Subtract(TimeSpan.FromMinutes(10)).Ticks));
+            }
+            catch (SQLiteException ex)
+            {
+                switch ((SQLiteErrorCode) ex.ErrorCode)
                 {
-                    QueryHelper.ExecuteNonQuery(string.Format("DELETE FROM PortsBooked WHERE PortNumber={0}", PortNumber));
 
-                    var items =
-                        QueryHelper.ExecuteScalar<int>(
-                            string.Format("SELECT COUNT(*) FROM PortsBooked WHERE PortNumber={0}", PortNumber));
-                    if (items == 0)
-                        SqliteDbEngine.DropDatabase();
-                }
-                catch (SQLiteException ex)
-                {
-                    switch ((SQLiteErrorCode)ex.ErrorCode)
-                    {
-
-                        case SQLiteErrorCode.Error://already deleted
-                            break;
-                        default:
-                            throw ex;
-                    }
+                    case SQLiteErrorCode.Error: //already deleted
+                    case SQLiteErrorCode.Locked:
+                        break;
+                    default:
+                        throw ex;
                 }
             }
         }
@@ -160,6 +154,5 @@ namespace ermeX.Tests.Common.Networking
         {
             return port.PortNumber;
         }
-
     }
 }
