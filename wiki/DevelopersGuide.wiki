@@ -3,6 +3,9 @@
 
 *_please feedback_*
 
+== SOLUTION CONFIGURATIONS ==
+  * Platforms: x86, x64 (ANY_CPU not available at the moment)
+  * Platforms
 == SVN Folders ==
 
   *_blessed_ this is the main trunk, and is intended to be used for merging/branching *ONLY* by the project admins
@@ -44,3 +47,10 @@ A mergeable task is a task that after merged locally(Request info about how to r
 A mergeable task can be commited to the trunk
 
 If everything went fine, then you can merge your code
+
+== UTILS FOR DEVELOPERS ==
+  * Run test from nUnit GUI: links at folder _Utilities_
+  * Build tasks in local environment
+    # Files ReleaseRunner__FRAMEWORK___PLATFORM_.cmd
+    # Params _Compile_ or _Pack_ or _UnitTests_ or _AcceptanceTests_. The last two options need _Compile_ to be invoked previously
+
