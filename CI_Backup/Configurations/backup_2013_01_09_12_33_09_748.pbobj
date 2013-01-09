@@ -1,0 +1,14 @@
+<org.jenkinsci.plugins.periodicbackup.BackupObject plugin="periodicbackup@1.3">
+  <fileManager class="org.jenkinsci.plugins.periodicbackup.ConfigOnly">
+    <restorePolicy class="org.jenkinsci.plugins.periodicbackup.OverwriteRestorePolicy"/>
+  </fileManager>
+  <storage class="org.jenkinsci.plugins.periodicbackup.ZipStorage">
+    <multiVolume>false</multiVolume>
+    <volumeSize>5242880</volumeSize>
+  </storage>
+  <location class="org.jenkinsci.plugins.periodicbackup.LocalDirectory">
+    <enabled>true</enabled>
+    <path>D:\DevProjects\ermeX\CI_Backup</path>
+  </location>
+  <timestamp>2013-01-09 12:33:09.748 CET</timestamp>
+</org.jenkinsci.plugins.periodicbackup.BackupObject>
