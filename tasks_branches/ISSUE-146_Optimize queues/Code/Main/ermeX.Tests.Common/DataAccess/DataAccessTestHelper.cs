@@ -126,13 +126,16 @@ namespace ermeX.Tests.Common.DataAccess
         }
 
         private volatile QueryHelper _queryTestHelper = null;
+
         public QueryHelper QueryTestHelper
         {
             get
             {
                 if (_queryTestHelper == null)
-                    lock (_syncLock) if (_queryTestHelper == null)
-                       _queryTestHelper= QueryHelper.GetHelper(EngineType, DataAccessSettings.ConfigurationConnectionString);
+                    lock (_syncLock)
+                        if (_queryTestHelper == null)
+                            _queryTestHelper = QueryHelper.GetHelper(EngineType,
+                                                                     DataAccessSettings.ConfigurationConnectionString);
                 return _queryTestHelper;
             }
         }
