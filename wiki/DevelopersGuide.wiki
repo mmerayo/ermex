@@ -29,7 +29,9 @@
   # Commit your code to your branch _with comments_ using the format "ISSUE-NUM:" as prefix of the comment
   # if your task is *MERGEABLE* _(see mergeable tasks below)_ Merge it to the source trunk under _WorkingTrunks_. In the case the source trunk is not the current, them merge to that one and merge the revision trunk by trunk until the current. Ensure every merge commit is *MERGEABLE* 
   # Move your branch to _attic_. It will stay there until is verified and it will be deleted by the project admin
-
+---
+== SVN COMMENTS ==
+All the comments must have the prefix "ISSUE_NUM:" and then action text: i.e. Branch created, branch commit, merged to trunk, task commit...
 ---
 
 == WHAT IS A MERGEABLE TASK ==
