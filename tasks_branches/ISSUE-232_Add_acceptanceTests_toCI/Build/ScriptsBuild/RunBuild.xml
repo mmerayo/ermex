@@ -7,7 +7,8 @@
     <MSBuildExtensionsPath>$(MSBuildProjectDirectory)\..\Packages\msBuildTaskExtensions</MSBuildExtensionsPath>
     <ermeXProjectDir>$(MSBuildProjectDirectory)\..\..\Code\Main\ermeX</ermeXProjectDir>
     <MergedBinFolder>$(MergedFolder)</MergedBinFolder>
-	<TargetFrameworkVersion>v$(frameworkVersion)</TargetFrameworkVersion>	
+	<TargetFrameworkVersion>v$(frameworkVersion)</TargetFrameworkVersion>
+    <AcceptanceBinFolder>$(OutputPath)Acceptance</AcceptanceBinFolder>	
    </PropertyGroup>
 
 
@@ -25,6 +26,7 @@
     <Message Text="OutputPath: $(OutputPath)"/>    
 	<Message Text="TargetFrameworkVersion: $(TargetFrameworkVersion)"/>	
     <Message Text="ermeXProjectDir: $(ermeXProjectDir)"/>
+	<Message Text="AcceptanceBinFolder: $(AcceptanceBinFolder)"/>
     <!--<MSBuild.ExtensionPack.UI.Console TaskAction="ReadLine" UserPrompt="Press [Enter] to continue…"/>-->
   </Target>
 
@@ -39,8 +41,9 @@
     <Message Text="Build:Start" />  
 	
 	<CallTarget Targets="CompileTask" />
-    <CallTarget Targets="RunTests" />
-	<CallTarget Targets="CreatePackageTask" />
+    <CallTarget Targets="CreatePackageTask" />
+	<CallTarget Targets="RunTestsTask" />
+	<CallTarget Targets="RunAcceptanceTestsTask" />
     <Message Text="Build:End" />
   </Target>
 
@@ -58,23 +61,21 @@
 	<CallTarget Targets="CleanLastBuild" />
     <CallTarget Targets="CreateOutputDirectories" />
     
-	<MSBuild Projects="$(MSBuildProjectDirectory)\..\..\Code\Main\ermeX.sln" />
-	<Message Text="The build version is: $(BuildVersion)"/> 
+	<MSBuild Projects="$(MSBuildProjectDirectory)\..\..\Code\Main\ermeX.sln" />	
 	<CallTarget Targets="MergeOutput" />
-	
+	<MSBuild 
+		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\AcceptanceTests.sln" 
+		Properties="OutputPath=$(AcceptanceBinFolder);"/>
 	<Message Text="CompileTask:End" />
   </Target>
   <!--http://www.msbuildextensionpack.com/help/4.0.5.0/html/b9e622d0-2888-4ba5-a042-889adac0e220.htm-->
-  <Target Name="RunTests" Condition=" '$(TaskIdName)' == 'UnitTests' ">
-	<Message Text="RunTests:Start" />	
+  <Target Name="RunTestsTask" Condition=" '$(TaskIdName)' == 'UnitTests' ">
+	<Message Text="RunTestsTask:Start" />	
 	<PropertyGroup>		
 		<Is32 Condition="'$(Platform)' == 'x86'" >true</Is32>
 		<Is32 Condition="'$(Platform)' == 'x64'" >false</Is32>
 	</PropertyGroup>
-	<!--<CreateProperty Value="'$(Platform)' == 'x86'">
-      <Output PropertyName="Is32" TaskParameter="Value"/>
-    </CreateProperty>-->
-	<Message Text="Is32: $(Is32)" />
+	
 	<ItemGroup>
       <AssembliesToTest Include="$(OutputPath)*Tests*.dll"/>
     </ItemGroup>
@@ -83,10 +84,10 @@
 		Framework="$(nUnitFramework)" 
 		OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml"
 		Use32Bit="$(Is32)"/>
-	<Message Text="RunTests:End" />
+	<Message Text="RunTestsTask:End" />
   </Target>
   <Target Name="CreatePackageTask" Condition=" $(TaskIdName) == 'Pack' ">
-	<Message Text="CreatePackage:Start" />	
+	<Message Text="CreatePackageTask:Start" />	
 	<Message Text="Creating package $(BuildReportsFolder)\ermeX_$(BuildTag).zip from: $(MergedBinFolder)"/> 
 	<ItemGroup>
       <FilesToZip Include="$(MergedBinFolder)\*.dll"/>
@@ -96,13 +97,18 @@
 		CompressFiles="@(FilesToZip)"
 		RemoveRoot="$(MergedBinFolder)"
 		ZipFileName="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>
-	<!--<MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="$(MergedBinFolder)\*.*" ZipFileName="$(BuildReportsFolder)\ermeX_$(BuildTag).zip" RemoveRoot="$(MergedBinFolder)" />-->
-	<Message Text="CreatePackage:End" />
+	
+	<Message Text="CreatePackageTask:End" />
+  </Target>
+  
+   <Target Name="RunAcceptanceTestsTask" Condition=" $(TaskIdName) == 'AcceptanceTests' ">
+	<Message Text="RunAcceptanceTestsTask:Start" />	
+	<Message Text="Running: $(AcceptanceBinFolder)\ermeX.Tests.AcceptanceTester.exe"/>
+	<Exec Command="$(AcceptanceBinFolder)\ermeX.Tests.AcceptanceTester.exe AllJoinToSameFriendComponent true 60000 61000 5 5 false 0"/>
+	
+	<Message Text="RunAcceptanceTestsTask:End" />
   </Target>
 
-
-
-  
   <!-- HELPER METHODS-->
   <Target Name="CleanLastBuild">
     <RemoveDir Directories="$(OutputPath)" />
@@ -146,7 +152,7 @@
   
  
  <Target Name="MergeOutput" >
-    <!--<CallTarget Targets="RemoveNonMergeableFiles" />-->
+    
     <ItemGroup>
       <Input Include="$(OutputPath)*dll" Exclude="$(OutputPath)*Test*;$(OutputPath)Moq.*;$(OutputPath)System.Data.SQLite.*;$(OutputPath)SQLite.Interop.*;$(OutputPath)nunit.*;$(OutputPath)log4net*;$(OutputPath)NInject*;$(OutputPath)System*;$(OutputPath)mscorlib.*;$(OutputPath)Common.Logging*;"/>	  	     
 		<NotMergeable Include="$(OutputPath)SQLite.Interop.*;$(OutputPath)NInject.dll;$(OutputPath)Common.Logging.dll;$(OutputPath)System.Data.SQLite.dll;"/>
@@ -165,14 +171,5 @@
 		/>
 	<Copy SourceFiles="@(NotMergeable)" DestinationFolder="$(MergedBinFolder)"/>
   </Target>
-<!--
 
-
-  <Target Name="RemoveNonMergeableFiles">
-    <Delete Files="$(OutputPath)ermeX.Tests.dll" />
-    <Delete Files="$(OutputPath)ermeX.Tests.pdb" />
-    <Delete Files="$(OutputPath)Moq.dll" />
-    <MSBuild.ExtensionPack.UI.Console TaskAction="ReadLine" UserPrompt="Press [Enter] to continue…"/>
-  </Target>
--->
 </Project>
