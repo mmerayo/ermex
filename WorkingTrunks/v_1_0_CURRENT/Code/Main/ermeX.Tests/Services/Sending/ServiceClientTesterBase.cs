@@ -234,6 +234,7 @@ namespace ermeX.Tests.Services.Sending
             }
         }
 
+        
         [Test(Description = "Tests to send a big file")]
         public void Can_Send_Chunked_Message([Values(1, 10,20)] int mBytes)
         {
