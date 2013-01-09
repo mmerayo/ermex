@@ -116,23 +116,29 @@ namespace ermeX.Tests.Common.Networking
             }
             //unmanaged
 
-            try
+            bool mustRetry=false;
+            do
             {
-                QueryHelper.ExecuteNonQuery(string.Format("DELETE FROM PortsBooked WHERE CreatedDateUtc<{0}",
-                                                          DateTime.UtcNow.Subtract(TimeSpan.FromMinutes(10)).Ticks));
-            }
-            catch (SQLiteException ex)
-            {
-                switch ((SQLiteErrorCode) ex.ErrorCode)
+                try
                 {
-
-                    case SQLiteErrorCode.Error: //already deleted
-                    case SQLiteErrorCode.Locked:
-                        break;
-                    default:
-                        throw ex;
+                    QueryHelper.ExecuteNonQuery(string.Format("DELETE FROM PortsBooked WHERE CreatedDateUtc<{0}",
+                                                              DateTime.UtcNow.Subtract(TimeSpan.FromMinutes(10)).Ticks));
                 }
-            }
+                catch (SQLiteException ex)
+                {
+                    switch ((SQLiteErrorCode) ex.ErrorCode)
+                    {
+
+                        case SQLiteErrorCode.Error: //already deleted
+                            break;
+                        case SQLiteErrorCode.Locked:
+                            mustRetry = true;
+                            break;
+                        default:
+                            throw ex;
+                    }
+                }
+            } while (mustRetry);
         }
 
         ~TestPort()
