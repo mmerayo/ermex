@@ -231,15 +231,22 @@ namespace ermeX.Common
         {
             object result = null;
 
-            try
+            if (Environment.Is64BitProcess)
             {
-                var invoker = ILHelper.GetMethodInvoker(method);
-                result = invoker(target, args);
+                try
+                {
+                    var invoker = ILHelper.GetMethodInvoker(method);
+                    result = invoker(target, args);
+                }
+                catch (EntryPointNotFoundException)
+                {
+                    result = method.Invoke(target, args);
+                    //TODO: THIS IS DUE A LIMITATION in the x86 COMPILER and its failing sometimes in the x64 as well
+                }
             }
-            catch (EntryPointNotFoundException)
+            else
             {
                 result = method.Invoke(target, args);
-                    //TODO: THIS IS DUE A LIMITATION in the x86 COMPILER and its failing sometimes in the x64 as well
             }
 
             return result;
