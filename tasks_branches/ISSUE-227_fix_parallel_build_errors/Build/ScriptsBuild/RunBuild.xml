@@ -64,16 +64,39 @@
 	
 	<Message Text="CompileTask:End" />
   </Target>
-  
+  <!--http://www.msbuildextensionpack.com/help/4.0.5.0/html/b9e622d0-2888-4ba5-a042-889adac0e220.htm-->
   <Target Name="RunTests" Condition=" '$(TaskIdName)' == 'UnitTests' ">
 	<Message Text="RunTests:Start" />	
-    <NUnit Assemblies="$(OutputPath)*.Tests.dll" ToolPath="$(nUnitPath)" Framework="$(nUnitFramework)" OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml" />
+	<PropertyGroup>		
+		<Is32 Condition="'$(Platform)' == 'x86'" >true</Is32>
+		<Is32 Condition="'$(Platform)' == 'x64'" >false</Is32>
+	</PropertyGroup>
+	<!--<CreateProperty Value="'$(Platform)' == 'x86'">
+      <Output PropertyName="Is32" TaskParameter="Value"/>
+    </CreateProperty>-->
+	<Message Text="Is32: $(Is32)" />
+	<ItemGroup>
+      <AssembliesToTest Include="$(OutputPath)*Tests*.dll"/>
+    </ItemGroup>
+    <NUnit Assemblies="@(AssembliesToTest)" 
+		ToolPath="$(nUnitPath)" 
+		Framework="$(nUnitFramework)" 
+		OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml"
+		Use32Bit="$(Is32)"/>
 	<Message Text="RunTests:End" />
   </Target>
   <Target Name="CreatePackageTask" Condition=" $(TaskIdName) == 'Pack' ">
 	<Message Text="CreatePackage:Start" />	
-	<Message Text="The build tag is: $(BuildTag)"/> 
-    <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="$(MergedBinFolder)\ermeX.dll" ZipFileName="$(BuildReportsFolder)\ermeX_$(BuildTag).zip" RemoveRoot="$(MergedBinFolder)" />
+	<Message Text="Creating package $(BuildReportsFolder)\ermeX_$(BuildTag).zip from: $(MergedBinFolder)"/> 
+	<ItemGroup>
+      <FilesToZip Include="$(MergedBinFolder)\*.dll"/>
+    </ItemGroup>
+    <MSBuild.ExtensionPack.Compression.Zip 
+		TaskAction="Create" 
+		CompressFiles="@(FilesToZip)"
+		RemoveRoot="$(MergedBinFolder)"
+		ZipFileName="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>
+	<!--<MSBuild.ExtensionPack.Compression.Zip TaskAction="Create" CompressFiles="$(MergedBinFolder)\*.*" ZipFileName="$(BuildReportsFolder)\ermeX_$(BuildTag).zip" RemoveRoot="$(MergedBinFolder)" />-->
 	<Message Text="CreatePackage:End" />
   </Target>
 
@@ -126,7 +149,7 @@
     <!--<CallTarget Targets="RemoveNonMergeableFiles" />-->
     <ItemGroup>
       <Input Include="$(OutputPath)*dll" Exclude="$(OutputPath)*Test*;$(OutputPath)Moq.*;$(OutputPath)System.Data.SQLite.*;$(OutputPath)SQLite.Interop.*;$(OutputPath)nunit.*;$(OutputPath)log4net*;$(OutputPath)NInject*;$(OutputPath)System*;$(OutputPath)mscorlib.*;$(OutputPath)Common.Logging*;"/>	  	     
-		<NotMergeable Include="$(OutputPath)SQLite.Interop.*;$(OutputPath)NInject*;$(OutputPath)Common.Logging.dll;$(OutputPath)System.Data.SQLite.*;"/>
+		<NotMergeable Include="$(OutputPath)SQLite.Interop.*;$(OutputPath)NInject.dll;$(OutputPath)Common.Logging.dll;$(OutputPath)System.Data.SQLite.dll;"/>
     </ItemGroup>
 	<Message Text="The build version is name is: $(BuildVersion)"/> 
     <ILMerge.MSBuild.Tasks.ILMerge
