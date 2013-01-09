@@ -101,8 +101,9 @@ namespace ermeX.Threading.Queues
             lock (_queueLocker)
             {               
                 ItemsQueue.Enqueue(item);
-                Monitor.Pulse(_queueLocker); 
-                if(ItemsQueue.Count>=QueueSizeToCreateNewThread)
+                Monitor.Pulse(_queueLocker);
+                int count = ItemsQueue.Count;
+                if(count > 0 && count % QueueSizeToCreateNewThread==0)
                     AddNewThread();
             }
         }
