@@ -129,7 +129,7 @@
       <Output PropertyName="BuildPrefix" TaskParameter="Value"/>
     </CreateProperty>
 
-    <CreateProperty Value="$(BuildPrefix)$(BRevisionNumber)">
+    <CreateProperty Value="$(BuildPrefix)$(BMinorNumber).$(BRevisionNumber)">
       <Output PropertyName="BuildVersion" TaskParameter="Value"/>
     </CreateProperty>
 	<CreateProperty Value="$(frameworkVersion)_$(Platform)_$(BuildVersion)">
