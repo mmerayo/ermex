@@ -16,12 +16,13 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using System.Diagnostics;
 using System.Threading;
 using NUnit.Framework;
 
-namespace ermeX.Tests.Common.Threading
+namespace ermeX.Tests.Threading
 {
     [Explicit("TODO: Make these tests deterministic")]
     [TestFixture]

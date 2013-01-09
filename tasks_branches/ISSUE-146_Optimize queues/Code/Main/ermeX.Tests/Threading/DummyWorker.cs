@@ -16,11 +16,11 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-using System;
 
+using System;
 using ermeX.Threading;
 
-namespace ermeX.Tests.Common.Threading
+namespace ermeX.Tests.Threading
 {
     class DummyWorker:Worker
     {
