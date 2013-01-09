@@ -56,7 +56,7 @@ namespace ermeX.Tests.Threading.Queues
         }
 
         [Test]
-        public void Create_Threads_And_Remove_Them_On_Demand()
+        public void Create_Threads_on_Demand()
         {
             bool increased = false;
             bool decreased = false;
@@ -94,13 +94,20 @@ namespace ermeX.Tests.Threading.Queues
                     count = testQueue.ItemsRead.Count;
                 } while (count < numThreads * numItemsToPush);
                 Thread.Sleep(TimeSpan.FromSeconds(5)); //make them expire
-                
+
+                //tests removal
+                var a = testQueue.CurrentThreadNumber;
+                testQueue.EnqueueItem(dummyQueueItem);
+                Thread.Sleep(250);
+                Assert.IsTrue(a== testQueue.CurrentThreadNumber+1);
+
                 Assert.IsTrue(maxThreads>2 && maxThreads<=64 );
             }
 
             Assert.IsTrue(increased);
-            Assert.IsTrue(decreased);
-
+            Assert.IsFalse(decreased);
         }
+
+        
     }
 }
