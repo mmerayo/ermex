@@ -1,8 +1,0 @@
-== Current platforms ==
-these are the current available builds:
-  * Frameworks: v4.0
-  * Platforms: x86, x64
-  * Configurations: Debug, Release
-
-
-= TO BE CONTINUED... :) =
