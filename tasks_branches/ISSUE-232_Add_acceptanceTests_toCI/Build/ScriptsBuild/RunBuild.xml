@@ -83,7 +83,8 @@
 		ToolPath="$(nUnitPath)" 
 		Framework="$(nUnitFramework)" 
 		OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml"
-		Use32Bit="$(Is32)"/>
+		Use32Bit="$(Is32)" 
+		/>
 	<Message Text="RunTestsTask:End" />
   </Target>
   <Target Name="CreatePackageTask" Condition=" $(TaskIdName) == 'Pack' ">
