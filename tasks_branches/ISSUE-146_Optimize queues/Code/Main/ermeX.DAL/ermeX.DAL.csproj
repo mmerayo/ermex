@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{588A3C5F-C021-480E-B413-AEF2DEC4F97F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ermeX.DAL</RootNamespace>
+    <AssemblyName>ermeX.DAL</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\ermeX.DAL.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\ermeX.DAL.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\ermeX.DAL.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\ermeX.DAL.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\packages\FluentNHibernate.1.3.0.717\lib\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.3.2.0.4000\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.2.2.1.4\lib\net40-Full\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath Condition="'$(Platform)' == 'x64'">..\packages\Sqlite.1.0.83\x64\System.Data.SQLite.dll</HintPath>
+      <HintPath Condition="'$(Platform)' == 'x86'">..\packages\Sqlite.1.0.83\x86\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ermeX\Properties\KeyFileInfo.cs">
+      <Link>Properties\KeyFileInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
+      <Link>Properties\ProjectInfo.cs</Link>
+    </Compile>
+    <Compile Include="DataAccess\DataSources\AutoRegistration.cs" />
+    <Compile Include="DataAccess\DataSources\BusMessageDataSource.cs" />
+    <Compile Include="DataAccess\DataSources\ChunkedServiceRequestMessageDataSource.cs" />
+    <Compile Include="DataAccess\Helpers\DataAccessExecutor.cs" />
+    <Compile Include="DataAccess\Mappings\BusMessageDataMap.cs" />
+    <Compile Include="DataAccess\Mappings\ChunkedServiceRequestMessageDataMap.cs" />
+    <Compile Include="DataAccess\Mappings\Sqlite\AppComponentMap.cs" />
+    <Compile Include="DataAccess\Mappings\Sqlite\BusMessageDataMap.cs" />
+    <Compile Include="DataAccess\Mappings\Sqlite\ConnectivityDetailsMap.cs" />
+    <Compile Include="DataAccess\Mappings\Sqlite\IncomingMessagesMap.cs" />
+    <Compile Include="DataAccess\Mappings\Sqlite\IncomingMessageSuscriptionsMap.cs" />
+    <Compile Include="DataAccess\Mappings\Sqlite\OutgoingMessagesMap.cs" />
+    <Compile Include="DataAccess\Mappings\Sqlite\OutgoingMessageSuscriptionsMap.cs" />
+    <Compile Include="DataAccess\Mappings\Sqlite\ServiceDetailsMap.cs" />
+    <Compile Include="DataAccess\Mappings\SqlServer\AppComponentMap.cs" />
+    <Compile Include="DataAccess\Mappings\SqlServer\ConnectivityDetailsMap.cs" />
+    <Compile Include="DataAccess\Mappings\SqlServer\BusMessageDataMap.cs" />
+    <Compile Include="DataAccess\Mappings\SqlServer\ChunkedServiceRequestMessageDataMap.cs" />
+    <Compile Include="DataAccess\Mappings\Sqlite\ChunkedServiceRequestMessageDataMap.cs" />
+    <Compile Include="DataAccess\Mappings\SqlServer\IncomingMessagesMap.cs" />
+    <Compile Include="DataAccess\Mappings\SqlServer\IncomingMessageSuscriptionsMap.cs" />
+    <Compile Include="DataAccess\Mappings\SqlServer\OutgoingMessagesMap.cs" />
+    <Compile Include="DataAccess\Mappings\SqlServer\OutgoingMessageSuscriptionsMap.cs" />
+    <Compile Include="DataAccess\Mappings\SqlServer\ServiceDetailsMap.cs" />
+    <Compile Include="DataAccess\Providers\ISessionProvider.cs" />
+    <Compile Include="IoC\DALInjections.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DataAccess\DataSources\DataSource.cs" />
+    <Compile Include="DataAccess\Helpers\QueryHelper.cs" />
+    <Compile Include="DataAccess\Providers\NHibernateBootstrapper.cs" />
+    <Compile Include="DataAccess\Providers\SessionProvider.cs" />
+    <Compile Include="DataAccess\DataSources\AppComponentDataSource.cs" />
+    <Compile Include="DataAccess\DataSources\ConnectivityDetailsDataSource.cs" />
+    <Compile Include="DataAccess\DataSources\IncomingMessagesDataSource.cs" />
+    <Compile Include="DataAccess\DataSources\IncomingMessageSuscriptionsDataSource.cs" />
+    <Compile Include="DataAccess\DataSources\OutgoingMessagesDataSource.cs" />
+    <Compile Include="DataAccess\DataSources\OutgoingMessageSuscriptionsDataSource.cs" />
+    <Compile Include="DataAccess\DataSources\ServiceDetailsDataSource.cs" />
+    <Compile Include="DataAccess\Mappings\AppComponentMap.cs" />
+    <Compile Include="DataAccess\Mappings\ConnectivityDetailsMap.cs" />
+    <Compile Include="DataAccess\Mappings\IncomingMessagesMap.cs" />
+    <Compile Include="DataAccess\Mappings\IncomingMessageSuscriptionsMap.cs" />
+    <Compile Include="DataAccess\Mappings\OutgoingMessagesMap.cs" />
+    <Compile Include="DataAccess\Mappings\OutgoingMessageSuscriptionsMap.cs" />
+    <Compile Include="DataAccess\Mappings\ServiceDetailsMap.cs" />
+    <Compile Include="DataAccess\Mappings\UserMappingTypes\DateTimeUserType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="KeyFile.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ermeX.Bus.Interfaces\ermeX.Bus.Interfaces.csproj">
+      <Project>{9E3D8616-BD44-4E0A-A67C-182473CE2453}</Project>
+      <Name>ermeX.Bus.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Common\ermeX.Common.csproj">
+      <Project>{49D6179A-5489-4CB0-A4AE-F40DB88B78B7}</Project>
+      <Name>ermeX.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement.Settings\ermeX.ConfigurationManagement.Settings.csproj">
+      <Project>{A6C2D141-25F0-4BFF-93BC-F9EF0CBDB3B1}</Project>
+      <Name>ermeX.ConfigurationManagement.Settings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement\ermeX.ConfigurationManagement.csproj">
+      <Project>{C4536E30-DC91-4AA4-8860-ECBDAF1AE4DE}</Project>
+      <Name>ermeX.ConfigurationManagement</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.DAL.Interfaces\ermeX.DAL.Interfaces.csproj">
+      <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>
+      <Name>ermeX.DAL.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
+      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
+      <Name>ermeX.Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if $(PlatformName) == x64 xcopy /i /y "$(SolutionDir)packages\Sqlite.1.0.83\x64\SQLite.Interop.dll" "$(TargetDir)*.*"
+if $(PlatformName) == x86 xcopy /i /y "$(SolutionDir)packages\Sqlite.1.0.83\x86\SQLite.Interop.dll" "$(TargetDir)*.*"
+</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
