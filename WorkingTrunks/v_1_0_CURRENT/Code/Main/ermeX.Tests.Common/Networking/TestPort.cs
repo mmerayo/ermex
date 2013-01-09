@@ -89,12 +89,7 @@ namespace ermeX.Tests.Common.Networking
                             bottomRange = (ushort) (candidatePort + 1);
                             break;
                         case SQLiteErrorCode.Error:
-                            //using (var mutex = new Mutex(false, LockDbCreationMutexName))
-                            //{
-                            //    mutex.WaitOne(TimeSpan.FromSeconds(10));
-                            //    SqliteDbEngine.CreateDatabase();
-                            //    QueryHelper.ExecuteNonQuery(CreateTableQuery);
-                            //}
+                        case SQLiteErrorCode.Locked:   
                             break;
 
                         default:
