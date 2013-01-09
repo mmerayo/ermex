@@ -8,27 +8,41 @@ using ermeX.Threading.Queues;
 
 namespace ermeX.Tests.Threading.Queues
 {
-    internal class TestProducerParallelConsumerQueue : TestProducerConsumerQueueBase
+    internal class TestProducerParallelConsumerPriorityQueue : TestProducerConsumerQueueBase
     {
         private const int InitialWorkerCount = 1;
 
-        protected class DummyQueue : ProducerParallelConsumerQueue<DummyQueueItem>, ITestQueue
+        protected class DummyQueue : ProducerParallelConsumerPriorityQueue<DummyQueueItem>, ITestQueue
         {
             private readonly List<DummyQueueItem> _itemsRead = new List<DummyQueueItem>();
 
-            private readonly object _locker = new object();
 
             public DummyQueue(int initialWorkerCount, int maxThreadsNum)
-                : base(initialWorkerCount, maxThreadsNum)
+                : base(initialWorkerCount, maxThreadsNum,new MyComparer())
             {
                 
             }
-
+            
             public DummyQueue(int initialWorkerCount, int maxThreadsNum, int queueSizeToCreateNewThread,
                               TimeSpan maxLazyThreadAlive)
-                : base(initialWorkerCount, maxThreadsNum, queueSizeToCreateNewThread, maxLazyThreadAlive)
+                : base(initialWorkerCount, maxThreadsNum, queueSizeToCreateNewThread, maxLazyThreadAlive,new MyComparer())
             {
             }
+
+            private class MyComparer : IComparer<DummyQueueItem>
+           {
+                public int Compare(DummyQueueItem x, DummyQueueItem y)
+                {
+                    if (x == null && y == null)
+                        return 0;
+                    if (x == null)
+                        return -1;
+                    if (y == null)
+                        return 1;
+                    
+                    return x.Time.CompareTo(y.Time);
+                }
+           }
 
             protected override Action<DummyQueueItem> RunActionOnDequeue
             {
@@ -50,8 +64,10 @@ namespace ermeX.Tests.Threading.Queues
         }
 
         [Test]
-        public void Create_Threads_on_Demand()
+        public void SortsByPriority()
         {
+            var queueItem = new DummyQueueItem(666, DateTime.Now.Subtract(TimeSpan.FromDays(1)));
+
             bool increased = false;
             bool decreased = false;
             var dummyQueueItem = new DummyQueueItem(333, DateTime.Now);
@@ -77,6 +93,8 @@ namespace ermeX.Tests.Threading.Queues
                     if (!increased && currentThreadNumber > antThreads)
                     {
                         increased = true;
+                        //this will pass many of them
+                        testQueue.EnqueueItem( queueItem);
                     }
                     else if (!decreased && currentThreadNumber < antThreads)
                     {
@@ -86,7 +104,7 @@ namespace ermeX.Tests.Threading.Queues
                     if (maxThreads < currentThreadNumber) 
                         maxThreads = currentThreadNumber;
                     count = testQueue.ItemsRead.Count;
-                } while (count < numThreads * numItemsToPush);
+                } while (count < numThreads * numItemsToPush +1 );
                 Thread.Sleep(TimeSpan.FromSeconds(5)); //make them expire
 
                 //tests removal
@@ -96,6 +114,12 @@ namespace ermeX.Tests.Threading.Queues
                 Assert.IsTrue(a== testQueue.CurrentThreadNumber+1);
 
                 Assert.IsTrue(maxThreads>2 && maxThreads<=64 );
+
+                int indexOf = testQueue.ItemsRead.IndexOf(queueItem);
+                int count1 = testQueue.ItemsRead.Count;
+
+                Console.WriteLine("Index:{0} of {1}",indexOf,count1);
+                Assert.IsTrue(indexOf<count1-1);
             }
 
             Assert.IsTrue(increased);

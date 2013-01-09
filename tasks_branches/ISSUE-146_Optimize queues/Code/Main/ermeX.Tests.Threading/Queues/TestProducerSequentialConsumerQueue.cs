@@ -8,33 +8,27 @@ using ermeX.Threading.Queues;
 
 namespace ermeX.Tests.Threading.Queues
 {
-    internal class TestProducerParallelConsumerQueue : TestProducerConsumerQueueBase
+    internal class TestProducerSequentialConsumerQueue : TestProducerConsumerQueueBase
     {
-        private const int InitialWorkerCount = 1;
 
-        protected class DummyQueue : ProducerParallelConsumerQueue<DummyQueueItem>, ITestQueue
+        protected class DummyQueue : ProducerSequentialConsumerQueue<DummyQueueItem>, ITestQueue
         {
             private readonly List<DummyQueueItem> _itemsRead = new List<DummyQueueItem>();
 
             private readonly object _locker = new object();
 
-            public DummyQueue(int initialWorkerCount, int maxThreadsNum)
-                : base(initialWorkerCount, maxThreadsNum)
-            {
-                
-            }
-
-            public DummyQueue(int initialWorkerCount, int maxThreadsNum, int queueSizeToCreateNewThread,
-                              TimeSpan maxLazyThreadAlive)
-                : base(initialWorkerCount, maxThreadsNum, queueSizeToCreateNewThread, maxLazyThreadAlive)
-            {
-            }
 
             protected override Action<DummyQueueItem> RunActionOnDequeue
             {
                 get
                 {
-                    return (item) => ItemsRead.Add(item);
+                    return (item) =>
+                        {
+                            lock (_locker)
+                            {
+                                ItemsRead.Add(item);
+                            }
+                        };
                 }
             }
 
@@ -46,19 +40,19 @@ namespace ermeX.Tests.Threading.Queues
 
         protected override ITestQueue GetTarget()
         {
-            return new DummyQueue(InitialWorkerCount, 64, 5, TimeSpan.FromSeconds(5));
+            return new DummyQueue();
         }
 
         [Test]
-        public void Create_Threads_on_Demand()
+        public void Dont_Create_Threads_on_Demand()
         {
             bool increased = false;
             bool decreased = false;
             var dummyQueueItem = new DummyQueueItem(333, DateTime.Now);
             using(var testQueue = GetTarget())
             {
-                const int numThreads = 32;
-                const int numItemsToPush = 100;
+                const int numThreads = 5;
+                const int numItemsToPush = 10;
                 var threads = new Thread[numThreads];
                 for(int i=0;i<numThreads;i++)
                     threads[i]=new Thread(()=>
@@ -68,7 +62,7 @@ namespace ermeX.Tests.Threading.Queues
                         });
                 for(int i=0;i<numThreads;i++)
                     threads[i].Start();
-                int antThreads = InitialWorkerCount;
+                int antThreads = 1;
                 int maxThreads = 0;
                 int count;
                 do
@@ -93,12 +87,12 @@ namespace ermeX.Tests.Threading.Queues
                 var a = testQueue.CurrentThreadNumber;
                 testQueue.EnqueueItem(dummyQueueItem);
                 Thread.Sleep(250);
-                Assert.IsTrue(a== testQueue.CurrentThreadNumber+1);
+                Assert.AreEqual(1, a);
 
-                Assert.IsTrue(maxThreads>2 && maxThreads<=64 );
+                Assert.AreEqual(1,maxThreads);
             }
 
-            Assert.IsTrue(increased);
+            Assert.IsFalse(increased);
             Assert.IsFalse(decreased);
         }
 

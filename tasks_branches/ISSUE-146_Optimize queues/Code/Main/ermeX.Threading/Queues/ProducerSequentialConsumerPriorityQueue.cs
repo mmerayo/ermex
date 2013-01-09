@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 
 namespace ermeX.Threading.Queues
 {
-    internal abstract class ProducerSequentialConsumerPriorityQueue<TKey,TValue>:ProducerParallelConsumerPriorityQueue<TKey,TValue>
+    internal abstract class ProducerSequentialConsumerPriorityQueue<TQueueItem> : ProducerParallelConsumerPriorityQueue<TQueueItem>
     {
-        protected ProducerSequentialConsumerPriorityQueue(Func<TValue, TKey> getSortByPriorityKey) : base(1, 1, getSortByPriorityKey)
+        protected ProducerSequentialConsumerPriorityQueue(IComparer<TQueueItem> getSortByPriorityKey)
+            : base(1, 1, getSortByPriorityKey)
         {
         }
         
