@@ -59,9 +59,9 @@ namespace ermeX.Threading.Queues
         private readonly Dictionary<string,DateTime> _timeLazy =new Dictionary<string, DateTime>();   
         private void AddNewThread()
         {
-            if (_workers.Count <= MaxThreadsNum)
+            if (_workers.Count < MaxThreadsNum)
                 lock (_threadsLocker)
-                    if (_workers.Count <= MaxThreadsNum)
+                    if (!_shuttingDown && _workers.Count < MaxThreadsNum)
                     {
                         var thread = new Thread(Consume){Name = string.Format("TC{0}", Guid.NewGuid().ToString())};
                         _timeLazy.Add(thread.Name,DateTime.UtcNow);
