@@ -61,8 +61,7 @@ namespace ermeX.Tests.WorldGateTests
         public void RegistersSystemSuscriptionsStartUp(DbEngineType dbEngine)
         { 
 
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
-                                                                                SchemasToApply);
+            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
             DataAccessTestHelper dataAccessTestHelper = GetDataHelper(dbEngine);
             var incommingSuscriptions = dataAccessTestHelper.GetObjectsFromDb<IncomingMessageSuscription>(IncomingMessageSuscription.TableName);

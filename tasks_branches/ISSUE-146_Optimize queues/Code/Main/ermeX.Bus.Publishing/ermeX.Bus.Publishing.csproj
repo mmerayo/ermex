@@ -97,6 +97,7 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
+    <Compile Include="Dispatching\Messages\IMessageDistributor.cs" />
     <Compile Include="Dispatching\Messages\MessageCollector.cs" />
     <Compile Include="Dispatching\Messages\MessageDistributor.cs" />
     <Compile Include="Dispatching\Messages\MessageSender.cs" />

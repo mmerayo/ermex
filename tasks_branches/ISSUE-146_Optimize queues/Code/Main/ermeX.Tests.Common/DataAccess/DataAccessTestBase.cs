@@ -131,6 +131,19 @@ namespace ermeX.Tests.Common.DataAccess
             return _busMessageDataSources[engineType];
         }
 
+        private readonly Dictionary<DbEngineType, OutgoingMessagesDataSource> _outgoingMessageDataSources = new Dictionary<DbEngineType, OutgoingMessagesDataSource>();
+        protected OutgoingMessagesDataSource GetOutgoingMessageDataSource(DbEngineType engineType)
+        {
+            if (!_outgoingMessageDataSources.ContainsKey(engineType))
+            {
+                var dataAccessExecutor = GetdataAccessExecutor(engineType);
+                var dataSource = new OutgoingMessagesDataSource(dataAccessExecutor.DalSettings, LocalComponentId,
+                                                                    dataAccessExecutor);
+                _outgoingMessageDataSources.Add(engineType, dataSource);
+            }
+            return _outgoingMessageDataSources[engineType];
+        }
+
         private readonly Dictionary<DbEngineType, ChunkedServiceRequestMessageDataSource> _chunkDataSources = new Dictionary<DbEngineType, ChunkedServiceRequestMessageDataSource>();
         protected ChunkedServiceRequestMessageDataSource GetChunkedServiceRequestMessageDataSource(DbEngineType engineType)
         {

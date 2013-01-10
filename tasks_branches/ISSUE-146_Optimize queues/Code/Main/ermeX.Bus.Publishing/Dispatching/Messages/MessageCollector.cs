@@ -47,17 +47,18 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         [Inject]
         public MessageCollector(IBusSettings settings,
                                 IBusMessageDataSource busMessageDataSource, SystemTaskQueue systemTaskQueue,
-                                IOutgoingMessagesDataSource outgoingMessagesDataSource)
+                                IOutgoingMessagesDataSource outgoingMessagesDataSource,IMessageDistributor distributor )
         {
             if (settings == null) throw new ArgumentNullException("settings");
             if (busMessageDataSource == null) throw new ArgumentNullException("busMessageDataSource");
             if (systemTaskQueue == null) throw new ArgumentNullException("systemTaskQueue");
             if (outgoingMessagesDataSource == null) throw new ArgumentNullException("outgoingMessagesDataSource");
+            if (distributor == null) throw new ArgumentNullException("distributor");
             Settings = settings;
             BusMessageDataSource = busMessageDataSource;
             SystemTaskQueue = systemTaskQueue;
             OutgoingMessagesDataSource = outgoingMessagesDataSource;
-            MessageDistributor = new MessageDistributor();
+            MessageDistributor = distributor;
 
         }
 
@@ -96,7 +97,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         private IBusMessageDataSource BusMessageDataSource { get; set; }
         private SystemTaskQueue SystemTaskQueue { get; set; }
         private IOutgoingMessagesDataSource OutgoingMessagesDataSource { get; set; }
-        private MessageDistributor MessageDistributor { get; set; }
+        private IMessageDistributor MessageDistributor { get; set; }
         private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
         private int _dispatchedItems = 0;
 

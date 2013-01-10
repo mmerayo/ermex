@@ -87,7 +87,7 @@ namespace ermeX.Tests.Common.SettingsProviders
         }
 
         public static Configuration GetServiceLayerSettingsSource(Guid componentId, DbEngineType engine,
-                                                                  List<DataSchemaType> schemasToApply,bool devLoggingOn=false)
+                                                                  bool devLoggingOn=false)
         {
 
             Configuration result = Configuration.Configure(componentId).SendMessagesExpirationTime(TimeSpan.FromMinutes(5))
