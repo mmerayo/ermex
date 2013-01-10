@@ -8,7 +8,6 @@ using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.DataSources;
 using ermeX.LayerMessages;
-using ermeX.Tests.Bus.Publishing.Dispatching.Messages.Dummy;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.SettingsProviders;
 using ermeX.Threading.Queues;
