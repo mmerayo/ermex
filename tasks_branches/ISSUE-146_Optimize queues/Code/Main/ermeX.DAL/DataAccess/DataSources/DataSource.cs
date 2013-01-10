@@ -145,6 +145,8 @@ namespace ermeX.DAL.DataAccess.DataSources
                throw new DataException("could not perform RemoveAll");
         }
 
+      
+
         public DataAccessOperationResult<bool> RemoveAll(ISession session)
         {
             var result = GetAll(session);
@@ -157,7 +159,7 @@ namespace ermeX.DAL.DataAccess.DataSources
         ///   Removes a list of entitities from the datasource
         /// </summary>
         /// <param name="entities"> </param>
-        public virtual void Remove(IList<TEntity> entities)
+        public virtual void Remove(IEnumerable<TEntity> entities)
         {
             if (!DataAccessExecutor.Perform(session => this.Remove(session, entities)).Success)
                 throw new DataException("could not perform Remove");
@@ -177,7 +179,7 @@ namespace ermeX.DAL.DataAccess.DataSources
 #endif
             Remove(new[] {entity});
         }
-        protected DataAccessOperationResult<IList<TEntity>> Remove(ISession session, TEntity entity)
+        protected DataAccessOperationResult<IEnumerable<TEntity>> Remove(ISession session, TEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
             var result = Remove(session, new List<TEntity>(){entity});
@@ -189,15 +191,16 @@ namespace ermeX.DAL.DataAccess.DataSources
         /// </summary>
         /// <param name="session"> </param>
         /// <param name="entities"> </param>
-        protected DataAccessOperationResult<IList<TEntity>> Remove(ISession session, IList<TEntity> entities)
+        protected DataAccessOperationResult<IEnumerable<TEntity>> Remove(ISession session, IEnumerable<TEntity> entities)
         {
             if (entities == null) throw new ArgumentNullException("entities");
          
-            var result=new DataAccessOperationResult<IList<TEntity>>();
-   
-            foreach (var entity in entities) //TODO: Transaction here
+            var result=new DataAccessOperationResult<IEnumerable<TEntity>>();
+
+            var resultValue = entities as List<TEntity> ?? entities.ToList();
+            foreach (var entity in resultValue) //TODO: Transaction here
                 session.Delete(entity);
-            result.ResultValue = entities;
+            result.ResultValue = resultValue;
             result.Success = true;
             return result;
         }
@@ -226,7 +229,7 @@ namespace ermeX.DAL.DataAccess.DataSources
 
         public void RemoveById(int id)
         {
-            var result = DataAccessExecutor.Perform(session => GetById(session, id));
+            var result = DataAccessExecutor.Perform(session => RemoveById(session, id));
             if (!result.Success)
                 throw new DataException("Couldnt perform the operation RemoveById");
 
@@ -398,6 +401,19 @@ namespace ermeX.DAL.DataAccess.DataSources
             IList<TEntity> result = criteria.List<TEntity>();
 
             return result;
+        }
+
+        public IList<TEntity> GetItemsByFields(Tuple<string, object>[] equalArguments, Tuple<string, object>[] differentArguments)
+        {
+            var result = DataAccessExecutor.Perform(session =>
+            {
+                IList<TEntity> itemsByFields = GetItemsByFields(session, equalArguments,differentArguments);
+                return new DataAccessOperationResult<IList<TEntity>>() { ResultValue = itemsByFields, Success = true };
+            });
+            if (!result.Success)
+                throw new DataException("Could not perform the operation GetAll");
+
+            return result.ResultValue;
         }
        
 

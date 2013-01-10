@@ -58,7 +58,7 @@ namespace ermeX.DAL.Interfaces
         ///   Removes a list of entitities from the datasource
         /// </summary>
         /// <param name="entities"> </param>
-        void Remove(IList<TEntity> entities);
+        void Remove(IEnumerable<TEntity> entities);
 
         /// <summary>
         ///   Gets all the entitites
@@ -151,6 +151,7 @@ namespace ermeX.DAL.Interfaces
         int GetMax(string propertyName);
 
         // bool HasRowAlready(TEntity entity);
-        
+
+        IList<TEntity> GetItemsByFields(Tuple<string, object>[] equalArguments, Tuple<string, object>[] differentArguments);
     }
 }

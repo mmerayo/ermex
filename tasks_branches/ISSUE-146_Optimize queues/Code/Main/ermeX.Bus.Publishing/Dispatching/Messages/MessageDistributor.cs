@@ -22,11 +22,11 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
             public MessageDistributorMessage(OutgoingMessage outGoingMessage, BusMessage message)
             {
-                OutGoingMessage = outGoingMessage;
-                Message = message;
+
                 if (outGoingMessage == null) throw new ArgumentNullException("outGoingMessage");
                 if (message == null) throw new ArgumentNullException("message");
-                
+                OutGoingMessage = outGoingMessage;
+                Message = message;
             }
         }
 

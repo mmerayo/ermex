@@ -114,6 +114,9 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             if (message.Data == null)
                 throw new InvalidOperationException("the BusMessage cannot be null");
 
+            if (Status != DispatcherStatus.Started)
+                throw new InvalidOperationException("The component is not running now");
+
             Logger.Trace(x => x("{0} - Start dispatching", message.MessageId));
 
             OutgoingMessage outGoingMessage = CreateRootOutgoingMessage(message);
@@ -128,20 +131,21 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         private void RemoveExpiredMessages()
         {
+            //TODO:to be a method OF THE OutgoingMessagesDataSource WHEN HANDLING THE BUSMESSAGES
+
             TimeSpan expirationTime = Settings.SendExpiringTime;
             var outgoingMessages = OutgoingMessagesDataSource.GetExpiredMessages(expirationTime);
-            OutgoingMessagesDataSource.RemoveExpiredMessages(expirationTime);
             foreach (var outgoingMessage in outgoingMessages)
-            {
-                BusMessageDataSource.RemoveById(outgoingMessage.Id);
-            }
+                BusMessageDataSource.RemoveById(outgoingMessage.BusMessageId);
+            
+            OutgoingMessagesDataSource.RemoveExpiredMessages(expirationTime);
             Logger.Trace("MessageCollector: removed expired items");
         }
 
         private OutgoingMessage CreateRootOutgoingMessage(BusMessage message)
         {
             BusMessageData busMessage = BusMessageData.FromBusLayerMessage(Settings.ComponentId, message,
-                                                                           BusMessageData.BusMessageStatus.SenderOrder);
+                                                                           BusMessageData.BusMessageStatus.SenderCollected);
             BusMessageDataSource.Save(busMessage);
 
             var result = new OutgoingMessage(busMessage)
@@ -172,17 +176,23 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             {
                 Status = DispatcherStatus.Starting;
 
-                //TODO: OUTGOING MESSAGE SHOULD HOLD BUSMESSAGEdATA
-                var busMessageDatas = BusMessageDataSource.GetByIdStatus(BusMessageData.BusMessageStatus.SenderOrder);
-                foreach (var busMessageData in busMessageDatas)
-                {
-                    var outgoingMessage = OutgoingMessagesDataSource.GetByBusMessageId(busMessageData.Id);
-                    if(!outgoingMessage.Expired(Settings.SendExpiringTime))
-                        MessageDistributor.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outgoingMessage,
-                                                                                                    busMessageData));
-                }
+                RemoveExpiredMessages();
+
+                SendAllMessagesInQueue();
 
                 Status = DispatcherStatus.Started;
+            }
+        }
+
+        private void SendAllMessagesInQueue()
+        {
+//TODO: OUTGOING MESSAGE SHOULD HOLD BUSMESSAGEdATA
+            var busMessageDatas = BusMessageDataSource.GetByStatus(BusMessageData.BusMessageStatus.SenderCollected);
+            foreach (var busMessageData in busMessageDatas)
+            {
+                var outgoingMessage = OutgoingMessagesDataSource.GetByBusMessageId(busMessageData.Id);
+                MessageDistributor.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outgoingMessage,
+                                                                                                busMessageData));
             }
         }
 
