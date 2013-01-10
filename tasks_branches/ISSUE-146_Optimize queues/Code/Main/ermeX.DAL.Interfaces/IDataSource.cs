@@ -88,6 +88,13 @@ namespace ermeX.DAL.Interfaces
         void RemoveByProperty(string propertyName, string propertyValue);
 
         /// <summary>
+        /// Removes an entity by its Id
+        /// </summary>
+        /// <param name="id"></param>
+        void RemoveById(int id);
+
+
+        /// <summary>
         ///   Gets an item by a field value or null
         /// </summary>
         /// <typeparam name="TFieldType"> </typeparam>

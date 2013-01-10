@@ -177,6 +177,13 @@ namespace ermeX.DAL.DataAccess.DataSources
 #endif
             Remove(new[] {entity});
         }
+        protected DataAccessOperationResult<IList<TEntity>> Remove(ISession session, TEntity entity)
+        {
+            if (entity == null) throw new ArgumentNullException("entity");
+            var result = Remove(session, new List<TEntity>(){entity});
+            return result;
+        }
+
         /// <summary>
         ///   Removes a list of entitities from the datasource
         /// </summary>
@@ -217,6 +224,30 @@ namespace ermeX.DAL.DataAccess.DataSources
                 throw new DataException("could not perform Remove");
         }
 
+        public void RemoveById(int id)
+        {
+            var result = DataAccessExecutor.Perform(session => GetById(session, id));
+            if (!result.Success)
+                throw new DataException("Couldnt perform the operation RemoveById");
+
+        }
+
+        public virtual DataAccessOperationResult<bool> RemoveById(ISession session, int id)
+        {
+            var resultValue = session.Get<TEntity>(id);
+
+            if (resultValue != null && resultValue.ComponentOwner != LocalComponentId)
+                throw new InvalidOperationException(
+                    "Attempt to retrieve one row from another component. Local component: " + LocalComponentId);
+
+            Remove(session, resultValue);
+
+            return new DataAccessOperationResult<bool>()
+            {
+                Success = true,
+                ResultValue = true
+            };
+        }
 
         /// <summary>
         ///   Gets all the entitites
@@ -269,7 +300,7 @@ namespace ermeX.DAL.DataAccess.DataSources
                         {ResultValue = criteria.List<TEntity>(), Success = true};
                 });
             if (!result.Success)
-                throw new DataException("Couldnt perform the operation GetAll");
+                throw new DataException("Couldnt perform the operation GetAllAbsolute");
 
             return result.ResultValue;
         }

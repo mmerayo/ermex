@@ -10,7 +10,7 @@ namespace ermeX.Threading.Queues
     /// Several overlapped consumers can pick messages from the queue 
     /// </summary>
     /// <typeparam name="TQueueItem"></typeparam>
-    internal abstract class ProducerParallelConsumerQueue<TQueueItem>:IDisposable 
+    internal abstract class ProducerParallelConsumerQueue<TQueueItem>: IProducerConsumerQueue<TQueueItem>
     {
         private int MaxThreadsNum { get; set; }
         private int QueueSizeToCreateNewThread { get; set; }

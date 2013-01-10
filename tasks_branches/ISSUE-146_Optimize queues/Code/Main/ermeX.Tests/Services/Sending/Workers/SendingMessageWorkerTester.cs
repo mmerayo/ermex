@@ -23,7 +23,7 @@ using System.IO;
 using System.Threading;
 using NUnit.Framework;
 using ermeX.Bus.Interfaces;
-using ermeX.Bus.Publishing.AsyncWorkers;
+using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
