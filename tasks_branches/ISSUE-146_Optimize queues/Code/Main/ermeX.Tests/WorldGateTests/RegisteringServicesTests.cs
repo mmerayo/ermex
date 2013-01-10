@@ -93,8 +93,7 @@ namespace ermeX.Tests.WorldGateTests
 
         private void DoTestRegisterService(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
-                                                                                   SchemasToApply);
+            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             WorldGate.RegisterService<ITestService>(typeof(TestService));
@@ -142,8 +141,7 @@ namespace ermeX.Tests.WorldGateTests
                                  serviceType.FullName, operationIdentifier, DateTime.UtcNow, asSystemService);
 
 
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
-                                                                                   SchemasToApply);
+            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
             TestDelegate testDelegate = () => WorldGate.RegisterService<TService>(typeof(TestService));
             if (asSystemService || !returnValues)

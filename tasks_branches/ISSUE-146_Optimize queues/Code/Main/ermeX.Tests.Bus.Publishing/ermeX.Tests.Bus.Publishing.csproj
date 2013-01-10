@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.0.10827\NET40\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\Build\Packages\nUnit\NUnit-2.5.6.10205\nunitbin\nunit.framework.dll</HintPath>
     </Reference>
@@ -58,11 +61,44 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ermeX.Bus.Interfaces\ermeX.Bus.Interfaces.csproj">
+      <Project>{9E3D8616-BD44-4E0A-A67C-182473CE2453}</Project>
+      <Name>ermeX.Bus.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Bus.Publishing\ermeX.Bus.Publishing.csproj">
+      <Project>{AC2791B0-305E-44E5-B6C1-88771BDE7860}</Project>
+      <Name>ermeX.Bus.Publishing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement.Settings\ermeX.ConfigurationManagement.Settings.csproj">
+      <Project>{A6C2D141-25F0-4BFF-93BC-F9EF0CBDB3B1}</Project>
+      <Name>ermeX.ConfigurationManagement.Settings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement\ermeX.ConfigurationManagement.csproj">
+      <Project>{C4536E30-DC91-4AA4-8860-ECBDAF1AE4DE}</Project>
+      <Name>ermeX.ConfigurationManagement</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.DAL.Interfaces\ermeX.DAL.Interfaces.csproj">
+      <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>
+      <Name>ermeX.DAL.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.DAL\ermeX.DAL.csproj">
+      <Project>{588A3C5F-C021-480E-B413-AEF2DEC4F97F}</Project>
+      <Name>ermeX.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.LayerMessages\ermeX.LayerMessages.csproj">
+      <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
+      <Name>ermeX.LayerMessages</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Tests.Common\ermeX.Tests.Common.csproj">
       <Project>{7E841F70-E81D-4AB8-B387-DD7383202915}</Project>
       <Name>ermeX.Tests.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Threading\ermeX.Threading.csproj">
+      <Project>{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}</Project>
+      <Name>ermeX.Threading</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

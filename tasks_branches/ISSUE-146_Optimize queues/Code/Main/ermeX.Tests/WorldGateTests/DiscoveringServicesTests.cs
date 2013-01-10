@@ -52,8 +52,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_Register_Services_In_Assembly(DbEngineType dbEngine)
         {
-            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
-                                                                         new List<DataSchemaType>(){DataSchemaType.ClientComponent})
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine)
                 .DiscoverServicesToPublish(new[] { typeof(MessageA).Assembly }, new[] { typeof(IServiceB) });
 
             WorldGate.ConfigureAndStart(cfg);
@@ -83,8 +82,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_Late_Register_Services_In_Other_Assemblies( DbEngineType dbEngine)
         {
-            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
-                                                                         new List<DataSchemaType>(){DataSchemaType.ClientComponent})
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine)
                 .DiscoverServicesToPublish(new[] {typeof (MessageA).Assembly}, new[] {typeof (IServiceB)});
 
             WorldGate.ConfigureAndStart(cfg);

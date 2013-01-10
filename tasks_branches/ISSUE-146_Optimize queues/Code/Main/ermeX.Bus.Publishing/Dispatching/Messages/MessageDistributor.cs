@@ -13,7 +13,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
     /// <summary>
     /// Distributes the messages with an entry per subscriber where the message havent been sent
     /// </summary>
-    sealed class MessageDistributor:ProducerParallelConsumerQueue<MessageDistributor.MessageDistributorMessage>
+    sealed class MessageDistributor:ProducerParallelConsumerQueue<MessageDistributor.MessageDistributorMessage>, IMessageDistributor
     {
 
         public class MessageDistributorMessage{

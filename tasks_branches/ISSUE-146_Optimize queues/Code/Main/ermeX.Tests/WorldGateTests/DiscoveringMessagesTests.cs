@@ -62,8 +62,7 @@ namespace ermeX.Tests.WorldGateTests
         private List<IncomingMessageSuscription> DoCanSubscribeTest(DbEngineType dbEngine, Type[] excludeTypes,
                                                                     int expectedItems)
         {
-            var cfg =TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
-                                                                         new List<DataSchemaType>(){DataSchemaType.ClientComponent})
+            var cfg =TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine)
                 .DiscoverSubscriptors(new[] {typeof (MessageA).Assembly},
                                       excludeTypes);
 
@@ -159,8 +158,7 @@ namespace ermeX.Tests.WorldGateTests
         {
             
 
-            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
-                                                                         new List<DataSchemaType>(){DataSchemaType.ClientComponent})
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine)
                 .DiscoverSubscriptors(new[] {typeof (MessageA).Assembly},
                                       new[]
                                           {

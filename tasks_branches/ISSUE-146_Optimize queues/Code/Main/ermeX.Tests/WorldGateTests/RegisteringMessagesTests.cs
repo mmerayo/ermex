@@ -57,8 +57,7 @@ namespace ermeX.Tests.WorldGateTests
         public void Can_Register_Message_Suscription_To_SeveralTypes(
             DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
-                                                                                   SchemasToApply);
+            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             var testMessageHandler = WorldGate.Suscribe(typeof (ComposedMessageHandler));
@@ -71,8 +70,7 @@ namespace ermeX.Tests.WorldGateTests
         public void Can_Register_Several_Message_Suscriptions_To_SameType(
             DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
-                                                                                   SchemasToApply);
+            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             var testMessageHandler1 = WorldGate.Suscribe(typeof(ComposedMessageHandler));
@@ -88,8 +86,7 @@ namespace ermeX.Tests.WorldGateTests
         public void Cant_Register_Message_Suscription_To_WrongType(
             DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
-                                                                                   SchemasToApply);
+            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             Assert.Throws<ArgumentException>(() => WorldGate.Suscribe<DummyDomainEntity>(typeof (string)));
@@ -97,8 +94,7 @@ namespace ermeX.Tests.WorldGateTests
 
         private void DoTestRegisterMessage(DbEngineType dbEngine, bool suscribeInstance) //TODO: subscribe instance
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
-                                                                                   SchemasToApply);
+            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             //if (suscribeInstance)
@@ -142,8 +138,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_RegisterSuscription(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine,
-                                                                                   SchemasToApply);
+            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             var autoResetEvent = new AutoResetEvent(false);
