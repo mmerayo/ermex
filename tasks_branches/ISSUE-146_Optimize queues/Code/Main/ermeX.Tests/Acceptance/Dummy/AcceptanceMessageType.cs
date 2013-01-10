@@ -41,14 +41,14 @@ namespace ermeX.Tests.Acceptance.Dummy
 
         public void GenerateRandomValues()
         {
-            TheInt = RandomHelper.GetRandomInt(0, int.MaxValue);
+            TheInt = RandomHelper.GetRandomInt();
             TheString = RandomHelper.GetRandomString(15);
 
-            TheArray = new int[RandomHelper.GetRandomInt()];
+            TheArray = new int[RandomHelper.GetRandomInt(100)];
             for (int i = 0; i < TheArray.Length; i++)
                 TheArray[i] = RandomHelper.GetRandomInt(0, 255);
 
-            int items = RandomHelper.GetRandomInt();
+            int items = RandomHelper.GetRandomInt(1);
             TheList = new List<string>(items);
             for (int i = 0; i < items; i++)
                 TheList.Add(RandomHelper.GetRandomString());

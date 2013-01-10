@@ -26,7 +26,7 @@ namespace ermeX.LayerMessages
     /// Represents a message at the BusLayer level
     /// </summary>
     [ProtoContract(SkipConstructor = true)]
-    internal sealed class BusMessage: SystemMessage, ISystemMessage<BizMessage>
+    internal sealed class BusMessage: SystemMessage, ISystemMessage<BizMessage>,IEquatable<BusMessage>
     {
         private BusMessage()
         {
@@ -52,5 +52,45 @@ namespace ermeX.LayerMessages
         public BizMessage Data { get; protected set; }
 
 
+        #region Equatable
+
+        public bool Equals(BusMessage other)
+        {
+            if (other == null)
+                return false;
+
+            return base.Equals(other) && Publisher==other.Publisher && Data==other.Data;
+        }
+
+        public static bool operator ==(BusMessage a, BusMessage b)
+        {
+            if ((object)a == null || ((object)b) == null)
+                return Equals(a, b);
+
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(BusMessage a, BusMessage b)
+        {
+            if (a == null || b == null)
+                return !Equals(a, b);
+
+            return !(a.Equals(b));
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof(BusMessage)) return false;
+            return Equals((BusMessage)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return MessageId.GetHashCode();
+        }
+
+        #endregion
     }
 }

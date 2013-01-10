@@ -24,6 +24,7 @@ using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.Entities.Entities;
 
 namespace ermeX.Tests.Common.DataAccess
 {
@@ -118,6 +119,8 @@ namespace ermeX.Tests.Common.DataAccess
 
         //TODO: MOVE THE FOLLOWING METHODS TO A GENERIC PROVIDER
 
+        #region Data sources
+
         private readonly Dictionary<DbEngineType, BusMessageDataSource> _busMessageDataSources = new Dictionary<DbEngineType, BusMessageDataSource>();
         protected BusMessageDataSource GetBusMessageDataSource(DbEngineType engineType)
         {
@@ -155,6 +158,22 @@ namespace ermeX.Tests.Common.DataAccess
                 _chunkDataSources.Add(engineType, ds);
             }
             return _chunkDataSources[engineType];
+        } 
+
+        #endregion
+
+        #region AllRecords
+
+        protected IList<OutgoingMessage> GetOutgoingMessages(DbEngineType engineType)
+        {
+            return GetOutgoingMessageDataSource(engineType).GetAll();
         }
+
+        protected BusMessageData GetBusMessage(DbEngineType engineType, int id)
+        {
+            return GetBusMessageDataSource(engineType).GetById(id);
+        }
+
+        #endregion
     }
 }
