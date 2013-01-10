@@ -16,6 +16,8 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
+using System;
 using System.Collections.Generic;
 using ermeX.Entities.Entities;
 
@@ -25,5 +27,8 @@ namespace ermeX.DAL.Interfaces
     {
         IEnumerable<OutgoingMessage> GetItemsPendingSorted();
         OutgoingMessage GetNextDeliverable();
+        OutgoingMessage GetByBusMessageId(int id);
+        IEnumerable<OutgoingMessage> GetExpiredMessages(TimeSpan expirationTime);
+        void RemoveExpiredMessages(TimeSpan expirationTime);
     }
 }

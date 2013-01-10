@@ -52,5 +52,10 @@ namespace ermeX.DAL.DataAccess.DataSources
         {
            return GetItemsByField("Status", BusMessageData.BusMessageStatus.ReceiverReceived).OrderBy(x=>x.CreatedTimeUtc).ToList();
         }
+
+        public IList<BusMessageData> GetByIdStatus(BusMessageData.BusMessageStatus senderOrder)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

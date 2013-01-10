@@ -25,5 +25,6 @@ namespace ermeX.DAL.Interfaces
     internal interface IBusMessageDataSource : IDataSource<BusMessageData>
     {
         IList<BusMessageData> GetMessagesToDispatch();
+        IList<BusMessageData> GetByIdStatus(BusMessageData.BusMessageStatus senderOrder);
     }
 }

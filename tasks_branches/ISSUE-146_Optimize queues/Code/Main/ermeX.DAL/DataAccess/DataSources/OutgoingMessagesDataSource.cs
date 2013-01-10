@@ -74,6 +74,21 @@ namespace ermeX.DAL.DataAccess.DataSources
                 outgoingMessages.OrderBy(x => x.Id).FirstOrDefault(x => x.TimePublishedUtc.Ticks == oldestPublishingTime);
         }
 
+        public OutgoingMessage GetByBusMessageId(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<OutgoingMessage> GetExpiredMessages(TimeSpan expirationTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveExpiredMessages(TimeSpan expirationTime)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }
