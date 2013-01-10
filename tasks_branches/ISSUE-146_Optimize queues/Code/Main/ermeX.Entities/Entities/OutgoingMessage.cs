@@ -131,7 +131,7 @@ namespace ermeX.Entities.Entities
 
         #endregion
 
-        public bool Expired(TimeSpan sendExpiringTime)
+        public virtual bool Expired(TimeSpan sendExpiringTime)
         {
             return DateTime.UtcNow.Subtract(TimePublishedUtc) > sendExpiringTime;
         }
