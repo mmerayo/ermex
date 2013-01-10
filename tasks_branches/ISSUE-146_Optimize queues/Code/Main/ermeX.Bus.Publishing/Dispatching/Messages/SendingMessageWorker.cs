@@ -16,18 +16,15 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
+
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using Ninject;
 using ermeX.Bus.Interfaces;
-using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-
-
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
 using ermeX.LayerMessages;
@@ -35,7 +32,7 @@ using ermeX.Threading;
 using ermeX.Transport.Interfaces.Messages;
 using ermeX.Transport.Interfaces.Sending.Client;
 
-namespace ermeX.Bus.Publishing.AsyncWorkers
+namespace ermeX.Bus.Publishing.Dispatching.Messages
 {
     internal sealed class SendingMessageWorker : Worker, ISendingMessageWorker
     {

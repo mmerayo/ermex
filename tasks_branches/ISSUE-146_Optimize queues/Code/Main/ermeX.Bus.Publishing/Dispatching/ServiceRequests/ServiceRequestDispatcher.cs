@@ -16,6 +16,7 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using Ninject;
 using ermeX.Bus.Interfaces.Dispatching;
@@ -23,7 +24,7 @@ using ermeX.Transport.Interfaces.Messages;
 using ermeX.Transport.Interfaces.Sending.Client;
 using ermeX.Transport.Interfaces.ServiceOperations;
 
-namespace ermeX.Bus.Publishing.Dispatching
+namespace ermeX.Bus.Publishing.Dispatching.ServiceRequests
 {
     internal class ServiceRequestDispatcher : IServiceRequestDispatcher
     {
