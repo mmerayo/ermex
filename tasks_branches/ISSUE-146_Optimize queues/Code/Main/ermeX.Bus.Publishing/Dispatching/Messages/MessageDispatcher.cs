@@ -16,11 +16,10 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
+
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using Common.Logging;
@@ -31,15 +30,12 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-
-
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 
-namespace ermeX.Bus.Publishing.Dispatching
+namespace ermeX.Bus.Publishing.Dispatching.Messages
 {
 
-    //TODO: THIS TO BE DONE BY A WORKER,AND REMOVE THREAD
     internal sealed class MessageDispatcher : IMessagePublisherDispatcherStrategy
     {
         private static readonly object PollingMessageLocker = new object();
