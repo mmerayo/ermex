@@ -30,7 +30,7 @@ namespace ermeX.Entities.Entities
             /// <summary>
             /// This is an special stutus to save the first stage, no copies created per subscriber yet
             /// </summary>
-            SenderOrder=1,
+            SenderCollected=1,
             /// <summary>
             /// Is ready to deliver to subscriber. Its refered by outpoing message
             /// </summary>

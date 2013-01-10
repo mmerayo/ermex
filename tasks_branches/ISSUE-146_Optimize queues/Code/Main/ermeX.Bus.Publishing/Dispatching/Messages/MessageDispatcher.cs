@@ -118,7 +118,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         private OutgoingMessage CreateRootOutgoingMessage(BusMessage message)
         {
-            BusMessageData busMessage = BusMessageData.FromBusLayerMessage(Settings.ComponentId, message, BusMessageData.BusMessageStatus.SenderOrder);
+            BusMessageData busMessage = BusMessageData.FromBusLayerMessage(Settings.ComponentId, message, BusMessageData.BusMessageStatus.SenderCollected);
             BusMessageDataSource.Save(busMessage);
 
 

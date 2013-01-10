@@ -76,17 +76,21 @@ namespace ermeX.DAL.DataAccess.DataSources
 
         public OutgoingMessage GetByBusMessageId(int id)
         {
-            throw new NotImplementedException();
+            return GetItemByField("BusMessageId", id);
         }
 
         public IEnumerable<OutgoingMessage> GetExpiredMessages(TimeSpan expirationTime)
         {
-            throw new NotImplementedException();
+            DateTime dateTime = DateTime.UtcNow - expirationTime;
+            return GetAll().Where(x => x.TimePublishedUtc <= dateTime);//TODO: STRAIGHT QUERY
         }
 
         public void RemoveExpiredMessages(TimeSpan expirationTime)
         {
-            throw new NotImplementedException();
+//TODO: INTRANSACTION LIKE OTHERS
+            IEnumerable<OutgoingMessage> outgoingMessages = GetExpiredMessages(expirationTime);
+            Remove(outgoingMessages);
+            
         }
 
         #endregion
