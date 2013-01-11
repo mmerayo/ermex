@@ -117,10 +117,10 @@ namespace ermeX.Tests.Common.DataAccess
             return _dataAccessExecutors[engineType];
         }
 
-        //TODO: MOVE THE FOLLOWING METHODS TO A GENERIC PROVIDER
 
         #region Data sources
 
+        //TODO: MOVE THE FOLLOWING METHODS TO A GENERIC PROVIDER
         private readonly Dictionary<DbEngineType, BusMessageDataSource> _busMessageDataSources = new Dictionary<DbEngineType, BusMessageDataSource>();
         protected BusMessageDataSource GetBusMessageDataSource(DbEngineType engineType)
         {
@@ -158,7 +158,21 @@ namespace ermeX.Tests.Common.DataAccess
                 _chunkDataSources.Add(engineType, ds);
             }
             return _chunkDataSources[engineType];
-        } 
+        }
+
+        private readonly Dictionary<DbEngineType, OutgoingMessageSuscriptionsDataSource> _outgoingMessageSubscriptionsDataSource = new Dictionary<DbEngineType, OutgoingMessageSuscriptionsDataSource>();
+        protected OutgoingMessageSuscriptionsDataSource GetOutgoingMessageSubscriptionsDataSource(DbEngineType engineType)
+        {
+            if (!_outgoingMessageSubscriptionsDataSource.ContainsKey(engineType))
+            {
+                var dataAccessExecutor = GetdataAccessExecutor(engineType);
+                var ds = new OutgoingMessageSuscriptionsDataSource(dataAccessExecutor.DalSettings, LocalComponentId,
+                                                                    dataAccessExecutor);
+                _outgoingMessageSubscriptionsDataSource.Add(engineType, ds);
+            }
+            return _outgoingMessageSubscriptionsDataSource[engineType];
+        }
+        
 
         #endregion
 

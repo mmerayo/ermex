@@ -114,6 +114,7 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
+    <Compile Include="Dispatching\Messages\MessageDistributorTester.cs" />
     <Compile Include="Dispatching\Messages\MessageCollectorTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

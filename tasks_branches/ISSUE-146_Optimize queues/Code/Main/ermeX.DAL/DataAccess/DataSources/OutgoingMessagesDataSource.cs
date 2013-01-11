@@ -18,8 +18,12 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using NHibernate;
+using NHibernate.Transform;
 using Ninject;
+using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Settings.Data;
@@ -91,6 +95,27 @@ namespace ermeX.DAL.DataAccess.DataSources
             IEnumerable<OutgoingMessage> outgoingMessages = GetExpiredMessages(expirationTime);
             Remove(outgoingMessages);
             
+        }
+
+        public bool ContainsMessageFor(Guid busMessageId, Guid destinationComponent)
+        {
+            if(busMessageId.IsEmpty() || destinationComponent.IsEmpty())
+                throw new ArgumentException("Parameters cannot be empty");
+
+
+            DataAccessOperationResult<bool> dataAccessOperationResult = DataAccessExecutor.Perform(session =>
+                {
+                    string queryString = string.Format("select {0} from {0} as om, {1} as bm where om.BusMessageId=bm.Id and om.ComponentOwner='{2}' and bm.MessageId='{3}' and om.PublishedTo='{4}'", typeof (OutgoingMessage).Name, typeof (BusMessageData).Name, LocalComponentId, busMessageId, destinationComponent);
+                    IQuery query = session.CreateQuery(queryString);
+                    query= query.SetResultTransformer(Transformers.AliasToBean<OutgoingMessage>());
+
+
+                    return new DataAccessOperationResult<bool>() {Success = true, ResultValue = query.List<OutgoingMessage>().Count == 1};
+                });
+            if (!dataAccessOperationResult.Success)
+                throw new DataException("could not perform ContainsMessageFor");
+
+            return dataAccessOperationResult.ResultValue;
         }
 
         #endregion
