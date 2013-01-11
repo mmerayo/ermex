@@ -49,11 +49,19 @@ namespace ermeX.DAL.DataAccess.DataSources
             get { return "OutgoingMessages"; }
         }
 
+        protected override bool BeforeUpdating(OutgoingMessage entity, NHibernate.ISession session)
+        {
+            if(entity.Status==Message.MessageStatus.NotSet)
+                throw new InvalidOperationException("Must set the status");
+            return base.BeforeUpdating(entity, session);
+
+        }
+
         #region IOutgoingMessagesDataSource Members
 
         public IEnumerable<OutgoingMessage> GetItemsPendingSorted()
         {
-            return GetAll(new Tuple<string, bool>("Tries", true), new Tuple<string, bool>("TimePublishedUtc", true)).
+            return GetAll(new Tuple<string, bool>("Tries", true), new Tuple<string, bool>("CreatedTimeUtc", true)).
                 Where(
                     x => x.Failed == false); //TODO: OPTIMISE FROM QUERY
         }
@@ -69,9 +77,9 @@ namespace ermeX.DAL.DataAccess.DataSources
             if (outgoingMessages.Count == 0)
                 return null;
 
-            var oldestPublishingTime = outgoingMessages.Min(x => x.TimePublishedUtc.Ticks);
+            var oldestPublishingTime = outgoingMessages.Min(x => x.CreatedTimeUtc.Ticks);
             return
-                outgoingMessages.OrderBy(x => x.Id).FirstOrDefault(x => x.TimePublishedUtc.Ticks == oldestPublishingTime);
+                outgoingMessages.OrderBy(x => x.Id).FirstOrDefault(x => x.CreatedTimeUtc.Ticks == oldestPublishingTime);
         }
 
         #endregion

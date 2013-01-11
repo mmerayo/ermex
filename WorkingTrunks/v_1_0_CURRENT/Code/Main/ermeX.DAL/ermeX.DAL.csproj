@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -115,10 +115,8 @@
     <Compile Include="DataAccess\DataSources\BusMessageDataSource.cs" />
     <Compile Include="DataAccess\DataSources\ChunkedServiceRequestMessageDataSource.cs" />
     <Compile Include="DataAccess\Helpers\DataAccessExecutor.cs" />
-    <Compile Include="DataAccess\Mappings\BusMessageDataMap.cs" />
     <Compile Include="DataAccess\Mappings\ChunkedServiceRequestMessageDataMap.cs" />
     <Compile Include="DataAccess\Mappings\Sqlite\AppComponentMap.cs" />
-    <Compile Include="DataAccess\Mappings\Sqlite\BusMessageDataMap.cs" />
     <Compile Include="DataAccess\Mappings\Sqlite\ConnectivityDetailsMap.cs" />
     <Compile Include="DataAccess\Mappings\Sqlite\IncomingMessagesMap.cs" />
     <Compile Include="DataAccess\Mappings\Sqlite\IncomingMessageSuscriptionsMap.cs" />
@@ -127,7 +125,6 @@
     <Compile Include="DataAccess\Mappings\Sqlite\ServiceDetailsMap.cs" />
     <Compile Include="DataAccess\Mappings\SqlServer\AppComponentMap.cs" />
     <Compile Include="DataAccess\Mappings\SqlServer\ConnectivityDetailsMap.cs" />
-    <Compile Include="DataAccess\Mappings\SqlServer\BusMessageDataMap.cs" />
     <Compile Include="DataAccess\Mappings\SqlServer\ChunkedServiceRequestMessageDataMap.cs" />
     <Compile Include="DataAccess\Mappings\Sqlite\ChunkedServiceRequestMessageDataMap.cs" />
     <Compile Include="DataAccess\Mappings\SqlServer\IncomingMessagesMap.cs" />
@@ -186,6 +183,10 @@
     <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
       <Name>ermeX.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.LayerMessages\ermeX.LayerMessages.csproj">
+      <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
+      <Name>ermeX.LayerMessages</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

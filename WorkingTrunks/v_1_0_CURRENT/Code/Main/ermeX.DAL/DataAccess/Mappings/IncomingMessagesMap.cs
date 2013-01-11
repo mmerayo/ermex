@@ -45,18 +45,23 @@ namespace ermeX.DAL.DataAccess.Mappings
             }
 
             Table(tableName);
-            //LazyLoad();
+            LazyLoad();
             Id(x => x.Id).GeneratedBy.Identity().Column(IncomingMessage.GetDbFieldName("Id"));
             Map(x => x.PublishedBy).Column(IncomingMessage.GetDbFieldName("PublishedBy"));
             Map(x => x.PublishedTo).Column(IncomingMessage.GetDbFieldName("PublishedTo"));
-            Map(x => x.SuscriptionHandlerId).Column(IncomingMessage.GetDbFieldName("SuscriptionHandlerId"));
-            Map(x => x.BusMessageId).Column(IncomingMessage.GetDbFieldName("BusMessageId"));
-            Map(x => x.TimePublishedUtc).Column(IncomingMessage.GetDbFieldName("TimePublishedUtc")).CustomType(
-                typeof (DateTimeUserType));
+            Map(x => x.SuscriptionHandlerId).Column(IncomingMessage.GetDbFieldName("SuscriptionHandlerId"));           
             Map(x => x.TimeReceivedUtc).Column(IncomingMessage.GetDbFieldName("TimeReceivedUtc")).CustomType(
                 typeof (DateTimeUserType));
             Map(x => x.ComponentOwner).Column(IncomingMessage.GetDbFieldName("ComponentOwner"));
             Map(x => x.Version).Column(IncomingMessage.GetDbFieldName("Version"));
+
+            Map(x => x.Status).Column(IncomingMessage.GetDbFieldName("Status")).CustomType<Message.MessageStatus>(); 
+            Map(x => x.JsonMessage).Column(IncomingMessage.GetDbFieldName("JsonMessage"));
+            Map(x => x.MessageId).Column(IncomingMessage.GetDbFieldName("MessageId"));
+            Map(x => x.CreatedTimeUtc).Column(IncomingMessage.GetDbFieldName("CreatedTimeUtc")).CustomType(
+                typeof(DateTimeUserType)); ;
+
+
         }
     }
 }

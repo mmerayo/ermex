@@ -33,7 +33,7 @@ namespace ermeX.Entities.Entities
 
 //for testing
 
-        public OutgoingMessage(BusMessageData message)
+        public OutgoingMessage(BusMessage message)
             : base(message)
         {
             Tries = 0;
@@ -58,11 +58,16 @@ namespace ermeX.Entities.Entities
         {
             var result = new OutgoingMessage()
                              {
-                                 //BusMessageId = BusMessageId,
-                                 TimePublishedUtc = TimePublishedUtc,
+                                 Version = Version,
+                                 ComponentOwner = ComponentOwner,
+                                 MessageId = MessageId,
+                                 CreatedTimeUtc = CreatedTimeUtc,
+                                 Status = Status,
+                                 JsonMessage = JsonMessage,
                                  PublishedBy = PublishedBy,
                                  PublishedTo = PublishedTo,
                                  Failed = Failed
+
                              };
 
             return result;
@@ -73,8 +78,11 @@ namespace ermeX.Entities.Entities
             var result = new OutgoingMessage
                              {
                                  Id = Convert.ToInt32(dataRow[GetDbFieldName("Id")]), //TODO: SET SQL SERVER TO LONG AND RECAST, CREATE TEST WITH INT32 OVERFLOW
-                                 BusMessageId = Convert.ToInt32(dataRow[GetDbFieldName("BusMessageId")]),
-                                 TimePublishedUtc = new DateTime((long) dataRow[GetDbFieldName("TimePublishedUtc")]),
+                                 //BusMessageId = Convert.ToInt32(dataRow[GetDbFieldName("BusMessageId")]),
+                                 CreatedTimeUtc = new DateTime((long)dataRow[GetDbFieldName("CreatedTimeUtc")]),
+                                 Status = (MessageStatus)Convert.ToInt32(dataRow[GetDbFieldName("Status")]),
+                                 JsonMessage = dataRow[GetDbFieldName("JsonMessage")].ToString(),
+                                 MessageId = (Guid)dataRow[GetDbFieldName("MessageId")],
                                  PublishedBy = (Guid) dataRow[GetDbFieldName("PublishedBy")],
                                  PublishedTo = (Guid) dataRow[GetDbFieldName("PublishedTo")],
                                  Failed = (bool) dataRow[GetDbFieldName("Failed")],
@@ -95,9 +103,11 @@ namespace ermeX.Entities.Entities
             if (other == null)
                 return false;
 
-            return BusMessageId == other.BusMessageId &&
-                   ComponentOwner == other.ComponentOwner && Failed == other.Failed && Version == other.Version;
-                //TODO: FINISH
+            return
+                ComponentOwner == other.ComponentOwner && Failed == other.Failed && Version == other.Version &&
+                Status == other.Status && CreatedTimeUtc == other.CreatedTimeUtc && JsonMessage == other.JsonMessage &&
+                MessageId == other.MessageId;
+            //TODO: FINISH
         }
 
         public static bool operator ==(OutgoingMessage a, OutgoingMessage b)

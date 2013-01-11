@@ -17,6 +17,7 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using ermeX.Common;
 using ermeX.Entities.Base;
 using ermeX.LayerMessages;
 
@@ -26,31 +27,74 @@ namespace ermeX.Entities.Entities
     [Serializable]
     internal abstract class Message : ModelBase
     {
+        public enum MessageStatus : int
+        {
+            NotSet = 0,
+
+
+            /// <summary>
+            /// This is an special stutus to save the first stage, no copies created per subscriber yet
+            /// </summary>
+            SenderOrder = 1,
+            /// <summary>
+            /// Is ready to deliver to subscriber. Its refered by outpoing message
+            /// </summary>
+            SenderDispatchPending = 2,
+            /// <summary>
+            /// Marks the message as sent
+            /// </summary>
+            SenderSent,
+
+            /// <summary>
+            /// Received but not created copy per local subscription
+            /// </summary>
+            ReceiverReceived,
+
+            /// <summary>
+            /// Ready to be delivered to the handler
+            /// </summary>
+            ReceiverDispatchable,
+
+            /// <summary>
+            /// its being dispatched now
+            /// </summary>
+            ReceiverDispatching
+        }
 
         protected Message()
         {
         }
 
-        protected Message(BusMessageData message)
+        protected Message(BusMessage message)
         {
             if (message == null) throw new ArgumentNullException("message");
-            if(message.Id<=0) throw new ArgumentOutOfRangeException("message","Save the message before");
             //TODO: REMOVE, AS the biz message should be handled only by the bizlayer
-            BusMessageId = message.Id;
-            TimePublishedUtc = message.CreatedTimeUtc;
+            PublishedBy= message.Publisher;
+            JsonMessage = message.Data.JsonMessage;
+            MessageId = message.MessageId;
+            CreatedTimeUtc = message.CreatedTimeUtc;
         }
 
         protected abstract string TableName { get; }
 
-        public virtual int BusMessageId { get; set; }
+        public virtual MessageStatus Status { get; set; }
 
-        public virtual DateTime TimePublishedUtc { get; set; }
+        public virtual string JsonMessage { get; set; }
 
+        public virtual Guid MessageId { get; set; }
+
+        public virtual DateTime CreatedTimeUtc { get; set; }
 
         public virtual Guid PublishedBy
         {
             get { return ComponentOwner; }
             set { ComponentOwner = value; }
+        }
+
+        public virtual BusMessage ToBusMessage()
+        {
+            BizMessage bizMessage = BizMessage.FromJson(JsonMessage);
+            return new BusMessage(MessageId,CreatedTimeUtc,PublishedBy,bizMessage);
         }
 
         //TODO: to compenentData object when provider specified
@@ -60,7 +104,9 @@ namespace ermeX.Entities.Entities
 
         protected string GetDbFieldName(string fieldName)
         {
-            return string.Format("{0}_{1}", TableName, fieldName);
+            return String.Format("{0}_{1}", TableName, fieldName);
         }
+
+        
     }
 }
