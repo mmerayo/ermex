@@ -50,13 +50,14 @@ namespace ermeX.DAL.DataAccess.Mappings
             Map(x => x.PublishedBy).Column(IncomingMessage.GetDbFieldName("PublishedBy"));
             Map(x => x.PublishedTo).Column(IncomingMessage.GetDbFieldName("PublishedTo"));
             Map(x => x.SuscriptionHandlerId).Column(IncomingMessage.GetDbFieldName("SuscriptionHandlerId"));
-            Map(x => x.BusMessageId).Column(IncomingMessage.GetDbFieldName("BusMessageId"));
             Map(x => x.TimePublishedUtc).Column(IncomingMessage.GetDbFieldName("TimePublishedUtc")).CustomType(
                 typeof (DateTimeUserType));
             Map(x => x.TimeReceivedUtc).Column(IncomingMessage.GetDbFieldName("TimeReceivedUtc")).CustomType(
                 typeof (DateTimeUserType));
             Map(x => x.ComponentOwner).Column(IncomingMessage.GetDbFieldName("ComponentOwner"));
             Map(x => x.Version).Column(IncomingMessage.GetDbFieldName("Version"));
+
+            HasOne<BusMessageData>(x => x.BusMessage).ForeignKey(BusMessageData.GetDbFieldName("Id")).Cascade.All();
         }
     }
 }

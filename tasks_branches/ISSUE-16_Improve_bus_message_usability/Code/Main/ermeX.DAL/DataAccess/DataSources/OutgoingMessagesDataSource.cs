@@ -49,6 +49,14 @@ namespace ermeX.DAL.DataAccess.DataSources
             get { return "OutgoingMessages"; }
         }
 
+        protected override bool BeforeUpdating(OutgoingMessage entity, NHibernate.ISession session)
+        {
+            if(entity.BusMessage==null || entity.Status==BusMessageData.BusMessageStatus.NotSet)
+                throw new InvalidOperationException("Must set the bus message or the status");
+            return base.BeforeUpdating(entity, session);
+
+        }
+
         #region IOutgoingMessagesDataSource Members
 
         public IEnumerable<OutgoingMessage> GetItemsPendingSorted()

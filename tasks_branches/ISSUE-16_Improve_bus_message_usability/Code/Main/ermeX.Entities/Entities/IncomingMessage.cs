@@ -33,7 +33,7 @@ namespace ermeX.Entities.Entities
 
 //for testing
 
-        public IncomingMessage(BusMessageData message)
+        public IncomingMessage(BusMessage message)
             : base(message)
         {
         }
@@ -71,7 +71,7 @@ namespace ermeX.Entities.Entities
                              {
                                  Version=Version,
                                  ComponentOwner = ComponentOwner,
-                                 BusMessageId = BusMessageId,
+                                 //BusMessageId = BusMessageId,
                                  TimePublishedUtc = TimePublishedUtc,
                                  PublishedBy = PublishedBy,
                                  PublishedTo = PublishedTo,
@@ -87,7 +87,7 @@ namespace ermeX.Entities.Entities
             var result = new IncomingMessage
                              {
                                  Id = Convert.ToInt32( dataRow[GetDbFieldName("Id")]),
-                                 BusMessageId = Convert.ToInt32(dataRow[GetDbFieldName("BusMessageId")]),
+                                 //BusMessageId = Convert.ToInt32(dataRow[GetDbFieldName("BusMessageId")]),
                                  TimePublishedUtc = new DateTime((long) dataRow[GetDbFieldName("TimePublishedUtc")]),
                                  TimeReceivedUtc = new DateTime((long) dataRow[GetDbFieldName("TimeReceivedUtc")]),
                                  PublishedBy = (Guid) dataRow[GetDbFieldName("PublishedBy")],
@@ -109,7 +109,7 @@ namespace ermeX.Entities.Entities
             if (other == null)
                 return false;
 
-            return BusMessageId == other.BusMessageId
+            return BusMessage == other.BusMessage
                    && ComponentOwner == other.ComponentOwner && SuscriptionHandlerId == other.SuscriptionHandlerId &&
                    Version == other.Version; //TODO: FINISH
         }

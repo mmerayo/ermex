@@ -59,7 +59,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 
         protected override OutgoingMessage GetExpectedWithChanges(OutgoingMessage source)
         {
-            source.BusMessageId = BMID2;
+            //source.PublishedTo = BMID2;
             return source;
         }
 
@@ -77,7 +77,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             Assert.IsNotNull(record);
             Assert.IsTrue(record.PublishedTo == componentId);
             Assert.IsTrue(record.PublishedBy == LocalComponentId);
-            Assert.IsTrue(record.BusMessageId == BMID);
+            //Assert.IsTrue(record.BusMessageId == BMID);
 #if (!NEED_FIX_MILLISECONDS)
             Assert.IsTrue(record.TimePublishedUtc == TimePublished);
 #endif
@@ -105,12 +105,5 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             return new BusMessage(LocalComponentId,new BizMessage(data));
         }
 
-        protected override OutgoingMessagesDataSource GetDataSourceTarget(DbEngineType engine)
-        {
-            DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
-            IDalSettings dataAccessSettings = dataAccessTestHelper.DataAccessSettings;
-            var dataAccessExecutor = new DataAccessExecutor(dataAccessSettings);
-            return new OutgoingMessagesDataSource(dataAccessSettings, LocalComponentId, dataAccessExecutor);
-        }
     }
 }

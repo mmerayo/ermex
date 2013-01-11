@@ -50,12 +50,10 @@ namespace ermeX.Bus.Publishing.Dispatching
         private List<ISendingMessageWorker> _workers;
 
         [Inject]
-        public MessageDispatcher(IBusSettings settings,IBusMessageDataSource busMessageDataSource )
+        public MessageDispatcher(IBusSettings settings)
         {
             if (settings == null) throw new ArgumentNullException("settings");
-            if (busMessageDataSource == null) throw new ArgumentNullException("busMessageDataSource");
             Settings = settings;
-            BusMessageDataSource = busMessageDataSource;
         }
 
         #region IDisposable
@@ -85,7 +83,6 @@ namespace ermeX.Bus.Publishing.Dispatching
         #endregion
 
         private IBusSettings Settings { get; set; }
-        private IBusMessageDataSource BusMessageDataSource { get; set; }
         private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
 
       
@@ -122,13 +119,10 @@ namespace ermeX.Bus.Publishing.Dispatching
 
         private OutgoingMessage CreateRootOutgoingMessage(BusMessage message)
         {
-            BusMessageData busMessage = BusMessageData.FromBusLayerMessage(Settings.ComponentId, message, BusMessageData.BusMessageStatus.SenderOrder);
-            BusMessageDataSource.Save(busMessage);
-
-
-            var result = new OutgoingMessage(busMessage)
+            var result = new OutgoingMessage(message)
                              {
-                                 PublishedBy = message.Publisher
+                                 PublishedBy = message.Publisher,
+                                 Status = BusMessageData.BusMessageStatus.SenderOrder
                              };
             return result;
         }
@@ -202,22 +196,14 @@ namespace ermeX.Bus.Publishing.Dispatching
         {
             if (suscriptions == null) throw new ArgumentNullException("suscriptions");
 
-            
-            BusMessageData busMessageData = BusMessageDataSource.GetById(message.BusMessageId);
-
             foreach (var messageSuscription in suscriptions)
             {
-                //store bus message
-                BusMessageData currentBusMessage = BusMessageData.NewFromExisting(busMessageData);
-                currentBusMessage.Status=BusMessageData.BusMessageStatus.SenderDispatchPending;
-                BusMessageDataSource.Save(currentBusMessage);
-
-                //save outgoing message
                 var messageToSend = message.GetClone();
                 messageToSend.PublishedTo = messageSuscription.Component;
-                messageToSend.BusMessageId = currentBusMessage.Id;
+                messageToSend.Status = BusMessageData.BusMessageStatus.SenderDispatchPending;
                 OutgoingMessagesDs.Save(messageToSend);
-                Logger.Trace(x=>x("{0} - Dispatching - Created entry for subscriber: {1}",currentBusMessage.MessageId,  messageSuscription.Component));
+                Logger.Trace(x => x("{0} - Dispatching - Created entry for subscriber: {1}", messageToSend.BusMessage.MessageId, messageSuscription.Component));
+                
             }
         }
         

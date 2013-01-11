@@ -50,7 +50,6 @@ namespace ermeX.DAL.DataAccess.Mappings
             Id(x => x.Id).GeneratedBy.Identity().Column(OutgoingMessage.GetDbFieldName("Id"));
             Map(x => x.PublishedBy).Column(OutgoingMessage.GetDbFieldName("PublishedBy"));
             Map(x => x.PublishedTo).Column(OutgoingMessage.GetDbFieldName("PublishedTo"));
-            Map(x => x.BusMessageId).Column(OutgoingMessage.GetDbFieldName("BusMessageId"));
             Map(x => x.TimePublishedUtc).Column(OutgoingMessage.GetDbFieldName("TimePublishedUtc")).CustomType(
                 typeof (DateTimeUserType));
             Map(x => x.Tries).Column(OutgoingMessage.GetDbFieldName("Tries"));
@@ -59,6 +58,7 @@ namespace ermeX.DAL.DataAccess.Mappings
             Map(x => x.ComponentOwner).Column(OutgoingMessage.GetDbFieldName("ComponentOwner"));
             Map(x => x.Version).Column(OutgoingMessage.GetDbFieldName("Version"));
             Map(x => x.Delivering).Column(OutgoingMessage.GetDbFieldName("Delivering"));
+            HasOne<BusMessageData>(x => x.BusMessage).ForeignKey(BusMessageData.GetDbFieldName("Id")).Cascade.All();
         }
     }
 }

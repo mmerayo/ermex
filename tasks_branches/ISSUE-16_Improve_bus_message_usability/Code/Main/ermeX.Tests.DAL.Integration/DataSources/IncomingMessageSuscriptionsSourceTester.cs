@@ -90,14 +90,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
                        };
         }
 
-        protected override IncomingMessageSuscriptionsDataSource GetDataSourceTarget(DbEngineType engine)
-        {
-            DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
-            IDalSettings dataAccessSettings = dataAccessTestHelper.DataAccessSettings;
-            var dataAccessExecutor = new DataAccessExecutor(dataAccessSettings);
-            return new IncomingMessageSuscriptionsDataSource(dataAccessSettings, LocalComponentId,dataAccessExecutor);
-        }
-
+       
        
     }
 }
