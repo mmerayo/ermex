@@ -28,7 +28,7 @@ namespace ermeX.LayerMessages
     [ProtoInclude(100, typeof(BusMessage))]
     [ProtoInclude(200, typeof(TransportMessage))]
     [ProtoInclude(300, typeof(BizMessage))]
-    internal abstract class SystemMessage:ISystemMessage
+    internal abstract class SystemMessage : ISystemMessage, IEquatable<SystemMessage>
     {
         protected SystemMessage():this(Guid.NewGuid(),DateTime.UtcNow)
         {
@@ -44,5 +44,46 @@ namespace ermeX.LayerMessages
 
         [ProtoMember(2)]
         public DateTime CreatedTimeUtc { get; private set; }
+
+        #region Equatable
+
+        public bool Equals(SystemMessage other)
+        {
+            if (other == null)
+                return false;
+
+            return MessageId == other.MessageId && CreatedTimeUtc == other.CreatedTimeUtc;
+        }
+
+        public static bool operator ==(SystemMessage a, SystemMessage b)
+        {
+            if ((object)a == null || ((object)b) == null)
+                return Equals(a, b);
+
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(SystemMessage a, SystemMessage b)
+        {
+            if (a == null || b == null)
+                return !Equals(a, b);
+
+            return !(a.Equals(b));
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof(SystemMessage)) return false;
+            return Equals((SystemMessage)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return MessageId.GetHashCode();
+        }
+
+        #endregion
     }
 }

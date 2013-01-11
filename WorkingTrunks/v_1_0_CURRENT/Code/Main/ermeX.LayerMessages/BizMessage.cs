@@ -30,7 +30,7 @@ namespace ermeX.LayerMessages
     /// Represents a message at the BizLayer level
     /// </summary>
     [ProtoContract(SkipConstructor = true)]
-    internal sealed class BizMessage: SystemMessage
+    internal sealed class BizMessage : SystemMessage, IEquatable<BizMessage>
     {
         private string _jsonMessage;
         private object _data = null;
@@ -97,6 +97,47 @@ namespace ermeX.LayerMessages
                 _data = JsonSerializer.DeserializeObjectFromJson<object>(_jsonMessage);
             }
         }
+
+        #region Equatable
+
+        public bool Equals(BizMessage other)
+        {
+            if (other == null)
+                return false;
+
+            return JsonMessage == other.JsonMessage;
+        }
+
+        public static bool operator ==(BizMessage a, BizMessage b)
+        {
+            if ((object)a == null || ((object)b) == null)
+                return Equals(a, b);
+
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(BizMessage a, BizMessage b)
+        {
+            if (a == null || b == null)
+                return !Equals(a, b);
+
+            return !(a.Equals(b));
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof(BizMessage)) return false;
+            return Equals((BizMessage)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return MessageId.GetHashCode();
+        }
+
+        #endregion
     }
 
 }

@@ -56,7 +56,6 @@ namespace ermeX.DAL.IoC
             Bind<IIncomingMessagesDataSource>().To<IncomingMessagesDataSource>().InSingletonScope();
             Bind<IServiceDetailsDataSource>().To<ServiceDetailsDataSource>().InSingletonScope();
             Bind<IChunkedServiceRequestMessageDataSource>().To<ChunkedServiceRequestMessageDataSource>().InSingletonScope();
-            Bind<IBusMessageDataSource>().To<BusMessageDataSource>().InSingletonScope();
             
             Bind<IAutoRegistration>().To<AutoRegistration>().InSingletonScope();
             Bind<IDataAccessExecutor>().To<DataAccessExecutor>().InSingletonScope();

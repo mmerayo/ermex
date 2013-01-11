@@ -36,8 +36,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         private readonly DateTime TimePublished = new DateTime(2010, 2, 3, 1, 2, 3, 330);
         private readonly DateTime TimeReceived = new DateTime(2010, 2, 3, 3, 4, 5, 330);
        
-        private const int BMID = 2222;
-        private const int BMID2 = 654978;
+        private readonly Guid BMID = Guid.NewGuid();
 
         private readonly Guid componentId = Guid.NewGuid();
         private Guid ownerCompId {get { return LocalComponentId; }}
@@ -60,7 +59,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 
         protected override IncomingMessage GetExpectedWithChanges(IncomingMessage source)
         {
-            source.BusMessageId = BMID2;
+            //source.BusMessageId = BMID2;
             return source;
         }
 
@@ -70,7 +69,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             dataAccessTestHelper.InsertAppComponent(componentId, ownerCompId,0,false,false);
 
             return dataAccessTestHelper.InsertIncomingMessage(componentId, ownerCompId, BMID, 
-                                         TimePublished, TimeReceived, suscriptionHandlerId);
+                                         TimePublished, TimeReceived, suscriptionHandlerId,Message.MessageStatus.ReceiverReceived, new BizMessage("TheMessage").JsonMessage);
         }
 
         protected override void CheckInsertedRecord(IncomingMessage record)
@@ -78,9 +77,9 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             Assert.IsNotNull(record);
             Assert.IsTrue(record.PublishedTo == componentId);
             Assert.IsTrue(record.PublishedBy == ownerCompId);
-            Assert.IsTrue(record.BusMessageId == BMID);
+            //Assert.IsTrue(record.BusMessageId == BMID);
 #if (!NEED_FIX_MILLISECONDS)
-            Assert.IsTrue(record.TimePublishedUtc == TimePublished);
+            Assert.IsTrue(record.CreatedTimeUtc == TimePublished);
             Assert.IsTrue(record.TimeReceivedUtc == TimeReceived);
 
 #endif
@@ -91,17 +90,15 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         protected override IncomingMessage GetExpected(DbEngineType engine)
         {
             BusMessage busMessage = GetBusMessage(message);
-            BusMessageData fromBusLayerMessage = BusMessageData.FromBusLayerMessage(LocalComponentId, busMessage, BusMessageData.BusMessageStatus.SenderSent);
-            fromBusLayerMessage.Id = BMID;
-            return new IncomingMessage(fromBusLayerMessage)
+            return new IncomingMessage(busMessage)
                        {
                            ComponentOwner = ownerCompId,
                            PublishedBy = ownerCompId,
                            PublishedTo = componentId,
-                           TimePublishedUtc = TimePublished,
+                           CreatedTimeUtc = TimePublished,
                            TimeReceivedUtc = TimeReceived,
-                          
-                           SuscriptionHandlerId = suscriptionHandlerId
+                           SuscriptionHandlerId = suscriptionHandlerId,
+                           Status=Message.MessageStatus.SenderOrder
                        };
         }
 
@@ -110,16 +107,5 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             return new BusMessage(ownerCompId, new BizMessage(data));
         }
 
-
-        protected override IncomingMessagesDataSource GetDataSourceTarget(DbEngineType engine)
-        {
-            DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
-            IDalSettings dataAccessSettings =dataAccessTestHelper. DataAccessSettings;
-            var dataAccessExecutor = new DataAccessExecutor(dataAccessSettings);
-            BusMessageDataSource busMessageDataSource = GetBusMessageDataSource(engine);
-            return new IncomingMessagesDataSource(busMessageDataSource,  dataAccessSettings, ownerCompId,dataAccessExecutor);
-        }
-
-       
     }
 }
