@@ -122,7 +122,7 @@ namespace ermeX.Bus.Publishing.Dispatching
             var result = new OutgoingMessage(message)
                              {
                                  PublishedBy = message.Publisher,
-                                 Status = BusMessageData.BusMessageStatus.SenderOrder
+                                 Status = Message.MessageStatus.SenderOrder
                              };
             return result;
         }
@@ -200,9 +200,9 @@ namespace ermeX.Bus.Publishing.Dispatching
             {
                 var messageToSend = message.GetClone();
                 messageToSend.PublishedTo = messageSuscription.Component;
-                messageToSend.Status = BusMessageData.BusMessageStatus.SenderDispatchPending;
+                messageToSend.Status = Message.MessageStatus.SenderDispatchPending;
                 OutgoingMessagesDs.Save(messageToSend);
-                Logger.Trace(x => x("{0} - Dispatching - Created entry for subscriber: {1}", messageToSend.BusMessage.MessageId, messageSuscription.Component));
+                Logger.Trace(x => x("{0} - Dispatching - Created entry for subscriber: {1}", messageToSend.MessageId, messageSuscription.Component));
                 
             }
         }

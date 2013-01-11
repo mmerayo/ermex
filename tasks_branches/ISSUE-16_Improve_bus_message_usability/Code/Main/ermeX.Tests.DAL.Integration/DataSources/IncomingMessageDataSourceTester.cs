@@ -70,7 +70,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             dataAccessTestHelper.InsertAppComponent(componentId, ownerCompId,0,false,false);
 
             return dataAccessTestHelper.InsertIncomingMessage(componentId, ownerCompId, BMID, 
-                                         TimePublished, TimeReceived, suscriptionHandlerId);
+                                         TimePublished, TimeReceived, suscriptionHandlerId,Message.MessageStatus.ReceiverReceived, new BizMessage("TheMessage").JsonMessage);
         }
 
         protected override void CheckInsertedRecord(IncomingMessage record)
@@ -80,7 +80,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             Assert.IsTrue(record.PublishedBy == ownerCompId);
             //Assert.IsTrue(record.BusMessageId == BMID);
 #if (!NEED_FIX_MILLISECONDS)
-            Assert.IsTrue(record.TimePublishedUtc == TimePublished);
+            Assert.IsTrue(record.CreatedTimeUtc == TimePublished);
             Assert.IsTrue(record.TimeReceivedUtc == TimeReceived);
 
 #endif
@@ -91,17 +91,15 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         protected override IncomingMessage GetExpected(DbEngineType engine)
         {
             BusMessage busMessage = GetBusMessage(message);
-            BusMessageData fromBusLayerMessage = BusMessageData.FromBusLayerMessage(LocalComponentId, busMessage, BusMessageData.BusMessageStatus.SenderSent);
-            fromBusLayerMessage.Id = BMID;
-            return new IncomingMessage(fromBusLayerMessage)
+            return new IncomingMessage(busMessage)
                        {
                            ComponentOwner = ownerCompId,
                            PublishedBy = ownerCompId,
                            PublishedTo = componentId,
-                           TimePublishedUtc = TimePublished,
+                           CreatedTimeUtc = TimePublished,
                            TimeReceivedUtc = TimeReceived,
-                          
-                           SuscriptionHandlerId = suscriptionHandlerId
+                           SuscriptionHandlerId = suscriptionHandlerId,
+                           Status=Message.MessageStatus.SenderOrder
                        };
         }
 

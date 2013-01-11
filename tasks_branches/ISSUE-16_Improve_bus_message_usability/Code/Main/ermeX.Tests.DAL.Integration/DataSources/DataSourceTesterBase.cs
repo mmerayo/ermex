@@ -110,10 +110,14 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 
             Assert.IsTrue(expected.Id > 0);
 
-            var actual = dataAccessTestHelper.QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
+            var actual = GetObjectFromRow(engine,expected) ;
             Assert.AreEqual(expected, actual);
         }
 
+        protected virtual TModel GetObjectFromRow(DbEngineType enginetype, TModel expected)
+        {
+            return GetDataHelper(enginetype).QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
+        }
 
         [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
         public void CanUpdateRecord(DbEngineType engine)

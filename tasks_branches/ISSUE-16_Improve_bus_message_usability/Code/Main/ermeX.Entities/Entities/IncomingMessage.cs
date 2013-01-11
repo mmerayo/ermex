@@ -52,18 +52,7 @@ namespace ermeX.Entities.Entities
             return String.Format("{0}_{1}", FinalTableName, fieldName);
         }
 
-        //public static IncomingMessage From(OutgoingMessage source)
-        //{
-        //    var result = new IncomingMessage(source.BusMessage)
-        //                     {
-        //                         SerializedFileName = source.SerializedFileName,
-        //                         TimePublishedUtc = source.TimePublishedUtc,
-        //                         PublishedBy = source.PublishedBy,
-        //                         PublishedTo = source.PublishedTo,
-        //                     };
-
-        //    return result;
-        //}
+    
 
         public virtual IncomingMessage GetClone()
         {
@@ -72,7 +61,9 @@ namespace ermeX.Entities.Entities
                                  Version=Version,
                                  ComponentOwner = ComponentOwner,
                                  //BusMessageId = BusMessageId,
-                                 TimePublishedUtc = TimePublishedUtc,
+                                 CreatedTimeUtc = CreatedTimeUtc,
+                                 Status = Status,
+                                 JsonMessage = JsonMessage,
                                  PublishedBy = PublishedBy,
                                  PublishedTo = PublishedTo,
                                  TimeReceivedUtc = TimeReceivedUtc,
@@ -88,7 +79,10 @@ namespace ermeX.Entities.Entities
                              {
                                  Id = Convert.ToInt32( dataRow[GetDbFieldName("Id")]),
                                  //BusMessageId = Convert.ToInt32(dataRow[GetDbFieldName("BusMessageId")]),
-                                 TimePublishedUtc = new DateTime((long) dataRow[GetDbFieldName("TimePublishedUtc")]),
+                                 CreatedTimeUtc = new DateTime((long) dataRow[GetDbFieldName("CreatedTimeUtc")]),
+                                 Status = (MessageStatus)Convert.ToInt32(dataRow[GetDbFieldName("Status")]),
+                                 JsonMessage=dataRow[GetDbFieldName("JsonMessage")].ToString(),
+                                 MessageId = (Guid) dataRow[GetDbFieldName("MessageId")],
                                  TimeReceivedUtc = new DateTime((long) dataRow[GetDbFieldName("TimeReceivedUtc")]),
                                  PublishedBy = (Guid) dataRow[GetDbFieldName("PublishedBy")],
                                  PublishedTo = (Guid) dataRow[GetDbFieldName("PublishedTo")],
@@ -109,9 +103,10 @@ namespace ermeX.Entities.Entities
             if (other == null)
                 return false;
 
-            return BusMessage == other.BusMessage
-                   && ComponentOwner == other.ComponentOwner && SuscriptionHandlerId == other.SuscriptionHandlerId &&
-                   Version == other.Version; //TODO: FINISH
+            return 
+                   ComponentOwner == other.ComponentOwner && SuscriptionHandlerId == other.SuscriptionHandlerId &&
+                   Version == other.Version && Status == other.Status && CreatedTimeUtc == other.CreatedTimeUtc && JsonMessage == other.JsonMessage &&
+                MessageId == other.MessageId; //TODO: FINISH
         }
 
         public static bool operator ==(IncomingMessage a, IncomingMessage b)

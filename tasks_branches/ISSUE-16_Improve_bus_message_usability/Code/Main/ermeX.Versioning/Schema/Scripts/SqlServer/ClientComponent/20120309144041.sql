@@ -9,12 +9,15 @@ CREATE TABLE [ClientComponent].[OutgoingMessages](
 	[OutgoingMessages_PublishedBy] [uniqueidentifier] NOT NULL,
 	[OutgoingMessages_PublishedTo] [uniqueidentifier] NOT NULL,
 	[OutgoingMessages_BusMessageId] [int] NOT NULL,
-	[OutgoingMessages_TimePublishedUtc] [bigint] NOT NULL,
+	[OutgoingMessages_CreatedTimeUtc] [bigint] NOT NULL,
 	[OutgoingMessages_Tries] [int] NOT NULL,
 	[OutgoingMessages_Failed] [bit] NOT NULL,
 	[OutgoingMessages_Version] [bigint] NOT NULL,
 	[OutgoingMessages_ComponentOwner] [uniqueidentifier] NOT NULL,
 	[OutgoingMessages_Delivering] [bit] NOT NULL,
+	[OutgoingMessages_MessageId] [uniqueidentifier] NOT NULL,	
+	[OutgoingMessages_JsonMessage] [nvarchar](max) NOT NULL,
+	[OutgoingMessages_Status] [int] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[OutgoingMessages_Id] ASC
@@ -124,11 +127,14 @@ CREATE TABLE [ClientComponent].[IncomingMessages](
 	[IncomingMessages_PublishedBy] [uniqueidentifier] NOT NULL,
 	[IncomingMessages_PublishedTo] [uniqueidentifier] NOT NULL,
 	[IncomingMessages_BusMessageId] [int] NOT NULL,
-	[IncomingMessages_TimePublishedUtc] [bigint] NOT NULL,	
+	[IncomingMessages_CreatedTimeUtc] [bigint] NOT NULL,	
 	[IncomingMessages_TimeReceivedUtc] [bigint] NOT NULL,
 	[IncomingMessages_ComponentOwner] [uniqueidentifier] NOT NULL,
 	[IncomingMessages_Version] [bigint] NOT NULL,
 	[IncomingMessages_SuscriptionHandlerId] [uniqueidentifier] NOT NULL,
+	[IncomingMessages_MessageId] [uniqueidentifier] NOT NULL,	
+	[IncomingMessages_JsonMessage] [nvarchar](max) NOT NULL,
+	[IncomingMessages_Status] [int] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[IncomingMessages_Id] ASC
@@ -165,30 +171,6 @@ CREATE UNIQUE NONCLUSTERED INDEX [idx_uniqueoperation] ON [ClientComponent].[Ser
 GO
 
 
-/****** Object:  Table [ClientComponent].[BusMessages]    Script Date: 01/04/2013 14:21:01 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [ClientComponent].[BusMessages](
-	[BusMessages_Id] [int] IDENTITY(1,1) NOT NULL,
-
-	[BusMessages_MessageId] [uniqueidentifier] NOT NULL,
-	[BusMessages_CreatedTimeUtc] [bigint] NOT NULL,
-	[BusMessages_Publisher] [uniqueidentifier] NOT NULL,
-	[BusMessages_JsonMessage] [nvarchar](max) NOT NULL,
-	[BusMessages_Version] [bigint] NOT NULL,
-	[BusMessages_Status] [int] NOT NULL,
-	[BusMessages_ComponentOwner] [uniqueidentifier] NOT NULL,
- CONSTRAINT [PK_BusMessages] PRIMARY KEY CLUSTERED 
-(
-	[BusMessages_Id] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-GO
 
 
 

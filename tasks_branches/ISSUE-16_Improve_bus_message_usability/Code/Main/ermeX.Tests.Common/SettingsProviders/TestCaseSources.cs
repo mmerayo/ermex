@@ -33,6 +33,7 @@ namespace ermeX.Tests.Common.SettingsProviders
 
         public static IEnumerable<DbEngineType> AllDbs()
         {
+            //return InMemoryDb();
             Array enumValues = typeof (DbEngineType).GetEnumValues();
             return enumValues.Cast<DbEngineType>();
         }

@@ -78,26 +78,26 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers
 
                     //update component Latency
                     //TODO: FROM TRANSPORT LAYER ?? check correctness as the meaning time is this
-                    
-                    UpdateComponentLatency(message.BusMessage, message.TimeReceivedUtc);
+
+                    BusMessage busMessage = message.ToBusMessage();
+                    UpdateComponentLatency(busMessage, message.TimeReceivedUtc);
 
                     //get internal suscriptions
-                    BizMessage bizMessage = message.BusMessage.Data;
+                    BizMessage bizMessage = busMessage.Data;
                         
                     var suscriptions = GetSubscriptions(bizMessage.MessageType.FullName);
 
                     foreach (var suscription in suscriptions)
                     {
                         //create an object per suscription    
-                        var incomingMessage = new IncomingMessage(BusMessage.Clone(message.BusMessage))
+                        var incomingMessage = new IncomingMessage(BusMessage.Clone(busMessage))
                             {
                                 ComponentOwner = Settings.ComponentId,
                                 PublishedTo = Settings.ComponentId,
                                 TimeReceivedUtc = message.TimeReceivedUtc,
-                                TimePublishedUtc = message.TimePublishedUtc,
                                 PublishedBy = message.PublishedBy,
                                 SuscriptionHandlerId = suscription.SuscriptionHandlerId,
-                                Status=BusMessageData.BusMessageStatus.ReceiverDispatchable
+                                Status=Message.MessageStatus.ReceiverDispatchable
                             };
 
                         //WRITE objects to DB in single transaction
@@ -105,7 +105,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers
 
                         Logger.Trace(
                             x =>
-                            x("{0} - Created entry for handler {1}", message.BusMessage.MessageId, suscription.HandlerType));
+                            x("{0} - Created entry for handler {1}", message.MessageId, suscription.HandlerType));
                     }
                     //removes incommin created
                     MessagesDatasource.Remove(message); 
