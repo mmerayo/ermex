@@ -1,0 +1,6 @@
+﻿ermeX.*
+Castle.Core.Interceptor.IProxyTargetAccessor
+Castle.DynamicProxy.AbstractInvocation
+Castle.DynamicProxy.Generators.AttributesToAvoidReplicating
+NHibernate.Cfg.MappingSchema.*
+FluentNHibernate.Automapping.IAutoClasslike
