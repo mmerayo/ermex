@@ -27,6 +27,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.Interfaces;
 using ermeX.Entities.Base;
+using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.DataAccess.DataSources
 {
@@ -145,7 +146,8 @@ namespace ermeX.DAL.DataAccess.DataSources
                throw new DataException("could not perform RemoveAll");
         }
 
-      
+       
+
 
         public DataAccessOperationResult<bool> RemoveAll(ISession session)
         {
@@ -562,6 +564,7 @@ namespace ermeX.DAL.DataAccess.DataSources
             return true;
         }
 
-       
+
+        
     }
 }

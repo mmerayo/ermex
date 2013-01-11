@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -93,7 +94,7 @@ namespace ermeX.Tests.Common.Networking
                             break;
 
                         default:
-                            throw ex;
+                            throw new Exception(string.Format("SqliteErrorCode {0}", ex.ErrorCode.ToString(CultureInfo.InvariantCulture)),ex);
                     }
                 }
             } while (!booked);

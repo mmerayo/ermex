@@ -24,7 +24,6 @@ using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
-using ermeX.Entities.Entities;
 
 namespace ermeX.Tests.Common.DataAccess
 {
@@ -95,6 +94,8 @@ namespace ermeX.Tests.Common.DataAccess
             }
         }
 
+        private DataSourcesFactory _dataSourcesFactory = null;
+
         [SetUp]
         public virtual void OnStartUp()
         {
@@ -104,6 +105,7 @@ namespace ermeX.Tests.Common.DataAccess
         [TestFixtureSetUp]
         public virtual void OnFixtureSetup()
         {
+            _dataSourcesFactory=new DataSourcesFactory();
         }
 
         private readonly Dictionary<DbEngineType, DataAccessExecutor> _dataAccessExecutors = new Dictionary<DbEngineType, DataAccessExecutor>();
@@ -117,77 +119,30 @@ namespace ermeX.Tests.Common.DataAccess
             return _dataAccessExecutors[engineType];
         }
 
-
-        #region Data sources
-
-        //TODO: MOVE THE FOLLOWING METHODS TO A GENERIC PROVIDER
-        private readonly Dictionary<DbEngineType, BusMessageDataSource> _busMessageDataSources = new Dictionary<DbEngineType, BusMessageDataSource>();
-        protected BusMessageDataSource GetBusMessageDataSource(DbEngineType engineType)
+        protected TResult GetDataSource<TResult>(DbEngineType engineType)
         {
-            if (!_busMessageDataSources.ContainsKey(engineType))
+            return _dataSourcesFactory.GetDataSource<TResult>(engineType, GetdataAccessExecutor(engineType),
+                                                              LocalComponentId);
+        }
+
+        private class DataSourcesFactory
+        {
+            private readonly Dictionary<DbEngineType, Dictionary<Type,object>> _dataSourcesCache=new Dictionary<DbEngineType, Dictionary<Type, object>>();
+
+            public TResult GetDataSource<TResult>(DbEngineType engineType,DataAccessExecutor executor,Guid componentOwner)
             {
-                var dataAccessExecutor = GetdataAccessExecutor(engineType);
-                var busMessageDataSource = new BusMessageDataSource(dataAccessExecutor.DalSettings, LocalComponentId,
-                                                                    dataAccessExecutor);
-                _busMessageDataSources.Add(engineType, busMessageDataSource);
+                if(!_dataSourcesCache.ContainsKey(engineType))
+                    _dataSourcesCache.Add(engineType,new Dictionary<Type, object>());
+
+                var dictionary = _dataSourcesCache[engineType];
+
+                if(!dictionary.ContainsKey(typeof(TResult)))
+                {
+                    var fromType = ObjectBuilder.FromType<TResult>(typeof (TResult), executor.DalSettings, componentOwner, executor);
+                    dictionary.Add(typeof(TResult),fromType);
+                }
+                return (TResult)dictionary[typeof (TResult)];
             }
-            return _busMessageDataSources[engineType];
         }
-
-        private readonly Dictionary<DbEngineType, OutgoingMessagesDataSource> _outgoingMessageDataSources = new Dictionary<DbEngineType, OutgoingMessagesDataSource>();
-        protected OutgoingMessagesDataSource GetOutgoingMessageDataSource(DbEngineType engineType)
-        {
-            if (!_outgoingMessageDataSources.ContainsKey(engineType))
-            {
-                var dataAccessExecutor = GetdataAccessExecutor(engineType);
-                var dataSource = new OutgoingMessagesDataSource(dataAccessExecutor.DalSettings, LocalComponentId,
-                                                                    dataAccessExecutor);
-                _outgoingMessageDataSources.Add(engineType, dataSource);
-            }
-            return _outgoingMessageDataSources[engineType];
-        }
-
-        private readonly Dictionary<DbEngineType, ChunkedServiceRequestMessageDataSource> _chunkDataSources = new Dictionary<DbEngineType, ChunkedServiceRequestMessageDataSource>();
-        protected ChunkedServiceRequestMessageDataSource GetChunkedServiceRequestMessageDataSource(DbEngineType engineType)
-        {
-            if (!_chunkDataSources.ContainsKey(engineType))
-            {
-                var dataAccessExecutor = GetdataAccessExecutor(engineType);
-                var ds = new ChunkedServiceRequestMessageDataSource(dataAccessExecutor.DalSettings, LocalComponentId,
-                                                                    dataAccessExecutor);
-                _chunkDataSources.Add(engineType, ds);
-            }
-            return _chunkDataSources[engineType];
-        }
-
-        private readonly Dictionary<DbEngineType, OutgoingMessageSuscriptionsDataSource> _outgoingMessageSubscriptionsDataSource = new Dictionary<DbEngineType, OutgoingMessageSuscriptionsDataSource>();
-        protected OutgoingMessageSuscriptionsDataSource GetOutgoingMessageSubscriptionsDataSource(DbEngineType engineType)
-        {
-            if (!_outgoingMessageSubscriptionsDataSource.ContainsKey(engineType))
-            {
-                var dataAccessExecutor = GetdataAccessExecutor(engineType);
-                var ds = new OutgoingMessageSuscriptionsDataSource(dataAccessExecutor.DalSettings, LocalComponentId,
-                                                                    dataAccessExecutor);
-                _outgoingMessageSubscriptionsDataSource.Add(engineType, ds);
-            }
-            return _outgoingMessageSubscriptionsDataSource[engineType];
-        }
-        
-
-        #endregion
-
-        #region AllRecords
-
-        protected IList<OutgoingMessage> GetOutgoingMessages(DbEngineType engineType)
-        {
-            return GetOutgoingMessageDataSource(engineType).GetAll();
-        }
-
-        protected BusMessageData GetBusMessage(DbEngineType engineType, int id)
-        {
-            return GetBusMessageDataSource(engineType).GetById(id);
-        }
-
-        #endregion
     }
 }

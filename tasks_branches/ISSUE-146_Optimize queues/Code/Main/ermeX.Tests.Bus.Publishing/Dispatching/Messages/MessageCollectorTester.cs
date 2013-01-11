@@ -25,12 +25,11 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
         private MessageCollector GetInstance(DbEngineType dbEngine,Action<MessageDistributor.MessageDistributorMessage> messageReceived, out IMessageDistributor mockedDistributor)
         {
             var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
-            var busMessageDataSource = GetBusMessageDataSource(dbEngine);
-            var outgoingDataSource = GetOutgoingMessageDataSource(dbEngine);
+            var outgoingDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
             var mock = new Mock<IMessageDistributor>();
             mock.Setup(x=>x.EnqueueItem(It.IsAny<MessageDistributor.MessageDistributorMessage>())).Callback(messageReceived);
             mockedDistributor = mock.Object;
-            return new MessageCollector(settings, busMessageDataSource, _systemQueue, outgoingDataSource,mockedDistributor);
+            return new MessageCollector(settings,  _systemQueue, outgoingDataSource,mockedDistributor);
         }
 
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
@@ -61,15 +60,14 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
             }
 
             Assert.IsTrue(actual.Count==1);
-            Assert.AreSame(expected, actual[0].Message);
-            var messagesInDb= GetOutgoingMessages(dbEngine);
-            Assert.IsTrue(messagesInDb.Count==1);
+            BusMessage busMessage = actual[0].OutGoingMessage.ToBusMessage();
+            Assert.AreEqual(expected, busMessage); //asserts is the same that was pushed
+            var messagesInDb= GetDataSource<OutgoingMessagesDataSource>(dbEngine).GetAll();
+            Assert.IsTrue(messagesInDb.Count==1);  //asserts the message was created
 
-            Assert.AreNotEqual(0, messagesInDb[0].BusMessageId);
-
-            var busMessage=  GetBusMessage(dbEngine, messagesInDb[0].BusMessageId);
-            Assert.IsTrue(busMessage.Status==BusMessageData.BusMessageStatus.SenderCollected);
-            Assert.AreEqual(expected,(BusMessage)busMessage);
+            OutgoingMessage outgoingMessage = messagesInDb[0];
+            Assert.IsTrue(outgoingMessage.Status==Message.MessageStatus.SenderCollected);
+            Assert.AreEqual(expected,outgoingMessage.ToBusMessage()); //asserts is the same pushed one
         }
 
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
@@ -77,22 +75,19 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
         {
             
             var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage("theData"));
-            var busMessageData = BusMessageData.FromBusLayerMessage(LocalComponentId, busMessage, BusMessageData.BusMessageStatus.SenderCollected);
 
-            BusMessageDataSource busMessageDataSource = GetBusMessageDataSource(dbEngine);
-            busMessageDataSource.Save(busMessageData);
             //the default test set them for one day
-            var outgoingMessage = new OutgoingMessage(busMessageData)
+            var outgoingMessage = new OutgoingMessage(busMessage)
                 {
-                    TimePublishedUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
+                    CreatedTimeUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
                     ComponentOwner = LocalComponentId,
-                    PublishedBy=LocalComponentId
+                    PublishedBy=LocalComponentId,
+                    Status=Message.MessageStatus.SenderCollected
                 };
-            OutgoingMessagesDataSource outgoingMessagesDataSource = GetOutgoingMessageDataSource(dbEngine);
+            var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
             outgoingMessagesDataSource.Save(outgoingMessage);
 
-            Assert.IsTrue(outgoingMessagesDataSource.GetAll().Count==1);
-            Assert.IsTrue(busMessageDataSource.GetAll().Count == 1);
+            Assert.IsTrue(outgoingMessagesDataSource.GetAll().Count==1); //assert it was saved
 
             var actual = new List<MessageDistributor.MessageDistributorMessage>();
             IMessageDistributor mockedDistributor;
@@ -102,8 +97,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
                 Thread.Sleep(250);
             }
 
-            Assert.IsTrue(outgoingMessagesDataSource.GetAll().Count == 0);
-            Assert.IsTrue(busMessageDataSource.GetAll().Count == 0);
+            Assert.IsTrue(outgoingMessagesDataSource.GetAll().Count == 0);//asserts it was removed
         }
 
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
@@ -111,19 +105,17 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
         {
 
             var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage("theData"));
-            var busMessageData = BusMessageData.FromBusLayerMessage(LocalComponentId, busMessage, BusMessageData.BusMessageStatus.SenderCollected);
 
-            BusMessageDataSource busMessageDataSource = GetBusMessageDataSource(dbEngine);
-            busMessageDataSource.Save(busMessageData);
             //the default test set them for one day
-            var outgoingMessage = new OutgoingMessage(busMessageData)
+            var outgoingMessage = new OutgoingMessage(busMessage)//creates this message as a pending one
             {
-                TimePublishedUtc = DateTime.UtcNow,
+                CreatedTimeUtc = DateTime.UtcNow,
                 ComponentOwner = LocalComponentId,
-                PublishedBy = LocalComponentId
+                PublishedBy = LocalComponentId,
+                Status = Message.MessageStatus.SenderCollected
             };
-            OutgoingMessagesDataSource outgoingMessagesDataSource = GetOutgoingMessageDataSource(dbEngine);
-            outgoingMessagesDataSource.Save(outgoingMessage);
+            var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+            outgoingMessagesDataSource.Save(outgoingMessage);  
 
             IMessageDistributor mockedDistributor;
             var actual = new List<MessageDistributor.MessageDistributorMessage>();
@@ -135,8 +127,11 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
             }
 
-            Assert.IsTrue(actual.Count == 1);
-            Assert.AreEqual(busMessage, actual[0].Message);
+            Assert.IsTrue(actual.Count == 1);  //asserts it was sent
+            OutgoingMessage actualOutgoingMessage = actual[0].OutGoingMessage;
+            Assert.AreEqual(outgoingMessage, actualOutgoingMessage);
+            BusMessage message = actualOutgoingMessage.ToBusMessage();
+            Assert.AreEqual(busMessage, message);
             
         }
 

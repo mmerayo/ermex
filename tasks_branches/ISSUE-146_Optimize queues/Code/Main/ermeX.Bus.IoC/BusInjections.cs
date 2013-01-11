@@ -26,6 +26,7 @@ using ermeX.Bus.Listening;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers;
 using ermeX.Bus.Publishing;
+using ermeX.Bus.Publishing.AsyncWorkers;
 using ermeX.Bus.Publishing.ClientProxies;
 using ermeX.Bus.Publishing.Dispatching;
 using ermeX.Bus.Publishing.Dispatching.Messages;

@@ -96,14 +96,6 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         }
 
 
-        protected override ChunkedServiceRequestMessageDataSource GetDataSourceTarget(DbEngineType engine)
-        {
-            IDalSettings dataAccessSettings =GetDataHelper(engine).DataAccessSettings;
-            var dataAccessExecutor = new DataAccessExecutor(dataAccessSettings);
-            return new ChunkedServiceRequestMessageDataSource(dataAccessSettings, LocalComponentId,dataAccessExecutor);
-        }
-
-
       
   
     }

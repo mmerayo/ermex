@@ -46,16 +46,14 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         [Inject]
         public MessageCollector(IBusSettings settings,
-                                IBusMessageDataSource busMessageDataSource, SystemTaskQueue systemTaskQueue,
+                                SystemTaskQueue systemTaskQueue,
                                 IOutgoingMessagesDataSource outgoingMessagesDataSource,IMessageDistributor distributor )
         {
             if (settings == null) throw new ArgumentNullException("settings");
-            if (busMessageDataSource == null) throw new ArgumentNullException("busMessageDataSource");
             if (systemTaskQueue == null) throw new ArgumentNullException("systemTaskQueue");
             if (outgoingMessagesDataSource == null) throw new ArgumentNullException("outgoingMessagesDataSource");
             if (distributor == null) throw new ArgumentNullException("distributor");
             Settings = settings;
-            BusMessageDataSource = busMessageDataSource;
             SystemTaskQueue = systemTaskQueue;
             OutgoingMessagesDataSource = outgoingMessagesDataSource;
             MessageDistributor = distributor;
@@ -94,7 +92,6 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         #endregion
 
         private IBusSettings Settings { get; set; }
-        private IBusMessageDataSource BusMessageDataSource { get; set; }
         private SystemTaskQueue SystemTaskQueue { get; set; }
         private IOutgoingMessagesDataSource OutgoingMessagesDataSource { get; set; }
         private IMessageDistributor MessageDistributor { get; set; }
@@ -120,7 +117,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             Logger.Trace(x => x("{0} - Start dispatching", message.MessageId));
 
             OutgoingMessage outGoingMessage = CreateRootOutgoingMessage(message);
-            MessageDistributor.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outGoingMessage, message));
+            MessageDistributor.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outGoingMessage));
 
             //every CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched removes expired items
             if (++_dispatchedItems%CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched == 0)
@@ -131,12 +128,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         private void RemoveExpiredMessages()
         {
-            //TODO:to be a method OF THE OutgoingMessagesDataSource WHEN HANDLING THE BUSMESSAGES
-
             TimeSpan expirationTime = Settings.SendExpiringTime;
-            var outgoingMessages = OutgoingMessagesDataSource.GetExpiredMessages(expirationTime);
-            foreach (var outgoingMessage in outgoingMessages)
-                BusMessageDataSource.RemoveById(outgoingMessage.BusMessageId);
             
             OutgoingMessagesDataSource.RemoveExpiredMessages(expirationTime);
             Logger.Trace("MessageCollector: removed expired items");
@@ -144,13 +136,12 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         private OutgoingMessage CreateRootOutgoingMessage(BusMessage message)
         {
-            BusMessageData busMessage = BusMessageData.FromBusLayerMessage(Settings.ComponentId, message,
-                                                                           BusMessageData.BusMessageStatus.SenderCollected);
-            BusMessageDataSource.Save(busMessage);
 
-            var result = new OutgoingMessage(busMessage)
+            var result = new OutgoingMessage(message)
                 {
-                    PublishedBy = message.Publisher
+                    PublishedBy = message.Publisher,
+                    Status=Message.MessageStatus.SenderCollected
+
                 };
             OutgoingMessagesDataSource.Save(result);
             Logger.Trace("MessageCollector: Created RootOutgoingMessage");
@@ -186,14 +177,9 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         private void SendAllMessagesInQueue()
         {
-//TODO: OUTGOING MESSAGE SHOULD HOLD BUSMESSAGEdATA
-            var busMessageDatas = BusMessageDataSource.GetByStatus(BusMessageData.BusMessageStatus.SenderCollected);
-            foreach (var busMessageData in busMessageDatas)
-            {
-                var outgoingMessage = OutgoingMessagesDataSource.GetByBusMessageId(busMessageData.Id);
-                MessageDistributor.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outgoingMessage,
-                                                                                                busMessageData));
-            }
+            var outgoingMessages = OutgoingMessagesDataSource.GetByStatus(Message.MessageStatus.SenderCollected);
+            foreach (var outgoingMessage in outgoingMessages)
+                MessageDistributor.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outgoingMessage));
         }
 
         public void Stop()

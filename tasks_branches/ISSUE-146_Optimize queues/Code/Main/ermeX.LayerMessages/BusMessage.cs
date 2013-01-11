@@ -52,6 +52,11 @@ namespace ermeX.LayerMessages
         public BizMessage Data { get; protected set; }
 
 
+        public static BusMessage Clone(BusMessage busMessage)
+        {
+            return new BusMessage(busMessage.MessageId,busMessage.CreatedTimeUtc,busMessage.Publisher,busMessage.Data);
+        }
+
         #region Equatable
 
         public bool Equals(BusMessage other)
@@ -59,7 +64,7 @@ namespace ermeX.LayerMessages
             if (other == null)
                 return false;
 
-            return base.Equals(other) && Publisher==other.Publisher && Data==other.Data;
+            return base.Equals(other) && Publisher == other.Publisher && Publisher == other.Publisher;
         }
 
         public static bool operator ==(BusMessage a, BusMessage b)

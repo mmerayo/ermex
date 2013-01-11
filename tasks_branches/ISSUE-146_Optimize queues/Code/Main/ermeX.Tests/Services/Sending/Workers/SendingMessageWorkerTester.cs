@@ -23,6 +23,7 @@ using System.IO;
 using System.Threading;
 using NUnit.Framework;
 using ermeX.Bus.Interfaces;
+using ermeX.Bus.Publishing.AsyncWorkers;
 using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
@@ -76,17 +77,12 @@ namespace ermeX.Tests.Services.Sending.Workers
                                                out OutgoingMessagesDataSource dataSource,
                                                out TestSettingsProvider.ClientSettings settings)
         {
-            var dataAccessExecutor = GetdataAccessExecutor(engineType);
-            dataSource =
-                new OutgoingMessagesDataSource(
-                    dataAccessExecutor.DalSettings,
-                    LocalComponentId,dataAccessExecutor);
 
-            BusMessageDataSource busMessageDataSource=GetBusMessageDataSource(engineType);
+            dataSource=GetDataSource<OutgoingMessagesDataSource>(engineType);
 
             settings = (TestSettingsProvider.ClientSettings) TestSettingsProvider.GetClientConfigurationSettingsSource();
             proxy = new DummyServiceProxy();
-            var target = new SendingMessageWorker(dataSource, busMessageDataSource, settings, proxy);
+            var target = new SendingMessageWorker(dataSource, settings, proxy);
             return target;
         }
 
@@ -123,20 +119,18 @@ namespace ermeX.Tests.Services.Sending.Workers
 
         private OutgoingMessage GetExpected(DbEngineType engineType)
         {
-            BusMessageDataSource busMessageDataSource = GetBusMessageDataSource(engineType);
+            var dataSource = GetDataSource<OutgoingMessagesDataSource>(engineType);
 
             var msg = new DummyDomainEntity {Id = Guid.NewGuid()};
+
             BusMessage busMessage = GetBusMessage(msg);
-            BusMessageData fromBusLayerMessage = BusMessageData.FromBusLayerMessage(LocalComponentId, busMessage, BusMessageData.BusMessageStatus.ReceiverDispatchable);
-            fromBusLayerMessage.ComponentOwner = LocalComponentId;
-            busMessageDataSource.Save(fromBusLayerMessage);
-            var expected = new OutgoingMessage(fromBusLayerMessage)
-                               {
-                                   PublishedTo = RemoteComponentId,
-                                   TimePublishedUtc = DateTime.UtcNow,
-                                   ComponentOwner = LocalComponentId
-                               };
-            
+            var expected = new OutgoingMessage(busMessage)
+            {
+                PublishedTo = RemoteComponentId,
+                ComponentOwner = LocalComponentId,
+                Status=Message.MessageStatus.ReceiverReceived
+            };
+            dataSource.Save(expected);
             
             return expected;
         }
@@ -161,17 +155,15 @@ namespace ermeX.Tests.Services.Sending.Workers
             DummyServiceProxy proxy;
             SendingMessageWorker target = GetTarget(engineType, out proxy);
             OutgoingMessage expected = GetExpected(engineType);
-            BusMessageDataSource busMessageDataSource = GetBusMessageDataSource(engineType);
-            BusMessageData busMessageData = busMessageDataSource.GetById(expected.BusMessageId);
-            Assert.IsNotNull(busMessageData);
+            BusMessage busMessage = expected.ToBusMessage();
+            Assert.IsNotNull(busMessage);
             target.StartWorking(expected);
             target.FinishedWorkPendingEvent.WaitOne(TimeSpan.FromSeconds(20));
             target.Dispose();
+            var dataSource = GetDataSource<OutgoingMessagesDataSource>(engineType);
 
-            Assert.AreEqual(busMessageData.MessageId, proxy.LastSentMessage.Data.MessageId);
-            Assert.IsNull(busMessageDataSource.GetById(expected.BusMessageId));
-
-
+            Assert.AreEqual(busMessage.MessageId, proxy.LastSentMessage.Data.MessageId);
+            Assert.IsNull(dataSource.GetById(expected.Id));
         }
 
 
@@ -192,7 +184,6 @@ namespace ermeX.Tests.Services.Sending.Workers
             OutgoingMessagesDataSource ds;
             SendingMessageWorker target = GetTarget(engineType, out proxy, out ds);
             OutgoingMessage message = GetExpected(engineType);
-            BusMessage expected = GetExistingBusMessageData(engineType, message.BusMessageId);
 
             ds.Save(message);
             DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engineType);
@@ -204,22 +195,14 @@ namespace ermeX.Tests.Services.Sending.Workers
             target.Dispose();
 
             BusMessage actual = proxy.LastSentMessage.Data;
-            Assert.AreEqual(expected.CreatedTimeUtc, actual.CreatedTimeUtc);
-            Assert.AreEqual(expected.Publisher, actual.Publisher);
-            Assert.AreEqual(expected.MessageId, actual.MessageId);
-            Assert.AreEqual(expected.Data.JsonMessage, actual.Data.JsonMessage);
+            var expected = message.ToBusMessage();
+            Assert.AreEqual(expected, actual);
 
             Assert.IsNull(dataAccessTestHelper.GetObjectFromDb<OutgoingMessage>(message.Id,
                                                                 OutgoingMessage.FinalTableName));
         }
 
-        private BusMessageData GetExistingBusMessageData(DbEngineType engineType, int id)
-        {
-            BusMessageDataSource busMessageDataSource = GetBusMessageDataSource(engineType);
-
-            BusMessageData busMessageData = busMessageDataSource.GetById(id);
-            return busMessageData;
-        }
+       
 
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void DontDeleteMessageFileAfterSendingWhenMoreSuscribers(DbEngineType engineType)
@@ -237,17 +220,13 @@ namespace ermeX.Tests.Services.Sending.Workers
             DataTable tableFromDb = dataAccessTestHelper.GetTableFromDb(OutgoingMessage.FinalTableName);
             Assert.IsNotNull(tableFromDb);
             Assert.IsTrue(tableFromDb.Rows.Count == 2);
-            BusMessageData existingBusMessageData = GetExistingBusMessageData(engineType, expected.BusMessageId);
 
             target.StartWorking(expected);
             target.FinishedWorkPendingEvent.WaitOne(TimeSpan.FromSeconds(20));
             target.Dispose();
-
+            var existingBusMessageData = expected.ToBusMessage();
             BusMessage actual = proxy.LastSentMessage.Data;
-            Assert.AreEqual(existingBusMessageData.CreatedTimeUtc, actual.CreatedTimeUtc);
-            Assert.AreEqual(existingBusMessageData.Publisher, actual.Publisher);
-            Assert.AreEqual(existingBusMessageData.MessageId, actual.MessageId);
-            Assert.AreEqual(existingBusMessageData.JsonMessage, actual.Data.JsonMessage);
+            Assert.AreEqual(existingBusMessageData, actual);
 
             Assert.IsNotNull(dataAccessTestHelper.GetObjectFromDb<OutgoingMessage>(exp2.Id, OutgoingMessage.FinalTableName));
         }

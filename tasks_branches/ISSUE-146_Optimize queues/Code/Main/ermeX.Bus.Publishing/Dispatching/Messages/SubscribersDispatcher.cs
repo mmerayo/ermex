@@ -17,15 +17,11 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         public class SubscribersDispatcherMessage{
             public OutgoingMessage OutGoingMessage { get; private set; }
-            public BusMessage Message { get; private set; }
 
-            public SubscribersDispatcherMessage(OutgoingMessage outGoingMessage, BusMessage message)
+            public SubscribersDispatcherMessage(OutgoingMessage outGoingMessage)
             {
-
                 if (outGoingMessage == null) throw new ArgumentNullException("outGoingMessage");
-                if (message == null) throw new ArgumentNullException("message");
                 OutGoingMessage = outGoingMessage;
-                Message = message;
             }
         }
 

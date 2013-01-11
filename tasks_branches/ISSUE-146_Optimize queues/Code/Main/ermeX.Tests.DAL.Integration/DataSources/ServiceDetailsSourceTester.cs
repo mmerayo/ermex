@@ -80,13 +80,6 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         }
 
 
-        protected override ServiceDetailsDataSource GetDataSourceTarget(DbEngineType engine)
-        {
-            IDalSettings dataAccessSettings = GetDataHelper(engine).DataAccessSettings;
-            var dataAccessExecutor = new DataAccessExecutor(dataAccessSettings);
-            return new ServiceDetailsDataSource(dataAccessSettings, OwnerComponentId,dataAccessExecutor);
-        }
-
     
 
 
@@ -102,7 +95,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         {
             int id = InsertRecord(engine);
 
-            ServiceDetailsDataSource target = GetDataSourceTarget(engine);
+            ServiceDetailsDataSource target = GetDataSource<ServiceDetailsDataSource>(engine);
             ServiceDetails actual = target.GetByOperationId(RemoteComponentId, operationId);
             Assert.IsNotNull(actual);
 
@@ -114,9 +107,9 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         public void CantInsertRepeatedOperations(DbEngineType engine)
         {
             ServiceDetails serviceDetails1 = GetExpected(engine);
-            
 
-            ServiceDetailsDataSource target = GetDataSourceTarget(engine);
+
+            ServiceDetailsDataSource target = GetDataSource<ServiceDetailsDataSource>(engine);
             target.Save(serviceDetails1);
 
             ServiceDetails serviceDetails2 = GetExpected(engine);
