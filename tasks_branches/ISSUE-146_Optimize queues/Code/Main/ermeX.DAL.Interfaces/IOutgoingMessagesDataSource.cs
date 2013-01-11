@@ -30,5 +30,6 @@ namespace ermeX.DAL.Interfaces
         OutgoingMessage GetByBusMessageId(int id);
         IEnumerable<OutgoingMessage> GetExpiredMessages(TimeSpan expirationTime);
         void RemoveExpiredMessages(TimeSpan expirationTime);
+        bool ContainsMessageFor(Guid busMessageId, Guid destinationComponent);
     }
 }
