@@ -69,7 +69,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             dataAccessTestHelper.InsertAppComponent(componentId, LocalComponentId,0,false,false);
 
             return dataAccessTestHelper.InsertOutgoingMessage(componentId, LocalComponentId, BMID, 
-                                         TimePublished, Tries, Errored);
+                                         TimePublished, Tries, Errored,Message.MessageStatus.ReceiverReceived, new BizMessage("the message").JsonMessage);
         }
 
         protected override void CheckInsertedRecord(OutgoingMessage record)
@@ -79,7 +79,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             Assert.IsTrue(record.PublishedBy == LocalComponentId);
             //Assert.IsTrue(record.BusMessageId == BMID);
 #if (!NEED_FIX_MILLISECONDS)
-            Assert.IsTrue(record.TimePublishedUtc == TimePublished);
+            Assert.IsTrue(record.CreatedTimeUtc == TimePublished);
 #endif
             Assert.IsTrue(record.ComponentOwner == LocalComponentId);
             Assert.IsTrue(record.Tries == Tries);
@@ -87,15 +87,14 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 
         protected override OutgoingMessage GetExpected(DbEngineType engine)
         {
-            BusMessageData fromBusLayerMessage = BusMessageData.FromBusLayerMessage(LocalComponentId, GetBusMessage(message), BusMessageData.BusMessageStatus.ReceiverDispatchable);
-            fromBusLayerMessage.Id = BMID;
-            return new OutgoingMessage (fromBusLayerMessage)
+            BusMessage busMessage = GetBusMessage(message);
+            return new OutgoingMessage (busMessage)
                        {
                            ComponentOwner = LocalComponentId,
                            Failed = Errored,
                            PublishedBy = LocalComponentId,
                            PublishedTo = componentId,
-                           TimePublishedUtc = TimePublished,
+                           CreatedTimeUtc = TimePublished,
                            Tries = Tries
                        };
         }
@@ -104,6 +103,6 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         {
             return new BusMessage(LocalComponentId,new BizMessage(data));
         }
-
+       
     }
 }

@@ -123,12 +123,9 @@ namespace ermeX.Tests.Services.Sending.Workers
             var msg = new DummyDomainEntity {Id = Guid.NewGuid()};
 
             BusMessage busMessage = GetBusMessage(msg);
-            BusMessageData fromBusLayerMessage = BusMessageData.FromBusLayerMessage(LocalComponentId, busMessage, BusMessageData.BusMessageStatus.ReceiverDispatchable);
-            fromBusLayerMessage.ComponentOwner = LocalComponentId;
-            var expected = new OutgoingMessage(fromBusLayerMessage)
+            var expected = new OutgoingMessage(busMessage)
             {
                 PublishedTo = RemoteComponentId,
-                TimePublishedUtc = DateTime.UtcNow,
                 ComponentOwner = LocalComponentId
             };
             dataSource.Save(expected);
@@ -156,7 +153,7 @@ namespace ermeX.Tests.Services.Sending.Workers
             DummyServiceProxy proxy;
             SendingMessageWorker target = GetTarget(engineType, out proxy);
             OutgoingMessage expected = GetExpected(engineType);
-            BusMessage busMessage = expected.BusMessage;
+            BusMessage busMessage = expected.ToBusMessage();
             Assert.IsNotNull(busMessage);
             target.StartWorking(expected);
             target.FinishedWorkPendingEvent.WaitOne(TimeSpan.FromSeconds(20));
@@ -196,11 +193,8 @@ namespace ermeX.Tests.Services.Sending.Workers
             target.Dispose();
 
             BusMessage actual = proxy.LastSentMessage.Data;
-            var expected = message.BusMessage;
-            Assert.AreEqual(expected.CreatedTimeUtc, actual.CreatedTimeUtc);
-            Assert.AreEqual(expected.Publisher, actual.Publisher);
-            Assert.AreEqual(expected.MessageId, actual.MessageId);
-            Assert.AreEqual(expected.Data.JsonMessage, actual.Data.JsonMessage);
+            var expected = message.ToBusMessage();
+            Assert.AreEqual(expected, actual);
 
             Assert.IsNull(dataAccessTestHelper.GetObjectFromDb<OutgoingMessage>(message.Id,
                                                                 OutgoingMessage.FinalTableName));
@@ -228,12 +222,9 @@ namespace ermeX.Tests.Services.Sending.Workers
             target.StartWorking(expected);
             target.FinishedWorkPendingEvent.WaitOne(TimeSpan.FromSeconds(20));
             target.Dispose();
-            var existingBusMessageData = expected.BusMessage;
+            var existingBusMessageData = expected.ToBusMessage();
             BusMessage actual = proxy.LastSentMessage.Data;
-            Assert.AreEqual(existingBusMessageData.CreatedTimeUtc, actual.CreatedTimeUtc);
-            Assert.AreEqual(existingBusMessageData.Publisher, actual.Publisher);
-            Assert.AreEqual(existingBusMessageData.MessageId, actual.MessageId);
-            Assert.AreEqual(existingBusMessageData.Data.JsonMessage, actual.Data.JsonMessage);
+            Assert.AreEqual(existingBusMessageData, actual);
 
             Assert.IsNotNull(dataAccessTestHelper.GetObjectFromDb<OutgoingMessage>(exp2.Id, OutgoingMessage.FinalTableName));
         }

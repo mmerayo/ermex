@@ -115,10 +115,8 @@
     <Compile Include="DataAccess\DataSources\BusMessageDataSource.cs" />
     <Compile Include="DataAccess\DataSources\ChunkedServiceRequestMessageDataSource.cs" />
     <Compile Include="DataAccess\Helpers\DataAccessExecutor.cs" />
-    <Compile Include="DataAccess\Mappings\BusMessageDataMap.cs" />
     <Compile Include="DataAccess\Mappings\ChunkedServiceRequestMessageDataMap.cs" />
     <Compile Include="DataAccess\Mappings\Sqlite\AppComponentMap.cs" />
-    <Compile Include="DataAccess\Mappings\Sqlite\BusMessageDataMap.cs" />
     <Compile Include="DataAccess\Mappings\Sqlite\ConnectivityDetailsMap.cs" />
     <Compile Include="DataAccess\Mappings\Sqlite\IncomingMessagesMap.cs" />
     <Compile Include="DataAccess\Mappings\Sqlite\IncomingMessageSuscriptionsMap.cs" />
@@ -127,7 +125,6 @@
     <Compile Include="DataAccess\Mappings\Sqlite\ServiceDetailsMap.cs" />
     <Compile Include="DataAccess\Mappings\SqlServer\AppComponentMap.cs" />
     <Compile Include="DataAccess\Mappings\SqlServer\ConnectivityDetailsMap.cs" />
-    <Compile Include="DataAccess\Mappings\SqlServer\BusMessageDataMap.cs" />
     <Compile Include="DataAccess\Mappings\SqlServer\ChunkedServiceRequestMessageDataMap.cs" />
     <Compile Include="DataAccess\Mappings\Sqlite\ChunkedServiceRequestMessageDataMap.cs" />
     <Compile Include="DataAccess\Mappings\SqlServer\IncomingMessagesMap.cs" />

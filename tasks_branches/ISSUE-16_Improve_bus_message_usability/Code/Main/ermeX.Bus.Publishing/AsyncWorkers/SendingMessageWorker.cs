@@ -71,11 +71,10 @@ namespace ermeX.Bus.Publishing.AsyncWorkers
             
             if (messageToSend.Failed) return; //TODO: THE CALLER SHOULD NEVER SEND THIS MESSAGE HERE
 
-            BusMessage busMessage = messageToSend.BusMessage;
            
-            if ((DateTime.UtcNow - messageToSend.TimePublishedUtc) > Settings.SendExpiringTime) //TODO: NEVER EXPIRES PLEASE, MUST BE REMOVED MANUALLY FROM UTILITY
+            if ((DateTime.UtcNow - messageToSend.CreatedTimeUtc) > Settings.SendExpiringTime) //TODO: NEVER EXPIRES PLEASE, MUST BE REMOVED MANUALLY FROM UTILITY
             {
-                Logger.Warn(x=>x("FATAL! {0} not sent to {1} AND EXPIRED", busMessage.MessageId, messageToSend.PublishedTo));
+                Logger.Warn(x=>x("FATAL! {0} not sent to {1} AND EXPIRED", messageToSend.MessageId, messageToSend.PublishedTo));
                 messageToSend.Failed = true;
                 ReserializeMessage(messageToSend);
             }
@@ -84,7 +83,7 @@ namespace ermeX.Bus.Publishing.AsyncWorkers
                 if (SendData(messageToSend))
                 {
                     RemoveRecord(messageToSend);
-                    Logger.Trace(x=>x("SUCCESS {0} Sent to {1}", busMessage.MessageId, messageToSend.PublishedTo));
+                    Logger.Trace(x=>x("SUCCESS {0} Sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo));
                 }
                 else
                 {
@@ -92,7 +91,7 @@ namespace ermeX.Bus.Publishing.AsyncWorkers
 
                     messageToSend.Delivering = false;
                     ReserializeMessage(messageToSend);
-                    Logger.Trace(x=>x("FAILED! {0} not sent to {1}", busMessage.MessageId, messageToSend.PublishedTo));
+                    Logger.Trace(x=>x("FAILED! {0} not sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo));
                 }
             }
         }
@@ -103,7 +102,7 @@ namespace ermeX.Bus.Publishing.AsyncWorkers
 
         private void ReserializeMessage(OutgoingMessage messageToSend)
         {
-            messageToSend.Status=BusMessageData.BusMessageStatus.SenderDispatchPending;
+            messageToSend.Status=Message.MessageStatus.SenderDispatchPending;
             DataSource.Save(messageToSend);
         }
 
@@ -111,14 +110,13 @@ namespace ermeX.Bus.Publishing.AsyncWorkers
 
         private void RemoveRecord(OutgoingMessage messageToSend)
         {
-            Debug.Assert(messageToSend.BusMessage!=null);
             DataSource.Remove(messageToSend);
         }
 
 
         private bool SendData(OutgoingMessage data)
         {
-            var busMessage = data.BusMessage;
+            BusMessage busMessage = data.ToBusMessage();
             var transportMessage = new TransportMessage(data.PublishedTo, busMessage);
 
             ServiceResult serviceResult;
@@ -140,7 +138,7 @@ namespace ermeX.Bus.Publishing.AsyncWorkers
                 Logger.Error(x=>x("{0}",logData));
             }
 
-            data.Status=BusMessageData.BusMessageStatus.SenderSent;
+            data.Status=Message.MessageStatus.SenderSent;
             DataSource.Save(data);
 
             return serviceResult.Ok;

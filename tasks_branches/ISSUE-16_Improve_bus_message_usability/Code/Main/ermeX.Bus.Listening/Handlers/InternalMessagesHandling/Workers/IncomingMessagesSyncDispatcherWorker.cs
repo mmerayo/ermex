@@ -58,22 +58,21 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers
             var item = Scheduler.GetNext();
             if (item != null)
             {
-                var busMessage = item.BusMessage;
 
-                Logger.Trace(x=>x("{0} Start Handling", busMessage.MessageId));
+                Logger.Trace(x=>x("{0} Start Handling", item.MessageId));
                 try
                 {
-                    OnDispatchMessage(item.SuscriptionHandlerId, busMessage);
+                    OnDispatchMessage(item.SuscriptionHandlerId, item.ToBusMessage());
                 }
                 catch
                 {
-                    item.Status=BusMessageData.BusMessageStatus.ReceiverDispatchable;
+                    item.Status=Message.MessageStatus.ReceiverDispatchable;
                     MessagesDataSource.Save(item);
                     throw;
                 }
                 
                 MessagesDataSource.Remove(item);
-                Logger.Trace(x=>x("{0} Handled finally",busMessage.MessageId));
+                Logger.Trace(x=>x("{0} Handled finally",item.MessageId));
             }
         }
 
