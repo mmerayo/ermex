@@ -230,16 +230,27 @@ namespace ermeX.Common
         public static object InvokeFast(MethodInfo method, object target,object[] args)
         {
             object result = null;
+
             if (Environment.Is64BitProcess)
             {
-                var invoker = ILHelper.GetMethodInvoker(method);
-                result = invoker(target, args);
+                try
+                {
+                    var invoker = ILHelper.GetMethodInvoker(method);
+                    result = invoker(target, args);
+                }
+                catch (EntryPointNotFoundException)
+                {
+                    result = method.Invoke(target, args);
+                    //TODO: THIS IS DUE A LIMITATION in the x86 COMPILER and its failing sometimes in the x64 as well
+                }
             }
-            else //TODO: THIS IS DUE A LIMITATION in the x86 COMPILER
+            else
+            {
                 result = method.Invoke(target, args);
+            }
+
             return result;
         }
-
 
         public static MethodInfo GetPublicInstanceMethod(string type, string methodName)
         {

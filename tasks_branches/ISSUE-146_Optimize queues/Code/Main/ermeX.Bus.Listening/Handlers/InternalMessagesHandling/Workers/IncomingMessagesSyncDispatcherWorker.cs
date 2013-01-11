@@ -38,20 +38,17 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers
 
         [Inject]
         public IncomingMessagesSyncDispatcherWorker(IIncomingMessagesDataSource messagesDataSource,
-            IBusMessageDataSource busMessageDataSource, IScheduler scheduler)
+            IScheduler scheduler)
             : base("IncomingMessagesSyncDispatcherWorker", new TimeSpan(0, 0, 1))
         //TODO, THIS VALUE TO BE CONFIGURABLE AND CHANGE FOR TESTING
         {
             if (messagesDataSource == null) throw new ArgumentNullException("messagesDataSource");
-            if (busMessageDataSource == null) throw new ArgumentNullException("busMessageDataSource");
             if (scheduler == null) throw new ArgumentNullException("scheduler");
             MessagesDataSource = messagesDataSource;
-            BusMessageDataSource = busMessageDataSource;
             Scheduler = scheduler;
         }
 
         private IIncomingMessagesDataSource MessagesDataSource { get; set; }
-        private IBusMessageDataSource BusMessageDataSource { get; set; }
         private IScheduler Scheduler { get; set; }
 
         #region IIncomingMessagesDispatcherWorker Members
@@ -61,23 +58,21 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers
             var item = Scheduler.GetNext();
             if (item != null)
             {
-                var busMessage = BusMessageDataSource.GetById(item.BusMessageId);
 
-                Logger.Trace(x=>x("{0} Start Handling", busMessage.MessageId));
+                Logger.Trace(x=>x("{0} Start Handling", item.MessageId));
                 try
                 {
-                    OnDispatchMessage(item.SuscriptionHandlerId, busMessage);
+                    OnDispatchMessage(item.SuscriptionHandlerId, item.ToBusMessage());
                 }
                 catch
                 {
-                    busMessage.Status=BusMessageData.BusMessageStatus.ReceiverDispatchable;
-                    BusMessageDataSource.Save(busMessage);
+                    item.Status=Message.MessageStatus.ReceiverDispatchable;
+                    MessagesDataSource.Save(item);
                     throw;
                 }
                 
-                BusMessageDataSource.Remove(busMessage);
                 MessagesDataSource.Remove(item);
-                Logger.Trace(x=>x("{0} Handled finally",busMessage.MessageId));
+                Logger.Trace(x=>x("{0} Handled finally",item.MessageId));
             }
         }
 

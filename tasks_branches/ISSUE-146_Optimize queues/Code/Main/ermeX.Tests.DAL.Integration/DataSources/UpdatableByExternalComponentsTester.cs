@@ -39,7 +39,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         public void Doesnt_Update_When_Version_Is_Older_Than_Current(DbEngineType engine)
         {
             int id = InsertRecord(engine);
-            TDataSource target = GetDataSourceTarget(engine);
+            TDataSource target = GetDataSource<TDataSource>(engine);
             TModel expected = target.GetById(id);
             Assert.IsTrue(expected.Version != DateTime.MinValue.Ticks);
 

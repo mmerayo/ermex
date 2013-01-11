@@ -53,11 +53,19 @@ namespace ermeX.DAL.DataAccess.DataSources
             get { return "OutgoingMessages"; }
         }
 
+        protected override bool BeforeUpdating(OutgoingMessage entity, NHibernate.ISession session)
+        {
+            if(entity.Status==Message.MessageStatus.NotSet)
+                throw new InvalidOperationException("Must set the status");
+            return base.BeforeUpdating(entity, session);
+
+        }
+
         #region IOutgoingMessagesDataSource Members
 
         public IEnumerable<OutgoingMessage> GetItemsPendingSorted()
         {
-            return GetAll(new Tuple<string, bool>("Tries", true), new Tuple<string, bool>("TimePublishedUtc", true)).
+            return GetAll(new Tuple<string, bool>("Tries", true), new Tuple<string, bool>("CreatedTimeUtc", true)).
                 Where(
                     x => x.Failed == false); //TODO: OPTIMISE FROM QUERY
         }
@@ -73,9 +81,9 @@ namespace ermeX.DAL.DataAccess.DataSources
             if (outgoingMessages.Count == 0)
                 return null;
 
-            var oldestPublishingTime = outgoingMessages.Min(x => x.TimePublishedUtc.Ticks);
+            var oldestPublishingTime = outgoingMessages.Min(x => x.CreatedTimeUtc.Ticks);
             return
-                outgoingMessages.OrderBy(x => x.Id).FirstOrDefault(x => x.TimePublishedUtc.Ticks == oldestPublishingTime);
+                outgoingMessages.OrderBy(x => x.Id).FirstOrDefault(x => x.CreatedTimeUtc.Ticks == oldestPublishingTime);
         }
 
         public OutgoingMessage GetByBusMessageId(int id)
@@ -86,7 +94,7 @@ namespace ermeX.DAL.DataAccess.DataSources
         public IEnumerable<OutgoingMessage> GetExpiredMessages(TimeSpan expirationTime)
         {
             DateTime dateTime = DateTime.UtcNow - expirationTime;
-            return GetAll().Where(x => x.TimePublishedUtc <= dateTime);//TODO: STRAIGHT QUERY
+            return GetAll().Where(x => x.CreatedTimeUtc <= dateTime);//TODO: STRAIGHT QUERY
         }
 
         public void RemoveExpiredMessages(TimeSpan expirationTime)
@@ -97,25 +105,28 @@ namespace ermeX.DAL.DataAccess.DataSources
             
         }
 
-        public bool ContainsMessageFor(Guid busMessageId, Guid destinationComponent)
+        public bool ContainsMessageFor(Guid messageId, Guid destinationComponent)
         {
-            if(busMessageId.IsEmpty() || destinationComponent.IsEmpty())
-                throw new ArgumentException("Parameters cannot be empty");
+            if(messageId.IsEmpty() || destinationComponent.IsEmpty())
+                throw new ArgumentException("the arguments cannot be empty");
 
+            return
+                CountItems(new Tuple<string, object>("MessageId", messageId),
+                           new Tuple<string, object>("PublishedTo", destinationComponent)) > 0;
+        }
 
-            DataAccessOperationResult<bool> dataAccessOperationResult = DataAccessExecutor.Perform(session =>
-                {
-                    string queryString = string.Format("select {0} from {0} as om, {1} as bm where om.BusMessageId=bm.Id and om.ComponentOwner='{2}' and bm.MessageId='{3}' and om.PublishedTo='{4}'", typeof (OutgoingMessage).Name, typeof (BusMessageData).Name, LocalComponentId, busMessageId, destinationComponent);
-                    IQuery query = session.CreateQuery(queryString);
-                    query= query.SetResultTransformer(Transformers.AliasToBean<OutgoingMessage>());
+        public IEnumerable<OutgoingMessage> GetByStatus(Message.MessageStatus status)
+        {
+            var res = DataAccessExecutor.Perform(session => GetByStatus(session, status));
+            if (!res.Success)
+                throw new DataException("Couldnt perform the operation GetByStatus");
 
+            return res.ResultValue;
+        }
 
-                    return new DataAccessOperationResult<bool>() {Success = true, ResultValue = query.List<OutgoingMessage>().Count == 1};
-                });
-            if (!dataAccessOperationResult.Success)
-                throw new DataException("could not perform ContainsMessageFor");
-
-            return dataAccessOperationResult.ResultValue;
+        public DataAccessOperationResult<IEnumerable<OutgoingMessage>> GetByStatus(ISession session, Message.MessageStatus status)
+        {
+            return new DataAccessOperationResult<IEnumerable<OutgoingMessage>>(true, GetItemsByField(session, "Status", status));
         }
 
         #endregion

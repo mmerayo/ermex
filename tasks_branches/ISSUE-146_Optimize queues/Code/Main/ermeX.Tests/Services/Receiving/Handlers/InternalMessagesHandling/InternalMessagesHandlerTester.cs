@@ -58,8 +58,8 @@ namespace ermeX.Tests.Services.Receiving.Handlers.InternalMessagesHandling
             var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
             
             Assert.IsFalse(processorWorker.NewItemArrivedFlagged);
-            IBusMessageDataSource busManager = GetBusMessageDataSource(engineType);
-            using (var target = new InternalMessageHandler(processorWorker, dispatcherWorker, busManager,  settings))
+            var incommingMessagesDataSource = GetDataSource<IncomingMessagesDataSource>(engineType);
+            using (var target = new InternalMessageHandler(processorWorker, dispatcherWorker, incommingMessagesDataSource, settings))
             {
                 target.StartWorkers();
 
@@ -68,7 +68,7 @@ namespace ermeX.Tests.Services.Receiving.Handlers.InternalMessagesHandling
                 target.Handle(msg);
             }
 
-            IList<BusMessageData> busMessageDatas = busManager.GetAll();
+            var busMessageDatas = incommingMessagesDataSource.GetAll();
             Assert.IsTrue(busMessageDatas.Count==1);
 
             //check file is in folder
@@ -86,8 +86,9 @@ namespace ermeX.Tests.Services.Receiving.Handlers.InternalMessagesHandling
             Assert.IsFalse(processorWorker.Started);
             Assert.IsFalse(dispatcherWorker.Started);
 
+            IncomingMessagesDataSource incomingMessagesDataSource = GetDataSource<IncomingMessagesDataSource>(engineType);
             using (
-                var target = new InternalMessageHandler(processorWorker, dispatcherWorker,GetBusMessageDataSource(engineType),
+                var target = new InternalMessageHandler(processorWorker, dispatcherWorker,incomingMessagesDataSource,
                                                         TestSettingsProvider.GetClientConfigurationSettingsSource()))
                 target.StartWorkers();
 

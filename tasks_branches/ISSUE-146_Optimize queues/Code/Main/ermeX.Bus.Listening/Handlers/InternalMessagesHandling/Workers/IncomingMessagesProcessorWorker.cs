@@ -41,7 +41,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers
                                                IIncomingMessageSuscriptionsDataSource suscriptionsDataSource,
                                                IIncomingMessagesDataSource messagesDatasource,
                                                IAppComponentDataSource componentDataSource,
-            IIncomingMessagesDispatcherWorker dispatcherWorker,IBusMessageDataSource busMessageDataSource)
+            IIncomingMessagesDispatcherWorker dispatcherWorker)
             : base("IncomingMessagesProcessorWorker")
         {
             if (settings == null) throw new ArgumentNullException("settings");
@@ -49,13 +49,11 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers
             if (messagesDatasource == null) throw new ArgumentNullException("messagesDatasource");
             if (componentDataSource == null) throw new ArgumentNullException("componentDataSource");
             if (dispatcherWorker == null) throw new ArgumentNullException("dispatcherWorker");
-            if (busMessageDataSource == null) throw new ArgumentNullException("busMessageDataSource");
             Settings = settings;
             SuscriptionsDataSource = suscriptionsDataSource;
             MessagesDatasource = messagesDatasource;
             ComponentDataSource = componentDataSource;
             DispatcherWorker = dispatcherWorker;
-            BusMessageDataSource = busMessageDataSource;
         }
 
         private IBusSettings Settings { get; set; }
@@ -63,7 +61,6 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers
         private IIncomingMessagesDataSource MessagesDatasource { get; set; }
         private IAppComponentDataSource ComponentDataSource { get; set; }
         private IIncomingMessagesDispatcherWorker DispatcherWorker { get; set; }
-        private IBusMessageDataSource BusMessageDataSource { get; set; }
         private readonly object _SyncLock=new object();
         #region IIncomingMessagesProcessorWorker Members
 
@@ -71,38 +68,36 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers
         {
             lock (_SyncLock)
             {
-                var messagesToDispatch = BusMessageDataSource.GetMessagesToDispatch();
+                var messagesToDispatch = MessagesDatasource.GetMessagesToDispatch();
 
                 foreach (var message in messagesToDispatch)
                 {
                     //deserialize
 
-                    Logger.Trace(x => x("{0} - Start Processing from {1}", message.MessageId, message.Publisher));
+                    //Logger.Trace(x => x("{0} - Start Processing from {1}", message.MessageId, message.Publisher));
 
                     //update component Latency
                     //TODO: FROM TRANSPORT LAYER ?? check correctness as the meaning time is this
-                    DateTime receivedTimeUtc = DateTime.UtcNow;
-                    UpdateComponentLatency(message, receivedTimeUtc);
+
+                    BusMessage busMessage = message.ToBusMessage();
+                    UpdateComponentLatency(busMessage, message.TimeReceivedUtc);
 
                     //get internal suscriptions
-                    //TODO: EXTRACT FROM THE JSON, see next line
-                    BizMessage bizMessage = BizMessage.FromJson(message.JsonMessage);
+                    BizMessage bizMessage = busMessage.Data;
                         
                     var suscriptions = GetSubscriptions(bizMessage.MessageType.FullName);
 
                     foreach (var suscription in suscriptions)
                     {
-                        BusMessageData currentBusMessage = BusMessageData.NewFromExisting(message);
-                        currentBusMessage.Status=BusMessageData.BusMessageStatus.ReceiverDispatchable;
-                        BusMessageDataSource.Save(currentBusMessage);
-
                         //create an object per suscription    
-                        var incomingMessage = new IncomingMessage(currentBusMessage)
+                        var incomingMessage = new IncomingMessage(BusMessage.Clone(busMessage))
                             {
                                 ComponentOwner = Settings.ComponentId,
                                 PublishedTo = Settings.ComponentId,
-                                TimeReceivedUtc = receivedTimeUtc,
-                                SuscriptionHandlerId = suscription.SuscriptionHandlerId
+                                TimeReceivedUtc = message.TimeReceivedUtc,
+                                PublishedBy = message.PublishedBy,
+                                SuscriptionHandlerId = suscription.SuscriptionHandlerId,
+                                Status=Message.MessageStatus.ReceiverDispatchable
                             };
 
                         //WRITE objects to DB in single transaction
@@ -112,9 +107,8 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers
                             x =>
                             x("{0} - Created entry for handler {1}", message.MessageId, suscription.HandlerType));
                     }
-                    //delete source file
-                    BusMessageDataSource.Remove(message);
-
+                    //removes incommin created
+                    MessagesDatasource.Remove(message); 
                     DispatcherWorker.WorkPendingEvent.Set();
                 }
             }

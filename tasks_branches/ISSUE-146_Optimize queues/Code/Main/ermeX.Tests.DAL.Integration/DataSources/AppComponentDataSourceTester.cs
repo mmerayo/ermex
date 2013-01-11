@@ -80,14 +80,6 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         }
 
 
-        protected override AppComponentDataSource GetDataSourceTarget(DbEngineType engine)
-        {
-            IDalSettings dataAccessSettings =GetDataHelper(engine).DataAccessSettings;
-            var dataAccessExecutor = new DataAccessExecutor(dataAccessSettings);
-            return new AppComponentDataSource(dataAccessSettings, OwnerComponentId,dataAccessExecutor);
-        }
-
-
         private Guid ComponentId
         {
             get { return RemoteComponentId; }
@@ -108,7 +100,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         {
             int id = InsertRecord(engine);
             Assert.IsTrue(id>0);
-            AppComponentDataSource target = GetDataSourceTarget(engine);
+            AppComponentDataSource target = GetDataSource<AppComponentDataSource>(engine);
             AppComponent actual = target.GetByComponentId(ComponentId);
             Assert.IsNotNull(actual);
 
@@ -120,7 +112,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         {
             int id = InsertRecord(engine);
             Assert.IsTrue(id > 0);
-            AppComponentDataSource target = GetDataSourceTarget(engine);
+            AppComponentDataSource target = GetDataSource<AppComponentDataSource>(engine);
             AppComponent actual = target.GetByComponentId(ComponentId);
             Assert.IsNotNull(actual);
             Assert.IsNull(actual.ComponentExchanges);

@@ -103,7 +103,6 @@
     </Compile>
     <Compile Include="DataSources\AppComponentDataSourceTester.cs" />
     <Compile Include="DataSources\ConnectivityDetailsDataSourceTester.cs" />
-    <Compile Include="DataSources\BusMessageDataSourceTester.cs" />
     <Compile Include="DataSources\ChunkedServiceRequestMessageDataSourceTester.cs" />
     <Compile Include="DataSources\DataSourceTesterBase.cs" />
     <Compile Include="DataSources\IncomingMessageDataSourceTester.cs" />

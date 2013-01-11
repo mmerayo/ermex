@@ -30,7 +30,7 @@ namespace ermeX.LayerMessages
     /// Represents a message at the BizLayer level
     /// </summary>
     [ProtoContract(SkipConstructor = true)]
-    internal sealed class BizMessage: SystemMessage,IEquatable<BizMessage>
+    internal sealed class BizMessage : SystemMessage, IEquatable<BizMessage>
     {
         private string _jsonMessage;
         private object _data = null;
@@ -41,10 +41,7 @@ namespace ermeX.LayerMessages
             _data = data;
         }
 
-        private BizMessage()
-        {
-            
-        }
+        private BizMessage(){}
 
         public static BizMessage FromJson(string jsonData)
         {

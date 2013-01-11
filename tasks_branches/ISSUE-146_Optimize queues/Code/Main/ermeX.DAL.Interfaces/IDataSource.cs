@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using NHibernate;
 using ermeX.Entities.Base;
+using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Interfaces
 {
@@ -88,13 +89,6 @@ namespace ermeX.DAL.Interfaces
         void RemoveByProperty(string propertyName, string propertyValue);
 
         /// <summary>
-        /// Removes an entity by its Id
-        /// </summary>
-        /// <param name="id"></param>
-        void RemoveById(int id);
-
-
-        /// <summary>
         ///   Gets an item by a field value or null
         /// </summary>
         /// <typeparam name="TFieldType"> </typeparam>
@@ -149,9 +143,5 @@ namespace ermeX.DAL.Interfaces
         /// <param name="propertyName"> </param>
         /// <returns> </returns>
         int GetMax(string propertyName);
-
-        // bool HasRowAlready(TEntity entity);
-
-        IList<TEntity> GetItemsByFields(Tuple<string, object>[] equalArguments, Tuple<string, object>[] differentArguments);
     }
 }

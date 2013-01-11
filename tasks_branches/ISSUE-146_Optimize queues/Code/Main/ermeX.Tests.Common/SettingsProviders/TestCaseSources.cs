@@ -31,8 +31,14 @@ namespace ermeX.Tests.Common.SettingsProviders
             yield return DbEngineType.SqliteInMemory;
         }
 
+        public static IEnumerable<DbEngineType> SqlServerDb()
+        {
+            yield return DbEngineType.SqlServer2008;
+        }
+
         public static IEnumerable<DbEngineType> AllDbs()
         {
+            //return InMemoryDb();
             Array enumValues = typeof (DbEngineType).GetEnumValues();
             return enumValues.Cast<DbEngineType>();
         }

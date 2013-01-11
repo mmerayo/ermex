@@ -16,10 +16,11 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-
-
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Common.Logging;
@@ -30,12 +31,15 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
+
+
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 
-namespace ermeX.Bus.Publishing.Dispatching.Messages
+namespace ermeX.Bus.Publishing.Dispatching
 {
 
+    //TODO: THIS TO BE DONE BY A WORKER,AND REMOVE THREAD
     internal sealed class MessageDispatcher : IMessagePublisherDispatcherStrategy
     {
         private static readonly object PollingMessageLocker = new object();
@@ -46,12 +50,10 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         private List<ISendingMessageWorker> _workers;
 
         [Inject]
-        public MessageDispatcher(IBusSettings settings,IBusMessageDataSource busMessageDataSource )
+        public MessageDispatcher(IBusSettings settings)
         {
             if (settings == null) throw new ArgumentNullException("settings");
-            if (busMessageDataSource == null) throw new ArgumentNullException("busMessageDataSource");
             Settings = settings;
-            BusMessageDataSource = busMessageDataSource;
         }
 
         #region IDisposable
@@ -81,10 +83,9 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         #endregion
 
         private IBusSettings Settings { get; set; }
-        private IBusMessageDataSource BusMessageDataSource { get; set; }
         private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
 
-      
+
 
         [Inject]
         private IOutgoingMessagesDataSource OutgoingMessagesDs { get; set; }
@@ -99,10 +100,10 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         {
             if (message == null) throw new ArgumentNullException("message");
 
-            if (message.Data == null )
+            if (message.Data == null)
                 throw new InvalidOperationException("the BusMessage cannot be null");
 
-            Logger.Trace(x=>x("{0} - Start dispatching", message.MessageId));
+            Logger.Trace(x => x("{0} - Start dispatching", message.MessageId));
 
             var suscriptions = GetSubscriptions(message.Data.MessageType.FullName);
             OutgoingMessage outGoingMessage = CreateRootOutgoingMessage(message);
@@ -112,27 +113,24 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
                 CreateEntryPerSubscriber(outGoingMessage, suscriptions);
             }
 
-            
+
 
         }
 
         private OutgoingMessage CreateRootOutgoingMessage(BusMessage message)
         {
-            BusMessageData busMessage = BusMessageData.FromBusLayerMessage(Settings.ComponentId, message, BusMessageData.BusMessageStatus.SenderCollected);
-            BusMessageDataSource.Save(busMessage);
-
-
-            var result = new OutgoingMessage(busMessage)
-                             {
-                                 PublishedBy = message.Publisher
-                             };
+            var result = new OutgoingMessage(message)
+            {
+                PublishedBy = message.Publisher,
+                Status = Message.MessageStatus.SenderCollected
+            };
             return result;
         }
 
         private IList<OutgoingMessageSuscription> GetSubscriptions(string typeFullName)
         {
-            var result=new List<OutgoingMessageSuscription>();
-            var types = TypesHelper.GetInheritanceChain(typeFullName,true);
+            var result = new List<OutgoingMessageSuscription>();
+            var types = TypesHelper.GetInheritanceChain(typeFullName, true);
 
             foreach (var type in types)
             {
@@ -153,7 +151,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             }
         }
 
-      
+
 
         public void Start()
         {
@@ -182,7 +180,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
                     {
                         worker.Exit();
                     }
-                    WaitHandle.WaitAll(_workers.Select(x=>(WaitHandle)x.FinishedEvent).ToArray(), new TimeSpan(0, 0, 15));
+                    WaitHandle.WaitAll(_workers.Select(x => (WaitHandle)x.FinishedEvent).ToArray(), new TimeSpan(0, 0, 15));
                     _workers.Clear();
                 }
 
@@ -198,25 +196,17 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         {
             if (suscriptions == null) throw new ArgumentNullException("suscriptions");
 
-            
-            BusMessageData busMessageData = BusMessageDataSource.GetById(message.BusMessageId);
-
             foreach (var messageSuscription in suscriptions)
             {
-                //store bus message
-                BusMessageData currentBusMessage = BusMessageData.NewFromExisting(busMessageData);
-                currentBusMessage.Status=BusMessageData.BusMessageStatus.SenderDispatchPending;
-                BusMessageDataSource.Save(currentBusMessage);
-
-                //save outgoing message
                 var messageToSend = message.GetClone();
                 messageToSend.PublishedTo = messageSuscription.Component;
-                messageToSend.BusMessageId = currentBusMessage.Id;
+                messageToSend.Status = Message.MessageStatus.SenderDispatchPending;
                 OutgoingMessagesDs.Save(messageToSend);
-                Logger.Trace(x=>x("{0} - Dispatching - Created entry for subscriber: {1}",currentBusMessage.MessageId,  messageSuscription.Component));
+                Logger.Trace(x => x("{0} - Dispatching - Created entry for subscriber: {1}", messageToSend.MessageId, messageSuscription.Component));
+
             }
         }
-        
+
         private void DoGetMessageToDeliver()
         {
             try
@@ -225,7 +215,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
                 {
                     if (_workers.Count < 64) //TODO: lock access to this variable
                         lock (PollingMessageLocker)
-                            //TODO: CLEAR OPTIMIZATION HERE: the logic of the moller must keep pulling messages while they have different destinations, this is, every queue must have a subqueue per destination, DO WHEN QUEUES LOGIC TASK
+                        //TODO: CLEAR OPTIMIZATION HERE: the logic of the moller must keep pulling messages while they have different destinations, this is, every queue must have a subqueue per destination, DO WHEN QUEUES LOGIC TASK
                         {
                             OutgoingMessage nextDeliverable = OutgoingMessagesDs.GetNextDeliverable();
                             if (nextDeliverable != null)
@@ -238,9 +228,10 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
                     Thread.Sleep(_pollingTime);
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
-                Logger.Warn(x=>x("DoGetMessageToDeliver Failed. {0}",ex));
+                Logger.Warn(x => x("DoGetMessageToDeliver Failed. {0}", ex));
             }
         }
 
@@ -252,7 +243,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             if (Status == DispatcherStatus.Started)
             {
                 var handler = GetSendingMessageWorker(outgoingMessage);
-                if (handler == null|| _workers==null) 
+                if (handler == null || _workers == null)
                     return;
                 handler.PendingWorkFinished += HandlerFinished;
                 _workers.Add(handler);
@@ -265,7 +256,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         {
             if (Status != DispatcherStatus.Stopping && Status != DispatcherStatus.Stopped)
             {
-                var sendingMessageWorker = (ISendingMessageWorker) sender;
+                var sendingMessageWorker = (ISendingMessageWorker)sender;
                 sendingMessageWorker.Exit();
                 sendingMessageWorker.FinishedEvent.WaitOne(TimeSpan.FromSeconds(10));
                 _workers.Remove(sendingMessageWorker);
@@ -279,6 +270,6 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             return sendingMessageWorker;
         }
 
-       
+
     }
 }

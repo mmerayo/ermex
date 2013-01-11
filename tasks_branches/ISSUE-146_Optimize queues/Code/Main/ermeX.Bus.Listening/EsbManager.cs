@@ -81,17 +81,7 @@ namespace ermeX.Bus.Listening
 
         #endregion
 
-        //private OutgoingMessage GetPublisheableMessage(object message)
-        //{
-        //    cambiar esto para que use el bus message para metener estos datos guardandolos en la bbdd indicando la direccion
-
-        //    var result = new OutgoingMessage(message)
-        //                     {
-        //                         PublishedBy = Settings.ComponentId,
-        //                         TimePublishedUtc = DateTime.UtcNow
-        //                     };
-        //    return result;
-        //}
+       
 
         #region Services
 
