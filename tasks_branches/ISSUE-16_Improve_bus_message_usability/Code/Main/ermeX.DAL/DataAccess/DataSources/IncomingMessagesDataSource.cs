@@ -17,7 +17,9 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using NHibernate;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
@@ -31,23 +33,29 @@ namespace ermeX.DAL.DataAccess.DataSources
     //TODO:refactor to base
     internal class IncomingMessagesDataSource : DataSource<IncomingMessage>, IIncomingMessagesDataSource, IDataAccessUsable<IncomingMessage>
     {
-        private IBusMessageDataSource BusMessageDataSource { get; set; }
 
         [Inject]
-        public IncomingMessagesDataSource(IBusMessageDataSource busMessageDataSource, IDalSettings dataAccessSettings, IComponentSettings componentSettings, IDataAccessExecutor dataAccessExecutor)
-            : this(busMessageDataSource, dataAccessSettings, componentSettings.ComponentId,dataAccessExecutor)
+        public IncomingMessagesDataSource(IDalSettings dataAccessSettings, IComponentSettings componentSettings, IDataAccessExecutor dataAccessExecutor)
+            : this( dataAccessSettings, componentSettings.ComponentId,dataAccessExecutor)
         {
         }
 
-        public IncomingMessagesDataSource(IBusMessageDataSource busMessageDataSource, IDalSettings dataAccessSettings, Guid componentId, IDataAccessExecutor dataAccessExecutor)
+        public IncomingMessagesDataSource(IDalSettings dataAccessSettings, Guid componentId, IDataAccessExecutor dataAccessExecutor)
             : base(dataAccessSettings, componentId,dataAccessExecutor)
         {
-            BusMessageDataSource = busMessageDataSource;
         }
 
         protected override string TableName
         {
             get { return IncomingMessage.FinalTableName; }
+        }
+
+        protected override bool BeforeUpdating(IncomingMessage entity, ISession session)
+        {
+            if (entity.BusMessage == null || entity.Status == BusMessageData.BusMessageStatus.NotSet)
+                throw new InvalidOperationException("Must set the bus message or the status");
+            return base.BeforeUpdating(entity, session);
+
         }
 
         public IncomingMessage GetNextDispatchableItem(int maxLatency)
@@ -61,9 +69,10 @@ namespace ermeX.DAL.DataAccess.DataSources
 
         private DataAccessOperationResult<IncomingMessage> GetNextDispatchableItem( ISession session,int maxLatency)
         {
+            //TODO: IMPROVE
+
             IncomingMessage result = null;
             var incomingMessages = GetAll(session, new Tuple<string, bool>("TimePublishedUtc", true)).ResultValue;
-            var dataAccessUsable = ((IDataAccessUsable<BusMessageData>) BusMessageDataSource);
 
             //goes through all to find the first dispatchable
             foreach (var incomingMessage in incomingMessages)
@@ -72,11 +81,11 @@ namespace ermeX.DAL.DataAccess.DataSources
                 var milliseconds = timeSpan.TotalMilliseconds;
                 if (milliseconds >= maxLatency)
                 {
-                    BusMessageData busMessageData = dataAccessUsable.GetById(session, incomingMessage.BusMessageId).ResultValue;
-                    if (busMessageData.Status == BusMessageData.BusMessageStatus.ReceiverDispatchable)
+
+                    if (incomingMessage.Status == BusMessageData.BusMessageStatus.ReceiverDispatchable)
                     {
-                        busMessageData.Status = BusMessageData.BusMessageStatus.ReceiverDispatching;
-                        dataAccessUsable.Save(session, busMessageData);
+                        incomingMessage.Status = BusMessageData.BusMessageStatus.ReceiverDispatching;
+                        Save(session, incomingMessage);
                     }
                     else
                     {
@@ -87,6 +96,15 @@ namespace ermeX.DAL.DataAccess.DataSources
                 }
             }
             return new DataAccessOperationResult<IncomingMessage>(true, result);
+        }
+
+        public IEnumerable<IncomingMessage> GetMessagesToDispatch()
+        {
+            //TODO: improve
+            return
+                GetAll().Where(x => x.Status == BusMessageData.BusMessageStatus.ReceiverReceived).OrderBy(
+                    x => x.TimePublishedUtc).ToList();
+
         }
     }
 }

@@ -16,6 +16,8 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
+using System.Collections.Generic;
 using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Interfaces
@@ -23,5 +25,6 @@ namespace ermeX.DAL.Interfaces
     internal interface IIncomingMessagesDataSource : IDataSource<IncomingMessage>
     {
         IncomingMessage GetNextDispatchableItem(int maxLatency);
+        IEnumerable<IncomingMessage> GetMessagesToDispatch();
     }
 }

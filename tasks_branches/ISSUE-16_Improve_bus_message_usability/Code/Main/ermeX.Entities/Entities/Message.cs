@@ -31,18 +31,31 @@ namespace ermeX.Entities.Entities
         {
         }
 
-        protected Message(BusMessageData message)
+        protected Message(BusMessage message)
         {
             if (message == null) throw new ArgumentNullException("message");
-            if(message.Id<=0) throw new ArgumentOutOfRangeException("message","Save the message before");
             //TODO: REMOVE, AS the biz message should be handled only by the bizlayer
-            BusMessageId = message.Id;
+            BusMessage = message;
             TimePublishedUtc = message.CreatedTimeUtc;
         }
 
         protected abstract string TableName { get; }
 
-        public virtual int BusMessageId { get; set; }
+
+        private BusMessageData _busMessageData = null;
+
+        public virtual BusMessage BusMessage
+        {
+            get { return _busMessageData; }
+            set { _busMessageData = BusMessageData.FromBusLayerMessage(ComponentOwner, value); }
+        }
+
+        //TODO: MOVE THE STATUS TO and independent container
+        public virtual BusMessageData.BusMessageStatus Status
+        {
+            get { return _busMessageData.Status; }
+            set { _busMessageData.Status = value; }
+        }
 
         public virtual DateTime TimePublishedUtc { get; set; }
 

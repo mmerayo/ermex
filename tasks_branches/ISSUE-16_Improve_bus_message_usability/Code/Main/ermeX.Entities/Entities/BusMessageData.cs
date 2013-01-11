@@ -27,6 +27,9 @@ namespace ermeX.Entities.Entities
     {
         public enum BusMessageStatus:int
         {
+            NotSet=0,
+
+
             /// <summary>
             /// This is an special stutus to save the first stage, no copies created per subscriber yet
             /// </summary>
@@ -53,8 +56,6 @@ namespace ermeX.Entities.Entities
             /// its being dispatched now
             /// </summary>
             ReceiverDispatching
-
-
         }
 
         public BusMessageData()
@@ -79,6 +80,12 @@ namespace ermeX.Entities.Entities
         public virtual Guid MessageId { get; set; }
 
         public virtual DateTime CreatedTimeUtc { get; set; }
+
+
+        public static BusMessageData FromBusLayerMessage(Guid componentId, BusMessage source)
+        {
+            return FromBusLayerMessage(componentId, source, BusMessageStatus.NotSet);
+        }
 
         public static BusMessageData FromBusLayerMessage(Guid componentId, BusMessage source, BusMessageStatus status)
         {

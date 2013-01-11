@@ -52,5 +52,9 @@ namespace ermeX.LayerMessages
         public BizMessage Data { get; protected set; }
 
 
+        public static BusMessage Clone(BusMessage busMessage)
+        {
+            return new BusMessage(busMessage.MessageId,busMessage.CreatedTimeUtc,busMessage.Publisher,busMessage.Data);
+        }
     }
 }

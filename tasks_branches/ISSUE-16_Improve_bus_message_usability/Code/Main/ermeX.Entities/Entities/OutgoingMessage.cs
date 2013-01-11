@@ -33,7 +33,7 @@ namespace ermeX.Entities.Entities
 
 //for testing
 
-        public OutgoingMessage(BusMessageData message)
+        public OutgoingMessage(BusMessage message)
             : base(message)
         {
             Tries = 0;
@@ -56,13 +56,14 @@ namespace ermeX.Entities.Entities
 
         public virtual OutgoingMessage GetClone()
         {
-            var result = new OutgoingMessage()
+            var result = new OutgoingMessage(BusMessage)
                              {
                                  //BusMessageId = BusMessageId,
                                  TimePublishedUtc = TimePublishedUtc,
                                  PublishedBy = PublishedBy,
                                  PublishedTo = PublishedTo,
                                  Failed = Failed
+
                              };
 
             return result;
@@ -73,7 +74,7 @@ namespace ermeX.Entities.Entities
             var result = new OutgoingMessage
                              {
                                  Id = Convert.ToInt32(dataRow[GetDbFieldName("Id")]), //TODO: SET SQL SERVER TO LONG AND RECAST, CREATE TEST WITH INT32 OVERFLOW
-                                 BusMessageId = Convert.ToInt32(dataRow[GetDbFieldName("BusMessageId")]),
+                                 //BusMessageId = Convert.ToInt32(dataRow[GetDbFieldName("BusMessageId")]),
                                  TimePublishedUtc = new DateTime((long) dataRow[GetDbFieldName("TimePublishedUtc")]),
                                  PublishedBy = (Guid) dataRow[GetDbFieldName("PublishedBy")],
                                  PublishedTo = (Guid) dataRow[GetDbFieldName("PublishedTo")],
@@ -95,7 +96,7 @@ namespace ermeX.Entities.Entities
             if (other == null)
                 return false;
 
-            return BusMessageId == other.BusMessageId &&
+            return BusMessage == other.BusMessage &&
                    ComponentOwner == other.ComponentOwner && Failed == other.Failed && Version == other.Version;
                 //TODO: FINISH
         }

@@ -73,23 +73,24 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
         [Inject]
         public InternalMessageHandler(IIncomingMessagesProcessorWorker processorWorker,
                                       IIncomingMessagesDispatcherWorker dispatcherWorker,
-            IBusMessageDataSource busMessageDataSource,
+            IIncomingMessagesDataSource incomingMessagesDataSource,
+
                                       IBusSettings settings)
         {
             if (processorWorker == null) throw new ArgumentNullException("processorWorker");
             if (dispatcherWorker == null) throw new ArgumentNullException("dispatcherWorker");
-            if (busMessageDataSource == null) throw new ArgumentNullException("busMessageDataSource");
+            if (incomingMessagesDataSource == null) throw new ArgumentNullException("incomingMessagesDataSource");
             if (settings == null) throw new ArgumentNullException("settings");
             ProcessorWorker = processorWorker;
             DispatcherWorker = dispatcherWorker;
-            BusMessageDataSource = busMessageDataSource;
+            IncomingMessagesDataSource = incomingMessagesDataSource;
             Settings = settings;
             
         }
 
         private IIncomingMessagesProcessorWorker ProcessorWorker { get; set; }
         private IIncomingMessagesDispatcherWorker DispatcherWorker { get; set; }
-        private IBusMessageDataSource BusMessageDataSource { get; set; }
+        private IIncomingMessagesDataSource IncomingMessagesDataSource { get; set; }
         private IBusSettings Settings { get; set; }
         private readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
 
@@ -103,7 +104,19 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
         public override object Handle(TransportMessage message)
         {
             BusMessage busMessage = message.Data;
-            BusMessageDataSource.Save(BusMessageData.FromBusLayerMessage(Settings.ComponentId, busMessage,BusMessageData.BusMessageStatus.ReceiverReceived));
+
+            var incomingMessage = new IncomingMessage(BusMessage.Clone(busMessage))
+            {
+                ComponentOwner = Settings.ComponentId,
+                PublishedTo = Settings.ComponentId,
+                TimePublishedUtc = message.CreatedTimeUtc,
+                //TODO: PublishedBy = message.
+                TimeReceivedUtc = DateTime.UtcNow,
+                SuscriptionHandlerId = Guid.Empty,
+                Status = BusMessageData.BusMessageStatus.ReceiverDispatchable
+            };
+
+            IncomingMessagesDataSource.Save(incomingMessage);
             
             Logger.Trace(x=>x("{0} - Message received ", message.Data.MessageId));
             ProcessorWorker.WorkPendingEvent.Set();
