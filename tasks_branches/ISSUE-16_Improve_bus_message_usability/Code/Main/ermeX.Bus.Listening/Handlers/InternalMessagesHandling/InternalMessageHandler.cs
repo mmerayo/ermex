@@ -111,7 +111,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
                 PublishedTo = Settings.ComponentId,
                 TimeReceivedUtc = DateTime.UtcNow,
                 SuscriptionHandlerId = Guid.Empty,
-                Status = Message.MessageStatus.ReceiverDispatchable
+                Status = Message.MessageStatus.ReceiverReceived
             };
 
             IncomingMessagesDataSource.Save(incomingMessage);

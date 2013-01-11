@@ -60,7 +60,6 @@ namespace ermeX.Entities.Entities
                              {
                                  Version=Version,
                                  ComponentOwner = ComponentOwner,
-                                 //BusMessageId = BusMessageId,
                                  CreatedTimeUtc = CreatedTimeUtc,
                                  Status = Status,
                                  JsonMessage = JsonMessage,

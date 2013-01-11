@@ -58,7 +58,8 @@ namespace ermeX.DAL.DataAccess.Mappings
             Map(x => x.Status).Column(IncomingMessage.GetDbFieldName("Status")).CustomType<Message.MessageStatus>(); 
             Map(x => x.JsonMessage).Column(IncomingMessage.GetDbFieldName("JsonMessage"));
             Map(x => x.MessageId).Column(IncomingMessage.GetDbFieldName("MessageId"));
-            Map(x => x.CreatedTimeUtc).Column(IncomingMessage.GetDbFieldName("CreatedTimeUtc"));
+            Map(x => x.CreatedTimeUtc).Column(IncomingMessage.GetDbFieldName("CreatedTimeUtc")).CustomType(
+                typeof(DateTimeUserType)); ;
 
 
         }

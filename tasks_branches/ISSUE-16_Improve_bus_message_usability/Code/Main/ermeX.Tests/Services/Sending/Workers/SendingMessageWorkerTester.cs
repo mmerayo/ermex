@@ -126,7 +126,8 @@ namespace ermeX.Tests.Services.Sending.Workers
             var expected = new OutgoingMessage(busMessage)
             {
                 PublishedTo = RemoteComponentId,
-                ComponentOwner = LocalComponentId
+                ComponentOwner = LocalComponentId,
+                Status=Message.MessageStatus.ReceiverReceived
             };
             dataSource.Save(expected);
             

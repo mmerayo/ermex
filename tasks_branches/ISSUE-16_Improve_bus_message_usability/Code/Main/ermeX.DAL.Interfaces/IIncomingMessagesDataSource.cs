@@ -26,5 +26,6 @@ namespace ermeX.DAL.Interfaces
     {
         IncomingMessage GetNextDispatchableItem(int maxLatency);
         IEnumerable<IncomingMessage> GetMessagesToDispatch();
+        IEnumerable<IncomingMessage> GetByStatus(Message.MessageStatus status);
     }
 }

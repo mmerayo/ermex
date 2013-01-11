@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using NHibernate;
 using ermeX.Entities.Base;
+using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Interfaces
 {
@@ -142,8 +143,5 @@ namespace ermeX.DAL.Interfaces
         /// <param name="propertyName"> </param>
         /// <returns> </returns>
         int GetMax(string propertyName);
-
-        // bool HasRowAlready(TEntity entity);
-        
     }
 }

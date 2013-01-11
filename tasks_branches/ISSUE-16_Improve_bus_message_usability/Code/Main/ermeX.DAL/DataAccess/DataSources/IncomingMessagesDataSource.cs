@@ -54,6 +54,13 @@ namespace ermeX.DAL.DataAccess.DataSources
         {
             if (entity.Status == Message.MessageStatus.NotSet)
                 throw new InvalidOperationException("Must set the bus message or the status");
+            var existing = GetById(session, entity.Id).ResultValue;
+            session.Evict(existing);
+            if (existing == null)
+                return true;
+            if (existing.Version > entity.Version)
+                return false;
+
             return base.BeforeUpdating(entity, session);
 
         }
@@ -72,7 +79,8 @@ namespace ermeX.DAL.DataAccess.DataSources
             //TODO: IMPROVE
 
             IncomingMessage result = null;
-            var incomingMessages = GetAll(session, new Tuple<string, bool>("CreatedTimeUtc", true)).ResultValue;
+            
+            var incomingMessages = GetByStatus(session, Message.MessageStatus.ReceiverDispatchable).ResultValue.OrderBy(x=>x.CreatedTimeUtc);
 
             //goes through all to find the first dispatchable
             foreach (var incomingMessage in incomingMessages)
@@ -98,13 +106,27 @@ namespace ermeX.DAL.DataAccess.DataSources
             return new DataAccessOperationResult<IncomingMessage>(true, result);
         }
 
+        public IEnumerable<IncomingMessage> GetByStatus(Message.MessageStatus status)
+        {
+            var res = DataAccessExecutor.Perform(session => GetByStatus(session, status));
+            if (!res.Success)
+                throw new DataException("Couldnt perform the operation GetByStatus");
+
+            return res.ResultValue;
+        }
+
+        public DataAccessOperationResult<IEnumerable<IncomingMessage>> GetByStatus(ISession session, Message.MessageStatus status)
+        {
+            return new DataAccessOperationResult<IEnumerable<IncomingMessage>>(true, GetItemsByField(session, "Status", status));
+        }
+
         public IEnumerable<IncomingMessage> GetMessagesToDispatch()
         {
-            //TODO: improve
             return
-                GetAll().Where(x => x.Status == Message.MessageStatus.ReceiverReceived).OrderBy(
+                GetByStatus(Message.MessageStatus.ReceiverReceived).OrderBy(
                     x => x.CreatedTimeUtc).ToList();
-
         }
+
+        
     }
 }

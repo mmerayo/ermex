@@ -272,7 +272,7 @@ namespace ermeX.Tests.Common.DataAccess
         }
 
         public int InsertOutgoingMessage( Guid destination, Guid owner,
-                                            int busMessageId, DateTime timePublished, int tries,
+                                            Guid busMessageId, DateTime timePublished, int tries,
                                             bool errored, Message.MessageStatus status, string jsonMessage)
         {
             string sqlQuery = String.Format(
@@ -280,7 +280,7 @@ namespace ermeX.Tests.Common.DataAccess
                 "([{6}_PublishedBy],[{6}_PublishedTo],[{6}_CreatedTimeUtc],[{6}_Tries],[{6}_Failed],{6}_ComponentOwner,{6}_Version,{6}_Delivering,{6}_Status,{6}_JsonMessage,{6}_MessageId)" +
                 " VALUES('{0}','{1}',{3},'{4}','{5}','{0}',{7},0,'{8}','{9}','{2}')",
                 owner, destination, busMessageId,  timePublished.Ticks, tries, errored,
-                OutgoingMessage.FinalTableName, DateTime.UtcNow.Ticks,status,jsonMessage);
+                OutgoingMessage.FinalTableName, DateTime.UtcNow.Ticks,(int)status,jsonMessage);
             QueryTestHelper.ExecuteNonQuery(
                 sqlQuery);
             string lastIdSqlQuery = LastIdSqlQuery(OutgoingMessage.FinalTableName);
@@ -291,14 +291,14 @@ namespace ermeX.Tests.Common.DataAccess
         }
 
         public int InsertIncomingMessage( Guid destination, Guid owner,
-                                            int busMessageId, DateTime timePublished,
+                                            Guid busMessageId, DateTime timePublished,
                                             DateTime timeReceived, Guid suscriptionHandler, Message.MessageStatus status, string jsonMessage)
         {
             string sqlQuery = String.Format(
                 "insert into ClientComponent.{5} ([{5}_PublishedBy],[{5}_PublishedTo],[{5}_CreatedTimeUtc],{5}_ComponentOwner,{5}_TimeReceivedUtc,{5}_SuscriptionHandlerId,{5}_Version,{5}_Status,{5}_JsonMessage,{5}_MessageId)"+
                 " VALUES('{0}','{1}',{3},'{0}',{4},'{6}',{7},{8},'{9}','{2}')",
                 owner, destination, busMessageId,  timePublished.Ticks, timeReceived.Ticks,
-                IncomingMessage.FinalTableName, suscriptionHandler, DateTime.UtcNow.Ticks, status, jsonMessage);
+                IncomingMessage.FinalTableName, suscriptionHandler, DateTime.UtcNow.Ticks, (int)status, jsonMessage);
             QueryTestHelper.ExecuteNonQuery(
                 sqlQuery);
             string lastIdSqlQuery = LastIdSqlQuery(IncomingMessage.FinalTableName);

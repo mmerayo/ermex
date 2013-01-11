@@ -483,7 +483,6 @@ namespace ermeX.DAL.DataAccess.Helpers
                        {
                            "Version",
                            "ClientComponent.ChunkedServiceRequestMessages",
-                           "ClientComponent.BusMessages",
 
                            "ClientComponent.OutgoingMessageSuscriptions",
                            "ClientComponent.IncomingMessageSuscriptions",
