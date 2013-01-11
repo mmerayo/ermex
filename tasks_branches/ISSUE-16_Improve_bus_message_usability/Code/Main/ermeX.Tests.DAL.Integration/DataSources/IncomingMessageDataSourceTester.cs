@@ -36,8 +36,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         private readonly DateTime TimePublished = new DateTime(2010, 2, 3, 1, 2, 3, 330);
         private readonly DateTime TimeReceived = new DateTime(2010, 2, 3, 3, 4, 5, 330);
        
-        private const int BMID = 2222;
-        private const int BMID2 = 654978;
+        private readonly Guid BMID = Guid.NewGuid();
 
         private readonly Guid componentId = Guid.NewGuid();
         private Guid ownerCompId {get { return LocalComponentId; }}

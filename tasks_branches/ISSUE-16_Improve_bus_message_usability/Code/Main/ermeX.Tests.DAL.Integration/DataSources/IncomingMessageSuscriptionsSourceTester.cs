@@ -27,7 +27,6 @@ using ermeX.Tests.Common.DataAccess;
 
 namespace ermeX.Tests.DAL.Integration.DataSources
 {
-    //[TestFixture]
     internal class IncomingMessageSuscriptionsSourceTester :
         DataSourceTesterBase<IncomingMessageSuscriptionsDataSource, IncomingMessageSuscription>
     {

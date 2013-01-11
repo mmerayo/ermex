@@ -49,6 +49,7 @@ namespace ermeX.Entities.Entities
             /// Received but not created copy per local subscription
             /// </summary>
             ReceiverReceived,
+
             /// <summary>
             /// Ready to be delivered to the handler
             /// </summary>

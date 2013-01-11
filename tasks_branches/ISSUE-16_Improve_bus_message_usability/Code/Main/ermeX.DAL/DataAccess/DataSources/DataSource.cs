@@ -27,6 +27,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.Interfaces;
 using ermeX.Entities.Base;
+using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.DataAccess.DataSources
 {
@@ -515,6 +516,7 @@ namespace ermeX.DAL.DataAccess.DataSources
             return true;
         }
 
-       
+
+        
     }
 }

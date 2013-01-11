@@ -39,8 +39,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         
         private readonly Guid componentId = Guid.NewGuid();
         private readonly DummyDomainEntity message = new DummyDomainEntity {Id = Guid.NewGuid()};
-        private const int BMID = 2222;
-        private const int BMID2 = 654978;
+        private readonly Guid BMID = Guid.NewGuid();
 
         protected override string IdFieldName
         {
@@ -95,7 +94,8 @@ namespace ermeX.Tests.DAL.Integration.DataSources
                            PublishedBy = LocalComponentId,
                            PublishedTo = componentId,
                            CreatedTimeUtc = TimePublished,
-                           Tries = Tries
+                           Tries = Tries,
+                           Status = Message.MessageStatus.ReceiverReceived
                        };
         }
 
