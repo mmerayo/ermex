@@ -15,7 +15,7 @@ using ermeX.Threading.Queues;
 namespace ermeX.Bus.Publishing.Dispatching.Messages
 {
     /// <summary>
-    /// Distributes the messages with an entry per subscriber where the message havent been sent
+    /// Distributes the messages creating an entry per subscriber where the message havent been sent
     /// </summary>
     sealed class MessageDistributor:ProducerParallelConsumerQueue<MessageDistributor.MessageDistributorMessage>, IMessageDistributor
     {
@@ -94,11 +94,10 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
                     var messageToSend = outGoingMessage.GetClone(); //creates a copy for the subscriber
                     messageToSend.Status = Message.MessageStatus.SenderDispatchPending; //ready to be dispatched
                     messageToSend.PublishedTo = destinationComponent; //assigns the receiver
-
-                    Dispatcher.EnqueueItem(new SubscribersDispatcher.SubscribersDispatcherMessage(messageToSend));
-                    //pushes it
-                    OutgoingMessagesDataSource.Save(messageToSend);
-                    //enqueues for aupdate in the db
+                    Dispatcher.EnqueueItem(new SubscribersDispatcher.SubscribersDispatcherMessage(messageToSend));//pushes it
+                    
+                    OutgoingMessagesDataSource.Save(messageToSend);//update the db
+                    
                 }
             }
         }

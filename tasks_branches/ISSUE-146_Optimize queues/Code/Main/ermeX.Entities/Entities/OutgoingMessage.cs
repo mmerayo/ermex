@@ -41,8 +41,6 @@ namespace ermeX.Entities.Entities
 
 
         public virtual int Tries { get; set; }
-        public virtual bool Delivering { get; set; }
-        public virtual bool Failed { get; set; }
 
         protected override string TableName
         {
@@ -66,7 +64,6 @@ namespace ermeX.Entities.Entities
                                  JsonMessage = JsonMessage,
                                  PublishedBy = PublishedBy,
                                  PublishedTo = PublishedTo,
-                                 Failed = Failed
 
                              };
 
@@ -85,7 +82,6 @@ namespace ermeX.Entities.Entities
                                  MessageId = (Guid)dataRow[GetDbFieldName("MessageId")],
                                  PublishedBy = (Guid) dataRow[GetDbFieldName("PublishedBy")],
                                  PublishedTo = (Guid) dataRow[GetDbFieldName("PublishedTo")],
-                                 Failed = (bool) dataRow[GetDbFieldName("Failed")],
                                  ComponentOwner = (Guid) dataRow[GetDbFieldName("ComponentOwner")],
                                  Tries = Convert.ToInt32( dataRow[GetDbFieldName("Tries")]),
                                  Version = (long) dataRow[GetDbFieldName("Version")],
@@ -104,7 +100,7 @@ namespace ermeX.Entities.Entities
                 return false;
 
             return
-                ComponentOwner == other.ComponentOwner && Failed == other.Failed && Version == other.Version &&
+                ComponentOwner == other.ComponentOwner  && Version == other.Version &&
                 Status == other.Status && CreatedTimeUtc == other.CreatedTimeUtc && JsonMessage == other.JsonMessage &&
                 MessageId == other.MessageId;
             //TODO: FINISH

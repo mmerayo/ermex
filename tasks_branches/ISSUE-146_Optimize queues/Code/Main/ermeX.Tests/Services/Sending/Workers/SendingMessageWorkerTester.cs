@@ -291,7 +291,7 @@ namespace ermeX.Tests.Services.Sending.Workers
             OutgoingMessage expected = GetExpected(engineType);
             ds.Save(expected);
 
-            Assert.IsFalse(expected.Failed);
+            Assert.IsFalse(expected.Status==Message.MessageStatus.SenderFailed);
             settings.SendExpiringTime = TimeSpan.FromSeconds(1);
             proxy.ForceNumTries = 5;
 

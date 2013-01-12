@@ -67,7 +67,7 @@ namespace ermeX.DAL.DataAccess.DataSources
         {
             return GetAll(new Tuple<string, bool>("Tries", true), new Tuple<string, bool>("CreatedTimeUtc", true)).
                 Where(
-                    x => x.Failed == false); //TODO: OPTIMISE FROM QUERY
+                    x => x.Status!=Message.MessageStatus.SenderFailed); //TODO: OPTIMISE FROM QUERY
         }
 
         public OutgoingMessage GetNextDeliverable()

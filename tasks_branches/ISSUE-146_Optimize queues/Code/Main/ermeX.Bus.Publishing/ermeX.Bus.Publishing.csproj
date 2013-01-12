@@ -101,11 +101,8 @@
     <Compile Include="Dispatching\Messages\IMessageDistributor.cs" />
     <Compile Include="Dispatching\Messages\MessageCollector.cs" />
     <Compile Include="Dispatching\Messages\MessageDistributor.cs" />
-    <Compile Include="Dispatching\Messages\MessageSender.cs" />
-    <Compile Include="Dispatching\Messages\SendingMessageWorker.cs" />
     <Compile Include="BusInteropBase.cs" />
     <Compile Include="ClientProxies\ServiceCallsProxy.cs" />
-    <Compile Include="Dispatching\Messages\MessageDispatcher.cs" />
     <Compile Include="Dispatching\Messages\SubscribersDispatcher.cs" />
     <Compile Include="Dispatching\ServiceRequests\ServiceRequestDispatcher.cs" />
     <Compile Include="MessagePublishingManager.cs" />
@@ -162,9 +159,7 @@
       <Name>ermeX.Transport.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AsyncWorkers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

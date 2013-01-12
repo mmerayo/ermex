@@ -98,7 +98,6 @@
     <Compile Include="IHandleMessages.cs" />
     <Compile Include="IMessageListener.cs" />
     <Compile Include="IMessagePublisher.cs" />
-    <Compile Include="ISendingMessageWorker.cs" />
     <Compile Include="IServiceCallsProxy.cs" />
     <Compile Include="IServiceRequestManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

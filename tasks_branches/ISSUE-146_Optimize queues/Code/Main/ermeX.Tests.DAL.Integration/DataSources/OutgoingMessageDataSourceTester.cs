@@ -90,7 +90,6 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             return new OutgoingMessage (busMessage)
                        {
                            ComponentOwner = LocalComponentId,
-                           Failed = Errored,
                            PublishedBy = LocalComponentId,
                            PublishedTo = componentId,
                            CreatedTimeUtc = TimePublished,
