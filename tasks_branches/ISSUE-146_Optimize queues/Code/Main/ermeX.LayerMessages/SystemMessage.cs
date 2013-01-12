@@ -36,7 +36,7 @@ namespace ermeX.LayerMessages
         protected SystemMessage(Guid messageId,DateTime createdTimeUtc)
         {
             MessageId = messageId;
-            CreatedTimeUtc = createdTimeUtc; //new DateTime( createdTimeUtc.Ticks);//TODO: UNTIL PROTOBUF-NET FIXES ISSUE 335 RAISED BY MMERAYO30
+            CreatedTimeUtc = new DateTime(createdTimeUtc.Ticks);//TODO: UNTIL PROTOBUF-NET FIXES ISSUE 335 RAISED BY MMERAYO30
         }
 
         [ProtoMember(1)]
