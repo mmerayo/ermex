@@ -1,0 +1,58 @@
+= DEVELOPMENT GUIDE =
+
+This guide is for ermeX tools developers. Not for final users
+
+*_please feedback_*
+
+== SOLUTION CONFIGURATIONS ==
+  * Platforms: x86, x64 (ANY_CPU not available at the moment)
+  * Frameworks: 4.0 Full
+  * Configurations: Debug, Release
+
+== SVN Folders ==
+
+  *_blessed_ this is the main trunk, and is intended to be used for merging/branching *ONLY* by the project admins
+  *_tasks_branches_ it contains all the branches currently under development
+  *_attic_ contains the branches created for tasks already merged. The purpose of this folder is to store the branch after merge until the task is verified.
+  *_wiki_ wiki
+  *_WorkingTrunks_ Contains the trunk for each version where to branch from. the current version under development will contain the suffix *CURRENT*. Notice that all this trunks are branches from _blessed_ 
+  *_CI_Backup_ contains the backups of the CI current configuration
+
+---
+
+== ISSUES & NEW REQUIREMENTS ==
+
+  # The issues page is only used to report defects and to collect feedback from users to be organized into iterations
+  # The new requirements and other discussions are discussed in the *FORUM*(TO BE CREATED)
+  # Develop only the task you have picked: Id another tasks identified you can create an issue on the issues page that will be translated to a proper task in further iterations
+---
+
+== WORKFLOW ==
+
+  # Request the current iteration tasks available list to the admin. *MANAGEMENT TO BE DISCUSSED IN THE FUTURE*  
+  # Branch from the version specified in the task under _WorkingTrunks_ to _tasks_branches_ with format: ISSUE-NUM_TITLE_OF_THE_ISSUE
+  # Develop in this branch. Merge from your source trunk frequently
+  # Commit your code to your branch _with comments_ using the format "ISSUE-NUM:" as prefix of the comment
+  # if your task is *MERGEABLE* _(see mergeable tasks below)_ Merge it to the source trunk under _WorkingTrunks_. In the case the source trunk is not the current, them merge to that one and merge the revision trunk by trunk until the current. Ensure every merge commit is *MERGEABLE* 
+  # Move your branch to _attic_. It will stay there until is verified and it will be deleted by the project admin
+---
+== SVN COMMENTS ==
+All the comments must have the prefix "ISSUE_NUM:" and then action text: i.e. Branch created, branch commit, merged to trunk, task commit...
+---
+
+== WHAT IS A MERGEABLE TASK ==
+
+A mergeable task is a task that after merged locally(Request info about how to run these in in your local machine in one step):
+  * All tests run sucessfully in release mode for every platform
+  * The Acceptance tests run sucessfully in your local machine
+  * Other tasks run sucessfully(TODO)
+
+A mergeable task can be commited to the trunk
+
+If everything went fine, then you can merge your code
+
+== UTILS FOR DEVELOPERS ==
+  * Run test from nUnit GUI: links at folder _Utilities_
+  * Build tasks in local environment
+    # Files ReleaseRunner__FRAMEWORK___PLATFORM_.cmd
+    # Params _Compile_ or _Pack_ or _UnitTests_ or _AcceptanceTests_. The last two options need _Compile_ to be invoked previously
