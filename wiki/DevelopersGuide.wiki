@@ -1,6 +1,8 @@
 #labels Phase-Implementation
 = DEVELOPMENT GUIDE =
 
+This guide is for ermeX tools developers. Not for final users
+
 *_please feedback_*
 
 == SOLUTION CONFIGURATIONS ==
