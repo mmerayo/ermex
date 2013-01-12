@@ -38,6 +38,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
     sealed class MessageCollectorTester : DataAccessTestBase
     {
+        readonly List<MessageDistributor.MessageDistributorMessage> _sentMessages = new List<MessageDistributor.MessageDistributorMessage>();
+        readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
         private readonly SystemTaskQueue _systemQueue=new SystemTaskQueue();
 
         private MessageCollector GetInstance(DbEngineType dbEngine,Action<MessageDistributor.MessageDistributorMessage> messageReceived, out IMessageDistributor mockedDistributor)
@@ -50,12 +52,25 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
             return new MessageCollector(settings,  _systemQueue, outgoingDataSource,mockedDistributor);
         }
 
+        public override void OnStartUp()
+        {
+            base.OnStartUp();
+            _sentMessages.Clear();
+            _messageReceived.Reset();
+
+        }
+
+        private void DealWithMessage(MessageDistributor.MessageDistributorMessage message)
+        {
+            _sentMessages.Add(message);
+            _messageReceived.Set();
+        }
+
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void ComponentStopsOnDisposal(DbEngineType dbEngine)
         {
             IMessageDistributor mockedDistributor;
-            var actual = new List<MessageDistributor.MessageDistributorMessage>();
-            var target = GetInstance(dbEngine, actual.Add, out mockedDistributor);
+            var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor);
             target.Start();
             target.Dispose();
             Assert.AreEqual(DispatcherStatus.Stopped,  target.Status);
@@ -65,20 +80,18 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
         public void CanDispatchMessage(DbEngineType dbEngine )
         {
             IMessageDistributor mockedDistributor;
-            var actual = new List<MessageDistributor.MessageDistributorMessage>();
             var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId,
                                          new BizMessage("theData"));
-            using (var target = GetInstance(dbEngine, actual.Add, out mockedDistributor))
+            using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
             {
                 target.Start();
                 target.Dispatch(expected);
-                while(actual.Count==0)
-                    Thread.Sleep(50);
+                _messageReceived.WaitOne(TimeSpan.FromSeconds(10));
 
             }
 
-            Assert.IsTrue(actual.Count==1);
-            BusMessage busMessage = actual[0].OutGoingMessage.ToBusMessage();
+            Assert.IsTrue(_sentMessages.Count==1);
+            BusMessage busMessage = _sentMessages[0].OutGoingMessage.ToBusMessage();
             Assert.AreEqual(expected, busMessage); //asserts is the same that was pushed
             var messagesInDb= GetDataSource<OutgoingMessagesDataSource>(dbEngine).GetAll();
             Assert.IsTrue(messagesInDb.Count==1);  //asserts the message was created
@@ -107,9 +120,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
             Assert.IsTrue(outgoingMessagesDataSource.GetAll().Count==1); //assert it was saved
 
-            var actual = new List<MessageDistributor.MessageDistributorMessage>();
             IMessageDistributor mockedDistributor;
-            using (var target = GetInstance(dbEngine, actual.Add, out mockedDistributor))
+            using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
             {
                 target.Start();
                 Thread.Sleep(250);
@@ -136,17 +148,15 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
             outgoingMessagesDataSource.Save(outgoingMessage);  
 
             IMessageDistributor mockedDistributor;
-            var actual = new List<MessageDistributor.MessageDistributorMessage>();
-            using (var target = GetInstance(dbEngine, actual.Add, out mockedDistributor))
+            using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
             {
                 target.Start();
-                while (actual.Count == 0)
-                    Thread.Sleep(50);
+                _messageReceived.WaitOne(TimeSpan.FromSeconds(10));
 
             }
 
-            Assert.IsTrue(actual.Count == 1);  //asserts it was sent
-            OutgoingMessage actualOutgoingMessage = actual[0].OutGoingMessage;
+            Assert.IsTrue(_sentMessages.Count == 1);  //asserts it was sent
+            OutgoingMessage actualOutgoingMessage = _sentMessages[0].OutGoingMessage;
             Assert.AreEqual(outgoingMessage, actualOutgoingMessage);
             BusMessage message = actualOutgoingMessage.ToBusMessage();
             Assert.AreEqual(busMessage, message);
