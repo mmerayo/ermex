@@ -1,4 +1,4 @@
-// /*---------------------------------------------------------------------------------------*/
+﻿// /*---------------------------------------------------------------------------------------*/
 //        Licensed to the Apache Software Foundation (ASF) under one
 //        or more contributor license agreements.  See the NOTICE file
 //        distributed with this work for additional information
@@ -16,15 +16,28 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-using System;
-using System.Runtime.Serialization;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Common.Logging;
+using ermeX.Bus.Interfaces;
+using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.Interfaces;
 
-namespace ermeX.Exceptions
+namespace ermeX.Bus.Publishing.Dispatching.Messages
 {
-    public class ermeXException:Exception
+    /// <summary>
+    /// 
+    /// </summary>
+    internal interface IMessageSubscribersDispatcher
     {
-        public ermeXException(string message):base(message){}
-        public ermeXException(string message, Exception innerException):base(message,innerException){}
-        public ermeXException(SerializationInfo info, StreamingContext context) : base(info,context) { }
+        /// <summary>
+        /// Number of threads active currently
+        /// </summary>
+        int CurrentThreadNumber { get; }
+
+        int Count { get; }
+        void EnqueueItem(MessageSubscribersDispatcher.SubscribersDispatcherMessage item);
+        void Dispose();
     }
 }

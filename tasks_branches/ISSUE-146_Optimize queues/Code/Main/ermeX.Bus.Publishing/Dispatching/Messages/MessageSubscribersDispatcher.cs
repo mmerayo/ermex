@@ -1,3 +1,21 @@
+// /*---------------------------------------------------------------------------------------*/
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
+// /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +35,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
     /// <summary>
     /// Sends the messages and handle sending failures
     /// </summary>
-    sealed class SubscribersDispatcher : ProducerParallelConsumerQueue<SubscribersDispatcher.SubscribersDispatcherMessage>, ISubscribersDispatcher
+    sealed class MessageSubscribersDispatcher : ProducerParallelConsumerQueue<MessageSubscribersDispatcher.SubscribersDispatcherMessage>, IMessageSubscribersDispatcher
     {
        
         private const int _maxThreadsNum = 64;
@@ -35,7 +53,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         }
 
         [Inject]
-        public SubscribersDispatcher(IBusSettings settings, IOutgoingMessagesDataSource dataSource, IJobScheduler taskScheduler, SystemTaskQueue taskQueue, IServiceProxy service)
+        public MessageSubscribersDispatcher(IBusSettings settings, IOutgoingMessagesDataSource dataSource, IJobScheduler taskScheduler, SystemTaskQueue taskQueue, IServiceProxy service)
             : base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
         {
             if (settings == null) throw new ArgumentNullException("settings");
@@ -112,12 +130,16 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             if (!serviceResult.Ok)
             {
                 if (serviceResult.ServerMessages == null || serviceResult.ServerMessages.Count == 0)
-                    throw new ApplicationException("The service didnt return an error meassage at least. It is expected.");
+                    Logger.Error("The service didnt return an error message at least. It is expected.");
+                else
+                {
+                    string logData = serviceResult.ServerMessages.Aggregate("Server returned errors: ",
+                                                                            (current, serverMessage) =>
+                                                                            current + Environment.NewLine +
+                                                                            serverMessage);
 
-                string logData = serviceResult.ServerMessages.Aggregate("Server returned errors: ", (current, serverMessage) => current + Environment.NewLine + serverMessage);
-
-                Logger.Error(x => x("{0}", logData));
-                
+                    Logger.Error(x => x("{0}", logData));
+                }
             }
             
             return serviceResult.Ok;
