@@ -126,13 +126,16 @@ namespace ermeX.Tests.Common.DataAccess
         }
 
         private volatile QueryHelper _queryTestHelper = null;
+
         public QueryHelper QueryTestHelper
         {
             get
             {
                 if (_queryTestHelper == null)
-                    lock (_syncLock) if (_queryTestHelper == null)
-                       _queryTestHelper= QueryHelper.GetHelper(EngineType, DataAccessSettings.ConfigurationConnectionString);
+                    lock (_syncLock)
+                        if (_queryTestHelper == null)
+                            _queryTestHelper = QueryHelper.GetHelper(EngineType,
+                                                                     DataAccessSettings.ConfigurationConnectionString);
                 return _queryTestHelper;
             }
         }
@@ -273,13 +276,13 @@ namespace ermeX.Tests.Common.DataAccess
 
         public int InsertOutgoingMessage( Guid destination, Guid owner,
                                             Guid busMessageId, DateTime timePublished, int tries,
-                                            bool errored, Message.MessageStatus status, string jsonMessage)
+                                             Message.MessageStatus status, string jsonMessage)
         {
             string sqlQuery = String.Format(
-                "insert into ClientComponent.{6} "+
-                "([{6}_PublishedBy],[{6}_PublishedTo],[{6}_CreatedTimeUtc],[{6}_Tries],[{6}_Failed],{6}_ComponentOwner,{6}_Version,{6}_Delivering,{6}_Status,{6}_JsonMessage,{6}_MessageId)" +
-                " VALUES('{0}','{1}',{3},'{4}','{5}','{0}',{7},0,'{8}','{9}','{2}')",
-                owner, destination, busMessageId,  timePublished.Ticks, tries, errored,
+                "insert into ClientComponent.{5} "+
+                "([{5}_PublishedBy],[{5}_PublishedTo],[{5}_CreatedTimeUtc],[{5}_Tries],{5}_ComponentOwner,{5}_Version,{5}_Status,{5}_JsonMessage,{5}_MessageId)" +
+                " VALUES('{0}','{1}',{3},'{4}','{0}',{6},'{7}','{8}','{2}')",
+                owner, destination, busMessageId,  timePublished.Ticks, tries, 
                 OutgoingMessage.FinalTableName, DateTime.UtcNow.Ticks,(int)status,jsonMessage);
             QueryTestHelper.ExecuteNonQuery(
                 sqlQuery);

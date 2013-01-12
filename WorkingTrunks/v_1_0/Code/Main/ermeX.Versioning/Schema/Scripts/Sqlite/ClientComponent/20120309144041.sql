@@ -119,10 +119,8 @@ CREATE TABLE OutgoingMessages (
     OutgoingMessages_PublishedTo            GUID              NOT NULL,
     OutgoingMessages_CreatedTimeUtc       INTEGER           NOT NULL,
     OutgoingMessages_Tries                  INTEGER           NOT NULL,
-    OutgoingMessages_Failed                 BOOLEAN               NOT NULL,
     OutgoingMessages_Version                INTEGER           NOT NULL,
     OutgoingMessages_ComponentOwner         GUID              NOT NULL,
-    OutgoingMessages_Delivering             BOOLEAN               NOT NULL,
 	OutgoingMessages_MessageId      GUID     NOT NULL,
     OutgoingMessages_JsonMessage    NVARCHAR NOT NULL
                                         COLLATE 'NOCASE',

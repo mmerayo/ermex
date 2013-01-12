@@ -17,38 +17,30 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using Ninject;
-using ermeX.Bus.Interfaces.Dispatching;
-using ermeX.Transport.Interfaces.Messages;
-using ermeX.Transport.Interfaces.Sending.Client;
-using ermeX.Transport.Interfaces.ServiceOperations;
 
-namespace ermeX.Bus.Publishing.Dispatching
+namespace ermeX.Tests.Threading.Queues
 {
-    internal class ServiceRequestDispatcher : IServiceRequestDispatcher
+    public class DummyQueueItem
     {
-        [Inject]
-        public ServiceRequestDispatcher(IServiceProxy proxy)
+        private readonly int _value;
+        private readonly DateTime _time;
+
+        public DummyQueueItem(int value,DateTime time)
         {
-            if (proxy == null) throw new ArgumentNullException("proxy");
-            ServiceProxy = proxy;
+            _value = value;
+            _time = time;
         }
 
-        private IServiceProxy ServiceProxy { get; set; }
+       
 
-        #region IServiceRequestDispatcher Members
-
-        public IServiceOperationResult<TResult> RequestSync<TResult>(ServiceRequestMessage request)
+        public int Value
         {
-            return ServiceProxy.SendServiceRequestSync<TResult>(request);
+            get { return _value; }
         }
 
-        public void RequestAsync<TResult>(ServiceRequestMessage request,
-                                          Action<IServiceOperationResult<TResult>> responseHandler)
+        public DateTime Time
         {
-            ServiceProxy.SendServiceRequestAsync(request, responseHandler);
+            get { return _time; }
         }
-
-        #endregion
     }
 }

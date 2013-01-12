@@ -25,7 +25,8 @@ using ermeX.Common.Caching;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Status;
-
+using ermeX.Threading.Queues;
+using ermeX.Threading.Scheduling;
 
 
 namespace ermeX.ConfigurationManagement.IoC.InjectionModules
@@ -55,6 +56,8 @@ namespace ermeX.ConfigurationManagement.IoC.InjectionModules
              
             Bind<ICacheProvider>().ToConstant(new MemoryCacheStore(_settings.CacheExpirationSeconds));
 
+            Bind<SystemTaskQueue>().ToSelf().InSingletonScope();
+            Bind<IJobScheduler>().To<JobScheduler>().InSingletonScope();
 
         }
     }

@@ -17,16 +17,17 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using System.Threading;
-using ermeX.Common;
-using ermeX.Entities.Entities;
-using ermeX.Threading;
 
-
-namespace ermeX.Bus.Interfaces
+namespace ermeX.Threading.Queues
 {
-    internal interface ISendingMessageWorker : IWorker
+    internal interface IProducerConsumerQueue<TQueueItem> : IDisposable
     {
-       
+        /// <summary>
+        /// Number of threads active currently
+        /// </summary>
+        int CurrentThreadNumber { get; }
+
+        int Count { get; }
+        void EnqueueItem(TQueueItem item);
     }
 }

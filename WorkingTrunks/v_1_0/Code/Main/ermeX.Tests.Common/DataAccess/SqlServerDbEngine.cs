@@ -183,7 +183,7 @@ namespace ermeX.Tests.Common.DataAccess
             public string GetConnectionString(string dbName)
             {
                 if (string.IsNullOrEmpty(dbName)) throw new ArgumentNullException("dbName");
-                return string.Format("Data Source={0};User ID={1};PWD={2};Enlist=false;Initial Catalog={3};Connection Timeout=60",
+                return string.Format("Data Source={0};User ID={1};PWD={2};Enlist=false;Initial Catalog={3};Connection Timeout=300",
                                      ServerAddress, AdminLogin, AdminPassword, dbName);
             }
         }

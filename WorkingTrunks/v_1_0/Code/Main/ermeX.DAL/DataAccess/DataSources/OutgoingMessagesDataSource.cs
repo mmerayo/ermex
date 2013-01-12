@@ -18,8 +18,12 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using NHibernate;
+using NHibernate.Transform;
 using Ninject;
+using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Settings.Data;
@@ -63,7 +67,7 @@ namespace ermeX.DAL.DataAccess.DataSources
         {
             return GetAll(new Tuple<string, bool>("Tries", true), new Tuple<string, bool>("CreatedTimeUtc", true)).
                 Where(
-                    x => x.Failed == false); //TODO: OPTIMISE FROM QUERY
+                    x => x.Status!=Message.MessageStatus.SenderFailed); //TODO: OPTIMISE FROM QUERY
         }
 
         public OutgoingMessage GetNextDeliverable()
@@ -80,6 +84,49 @@ namespace ermeX.DAL.DataAccess.DataSources
             var oldestPublishingTime = outgoingMessages.Min(x => x.CreatedTimeUtc.Ticks);
             return
                 outgoingMessages.OrderBy(x => x.Id).FirstOrDefault(x => x.CreatedTimeUtc.Ticks == oldestPublishingTime);
+        }
+
+        public OutgoingMessage GetByBusMessageId(int id)
+        {
+            return GetItemByField("BusMessageId", id);
+        }
+
+        public IEnumerable<OutgoingMessage> GetExpiredMessages(TimeSpan expirationTime)
+        {
+            DateTime dateTime = DateTime.UtcNow - expirationTime;
+            return GetAll().Where(x => x.CreatedTimeUtc <= dateTime);//TODO: STRAIGHT QUERY
+        }
+
+        public void RemoveExpiredMessages(TimeSpan expirationTime)
+        {
+//TODO: INTRANSACTION LIKE OTHERS
+            IEnumerable<OutgoingMessage> outgoingMessages = GetExpiredMessages(expirationTime);
+            Remove(outgoingMessages);
+            
+        }
+
+        public bool ContainsMessageFor(Guid messageId, Guid destinationComponent)
+        {
+            if(messageId.IsEmpty() || destinationComponent.IsEmpty())
+                throw new ArgumentException("the arguments cannot be empty");
+
+            return
+                CountItems(new Tuple<string, object>("MessageId", messageId),
+                           new Tuple<string, object>("PublishedTo", destinationComponent)) > 0;
+        }
+
+        public IEnumerable<OutgoingMessage> GetByStatus(Message.MessageStatus status)
+        {
+            var res = DataAccessExecutor.Perform(session => GetByStatus(session, status));
+            if (!res.Success)
+                throw new DataException("Couldnt perform the operation GetByStatus");
+
+            return res.ResultValue;
+        }
+
+        public DataAccessOperationResult<IEnumerable<OutgoingMessage>> GetByStatus(ISession session, Message.MessageStatus status)
+        {
+            return new DataAccessOperationResult<IEnumerable<OutgoingMessage>>(true, GetItemsByField(session, "Status", status));
         }
 
         #endregion

@@ -35,7 +35,6 @@ namespace ermeX.Tests.DAL.Integration.DataSources
        
         private readonly DateTime TimePublished = new DateTime(2010, 2, 3, 1, 2, 3, 330);
         private int Tries = 6;
-        private bool Errored;
         
         private readonly Guid componentId = Guid.NewGuid();
         private readonly DummyDomainEntity message = new DummyDomainEntity {Id = Guid.NewGuid()};
@@ -68,7 +67,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             dataAccessTestHelper.InsertAppComponent(componentId, LocalComponentId,0,false,false);
 
             return dataAccessTestHelper.InsertOutgoingMessage(componentId, LocalComponentId, BMID, 
-                                         TimePublished, Tries, Errored,Message.MessageStatus.ReceiverReceived, new BizMessage("the message").JsonMessage);
+                                         TimePublished, Tries, Message.MessageStatus.ReceiverReceived, new BizMessage("the message").JsonMessage);
         }
 
         protected override void CheckInsertedRecord(OutgoingMessage record)
@@ -90,7 +89,6 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             return new OutgoingMessage (busMessage)
                        {
                            ComponentOwner = LocalComponentId,
-                           Failed = Errored,
                            PublishedBy = LocalComponentId,
                            PublishedTo = componentId,
                            CreatedTimeUtc = TimePublished,
