@@ -98,6 +98,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queues\ProducerSequentialConsumerQueue.cs" />
     <Compile Include="Queues\SystemTaskQueue.cs" />
+    <Compile Include="Scheduling\IJobScheduler.cs" />
+    <Compile Include="Scheduling\Job.cs" />
+    <Compile Include="Scheduling\JobScheduler.cs" />
     <Compile Include="Worker.cs" />
   </ItemGroup>
   <ItemGroup>

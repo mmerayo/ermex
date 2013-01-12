@@ -52,10 +52,8 @@ namespace ermeX.DAL.DataAccess.Mappings
             Map(x => x.PublishedTo).Column(OutgoingMessage.GetDbFieldName("PublishedTo"));
             Map(x => x.Tries).Column(OutgoingMessage.GetDbFieldName("Tries"));
           
-            Map(x => x.Failed).Column(OutgoingMessage.GetDbFieldName("Failed"));
             Map(x => x.ComponentOwner).Column(OutgoingMessage.GetDbFieldName("ComponentOwner"));
             Map(x => x.Version).Column(OutgoingMessage.GetDbFieldName("Version"));
-            Map(x => x.Delivering).Column(OutgoingMessage.GetDbFieldName("Delivering"));
 
             Map(x => x.Status).Column(OutgoingMessage.GetDbFieldName("Status")).CustomType<Message.MessageStatus>(); 
             Map(x => x.JsonMessage).Column(OutgoingMessage.GetDbFieldName("JsonMessage"));

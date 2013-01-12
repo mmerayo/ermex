@@ -35,15 +35,20 @@ namespace ermeX.Entities.Entities
             /// <summary>
             /// This is an special stutus to save the first stage, no copies created per subscriber yet
             /// </summary>
-            SenderCollected = 1,
+            SenderCollected ,
             /// <summary>
             /// Is ready to deliver to subscriber. Its refered by outpoing message
             /// </summary>
-            SenderDispatchPending = 2,
+            SenderDispatchPending,
             /// <summary>
             /// Marks the message as sent
             /// </summary>
             SenderSent,
+
+            /// <summary>
+            /// Marks the message as failed
+            /// </summary>
+            SenderFailed,
 
             /// <summary>
             /// Received but not created copy per local subscription

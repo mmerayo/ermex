@@ -48,12 +48,16 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
             //creates subscription
             var subscriptionsDs = GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine);
-            var outgoingMessageSuscription = new OutgoingMessageSuscription()
+            var suscription1 = new OutgoingMessageSuscription()
                 {
                     ComponentOwner = LocalComponentId, BizMessageFullTypeName = typeof (Dummy).FullName, Component = RemoteComponentId
                 };
-            subscriptionsDs.Save(outgoingMessageSuscription);
-
+            subscriptionsDs.Save(suscription1);
+            var suscription2=new OutgoingMessageSuscription()
+                {
+                    ComponentOwner = LocalComponentId, BizMessageFullTypeName = typeof (Dummy).FullName, Component = Guid.NewGuid()
+                };
+            subscriptionsDs.Save(suscription2);
             //creates the message as collected
             //the default test set them for one day
             var outgoingMessage = new OutgoingMessage(expected)
@@ -75,15 +79,24 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
             }
 
-            Assert.IsTrue(actual.Count == 1); //ensure the message was delivered
-            
-            Assert.AreEqual(expected, actual[0].OutGoingMessage.ToBusMessage()); //ensure is the message that was sent
-            var messagesInDb = outgoingMessagesDataSource.GetAll(); //ensures there are 2 messages the root one and the distributable one
-            Assert.IsTrue(messagesInDb.Count==2); 
+            Assert.IsTrue(actual.Count == 2); //ensure the message was delivered
+
+            OutgoingMessage outGoingMessage1 = actual[0].OutGoingMessage;
+            Assert.AreEqual(expected, outGoingMessage1.ToBusMessage()); //ensure is the message that was sent
+            Assert.AreEqual(suscription1.Component,outGoingMessage1.PublishedTo);
+
+            OutgoingMessage outGoingMessage2 = actual[1].OutGoingMessage;
+            Assert.AreEqual(expected, outGoingMessage2.ToBusMessage()); //ensure is the message that was sent
+            Assert.AreEqual(suscription2.Component, outGoingMessage2.PublishedTo);
+
+            var messagesInDb = outgoingMessagesDataSource.GetAll(); //ensures there are 3 messages the root one and the distributable ones
+            Assert.IsTrue(messagesInDb.Count==3); 
 
             var busMessage=  messagesInDb[1].ToBusMessage();//this one is the distributable
             Assert.IsTrue(messagesInDb[1].Status == Message.MessageStatus.SenderDispatchPending);
-            Assert.AreEqual(expected,busMessage); //ensure is the same message
+            var busMessage2 = messagesInDb[2].ToBusMessage();//this one is the distributable
+            Assert.IsTrue(messagesInDb[2].Status == Message.MessageStatus.SenderDispatchPending);
+            Assert.AreEqual(expected,busMessage2); //ensure is the same message
         }
 
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]

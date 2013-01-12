@@ -8,6 +8,9 @@ using ermeX.DAL.Interfaces;
 
 namespace ermeX.Bus.Publishing.Dispatching.Messages
 {
+    /// <summary>
+    /// 
+    /// </summary>
     internal interface ISubscribersDispatcher
     {
         /// <summary>

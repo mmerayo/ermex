@@ -26,7 +26,6 @@ using ermeX.Bus.Listening;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers;
 using ermeX.Bus.Publishing;
-using ermeX.Bus.Publishing.AsyncWorkers;
 using ermeX.Bus.Publishing.ClientProxies;
 using ermeX.Bus.Publishing.Dispatching;
 using ermeX.Bus.Publishing.Dispatching.Messages;
@@ -66,15 +65,19 @@ namespace ermeX.Bus.IoC
             //    Bind<IMessagePublisher>().ToConstant(_settings.Publisher);
             //else
                 Bind<IMessagePublisher>().To<MessagePublishingManager>().InSingletonScope();
-            Bind<IListeningStrategyProvider>().To<ListeningStrategyProvider>().InSingletonScope();
+                Bind<IListeningStrategyProvider>().To<ListeningStrategyProvider>().InSingletonScope();
+
             Bind<IServiceRequestManager>().To<ServiceRequestManager>().InSingletonScope();
             Bind<IServiceRequestDispatcher>().To<ServiceRequestDispatcher>().InSingletonScope();
             Bind<IServiceCallsProxy>().To<ServiceCallsProxy>();
-            Bind<IMessagePublisherDispatcherStrategy>().To<MessageDispatcher>().InSingletonScope();
+
+            Bind<IMessagePublisherDispatcherStrategy>().To<MessageCollector>().InSingletonScope();
+            Bind<IMessageDistributor>().To<MessageDistributor>().InSingletonScope();
+            Bind<ISubscribersDispatcher>().To<SubscribersDispatcher>().InSingletonScope();
+
             Bind<IIncomingMessagesProcessorWorker>().To<IncomingMessagesProcessorWorker>().InSingletonScope();
             Bind<IIncomingMessagesDispatcherWorker>().To<IncomingMessagesSyncDispatcherWorker>().InSingletonScope();
             Bind<IScheduler>().To<IncommingMessagesFifoScheduler>().InSingletonScope();
-            Bind<ISendingMessageWorker>().To<SendingMessageWorker>();
         }
     }
 }
