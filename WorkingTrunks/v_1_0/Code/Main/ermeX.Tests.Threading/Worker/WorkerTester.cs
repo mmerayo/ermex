@@ -21,7 +21,7 @@ using System.Diagnostics;
 using System.Threading;
 using NUnit.Framework;
 
-namespace ermeX.Tests.Common.Threading
+namespace ermeX.Tests.Threading.Worker
 {
     [Explicit("TODO: Make these tests deterministic")]
     [TestFixture]

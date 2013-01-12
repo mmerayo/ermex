@@ -98,7 +98,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
                            CreatedTimeUtc = TimePublished,
                            TimeReceivedUtc = TimeReceived,
                            SuscriptionHandlerId = suscriptionHandlerId,
-                           Status=Message.MessageStatus.SenderOrder
+                           Status=Message.MessageStatus.SenderCollected
                        };
         }
 

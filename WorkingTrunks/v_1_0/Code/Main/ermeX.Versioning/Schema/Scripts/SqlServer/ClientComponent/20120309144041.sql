@@ -10,10 +10,8 @@ CREATE TABLE [ClientComponent].[OutgoingMessages](
 	[OutgoingMessages_PublishedTo] [uniqueidentifier] NOT NULL,
 	[OutgoingMessages_CreatedTimeUtc] [bigint] NOT NULL,
 	[OutgoingMessages_Tries] [int] NOT NULL,
-	[OutgoingMessages_Failed] [bit] NOT NULL,
 	[OutgoingMessages_Version] [bigint] NOT NULL,
 	[OutgoingMessages_ComponentOwner] [uniqueidentifier] NOT NULL,
-	[OutgoingMessages_Delivering] [bit] NOT NULL,
 	[OutgoingMessages_MessageId] [uniqueidentifier] NOT NULL,	
 	[OutgoingMessages_JsonMessage] [nvarchar](max) NOT NULL,
 	[OutgoingMessages_Status] [int] NOT NULL,
@@ -23,6 +21,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON

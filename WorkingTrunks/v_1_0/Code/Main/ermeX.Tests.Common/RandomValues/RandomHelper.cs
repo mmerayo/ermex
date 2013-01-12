@@ -42,6 +42,15 @@ namespace ermeX.Tests.Common.RandomValues
             var random = new Random((int)DateTime.Now.Ticks);
             return random.Next(minValue, maxValue<int.MaxValue? maxValue+1:int.MaxValue);
         }
+        public static int GetRandomInt(int maxValue)
+        {
+            return GetRandomInt(0, maxValue);
+        }
+
+        public static int GetRandomInt()
+        {
+            return GetRandomInt(int.MaxValue);
+        }
 
         public static DateTime GetRandomDateTime()
         {

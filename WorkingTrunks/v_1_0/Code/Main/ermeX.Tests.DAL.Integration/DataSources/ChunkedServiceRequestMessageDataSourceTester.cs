@@ -32,7 +32,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 {
     //TODO: test al possible operations in all datasources
 
-    //[TestFixture]
+    
     internal class ChunkedServiceRequestMessageDataSourceTester :
         DataSourceTesterBase<ChunkedServiceRequestMessageDataSource, ChunkedServiceRequestMessageData>
     {

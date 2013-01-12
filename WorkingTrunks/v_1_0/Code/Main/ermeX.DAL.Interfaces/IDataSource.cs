@@ -59,7 +59,7 @@ namespace ermeX.DAL.Interfaces
         ///   Removes a list of entitities from the datasource
         /// </summary>
         /// <param name="entities"> </param>
-        void Remove(IList<TEntity> entities);
+        void Remove(IEnumerable<TEntity> entities);
 
         /// <summary>
         ///   Gets all the entitites

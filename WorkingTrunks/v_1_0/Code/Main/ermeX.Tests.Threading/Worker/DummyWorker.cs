@@ -18,11 +18,9 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 
-using ermeX.Threading;
-
-namespace ermeX.Tests.Common.Threading
+namespace ermeX.Tests.Threading.Worker
 {
-    class DummyWorker:Worker
+    class DummyWorker:ermeX.Threading.Worker
     {
         public DummyWorker(TimeSpan pollingTime)
             : base("DummyWorker", pollingTime)
