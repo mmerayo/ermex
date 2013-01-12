@@ -39,7 +39,11 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
     sealed class MessageDistributorTester : DataAccessTestBase
     {
+
+        readonly List<MessageSubscribersDispatcher.SubscribersDispatcherMessage> _sentMessages = new List<MessageSubscribersDispatcher.SubscribersDispatcherMessage>();
+        readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
         private readonly SystemTaskQueue _systemQueue = new SystemTaskQueue();
+
         private MessageDistributor GetInstance(DbEngineType dbEngine, Action<MessageSubscribersDispatcher.SubscribersDispatcherMessage> messageReceived, out IMessageSubscribersDispatcher mockedSubscriber)
         {
             var outgoingDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
@@ -54,13 +58,26 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
         {
             public string Data;
         }
-        
+
+        public override void OnStartUp()
+        {
+            base.OnStartUp();
+            _sentMessages.Clear();
+            _messageReceived.Reset();
+
+        }
+
+        private void DealWithMessage(MessageSubscribersDispatcher.SubscribersDispatcherMessage message)
+        {
+            _sentMessages.Add(message);
+            _messageReceived.Set();
+        }
+
 
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void CanDispatch_NotSentMessage(DbEngineType dbEngine )
         {
             IMessageSubscribersDispatcher mockedDispatcher;
-            var actual = new List<MessageSubscribersDispatcher.SubscribersDispatcherMessage>();
             
             var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage(new Dummy {Data="theData"}));
 
@@ -89,28 +106,31 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
             outgoingMessagesDataSource.Save(outgoingMessage);
 
             //enqueues the message
-            using (var target = GetInstance(dbEngine, actual.Add, out mockedDispatcher))
+            using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDispatcher))
             {
                 target.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outgoingMessage));
-                while(actual.Count==0)
-                    Thread.Sleep(50);
-
+                _messageReceived.WaitOne(TimeSpan.FromSeconds(5));
             }
 
-            Assert.IsTrue(actual.Count == 2); //ensure the message was delivered
+            Assert.IsTrue(_sentMessages.Count == 2); //ensure the message was delivered
 
-            OutgoingMessage outGoingMessage1 = actual[0].OutGoingMessage;
+            Assert.IsTrue(_sentMessages.Count(x => x.OutGoingMessage.PublishedTo == suscription1.Component)==1);
+            Assert.IsTrue(_sentMessages.Count(x => x.OutGoingMessage.PublishedTo == suscription2.Component) == 1);
+            OutgoingMessage outGoingMessage1 = _sentMessages.Single(x => x.OutGoingMessage.PublishedTo == suscription1.Component).OutGoingMessage;
             Assert.AreEqual(expected, outGoingMessage1.ToBusMessage()); //ensure is the message that was sent
             Assert.AreEqual(suscription1.Component,outGoingMessage1.PublishedTo);
 
-            OutgoingMessage outGoingMessage2 = actual[1].OutGoingMessage;
+            OutgoingMessage outGoingMessage2 = _sentMessages.Single(x => x.OutGoingMessage.PublishedTo == suscription2.Component).OutGoingMessage;
             Assert.AreEqual(expected, outGoingMessage2.ToBusMessage()); //ensure is the message that was sent
             Assert.AreEqual(suscription2.Component, outGoingMessage2.PublishedTo);
 
             var messagesInDb = outgoingMessagesDataSource.GetAll(); //ensures there are 3 messages the root one and the distributable ones
-            Assert.IsTrue(messagesInDb.Count==3); 
+            Assert.IsTrue(messagesInDb.Count==3);
 
-            var busMessage=  messagesInDb[1].ToBusMessage();//this one is the distributable
+            var busMessage = messagesInDb[1].ToBusMessage();//this one is the distributable
+
+            Assert.AreEqual(expected,busMessage);
+
             Assert.IsTrue(messagesInDb[1].Status == Message.MessageStatus.SenderDispatchPending);
             var busMessage2 = messagesInDb[2].ToBusMessage();//this one is the distributable
             Assert.IsTrue(messagesInDb[2].Status == Message.MessageStatus.SenderDispatchPending);
@@ -121,7 +141,6 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
         public void DontDispatchSentMessage(DbEngineType dbEngine)
         {
             IMessageSubscribersDispatcher mockedDispatcher;
-            var actual = new List<MessageSubscribersDispatcher.SubscribersDispatcherMessage>();
 
             var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage(new Dummy { Data = "theData" }));
 
@@ -149,7 +168,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
             
             
             //enqueues the first message pretending it needs to be sent
-            using (var target = GetInstance(dbEngine, actual.Add, out mockedDispatcher))
+            using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDispatcher))
             {
                 for (int i = 0; i < 500;i++ )
                 {
@@ -159,11 +178,11 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
                 Thread.Sleep(50);
             }
 
-            Assert.AreEqual(1,actual.Count); //Assert only one was sent
+            Assert.AreEqual(1,_sentMessages.Count); //Assert only one was sent
             var outgoingMessages = outgoingMessagesDataSource.GetByStatus(Message.MessageStatus.SenderDispatchPending);
             Assert.IsTrue(outgoingMessages.Count()==1,outgoingMessages.Count().ToString(CultureInfo.InvariantCulture)); //Asserts the second one was not considered and removed
 
-            OutgoingMessage pushedMessage = actual[0].OutGoingMessage;
+            OutgoingMessage pushedMessage = _sentMessages[0].OutGoingMessage;
             Assert.IsTrue( pushedMessage.Status==Message.MessageStatus.SenderDispatchPending);
             Assert.AreEqual(outgoingMessage.ToBusMessage(),pushedMessage.ToBusMessage());
 

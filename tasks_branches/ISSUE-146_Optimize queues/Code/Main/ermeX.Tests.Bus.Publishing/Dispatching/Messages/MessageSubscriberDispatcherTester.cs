@@ -43,7 +43,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
         readonly IJobScheduler _taskScheduler=new JobScheduler();
         readonly SystemTaskQueue _tasksQueue=new SystemTaskQueue();
         readonly List<TransportMessage> _sentMessages = new List<TransportMessage>();
-        ManualResetEvent _messageReceived=new ManualResetEvent(false);
+        readonly ManualResetEvent _messageReceived=new ManualResetEvent(false);
+
         private MessageSubscribersDispatcher GetInstance(DbEngineType dbEngine, Action<TransportMessage> messageReceived,bool valueToReturn, out IServiceProxy mockedService)
         {
             var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
@@ -119,7 +120,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
                 outgoingMessagesDataSource.Save(outgoingMessage);
 
                 target.EnqueueItem(new MessageSubscribersDispatcher.SubscribersDispatcherMessage(outgoingMessage));
-                _messageReceived.WaitOne(TimeSpan.FromSeconds(5));
+                _messageReceived.WaitOne(TimeSpan.FromSeconds(20));
             }
             OutgoingMessage actual = outgoingMessagesDataSource.GetById(outgoingMessage.Id);
             Assert.AreEqual(Message.MessageStatus.SenderSent,actual.Status);
