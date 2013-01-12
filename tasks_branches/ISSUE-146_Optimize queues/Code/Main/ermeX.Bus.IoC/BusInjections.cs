@@ -73,7 +73,7 @@ namespace ermeX.Bus.IoC
 
             Bind<IMessagePublisherDispatcherStrategy>().To<MessageCollector>().InSingletonScope();
             Bind<IMessageDistributor>().To<MessageDistributor>().InSingletonScope();
-            Bind<ISubscribersDispatcher>().To<SubscribersDispatcher>().InSingletonScope();
+            Bind<IMessageSubscribersDispatcher>().To<MessageSubscribersDispatcher>().InSingletonScope();
 
             Bind<IIncomingMessagesProcessorWorker>().To<IncomingMessagesProcessorWorker>().InSingletonScope();
             Bind<IIncomingMessagesDispatcherWorker>().To<IncomingMessagesSyncDispatcherWorker>().InSingletonScope();

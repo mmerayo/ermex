@@ -112,6 +112,7 @@
     </Compile>
     <Compile Include="Queues\TestProducerParallelConsumerPriorityQueue.cs" />
     <Compile Include="Queues\TestProducerSequentialConsumerQueue.cs" />
+    <Compile Include="Scheduler\JobSchedulerTests.cs" />
     <Compile Include="Worker\DummyWorker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queues\DummyQueueItem.cs" />

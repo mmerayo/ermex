@@ -114,6 +114,7 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
+    <Compile Include="Dispatching\Messages\MessageSubscriberDispatcherTester.cs" />
     <Compile Include="Dispatching\Messages\MessageDistributorTester.cs" />
     <Compile Include="Dispatching\Messages\MessageCollectorTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -163,6 +164,10 @@
     <ProjectReference Include="..\ermeX.Threading\ermeX.Threading.csproj">
       <Project>{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}</Project>
       <Name>ermeX.Threading</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Interfaces\ermeX.Transport.Interfaces.csproj">
+      <Project>{991296BF-95D5-4462-A7EF-574E56C679F3}</Project>
+      <Name>ermeX.Transport.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

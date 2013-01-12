@@ -97,13 +97,13 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
-    <Compile Include="Dispatching\Messages\ISubscribersDispatcher.cs" />
+    <Compile Include="Dispatching\Messages\IMessageSubscribersDispatcher.cs" />
     <Compile Include="Dispatching\Messages\IMessageDistributor.cs" />
     <Compile Include="Dispatching\Messages\MessageCollector.cs" />
     <Compile Include="Dispatching\Messages\MessageDistributor.cs" />
     <Compile Include="BusInteropBase.cs" />
     <Compile Include="ClientProxies\ServiceCallsProxy.cs" />
-    <Compile Include="Dispatching\Messages\SubscribersDispatcher.cs" />
+    <Compile Include="Dispatching\Messages\MessageSubscribersDispatcher.cs" />
     <Compile Include="Dispatching\ServiceRequests\ServiceRequestDispatcher.cs" />
     <Compile Include="MessagePublishingManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,4 +1,22 @@
-﻿using System;
+﻿// /*---------------------------------------------------------------------------------------*/
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
+// /*---------------------------------------------------------------------------------------*/
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -22,12 +40,12 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
     sealed class MessageDistributorTester : DataAccessTestBase
     {
         private readonly SystemTaskQueue _systemQueue = new SystemTaskQueue();
-        private MessageDistributor GetInstance(DbEngineType dbEngine, Action<SubscribersDispatcher.SubscribersDispatcherMessage> messageReceived, out ISubscribersDispatcher mockedSubscriber)
+        private MessageDistributor GetInstance(DbEngineType dbEngine, Action<MessageSubscribersDispatcher.SubscribersDispatcherMessage> messageReceived, out IMessageSubscribersDispatcher mockedSubscriber)
         {
             var outgoingDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
             var outgoingSubscriptionsDataSource = GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine);
-            var mock = new Mock<ISubscribersDispatcher>();
-            mock.Setup(x=>x.EnqueueItem(It.IsAny<SubscribersDispatcher.SubscribersDispatcherMessage>())).Callback(messageReceived);
+            var mock = new Mock<IMessageSubscribersDispatcher>();
+            mock.Setup(x=>x.EnqueueItem(It.IsAny<MessageSubscribersDispatcher.SubscribersDispatcherMessage>())).Callback(messageReceived);
             mockedSubscriber = mock.Object;
             return new MessageDistributor(outgoingSubscriptionsDataSource,outgoingDataSource,mockedSubscriber,_systemQueue);
         }
@@ -41,8 +59,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void CanDispatch_NotSentMessage(DbEngineType dbEngine )
         {
-            ISubscribersDispatcher mockedDispatcher;
-            var actual = new List<SubscribersDispatcher.SubscribersDispatcherMessage>();
+            IMessageSubscribersDispatcher mockedDispatcher;
+            var actual = new List<MessageSubscribersDispatcher.SubscribersDispatcherMessage>();
             
             var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage(new Dummy {Data="theData"}));
 
@@ -102,8 +120,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void DontDispatchSentMessage(DbEngineType dbEngine)
         {
-            ISubscribersDispatcher mockedDispatcher;
-            var actual = new List<SubscribersDispatcher.SubscribersDispatcherMessage>();
+            IMessageSubscribersDispatcher mockedDispatcher;
+            var actual = new List<MessageSubscribersDispatcher.SubscribersDispatcherMessage>();
 
             var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage(new Dummy { Data = "theData" }));
 

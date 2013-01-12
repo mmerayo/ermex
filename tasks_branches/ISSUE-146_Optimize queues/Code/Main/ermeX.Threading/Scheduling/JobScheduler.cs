@@ -1,3 +1,21 @@
+// /*---------------------------------------------------------------------------------------*/
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
+// /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -109,76 +127,86 @@ namespace ermeX.Threading.Scheduling
             }
         }
 
-
+        
         private void RunJobs(object state)
         {
-            lock (_syncRoot)
+            try
             {
-                Interlocked.CompareExchange(ref _jobsRunQueuedInThreadPool, 0, 1);
-
-                int availWorkerThreads;
-                int availCompletionPortThreads;
-
-                ThreadPool.GetAvailableThreads(out availWorkerThreads, out availCompletionPortThreads);
-
-                int jobsAdded = 0;
-
-                while (jobsAdded < MaxJobsToSchedulePerCheck && availWorkerThreads > MaxJobsToSchedulePerCheck + 1 &&
-                       _jobs.Count > 0)
+                lock (_syncRoot)
                 {
-                    List<Job> curJobs = _jobs.Values[0];
-                    long firetime = _jobs.Keys[0];
-                  
-                    if (_curTime.Elapsed.Ticks <= firetime) break;
+                    if (_disposed)
+                        return;
+                    Interlocked.CompareExchange(ref _jobsRunQueuedInThreadPool, 0, 1);
 
-                    while (curJobs.Count > 0 && jobsAdded < MaxJobsToSchedulePerCheck &&
-                           availWorkerThreads > MaxJobsToSchedulePerCheck + 1)
+                    int availWorkerThreads;
+                    int availCompletionPortThreads;
+
+                    ThreadPool.GetAvailableThreads(out availWorkerThreads, out availCompletionPortThreads);
+
+                    int jobsAdded = 0;
+
+                    while (jobsAdded < MaxJobsToSchedulePerCheck && availWorkerThreads > MaxJobsToSchedulePerCheck + 1 &&
+                           _jobs.Count > 0)
                     {
-                        var job = curJobs[0];
+                        List<Job> curJobs = _jobs.Values[0];
+                        long firetime = _jobs.Keys[0];
 
-                        if (job.DoAction != null)
+                        if (_curTime.Elapsed.Ticks <= firetime) break;
+
+                        while (curJobs.Count > 0 && jobsAdded < MaxJobsToSchedulePerCheck &&
+                               availWorkerThreads > MaxJobsToSchedulePerCheck + 1)
                         {
-                            ThreadPool.QueueUserWorkItem(callBack => job.DoAction(), job);
-                            ++jobsAdded;
+                            var job = curJobs[0];
 
-                            ThreadPool.GetAvailableThreads(out availWorkerThreads, out availCompletionPortThreads);
+                            if (job.DoAction != null)
+                            {
+                                ThreadPool.QueueUserWorkItem(callBack => job.DoAction(), job);
+                                ++jobsAdded;
+
+                                ThreadPool.GetAvailableThreads(out availWorkerThreads, out availCompletionPortThreads);
+                            }
+
+                            curJobs.Remove(job);
                         }
 
-                        curJobs.Remove(job);
+                        if (curJobs.Count < 1) _jobs.RemoveAt(0);
                     }
 
-                    if (curJobs.Count < 1) _jobs.RemoveAt(0);
-                }
-
-                if (_jobs.Count > 0)
-                {
-                    long firetime = _jobs.Keys[0];
-
-                    long delta = firetime - _curTime.Elapsed.Ticks;
-
-                    if (delta < MinIncrement)
+                    if (_jobs.Count > 0)
                     {
-                        if (Interlocked.CompareExchange(ref _jobsRunQueuedInThreadPool, 1, 0) == 0)
+                        long firetime = _jobs.Keys[0];
+
+                        long delta = firetime - _curTime.Elapsed.Ticks;
+
+                        if (delta < MinIncrement)
                         {
-                            _timer.Change(Timeout.Infinite, Timeout.Infinite);
-                            ThreadPool.QueueUserWorkItem(RunJobs);
+                            if (Interlocked.CompareExchange(ref _jobsRunQueuedInThreadPool, 1, 0) == 0)
+                            {
+                                _timer.Change(Timeout.Infinite, Timeout.Infinite);
+                                ThreadPool.QueueUserWorkItem(RunJobs);
+                            }
+                        }
+                        else
+                        {
+                            Logger.Debug(x => x("Next event in {0}", TimeSpan.FromTicks(delta)));
+                            _timer.Change(delta/TimeSpan.TicksPerMillisecond, Timeout.Infinite);
                         }
                     }
-                    else 
+                    else
                     {
-                        Logger.Debug(x=>x("Next event in {0}", TimeSpan.FromTicks(delta)));
-                        _timer.Change(delta/TimeSpan.TicksPerMillisecond, Timeout.Infinite);
+                        Logger.Debug(x => x("Queue ends"));
+                        Interlocked.CompareExchange(ref _queueRun, 0, 1);
                     }
                 }
-                else 
-                {
-                    Logger.Debug(x=>x("Queue ends"));
-                    Interlocked.CompareExchange(ref _queueRun, 0, 1);
-                }
+            }catch(Exception ex)
+            {
+                Logger.Warn(x=>x("{0}",ex.ToString()));
             }
         }
+
         #region IDisposable
-        
+
+        private bool _disposed = false;
         public void Dispose()
         {
             Dispose(true);
@@ -186,10 +214,15 @@ namespace ermeX.Threading.Scheduling
         }
         private void Dispose(bool disposing)
         {
-            if (disposing)
+            lock (_syncRoot)
             {
-                _curTime.Stop();
-                _timer.Dispose();
+                if (disposing)
+                {
+                    _curTime.Stop();
+                    _timer.Dispose();
+
+                }
+                _disposed = true;
             }
 
         }

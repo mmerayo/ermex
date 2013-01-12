@@ -169,7 +169,6 @@
     <Compile Include="Services\Mock\MockMessagesDispatcherWorker.cs" />
     <Compile Include="Services\Mock\MockMessagesProcessorWorker.cs" />
     <Compile Include="Services\Sending\Client\ServiceProxyTester.cs" />
-    <Compile Include="Services\Sending\Workers\SendingMessageWorkerTester.cs" />
     <Compile Include="Services\Receiving\ServerTesterBase.cs" />
     <Compile Include="Services\Mock\MockTestServerBase.cs" />
     <Compile Include="Services\Sending\ServiceClientTesterBase.cs" />
