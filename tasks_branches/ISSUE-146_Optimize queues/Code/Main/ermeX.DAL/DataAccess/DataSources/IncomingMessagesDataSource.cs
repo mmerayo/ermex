@@ -22,6 +22,7 @@ using System.Data;
 using System.Linq;
 using NHibernate;
 using Ninject;
+using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 
 using ermeX.DAL.Interfaces;
@@ -31,17 +32,20 @@ namespace ermeX.DAL.DataAccess.DataSources
 {
     //TODO:REFACTOR ALL THE DATAACCESS LAYER
     //TODO:refactor to base
-    internal class IncomingMessagesDataSource : DataSource<IncomingMessage>, IIncomingMessagesDataSource, IDataAccessUsable<IncomingMessage>
+    internal class IncomingMessagesDataSource : DataSource<IncomingMessage>, IIncomingMessagesDataSource,
+                                                IDataAccessUsable<IncomingMessage>
     {
 
         [Inject]
-        public IncomingMessagesDataSource(IDalSettings dataAccessSettings, IComponentSettings componentSettings, IDataAccessExecutor dataAccessExecutor)
-            : this( dataAccessSettings, componentSettings.ComponentId,dataAccessExecutor)
+        public IncomingMessagesDataSource(IDalSettings dataAccessSettings, IComponentSettings componentSettings,
+                                          IDataAccessExecutor dataAccessExecutor)
+            : this(dataAccessSettings, componentSettings.ComponentId, dataAccessExecutor)
         {
         }
 
-        public IncomingMessagesDataSource(IDalSettings dataAccessSettings, Guid componentId, IDataAccessExecutor dataAccessExecutor)
-            : base(dataAccessSettings, componentId,dataAccessExecutor)
+        public IncomingMessagesDataSource(IDalSettings dataAccessSettings, Guid componentId,
+                                          IDataAccessExecutor dataAccessExecutor)
+            : base(dataAccessSettings, componentId, dataAccessExecutor)
         {
         }
 
@@ -67,20 +71,22 @@ namespace ermeX.DAL.DataAccess.DataSources
 
         public IncomingMessage GetNextDispatchableItem(int maxLatency)
         {
-            var res = DataAccessExecutor.Perform(session => GetNextDispatchableItem(session,maxLatency));
+            var res = DataAccessExecutor.Perform(session => GetNextDispatchableItem(session, maxLatency));
             if (!res.Success)
                 throw new DataException("Couldnt perform the operation GetNextDispatchableItem");
 
             return res.ResultValue;
         }
 
-        private DataAccessOperationResult<IncomingMessage> GetNextDispatchableItem( ISession session,int maxLatency)
+        private DataAccessOperationResult<IncomingMessage> GetNextDispatchableItem(ISession session, int maxLatency)
         {
             //TODO: IMPROVE
 
             IncomingMessage result = null;
-            
-            var incomingMessages = GetByStatus(session, Message.MessageStatus.ReceiverDispatchable).ResultValue.OrderBy(x=>x.CreatedTimeUtc);
+
+            var incomingMessages =
+                GetByStatus(session, Message.MessageStatus.ReceiverDispatchable).ResultValue.OrderBy(
+                    x => x.CreatedTimeUtc);
 
             //goes through all to find the first dispatchable
             foreach (var incomingMessage in incomingMessages)
@@ -106,18 +112,49 @@ namespace ermeX.DAL.DataAccess.DataSources
             return new DataAccessOperationResult<IncomingMessage>(true, result);
         }
 
-        public IEnumerable<IncomingMessage> GetByStatus(Message.MessageStatus status)
+        public IEnumerable<IncomingMessage> GetByStatus(params Message.MessageStatus[] status)
         {
-            var res = DataAccessExecutor.Perform(session => GetByStatus(session, status));
+            if (status.Length == 0)
+                return GetAll();
+
+            var res = DataAccessExecutor.Perform(session =>
+                {
+                    var result = new List<IncomingMessage>();
+                    foreach (var messageStatus in status)
+                    {
+                        var dataAccessOperationResult = GetByStatus(session, messageStatus);
+                        if (!dataAccessOperationResult.Success)
+                            throw new DataException("Could not perform the operation GetByStatus");
+                        result.AddRange(dataAccessOperationResult.ResultValue);
+                    }
+
+                    return new DataAccessOperationResult<IEnumerable<IncomingMessage>>(true, result);
+                });
+
             if (!res.Success)
-                throw new DataException("Couldnt perform the operation GetByStatus");
+                throw new DataException("Could not perform the operation GetByStatus");
 
             return res.ResultValue;
         }
 
-        public DataAccessOperationResult<IEnumerable<IncomingMessage>> GetByStatus(ISession session, Message.MessageStatus status)
+        public bool ContainsMessageFor(Guid messageId, Guid destinationComponent)
         {
-            return new DataAccessOperationResult<IEnumerable<IncomingMessage>>(true, GetItemsByField(session, "Status", status));
+            if (messageId.IsEmpty() || destinationComponent.IsEmpty())
+                throw new ArgumentException("the arguments cannot be empty");
+
+            //TODO> THIS FILTER TO BE CHANGED IN ISSUE-244 SuscriptionHandlerId per queueId
+            return
+                CountItems(new Tuple<string, object>("MessageId", messageId),
+                           new Tuple<string, object>("SuscriptionHandlerId", destinationComponent)) > 0;
+        }
+
+
+        public DataAccessOperationResult<IEnumerable<IncomingMessage>> GetByStatus(ISession session,
+                                                                                   Message.MessageStatus status)
+        {
+            
+            return new DataAccessOperationResult<IEnumerable<IncomingMessage>>(true,
+                                                                               GetItemsByField(session, "Status", status));
         }
 
         public IEnumerable<IncomingMessage> GetMessagesToDispatch()
@@ -127,6 +164,6 @@ namespace ermeX.DAL.DataAccess.DataSources
                     x => x.CreatedTimeUtc).ToList();
         }
 
-        
+
     }
 }

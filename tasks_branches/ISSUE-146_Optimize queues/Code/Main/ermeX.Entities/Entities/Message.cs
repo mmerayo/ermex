@@ -29,41 +29,41 @@ namespace ermeX.Entities.Entities
     {
         public enum MessageStatus : int
         {
-            NotSet = 0,
+            NotSet = 1,
 
 
             /// <summary>
             /// This is an special stutus to save the first stage, no copies created per subscriber yet
             /// </summary>
-            SenderCollected ,
+            SenderCollected =2,
             /// <summary>
             /// Is ready to deliver to subscriber. Its refered by outpoing message
             /// </summary>
-            SenderDispatchPending,
+            SenderDispatchPending=4,
             /// <summary>
             /// Marks the message as sent
             /// </summary>
-            SenderSent,
+            SenderSent=8,
 
             /// <summary>
             /// Marks the message as failed
             /// </summary>
-            SenderFailed,
+            SenderFailed=16,
 
             /// <summary>
             /// Received but not created copy per local subscription
             /// </summary>
-            ReceiverReceived,
+            ReceiverReceived=32,
 
             /// <summary>
             /// Ready to be delivered to the handler
             /// </summary>
-            ReceiverDispatchable,
+            ReceiverDispatchable=64,
 
             /// <summary>
             /// its being dispatched now
             /// </summary>
-            ReceiverDispatching
+            ReceiverDispatching=128
         }
 
         protected Message()
