@@ -4,6 +4,13 @@ This guide is for ermeX tools developers. Not for final users
 
 *_please feedback_*
 
+
+== Solutions ==
+Currently, ermeX has two solutions:
+  * _Main_ : Main is the main solution, which contains the code and the unit & integration tests
+  * _AcceptanceTests_ : Contains the acceptance tests. This solution can be used until we have a proper QuickStart solution to illustrate the usage of the tool through the class *WorldGate* . Please, note that it needs the merged dll to be generated previously by using the release runner with the Compile option(See utils for developers)
+
+
 == SOLUTION CONFIGURATIONS ==
   * Platforms: x86, x64 (ANY_CPU not available at the moment)
   * Frameworks: 4.0 Full
@@ -47,7 +54,7 @@ A mergeable task is a task that after merged locally(Request info about how to r
   * The Acceptance tests run sucessfully in your local machine
   * Other tasks run sucessfully(TODO)
 
-A mergeable task can be commited to the trunk
+A mergeable task can be commited to the version trunk under working trunks
 
 If everything went fine, then you can merge your code
 
