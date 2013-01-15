@@ -84,9 +84,10 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                     var messageToDeliver = incomingMessage.GetClone(); //creates a copy for the subscriber
                     messageToDeliver.Status = Message.MessageStatus.ReceiverDispatchable; //ready to be dispatched
                     messageToDeliver.SuscriptionHandlerId = destination;
+
+                    MessagesDataSource.Save(messageToDeliver);//update the db ? could this be done async?
                     Dispatcher.EnqueueItem(new QueueDispatcherManager.QueueDispatcherManagerMessage(messageToDeliver));//pushes it
 
-                    MessagesDataSource.Save(messageToDeliver);//update the db
                 }
             }
         }
