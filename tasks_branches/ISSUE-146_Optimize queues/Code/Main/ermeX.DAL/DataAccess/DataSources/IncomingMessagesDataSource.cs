@@ -148,6 +148,12 @@ namespace ermeX.DAL.DataAccess.DataSources
                            new Tuple<string, object>("SuscriptionHandlerId", destinationComponent)) > 0;
         }
 
+        public IEnumerable<IncomingMessage> GetNonDistributedMessages()
+        {
+            //TODO: IMPROVE
+            return GetByStatus(Message.MessageStatus.ReceiverReceived).Where(x => x.SuscriptionHandlerId == Guid.Empty).ToList();
+        }
+
 
         public DataAccessOperationResult<IEnumerable<IncomingMessage>> GetByStatus(ISession session,
                                                                                    Message.MessageStatus status)

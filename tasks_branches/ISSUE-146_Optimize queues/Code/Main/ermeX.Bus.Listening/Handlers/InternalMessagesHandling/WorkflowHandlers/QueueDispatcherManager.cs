@@ -19,12 +19,14 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
         public class QueueDispatcherManagerMessage
         {
             public IncomingMessage IncomingMessage { get; private set; }
+            public bool MustCalculateLatency { get; private set; }
 
-            public QueueDispatcherManagerMessage(IncomingMessage message)
+            public QueueDispatcherManagerMessage(IncomingMessage message, bool mustCalculateLatency=true)
             {
 
                 if (message == null) throw new ArgumentNullException("message");
                 IncomingMessage = message;
+                MustCalculateLatency = mustCalculateLatency;
             }
         }
 
@@ -65,7 +67,8 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
             IncomingMessage incomingMessage = message.IncomingMessage;
             incomingMessage.Status=Message.MessageStatus.ReceiverDispatching;
             MessagesDataSource.Save(incomingMessage);
-            UpdateComponentLatency(incomingMessage.ToBusMessage(),DateTime.UtcNow);
+            if(message.MustCalculateLatency)
+                UpdateComponentLatency(incomingMessage.ToBusMessage(),DateTime.UtcNow);
         }
 
         //TODO: MOVE TO THE FINAL QUEUE
