@@ -89,7 +89,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
             SystemTaskQueue = systemTaskQueue;
             QueueDispatcherManager = queueDispatcherManager;
 
-            SystemTaskQueue.EnqueueItem(EnqueueNonDispatchedMessages);  //reenqueues non dispatched messages on startup
+            SystemTaskQueue.EnqueueItem(EnqueueNonDistributedMessages);  //reenqueues non dispatched messages on startup
         }
 
        
@@ -116,23 +116,27 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
                 Status = Message.MessageStatus.ReceiverReceived,
             };
             
-            //this must be done on-line in case of errors
+            //this must be done on-line in case of errors so it returns an exception to the caller
             IncomingMessagesDataSource.Save(incomingMessage); 
             ReceptionMessageDistributor.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage));
             Logger.Trace(x=>x("{0} - Message received ", message.Data.MessageId));
-            return null;
+            return null; //Check the correctness of this null
         }
 
-        private void EnqueueNonDispatchedMessages()
+
+        /// <summary>
+        /// Messages that havent finished the distribution. the distributor ensures that wont distribute it twice to the same suscriber
+        /// </summary>
+        private void EnqueueNonDistributedMessages()
         {
-            //Gets all that werent delivered in previous sessions
-            var incomingMessages = IncomingMessagesDataSource.GetByStatus(Message.MessageStatus.ReceiverReceived, Message.MessageStatus.ReceiverDispatchable, Message.MessageStatus.ReceiverDispatching);
+            //Gets all that were not distributed in previous sessions
+            var incomingMessages = IncomingMessagesDataSource.GetNonDistributedMessages();
 
             foreach (var incomingMessage in incomingMessages)
                 ReceptionMessageDistributor.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage));
         }
 
-        public void RegisterSuscriber(Action<Guid, object> onMessageReceived)
+        public void RegisterSuscriber(Action<Guid, object> onMessageReceived) //TODO: THIS IS A bootch and it must be refactored
         {
             if (onMessageReceived == null) throw new ArgumentNullException("onMessageReceived");
             Logger.Trace("InternalMessageHandler.RegisterSuscriber");

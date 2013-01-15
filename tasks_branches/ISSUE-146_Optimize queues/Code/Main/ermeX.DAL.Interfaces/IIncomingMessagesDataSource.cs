@@ -29,5 +29,6 @@ namespace ermeX.DAL.Interfaces
         IEnumerable<IncomingMessage> GetMessagesToDispatch();
         IEnumerable<IncomingMessage> GetByStatus(params Message.MessageStatus[] status);
         bool ContainsMessageFor(Guid messageId, Guid destination); //TODO: NOW IS THE SUSCRIPTOR ID BUT IT MUST BE THE QUEUE
+        IEnumerable<IncomingMessage> GetNonDistributedMessages();
     }
 }
