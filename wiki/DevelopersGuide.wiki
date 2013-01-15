@@ -16,7 +16,10 @@ Currently, ermeX has two solutions:
   * Frameworks: 4.0 Full
   * Configurations: Debug, Release
 
-== SVN Folders ==
+== Source control ==
+ermeX uses subversion. 
+
+=== SVN Folders ===
 
   *_blessed_ this is the main trunk, and is intended to be used for merging/branching *ONLY* by the project admins
   *_tasks_branches_ it contains all the branches currently under development
