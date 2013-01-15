@@ -115,9 +115,10 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
                 SuscriptionHandlerId = Guid.Empty,
                 Status = Message.MessageStatus.ReceiverReceived,
             };
-
-            IncomingMessagesDataSource.Save(incomingMessage);
             
+            //this must be done on-line in case of errors
+            IncomingMessagesDataSource.Save(incomingMessage); 
+            ReceptionMessageDistributor.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage));
             Logger.Trace(x=>x("{0} - Message received ", message.Data.MessageId));
             return null;
         }

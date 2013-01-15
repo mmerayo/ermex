@@ -58,7 +58,7 @@ namespace ermeX.Threading.Queues
                 lock (_locker)
                 {
                     if (Queue.Count == 0)
-                        throw new InvalidOperationException("The queue is empty");
+                        throw new InvalidOperationException("The queue is empty");//SHOULD THIS RETURN NULL?
                     TQueueItem result = Queue[0];
                     Queue.RemoveAt(0);
                     return result;
