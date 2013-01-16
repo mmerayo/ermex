@@ -127,7 +127,18 @@ namespace ermeX.Threading.Scheduling
             }
         }
 
-        
+        public void RemoveJobsByAction(Action doAction)
+        {
+            if (doAction == null) throw new ArgumentNullException("doAction");
+            lock (_syncRoot)
+            {
+                foreach (var job in _jobs)
+                {
+                    job.Value.RemoveAll(x => x.DoAction == doAction);
+                }
+            }
+        }
+
         private void RunJobs(object state)
         {
             try
@@ -232,5 +243,7 @@ namespace ermeX.Threading.Scheduling
         }
 
         #endregion
+
+        
     }
 }

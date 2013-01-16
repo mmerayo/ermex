@@ -26,6 +26,11 @@ namespace ermeX.DAL.Interfaces
     internal interface IAppComponentDataSource : IDataSource<AppComponent>
     {
         AppComponent GetByComponentId(Guid componentId);
+
+        /// <summary>
+        /// Gets the maximum latency in milliseconds
+        /// </summary>
+        /// <returns></returns>
         int GetMaxLatency();
         IList<AppComponent> GetOthers();
 

@@ -141,7 +141,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                 }
 
                 MessagesDataSource.Save(incomingMessages);
-                foreach (var incomingMessage in incomingMessages)
+                foreach (var incomingMessage in incomingMessages) //TODO:CREATE OVERLOAD on EnqueueItem TO ACCEPT THIS BATCH
                 {
                     Dispatcher.EnqueueItem(new QueueDispatcherManager.QueueDispatcherManagerMessage(incomingMessage,
                                                                                                     false));

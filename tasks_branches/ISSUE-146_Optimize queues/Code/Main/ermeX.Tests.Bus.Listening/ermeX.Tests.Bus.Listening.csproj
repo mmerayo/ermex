@@ -116,6 +116,7 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
+    <Compile Include="Handlers\InternalMessageHandling\WorkflowHandlers\QueueDispatcherManagerTester.cs" />
     <Compile Include="Handlers\InternalMessageHandling\WorkflowHandlers\ReceptionMessageDistributorTester.cs" />
     <Compile Include="Handlers\InternalMessageHandling\ReceptionMessageHandlerTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

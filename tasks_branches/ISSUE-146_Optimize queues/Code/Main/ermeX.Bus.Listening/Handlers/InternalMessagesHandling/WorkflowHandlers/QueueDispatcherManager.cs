@@ -42,22 +42,22 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
             if (messagesDataSource == null) throw new ArgumentNullException("messagesDataSource");
             if (scheduler == null) throw new ArgumentNullException("scheduler");
             if (jobScheduler == null) throw new ArgumentNullException("jobScheduler");
-            ComponentDataSource = componentDataSource;
+            ComponentsDataSource = componentDataSource;
             MessagesDataSource = messagesDataSource;
             Scheduler = scheduler;
             JobScheduler = jobScheduler;
             Settings = settings;
-
-            //TODO: REMOVE WHEN ISSUE-244 IS DONE
-            JobScheduler.ScheduleJob(Job.At(DateTime.UtcNow.AddSeconds(2),DoDeliver));
-
+            NextScheduledDelivery = DateTime.MaxValue;
         }
         private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
         private IBusSettings Settings { get; set; }
-        private IAppComponentDataSource ComponentDataSource { get; set; }
+        private IAppComponentDataSource ComponentsDataSource { get; set; }
         private IIncomingMessagesDataSource MessagesDataSource { get; set; }
         private IScheduler Scheduler { get; set; }
         private IJobScheduler JobScheduler { get; set; }
+        private DateTime NextScheduledDelivery { get; set; }
+        private readonly object _scheduleLocker=new object();
+        private readonly object _locker = new object();
 
         public void EnqueueItem(QueueDispatcherManagerMessage message)
         {
@@ -69,6 +69,23 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
             MessagesDataSource.Save(incomingMessage);
             if(message.MustCalculateLatency)
                 UpdateComponentLatency(incomingMessage.ToBusMessage(),DateTime.UtcNow);
+
+            //ScheduleDelivery
+            int maxLatency = ComponentsDataSource.GetMaxLatency();
+            DateTime nextScheduleCandidate = DateTime.UtcNow.AddMilliseconds(maxLatency);
+            TryScheduleDelivery(nextScheduleCandidate);
+        }
+
+        private void TryScheduleDelivery(DateTime nextScheduleCandidate)
+        {
+            lock(_scheduleLocker)
+            {
+                if(nextScheduleCandidate < NextScheduledDelivery) //Add to scheduler
+                {
+                    NextScheduledDelivery = nextScheduleCandidate;
+                    JobScheduler.ScheduleJob(Job.At(nextScheduleCandidate, DoDeliver));
+                }
+            }
         }
 
         //TODO: MOVE TO THE FINAL QUEUE
@@ -77,32 +94,40 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
             var milliseconds = receivedTimeUtc.Subtract(receivedMessage.CreatedTimeUtc).Milliseconds;
             if (milliseconds <= (Settings.MaxDelayDueToLatencySeconds * 1000))
             {
-                ComponentDataSource.UpdateRemoteComponentLatency(receivedMessage.Publisher, milliseconds);
+                ComponentsDataSource.UpdateRemoteComponentLatency(receivedMessage.Publisher, milliseconds);
             }
         }
 
         private void DoDeliver()
         {
-            var item = Scheduler.GetNext();
-            if (item != null)
+            if (_disposed) return;
+
+            lock (_scheduleLocker)
             {
-
-                Logger.Trace(x => x("{0} Start Handling", item.MessageId));
-                try
+                NextScheduledDelivery = DateTime.MaxValue;
+            }
+            lock (_locker)
+            {
+                var item = Scheduler.GetNext();
+                if (item != null)
                 {
-                    OnDispatchMessage(item.SuscriptionHandlerId, item.ToBusMessage());
-                }
-                catch
-                {
-                    item.Status = Message.MessageStatus.ReceiverDispatchable; //leaves it in the previous status
-                    MessagesDataSource.Save(item);
-                    JobScheduler.ScheduleJob(Job.At(DateTime.UtcNow.AddSeconds(2), DoDeliver));
-                    return;
-                }
-                MessagesDataSource.Remove(item);
-                Logger.Trace(x => x("{0} Handled finally", item.MessageId));
-                JobScheduler.ScheduleJob(Job.At(DateTime.UtcNow.AddSeconds(2), DoDeliver));
 
+                    Logger.Trace(x => x("{0} Start Handling", item.MessageId));
+                    try
+                    {
+                        OnDispatchMessage(item.SuscriptionHandlerId, item.ToBusMessage());
+                    }
+                    catch
+                    {
+                        TryScheduleDelivery(DateTime.UtcNow.AddSeconds(2));
+                            //it will continue rescheduling while there are more
+                        return;
+                    }
+                    MessagesDataSource.Remove(item);
+                    Logger.Trace(x => x("{0} Handled finally", item.MessageId));
+                    TryScheduleDelivery(DateTime.UtcNow.AddSeconds(2));
+                        //it will continue rescheduling while there are more
+                }
             }
         }
 
@@ -127,9 +152,31 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
             }catch(Exception ex)
             {
                 Logger.Error(x=>x("Error handling message {0} by subscriptionHandler {1}", message.MessageId, suscriptionHandlerId),ex);
-                throw ex;
+                throw;
             }
         }
 
+        #region IDisposable
+
+        private bool _disposed = false;
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        private void Dispose(bool disposing)
+        {
+            JobScheduler.RemoveJobsByAction(DoDeliver);
+            if(disposing)
+            {
+                DispatchMessage = null;
+            }
+            _disposed = true;
+        }
+
+        ~QueueDispatcherManager()
+        {
+            Dispose(false);
+        }
+        #endregion
     }
 }
