@@ -73,7 +73,18 @@ namespace ermeX.Tests.Common.Serialization
 
         }
 
-
+        [Test]
+        public void FromMarcGravell_Serialize_Deserialize_1M()
+        {
+            var rand = new Random(12345);
+            for (int i = 0; i < 1000000; i++)
+            {
+                var obj = new TransportMessage(Guid.NewGuid(), DateTime.UtcNow, Guid.NewGuid(), new BusMessage(
+                    Guid.NewGuid(), DateTime.UtcNow, Guid.NewGuid(), new BizMessage(rand.Next())));
+                var blob = ObjectSerializer.SerializeObjectToByteArray(obj);
+                Assert.DoesNotThrow(()=>ObjectSerializer.DeserializeObject<TransportMessage>(blob));
+            }
+        }
 
 
 
