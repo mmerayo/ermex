@@ -12,9 +12,11 @@ Currently, ermeX has two solutions:
 
 
 == SOLUTION CONFIGURATIONS ==
+Make sure you select one combination of the following before you compile from the IDE:
   * Platforms: x86, x64 (ANY_CPU not available at the moment)
   * Frameworks: 4.0 Full
   * Configurations: Debug, Release
+
 
 == Source control ==
 ermeX uses subversion. 
