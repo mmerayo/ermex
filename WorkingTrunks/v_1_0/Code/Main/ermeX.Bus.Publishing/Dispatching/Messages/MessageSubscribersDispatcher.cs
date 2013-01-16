@@ -83,31 +83,44 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         private void OnDequeue(SubscribersDispatcherMessage obj)
         {
-            var messageToSend = obj.OutGoingMessage;
-            if (messageToSend.Status!=Message.MessageStatus.SenderDispatchPending) 
-                return;
-
-            if (messageToSend.Expired(Settings.SendExpiringTime))
+            try
             {
-                messageToSend.Status = Message.MessageStatus.SenderFailed;
-                Logger.Warn(x => x("FATAL! {0} not sent to {1} AND EXPIRED.It wont be retried", messageToSend.MessageId, messageToSend.PublishedTo));
-                TaskQueue.EnqueueItem(()=>DataSource.Save(messageToSend));
-                return;
+                var messageToSend = obj.OutGoingMessage;
+                if (messageToSend.Status != Message.MessageStatus.SenderDispatchPending)
+                    return;
+
+                if (messageToSend.Expired(Settings.SendExpiringTime))
+                {
+                    messageToSend.Status = Message.MessageStatus.SenderFailed;
+                    Logger.Warn(
+                        x =>
+                        x("FATAL! {0} not sent to {1} AND EXPIRED.It wont be retried", messageToSend.MessageId,
+                          messageToSend.PublishedTo));
+                    TaskQueue.EnqueueItem(() => DataSource.Save(messageToSend));
+                    return;
+                }
+
+                if (SendData(messageToSend))
+                {
+                    messageToSend.Status = Message.MessageStatus.SenderSent;
+                    TaskQueue.EnqueueItem(() => DataSource.Save(messageToSend));
+                    Logger.Info(x => x("SUCCESS {0} Sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo));
+                }
+                else
+                {
+                    messageToSend.Tries += 1;
+
+                    TaskQueue.EnqueueItem(() => DataSource.Save(messageToSend));
+                    TaskQueue.EnqueueItem(() => ReEnqueueItem(messageToSend));
+                    Logger.Warn(
+                        x =>
+                        x("FAILED! {0} not sent to {1}. It will be retried", messageToSend.MessageId,
+                          messageToSend.PublishedTo));
+                }
             }
-
-            if (SendData(messageToSend))
+            catch (Exception ex)
             {
-                messageToSend.Status=Message.MessageStatus.SenderSent;
-                TaskQueue.EnqueueItem(() => DataSource.Save(messageToSend));
-                Logger.Info(x => x("SUCCESS {0} Sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo));
-            }
-            else
-            {
-                messageToSend.Tries += 1;
-
-                TaskQueue.EnqueueItem(() => DataSource.Save(messageToSend));
-                TaskQueue.EnqueueItem(()=>ReEnqueueItem(messageToSend));
-                Logger.Warn(x => x("FAILED! {0} not sent to {1}. It will be retried", messageToSend.MessageId, messageToSend.PublishedTo));
+                Logger.Error(x => x("There was an error while dispatching an outgoing message. {0}", ex));
             }
 
         }
@@ -153,7 +166,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             int suggestedRetryTime = messageToSend.Tries * 5;
             int fireTime = suggestedRetryTime > 120 ? 120 : suggestedRetryTime;
          
-            var job = Job.At(DateTime.UtcNow.AddSeconds(fireTime),
+            var job = Job.At(this,DateTime.UtcNow.AddSeconds(fireTime),
                              () => EnqueueItem(new SubscribersDispatcherMessage(messageToSend)));
             
             JobScheduler.ScheduleJob(job);
@@ -168,6 +181,12 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             {
                 ReEnqueueItem(outgoingMessage);
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            JobScheduler.RemoveJobsByRequester(this);
+            base.Dispose(disposing);
         }
     }
 }
