@@ -85,7 +85,7 @@ namespace ermeX.DAL.DataAccess.DataSources
             IncomingMessage result = null;
 
             var incomingMessages =
-                GetByStatus(session, Message.MessageStatus.ReceiverDispatchable).ResultValue.OrderBy(
+                GetByStatus(session, Message.MessageStatus.ReceiverDispatching).ResultValue.OrderBy(
                     x => x.CreatedTimeUtc);
 
             //goes through all to find the first dispatchable
@@ -95,16 +95,6 @@ namespace ermeX.DAL.DataAccess.DataSources
                 var milliseconds = timeSpan.TotalMilliseconds;
                 if (milliseconds >= maxLatency)
                 {
-
-                    if (incomingMessage.Status == Message.MessageStatus.ReceiverDispatchable)
-                    {
-                        incomingMessage.Status = Message.MessageStatus.ReceiverDispatching;
-                        Save(session, incomingMessage);
-                    }
-                    else
-                    {
-                        continue;
-                    }
                     result = incomingMessage;
                     break;
                 }

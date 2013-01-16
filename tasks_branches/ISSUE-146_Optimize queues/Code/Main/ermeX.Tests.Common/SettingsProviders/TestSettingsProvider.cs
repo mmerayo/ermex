@@ -188,7 +188,7 @@ namespace ermeX.Tests.Common.SettingsProviders
 
             public int MaxDelayDueToLatencySeconds
             {
-                get { throw new NotImplementedException(); }
+                get { return 20; }
             }
 
 

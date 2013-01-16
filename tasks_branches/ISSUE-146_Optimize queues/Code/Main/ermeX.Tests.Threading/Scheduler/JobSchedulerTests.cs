@@ -59,6 +59,27 @@ namespace ermeX.Tests.Threading.Scheduler
            }
         }
 
+        [Test]
+        public void Can_UnScheduleJobByAction([Values(1,3,5,15)]int numJobs)
+        {
+            const int seconds = 3;
+            using (var target = new JobScheduler())
+            {
+                for (int i = 0; i < numJobs; i++)
+                {
+                    DateTime dateTime = DateTime.UtcNow;
+                    Job job = Job.At(dateTime.AddSeconds(seconds), ActionPayload);
+                    target.ScheduleJob(job);
+                }
+                target.RemoveJobsByAction(ActionPayload);
+
+                _jobCalledEvent.WaitOne(TimeSpan.FromSeconds(seconds * 2));
+                Assert.IsFalse(_called);
+            }
+        }
+
+
+
        
 
         [Test]
