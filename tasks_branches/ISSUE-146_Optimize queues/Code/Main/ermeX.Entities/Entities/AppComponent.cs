@@ -24,7 +24,7 @@ namespace ermeX.Entities.Entities
 {
     internal class AppComponent : ModelBase, IEquatable<AppComponent>
     {
-        internal const int DefaultLatencyMilliseconds = 20000;
+        internal const int DefaultLatencyMilliseconds = 5000;
 
         public AppComponent() : this(DefaultLatencyMilliseconds)
         {
