@@ -83,7 +83,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                 if(nextScheduleCandidate < NextScheduledDelivery) //Add to scheduler
                 {
                     NextScheduledDelivery = nextScheduleCandidate;
-                    JobScheduler.ScheduleJob(Job.At(nextScheduleCandidate, DoDeliver));
+                    JobScheduler.ScheduleJob(Job.At(this,nextScheduleCandidate, DoDeliver));
                 }
             }
         }
@@ -165,7 +165,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
         }
         private void Dispose(bool disposing)
         {
-            JobScheduler.RemoveJobsByAction(DoDeliver);
+            JobScheduler.RemoveJobsByRequester(this);
             if(disposing)
             {
                 DispatchMessage = null;

@@ -166,7 +166,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             int suggestedRetryTime = messageToSend.Tries * 5;
             int fireTime = suggestedRetryTime > 120 ? 120 : suggestedRetryTime;
          
-            var job = Job.At(DateTime.UtcNow.AddSeconds(fireTime),
+            var job = Job.At(this,DateTime.UtcNow.AddSeconds(fireTime),
                              () => EnqueueItem(new SubscribersDispatcherMessage(messageToSend)));
             
             JobScheduler.ScheduleJob(job);
@@ -181,6 +181,12 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             {
                 ReEnqueueItem(outgoingMessage);
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            JobScheduler.RemoveJobsByRequester(this);
+            base.Dispose(disposing);
         }
     }
 }
