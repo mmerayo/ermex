@@ -127,14 +127,14 @@ namespace ermeX.Threading.Scheduling
             }
         }
 
-        public void RemoveJobsByAction(Action doAction)
+        public void RemoveJobsByRequester(object requester)
         {
-            if (doAction == null) throw new ArgumentNullException("doAction");
+            if (requester == null) throw new ArgumentNullException("requester");
             lock (_syncRoot)
             {
                 foreach (var job in _jobs)
                 {
-                    job.Value.RemoveAll(x => x.DoAction == doAction);
+                    job.Value.RemoveAll(x => x.Requester == requester);
                 }
             }
         }

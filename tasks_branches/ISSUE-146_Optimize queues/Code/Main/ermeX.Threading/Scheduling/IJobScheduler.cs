@@ -31,7 +31,7 @@ namespace ermeX.Threading.Scheduling
         /// <summary>
         /// Removes Scheduled jobs by action
         /// </summary>
-        /// <param name="doAction"></param>
-        void RemoveJobsByAction(Action doAction);
+        /// <param name="requester"></param>
+        void RemoveJobsByRequester(object requester);
     }
 }

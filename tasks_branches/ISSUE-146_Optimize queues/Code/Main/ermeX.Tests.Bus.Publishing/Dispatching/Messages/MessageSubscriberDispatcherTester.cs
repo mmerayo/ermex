@@ -206,7 +206,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
             outgoingMessagesDataSource.Save(outgoingMessage);
 
             using (var target = GetInstance(dbEngine, DealWithMessage, true, out mockedService))
-                _messageReceived.WaitOne(TimeSpan.FromSeconds(5));
+                _messageReceived.WaitOne(TimeSpan.FromSeconds(10));
 
             Assert.IsTrue(_sentMessages.Count == 1);
             OutgoingMessage actual = outgoingMessagesDataSource.GetById(outgoingMessage.Id);
