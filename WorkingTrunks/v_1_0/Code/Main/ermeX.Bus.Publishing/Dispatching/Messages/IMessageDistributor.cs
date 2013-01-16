@@ -16,9 +16,12 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
+using System;
+
 namespace ermeX.Bus.Publishing.Dispatching.Messages
 {
-    internal interface IMessageDistributor
+    internal interface IMessageDistributor:IDisposable
     {
         /// <summary>
         /// Number of threads active currently
@@ -27,6 +30,5 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         int Count { get; }
         void EnqueueItem(MessageDistributor.MessageDistributorMessage item);
-        void Dispose();
     }
 }
