@@ -32,19 +32,21 @@ namespace ermeX.Tests.Threading.Queues
 
         protected class DummyQueue : ProducerParallelConsumerPriorityQueue<DummyQueueItem>, ITestQueue
         {
+            public bool FailWhenHandling { get; set; }
             private readonly List<DummyQueueItem> _itemsRead = new List<DummyQueueItem>();
 
 
-            public DummyQueue(int initialWorkerCount, int maxThreadsNum)
+            public DummyQueue(int initialWorkerCount, int maxThreadsNum, bool failWhenHandling = false)
                 : base(initialWorkerCount, maxThreadsNum,new MyComparer())
             {
-                
+                FailWhenHandling = failWhenHandling;
             }
-            
+
             public DummyQueue(int initialWorkerCount, int maxThreadsNum, int queueSizeToCreateNewThread,
-                              TimeSpan maxLazyThreadAlive)
+                              TimeSpan maxLazyThreadAlive, bool failWhenHandling = false)
                 : base(initialWorkerCount, maxThreadsNum, queueSizeToCreateNewThread, maxLazyThreadAlive,new MyComparer())
             {
+                FailWhenHandling = failWhenHandling;
             }
 
             private class MyComparer : IComparer<DummyQueueItem>
@@ -66,6 +68,8 @@ namespace ermeX.Tests.Threading.Queues
             {
                 get
                 {
+                    if (FailWhenHandling)
+                        throw new InvalidOperationException("Exception sample as the queue handler is configured to fail");
                     return (item) => ItemsRead.Add(item);
                 }
             }
@@ -76,7 +80,7 @@ namespace ermeX.Tests.Threading.Queues
             }
         }
 
-        protected override ITestQueue GetTarget()
+        protected override ITestQueue GetTarget(bool failWhenHandling=false)
         {
             return new DummyQueue(InitialWorkerCount, 64, 5, TimeSpan.FromSeconds(5));
         }
