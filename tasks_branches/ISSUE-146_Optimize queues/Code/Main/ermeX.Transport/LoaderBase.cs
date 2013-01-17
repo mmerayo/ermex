@@ -143,9 +143,9 @@ namespace ermeX.Transport
 
         protected void Dispose(bool disposing)
         {
-                if (disposing)
-                {
-                }
+            if (disposing)
+            {
+            }
             if (_servers != null)
                 while (_servers.Count > 0)
                 {

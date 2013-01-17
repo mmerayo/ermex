@@ -154,7 +154,8 @@ namespace ermeX.Threading.Queues
                         RunActionOnDequeue(item);
                 }catch(Exception ex)
                 {
-                    Logger.Error(x=>x("{0}",ex.ToString()));
+                    EnqueueItem(item);
+                    Logger.Error(x=>x("An unhandled exception happened in the queue listener, the item has been reenqueued. Details --> {0}",ex.ToString()));
                 }
                 finally
                 {
