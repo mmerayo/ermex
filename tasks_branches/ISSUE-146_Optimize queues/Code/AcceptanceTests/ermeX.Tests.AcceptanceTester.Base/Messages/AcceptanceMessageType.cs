@@ -10,6 +10,7 @@ namespace ermeX.Tests.AcceptanceTester.Base.Messages
 
         public AcceptanceMessageType(bool generateRandomValues = false)
         {
+            CreationUtc = DateTime.UtcNow;
             if (generateRandomValues)
                 GenerateRandomValues();
         }
@@ -19,6 +20,7 @@ namespace ermeX.Tests.AcceptanceTester.Base.Messages
         public int[] TheArray { get; set; }
         public List<string> TheList { get; set; }
         public DateTime TheDateTime { get; set; }
+        public DateTime CreationUtc { get; set; }
 
         public void GenerateRandomValues()
         {
