@@ -109,7 +109,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
             var incomingMessage = new IncomingMessage(BusMessage.Clone(busMessage))
             {
                 ComponentOwner = Settings.ComponentId,
-
+                
                 PublishedTo = Settings.ComponentId,
                 TimeReceivedUtc = DateTime.UtcNow,
                 SuscriptionHandlerId = Guid.Empty,

@@ -42,7 +42,7 @@ namespace ermeX.Tests.Threading.Queues
             }
 
 
-            protected override Action<DummyQueueItem> RunActionOnDequeue
+            protected override Func<DummyQueueItem, bool> RunActionOnDequeue
             {
                 get
                 {
@@ -57,6 +57,7 @@ namespace ermeX.Tests.Threading.Queues
                             {
                                 ItemsRead.Add(item);
                             }
+                            return true;
                         };
                 }
             }

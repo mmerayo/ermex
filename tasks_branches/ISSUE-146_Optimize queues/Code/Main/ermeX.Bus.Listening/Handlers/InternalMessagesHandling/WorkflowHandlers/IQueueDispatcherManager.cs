@@ -1,10 +1,10 @@
 using System;
+using ermeX.Threading.Queues;
 
 namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 {
-    internal interface IQueueDispatcherManager:IDisposable
+    internal interface IQueueDispatcherManager : IProducerConsumerQueue<QueueDispatcherManager.QueueDispatcherManagerMessage>
     {
-        void EnqueueItem(QueueDispatcherManager.QueueDispatcherManagerMessage message);
         event Action<Guid, object> DispatchMessage;
     }
 }

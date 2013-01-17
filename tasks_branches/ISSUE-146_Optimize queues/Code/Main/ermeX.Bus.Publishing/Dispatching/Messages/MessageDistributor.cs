@@ -73,7 +73,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         private SystemTaskQueue TaskQueue { get; set; }
 
 
-        protected override Action<MessageDistributorMessage> RunActionOnDequeue
+        protected override Func<MessageDistributorMessage, bool> RunActionOnDequeue
         {
             get
             {
@@ -84,10 +84,10 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         private readonly Dictionary<Guid,object> _subscriptorLockers=new Dictionary<Guid, object>(); 
 
-        private void OnDequeue(MessageDistributorMessage message)
+        private bool OnDequeue(MessageDistributorMessage message)
         {
             if (message == null) throw new ArgumentNullException("message");
-
+            bool result;
             try
             {
                 //TODO: HIGHLY OPTIMIZABLE and THERe COULD BE CASES WHEN THE MESSAGE IS SENT TWICE
@@ -122,11 +122,14 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
                     }
                 }
-            }catch(Exception ex)
-            {
-                Logger.Error(x=>x("There was an error while distributing an otugoing message. {0}",ex));
-                throw ex;
+                result = true;
             }
+            catch (Exception ex)
+            {
+                Logger.Error(x => x("There was an error while distributing an otugoing message. {0}", ex));
+                result = false;
+            }
+            return result;
         }
 
         private IEnumerable<OutgoingMessageSuscription> GetSubscriptions(string typeFullName)

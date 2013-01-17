@@ -31,10 +31,8 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
             var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
             var componentsDataSource = GetDataSource<AppComponentDataSource>(dbEngine);
             var messagesDataSource = GetDataSource<IncomingMessagesDataSource>(dbEngine);
-            var fifoScheduler = new IncommingMessagesFifoScheduler(messagesDataSource, componentsDataSource);
-            var jobScheduler = new JobScheduler();
-
-            var result = new QueueDispatcherManager(settings, componentsDataSource, messagesDataSource, fifoScheduler, jobScheduler);
+           
+            var result = new QueueDispatcherManager(settings, componentsDataSource, messagesDataSource);
             result.DispatchMessage += deliveryHandler;
             return result;
         }

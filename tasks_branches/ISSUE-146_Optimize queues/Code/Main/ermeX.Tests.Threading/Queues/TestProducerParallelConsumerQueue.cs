@@ -50,13 +50,17 @@ namespace ermeX.Tests.Threading.Queues
                 FailWhenHandling = failWhenHandling;
             }
 
-            protected override Action<DummyQueueItem> RunActionOnDequeue
+            protected override Func<DummyQueueItem, bool> RunActionOnDequeue
             {
                 get
                 {
                     if(FailWhenHandling)
                         throw new InvalidOperationException("Exception sample as the queue handler is configured to fail");
-                    return (item) => ItemsRead.Add(item);
+                    return (item) =>
+                        {
+                            ItemsRead.Add(item);
+                            return true;
+                        };
                 }
             }
 
