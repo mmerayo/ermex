@@ -64,7 +64,11 @@ A mergeable task can be commited to the version trunk under working trunks
 If everything went fine, then you can merge your code
 
 == UTILS FOR DEVELOPERS ==
-  * Run test from nUnit GUI: links at folder _Utilities_
+  * SQL Server Setup: ermeX supports SQL Server as well as SQLite, for the SQL server tests you will need to create an account with full permissions and add the following environment variables:
+    # TEST_SQL_SERVER_ADDRESS: i.e. localhost\sqlserver
+    # TEST_SQL_SERVER_ADMIN_LOGIN: the user you have created
+    # TEST_SQL_SERVER_ADMIN_PASSWORD: the password for the user
+  * Run test from nUnit GUI: use links located at folder _Utilities_. note that you will need to compile the solution in one of the Configurations explained above.
   * Build tasks in local environment
     # Files ReleaseRunner__FRAMEWORK___PLATFORM_.cmd
     # Params _Compile_ or _Pack_ or _UnitTests_ or _AcceptanceTests_. The last two options need _Compile_ to be invoked previously
