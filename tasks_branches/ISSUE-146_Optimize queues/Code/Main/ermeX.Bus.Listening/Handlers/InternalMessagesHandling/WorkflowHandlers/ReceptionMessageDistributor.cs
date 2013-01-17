@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Ninject;
 using ermeX.Common;
 using ermeX.DAL.Interfaces;
@@ -51,7 +52,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
         private SystemTaskQueue TaskQueue { get; set; }
 
 
-        protected override Action<MessageDistributorMessage> RunActionOnDequeue
+        protected override Func<MessageDistributorMessage, bool> RunActionOnDequeue
         {
             get
             {
@@ -63,10 +64,10 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 
         
 
-        private void OnDequeue(MessageDistributorMessage message) 
+        private bool OnDequeue(MessageDistributorMessage message) 
         {
             if (message == null) throw new ArgumentNullException("message");
-
+            bool result;
             try
             {
                 
@@ -76,7 +77,6 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                 BusMessage busMessage = incomingMessage.ToBusMessage();
 
                 var subscriptions = GetSubscriptions(busMessage.Data.MessageType.FullName);
-
                 foreach (var messageSuscription in subscriptions)
                 {
                     Guid destination = messageSuscription.SuscriptionHandlerId;
@@ -103,15 +103,15 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                 }
 
                 MessagesDataSource.Remove(message.IncomingMessage); //removes the original message
-                
+                result = true;
+
             }catch(Exception exception)
             {
-                Logger.Error(exception);
+                Logger.Error(x=>x("an error happened in the reception message distributor.: {0}",exception));
                 //reenqueues the message
-                EnqueueItem(message);
+                result = false;
             }
-           
-
+            return result;
         }
 
         private IEnumerable<IncomingMessageSuscription> GetSubscriptions(string typeFullName)

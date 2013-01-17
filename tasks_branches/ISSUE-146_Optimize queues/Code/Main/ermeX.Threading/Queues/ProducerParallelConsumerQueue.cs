@@ -25,7 +25,7 @@ using ermeX.ConfigurationManagement.Settings;
 namespace ermeX.Threading.Queues
 {
     /// <summary>
-    /// Several overlapped consumers can pick messages from the queue 
+    /// Several overlapped consumers can pick messages from the queue using this one
     /// </summary>
     /// <typeparam name="TQueueItem"></typeparam>
     internal abstract class ProducerParallelConsumerQueue<TQueueItem>: IProducerConsumerQueue<TQueueItem>
@@ -37,7 +37,11 @@ namespace ermeX.Threading.Queues
         private readonly List<Thread> _workers = new List<Thread>();
         
         private TimeSpan MaxLazyThreadAlive { get; set; }
-        protected abstract Action<TQueueItem> RunActionOnDequeue { get; }
+
+        /// <summary>
+        /// handle the deliverty from the queue, when it returns false its reenqueued
+        /// </summary>
+        protected abstract Func<TQueueItem,bool> RunActionOnDequeue { get; }
         protected readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
 
         /// <summary>
@@ -151,7 +155,10 @@ namespace ermeX.Threading.Queues
                 try
                 {
                     if(!Equals(item, default(TQueueItem)) && !Disposed)
-                        RunActionOnDequeue(item);
+                        if(!RunActionOnDequeue(item))
+                        {
+                            EnqueueItem(item);
+                        }
                 }catch(Exception ex)
                 {
                     EnqueueItem(item);

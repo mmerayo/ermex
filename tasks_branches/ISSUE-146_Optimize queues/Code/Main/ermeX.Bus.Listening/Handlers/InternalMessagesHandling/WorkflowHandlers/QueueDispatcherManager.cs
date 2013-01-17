@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Common.Logging;
 using Ninject;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers;
@@ -8,18 +10,20 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
+using ermeX.Threading.Queues;
 using ermeX.Threading.Scheduling;
 
 namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 {
+    //THIS CLASS IS CRAP WE NEED TO IMPROVE
     //TODO: IT MUST BE IN PARALLEL, THIS IS TEMPORAL UNTIL iSSUE-244 is developed
     //TODO: THE WHOLE CLAS LOGIC SHOULD BE REWRITTEN
-    internal sealed class QueueDispatcherManager:IQueueDispatcherManager
+    internal sealed class QueueDispatcherManager : ProducerSequentialConsumerPriorityQueue<QueueDispatcherManager.QueueDispatcherManagerMessage>, IQueueDispatcherManager
     {
         public class QueueDispatcherManagerMessage
         {
             public IncomingMessage IncomingMessage { get; private set; }
-            public bool MustCalculateLatency { get; private set; }
+            public bool MustCalculateLatency { get; set; }
 
             public QueueDispatcherManagerMessage(IncomingMessage message, bool mustCalculateLatency=true)
             {
@@ -30,104 +34,118 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
             }
         }
 
+        private class QueueComparer:IComparer<QueueDispatcherManagerMessage>
+        {
+            public int Compare(QueueDispatcherManagerMessage x, QueueDispatcherManagerMessage y)
+            {
+                if (x == null && y == null)
+                    return 0;
+                if (x == null)
+                    return -1;
+                if (y == null)
+                    return 1;
+
+                var xi = x.IncomingMessage;
+                var yi = y.IncomingMessage;
+                 if (xi == null && yi == null)
+                    return 0;
+                if (xi == null)
+                    return -1;
+                if (yi == null)
+                    return 1;
+
+                return xi.CreatedTimeUtc.CompareTo(yi.CreatedTimeUtc);
+            }
+        }
 
         [Inject]
         public QueueDispatcherManager(IBusSettings settings, 
             IAppComponentDataSource componentDataSource,
-            IIncomingMessagesDataSource messagesDataSource,
-            IScheduler scheduler, IJobScheduler jobScheduler)
+            IIncomingMessagesDataSource messagesDataSource):base(new QueueComparer())
         {
             if (settings == null) throw new ArgumentNullException("settings");
             if (componentDataSource == null) throw new ArgumentNullException("componentDataSource");
             if (messagesDataSource == null) throw new ArgumentNullException("messagesDataSource");
-            if (scheduler == null) throw new ArgumentNullException("scheduler");
-            if (jobScheduler == null) throw new ArgumentNullException("jobScheduler");
             ComponentsDataSource = componentDataSource;
             MessagesDataSource = messagesDataSource;
-            Scheduler = scheduler;
-            JobScheduler = jobScheduler;
             Settings = settings;
-            NextScheduledDelivery = DateTime.MaxValue;
         }
-        private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
         private IBusSettings Settings { get; set; }
         private IAppComponentDataSource ComponentsDataSource { get; set; }
         private IIncomingMessagesDataSource MessagesDataSource { get; set; }
-        private IScheduler Scheduler { get; set; }
-        private IJobScheduler JobScheduler { get; set; }
-        private DateTime NextScheduledDelivery { get; set; }
-        private readonly object _scheduleLocker=new object();
-        private readonly object _locker = new object();
 
-        public void EnqueueItem(QueueDispatcherManagerMessage message)
+        protected override Func<QueueDispatcherManagerMessage,bool> RunActionOnDequeue
         {
-            //TODO: IT DOES THE DISPATCH TEMPORALLY, BUT IT MUST RESEND TO EACH QUEUE
-            //TODO: we need to IMPLEMENT the RETRIES IN THE FINAL QUEUE ISSUE-244
+            get { return DoDeliver; }
+        }
+
+        private bool DoDeliver(QueueDispatcherManagerMessage message)
+        {
+            bool result;
+            DateTime receivedHere = DateTime.UtcNow;
 
             IncomingMessage incomingMessage = message.IncomingMessage;
-            incomingMessage.Status=Message.MessageStatus.ReceiverDispatching;
-            MessagesDataSource.Save(incomingMessage);
-            if(message.MustCalculateLatency)
-                UpdateComponentLatency(incomingMessage.ToBusMessage(),DateTime.UtcNow);
 
-            //ScheduleDelivery
-            int maxLatency = ComponentsDataSource.GetMaxLatency();
-            DateTime nextScheduleCandidate = DateTime.UtcNow.AddMilliseconds(maxLatency);
-            TryScheduleDelivery(nextScheduleCandidate);
-        }
-
-        private void TryScheduleDelivery(DateTime nextScheduleCandidate)
-        {
-            lock(_scheduleLocker)
+            if (message.MustCalculateLatency)
             {
-                if(nextScheduleCandidate < NextScheduledDelivery) //Add to scheduler
-                {
-                    NextScheduledDelivery = nextScheduleCandidate;
-                    JobScheduler.ScheduleJob(Job.At(this,nextScheduleCandidate, DoDeliver));
-                }
+                UpdateComponentLatency(incomingMessage.ToBusMessage(), receivedHere);
+                message.MustCalculateLatency = false; //this will ensure that its only calculated once
             }
+
+            if (MustWaitDueToQueueLatency(receivedHere, incomingMessage))
+            {
+                result = false;
+            }
+            else
+            {
+                incomingMessage.Status = Message.MessageStatus.ReceiverDispatching;
+                MessagesDataSource.Save(incomingMessage);
+
+                Logger.Trace(x => x("{0} Start Handling", incomingMessage.MessageId));
+                OnDispatchMessage(incomingMessage.SuscriptionHandlerId, incomingMessage.ToBusMessage());
+
+                MessagesDataSource.Remove(incomingMessage);
+                Logger.Trace(x => x("{0} Handled finally", incomingMessage.MessageId));
+                result= true;
+            }
+            return result;
         }
 
-        //TODO: MOVE TO THE FINAL QUEUE
+        /// <summary>
+        ///  checks if it must wait because the latency barrier wasnt reached.
+        /// </summary>
+        /// <param name="receivedHere"></param>
+        /// <param name="incomingMessage"></param>
+        /// <returns></returns>
+        /// <remarks>It does the wait</remarks>
+        private bool MustWaitDueToQueueLatency(DateTime receivedHere, IncomingMessage incomingMessage)
+        {
+            bool result;
+            int maxLatency = ComponentsDataSource.GetMaxLatency();
+                //get the latency of all the components involved in the queue
+
+            //we equal the latency
+            TimeSpan timeSpan = receivedHere.Subtract(incomingMessage.CreatedTimeUtc);
+            var millisecondsLatency = (int) timeSpan.TotalMilliseconds;
+            if (millisecondsLatency < maxLatency) //checks the components latency IF IT WAS DELIVERED TO SOON
+            {
+                //lets wait the expected latency
+                Thread.Sleep(maxLatency - millisecondsLatency);
+                result = true; //if will reenqueue it, and as is sorted it will go to the beggining
+            }
+            else
+            {
+                result = false;
+            }
+            return result;
+        }
+
         private void UpdateComponentLatency(BusMessage receivedMessage, DateTime receivedTimeUtc)
         {
             var milliseconds = receivedTimeUtc.Subtract(receivedMessage.CreatedTimeUtc).Milliseconds;
             if (milliseconds <= (Settings.MaxDelayDueToLatencySeconds * 1000))
             {
                 ComponentsDataSource.UpdateRemoteComponentLatency(receivedMessage.Publisher, milliseconds);
-            }
-        }
-
-        private void DoDeliver()
-        {
-            if (_disposed) return;
-
-            lock (_scheduleLocker)
-            {
-                NextScheduledDelivery = DateTime.MaxValue;
-            }
-            lock (_locker)
-            {
-                var item = Scheduler.GetNext();
-                if (item != null)
-                {
-
-                    Logger.Trace(x => x("{0} Start Handling", item.MessageId));
-                    try
-                    {
-                        OnDispatchMessage(item.SuscriptionHandlerId, item.ToBusMessage());
-                    }
-                    catch
-                    {
-                        TryScheduleDelivery(DateTime.UtcNow.AddSeconds(2));
-                            //it will continue rescheduling while there are more
-                        return;
-                    }
-                    MessagesDataSource.Remove(item);
-                    Logger.Trace(x => x("{0} Handled finally", item.MessageId));
-                    TryScheduleDelivery(DateTime.UtcNow.AddSeconds(2));
-                        //it will continue rescheduling while there are more
-                }
             }
         }
 
@@ -155,28 +173,5 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                 throw;
             }
         }
-
-        #region IDisposable
-
-        private bool _disposed = false;
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-        private void Dispose(bool disposing)
-        {
-            JobScheduler.RemoveJobsByRequester(this);
-            if(disposing)
-            {
-                DispatchMessage = null;
-            }
-            _disposed = true;
-        }
-
-        ~QueueDispatcherManager()
-        {
-            Dispose(false);
-        }
-        #endregion
     }
 }
