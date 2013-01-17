@@ -30,9 +30,15 @@ namespace ermeX.Threading.Queues
     {
         public SystemTaskQueue():base(1,64,3,TimeSpan.FromSeconds(60)){}
 
-        protected override Action<Action> RunActionOnDequeue
+        protected override Func<Action,bool> RunActionOnDequeue
         {
-            get { return action => action(); }
+            get { return RunAction; }
+        }
+
+        private bool RunAction(Action arg)
+        {
+            arg();
+            return true;
         }
     }
 }

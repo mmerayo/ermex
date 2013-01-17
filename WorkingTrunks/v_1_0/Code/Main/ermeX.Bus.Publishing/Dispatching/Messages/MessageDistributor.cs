@@ -73,7 +73,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         private SystemTaskQueue TaskQueue { get; set; }
 
 
-        protected override Action<MessageDistributorMessage> RunActionOnDequeue
+        protected override Func<MessageDistributorMessage, bool> RunActionOnDequeue
         {
             get
             {
@@ -84,40 +84,52 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         private readonly Dictionary<Guid,object> _subscriptorLockers=new Dictionary<Guid, object>(); 
 
-        private void OnDequeue(MessageDistributorMessage message)
+        private bool OnDequeue(MessageDistributorMessage message)
         {
             if (message == null) throw new ArgumentNullException("message");
-
-            //TODO: HIGHLY OPTIMIZABLE and THERe COULD BE CASES WHEN THE MESSAGE IS SENT TWICE
-            OutgoingMessage outGoingMessage = message.OutGoingMessage;
-            BusMessage busMessage = outGoingMessage.ToBusMessage();
-
-            var subscriptions = GetSubscriptions(busMessage.Data.MessageType.FullName);
-
-            foreach (var messageSuscription in subscriptions)
+            bool result;
+            try
             {
-                Guid destinationComponent = messageSuscription.Component;
-                if (!_subscriptorLockers.ContainsKey(destinationComponent))
-                    lock (_subscriptorLockers)
-                        if (!_subscriptorLockers.ContainsKey(destinationComponent))
-                            _subscriptorLockers.Add(destinationComponent, new object());
+                //TODO: HIGHLY OPTIMIZABLE and THERe COULD BE CASES WHEN THE MESSAGE IS SENT TWICE
+                OutgoingMessage outGoingMessage = message.OutGoingMessage;
+                BusMessage busMessage = outGoingMessage.ToBusMessage();
 
-                object subscriptorLocker = _subscriptorLockers[destinationComponent];
-                lock (subscriptorLocker) // its sequential by component
+                var subscriptions = GetSubscriptions(busMessage.Data.MessageType.FullName);
+
+                foreach (var messageSuscription in subscriptions)
                 {
-                    //ensures it was not sent before this is not atomical because it will only happen when restarting or another component reconnecting
-                    if (OutgoingMessagesDataSource.ContainsMessageFor(outGoingMessage.MessageId, destinationComponent))
-                        continue;
+                    Guid destinationComponent = messageSuscription.Component;
+                    if (!_subscriptorLockers.ContainsKey(destinationComponent))
+                        lock (_subscriptorLockers)
+                            if (!_subscriptorLockers.ContainsKey(destinationComponent))
+                                _subscriptorLockers.Add(destinationComponent, new object());
 
-                    var messageToSend = outGoingMessage.GetClone(); //creates a copy for the subscriber
-                    messageToSend.Status = Message.MessageStatus.SenderDispatchPending; //ready to be dispatched
-                    messageToSend.PublishedTo = destinationComponent; //assigns the receiver
-                    Dispatcher.EnqueueItem(new MessageSubscribersDispatcher.SubscribersDispatcherMessage(messageToSend));//pushes it
-                    
-                    OutgoingMessagesDataSource.Save(messageToSend);//update the db
-                    
+                    object subscriptorLocker = _subscriptorLockers[destinationComponent];
+                    lock (subscriptorLocker) // its sequential by component
+                    {
+                        //ensures it was not sent before this is not atomical because it will only happen when restarting or another component reconnecting
+                        if (OutgoingMessagesDataSource.ContainsMessageFor(outGoingMessage.MessageId,
+                                                                          destinationComponent))
+                            continue;
+
+                        var messageToSend = outGoingMessage.GetClone(); //creates a copy for the subscriber
+                        messageToSend.Status = Message.MessageStatus.SenderDispatchPending; //ready to be dispatched
+                        messageToSend.PublishedTo = destinationComponent; //assigns the receiver
+                        Dispatcher.EnqueueItem(
+                            new MessageSubscribersDispatcher.SubscribersDispatcherMessage(messageToSend)); //pushes it
+
+                        OutgoingMessagesDataSource.Save(messageToSend); //update the db
+
+                    }
                 }
+                result = true;
             }
+            catch (Exception ex)
+            {
+                Logger.Error(x => x("There was an error while distributing an otugoing message. {0}", ex));
+                result = false;
+            }
+            return result;
         }
 
         private IEnumerable<OutgoingMessageSuscription> GetSubscriptions(string typeFullName)

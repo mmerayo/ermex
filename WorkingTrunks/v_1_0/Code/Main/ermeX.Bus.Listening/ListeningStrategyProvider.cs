@@ -26,13 +26,16 @@ using ermeX.Transport.Interfaces;
 
 namespace ermeX.Bus.Listening
 {
+    /// <summary>
+    /// Loads services handlers and starts listening
+    /// </summary>
     internal class ListeningStrategyProvider : IListeningStrategyProvider
     {
         private bool _started;
 
         [Inject]
         public ListeningStrategyProvider(IBusSettings settings,
-                                         InternalMessageHandler internalMessageHandler,
+                                         ReceptionMessageHandler internalMessageHandler,
                                          IConnectivityManager connectivityManager)
         {
             if (settings == null) throw new ArgumentNullException("settings");
@@ -45,7 +48,7 @@ namespace ermeX.Bus.Listening
 
         private IBusSettings Settings { get; set; }
 
-        private InternalMessageHandler InternalMessageHandler { get; set; }
+        private ReceptionMessageHandler InternalMessageHandler { get; set; }
         private IConnectivityManager ConnectivityManager { get; set; }
         private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
         #region IListeningStrategyProvider Members
@@ -64,8 +67,6 @@ namespace ermeX.Bus.Listening
 
             Logger.Trace("ListeningStrategyProvider.StartListening: Component: " + Settings.ComponentId);
             InternalMessageHandler.RegisterSuscriber(onMessageReceived);
-            //TODO:if injection cannot be singleton remove singleton feature
-            InternalMessageHandler.StartWorkers();
 
             ConnectivityManager.StartListening();
             _started = true;
@@ -100,7 +101,7 @@ namespace ermeX.Bus.Listening
 
         private void LoadServiceHandlers()
         {
-            ConnectivityManager.RegisterHandler(InternalMessageHandler.OperationIdentifier, InternalMessageHandler);
+            ConnectivityManager.RegisterHandler(ReceptionMessageHandler.OperationIdentifier, InternalMessageHandler);
         }
     }
 }

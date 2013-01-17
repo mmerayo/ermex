@@ -90,6 +90,7 @@ namespace ermeX.Tests.Common.Networking
                             bottomRange = (ushort) (candidatePort + 1);
                             break;
                         case SQLiteErrorCode.Error:
+                        case SQLiteErrorCode.Busy:
                         case SQLiteErrorCode.Locked:   
                             break;
 
@@ -132,6 +133,7 @@ namespace ermeX.Tests.Common.Networking
 
                         case SQLiteErrorCode.Error: //already deleted
                             break;
+                        case SQLiteErrorCode.Busy:
                         case SQLiteErrorCode.Locked:
                             mustRetry = true;
                             break;

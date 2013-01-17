@@ -25,7 +25,7 @@ using ermeX.ConfigurationManagement.Settings;
 namespace ermeX.Threading.Queues
 {
     /// <summary>
-    /// Several overlapped consumers can pick messages from the queue 
+    /// Several overlapped consumers can pick messages from the queue using this one
     /// </summary>
     /// <typeparam name="TQueueItem"></typeparam>
     internal abstract class ProducerParallelConsumerQueue<TQueueItem>: IProducerConsumerQueue<TQueueItem>
@@ -37,7 +37,11 @@ namespace ermeX.Threading.Queues
         private readonly List<Thread> _workers = new List<Thread>();
         
         private TimeSpan MaxLazyThreadAlive { get; set; }
-        protected abstract Action<TQueueItem> RunActionOnDequeue { get; }
+
+        /// <summary>
+        /// handle the deliverty from the queue, when it returns false its reenqueued
+        /// </summary>
+        protected abstract Func<TQueueItem,bool> RunActionOnDequeue { get; }
         protected readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
 
         /// <summary>
@@ -150,11 +154,15 @@ namespace ermeX.Threading.Queues
                 }
                 try
                 {
-                    if(item!=null)
-                        RunActionOnDequeue(item);
+                    if(!Equals(item, default(TQueueItem)) && !Disposed)
+                        if(!RunActionOnDequeue(item))
+                        {
+                            EnqueueItem(item);
+                        }
                 }catch(Exception ex)
                 {
-                    Logger.Error(x=>x("{0}",ex.ToString()));
+                    EnqueueItem(item);
+                    Logger.Error(x=>x("An unhandled exception happened in the queue listener, the item has been reenqueued. Details --> {0}",ex.ToString()));
                 }
                 finally
                 {
@@ -167,6 +175,8 @@ namespace ermeX.Threading.Queues
         }
 
         #region IDisposable
+
+        protected bool Disposed { get; private set; }
         public void Dispose()
         {
             Dispose(true);
@@ -179,6 +189,8 @@ namespace ermeX.Threading.Queues
             {
                 Shutdown(disposing);
             }
+
+            Disposed = true;
         }
 
         ~ProducerParallelConsumerQueue()
@@ -222,7 +234,7 @@ namespace ermeX.Threading.Queues
 
         #endregion
 
-
+        
     }
 
     

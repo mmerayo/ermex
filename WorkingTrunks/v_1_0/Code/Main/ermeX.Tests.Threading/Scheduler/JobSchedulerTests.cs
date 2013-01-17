@@ -47,7 +47,7 @@ namespace ermeX.Tests.Threading.Scheduler
            {
                DateTime dateTime = DateTime.UtcNow;
                var sw=Stopwatch.StartNew();
-               Job job = Job.At(dateTime.AddSeconds(seconds), ActionPayload);
+               Job job = Job.At(this,dateTime.AddSeconds(seconds), ActionPayload);
                
                target.ScheduleJob(job);
 
@@ -59,6 +59,28 @@ namespace ermeX.Tests.Threading.Scheduler
            }
         }
 
+        [Test]
+        public void Can_UnScheduleJob([Values(1,3,5,15)]int numJobs)
+        {
+            const int seconds = 3;
+            using (var target = new JobScheduler())
+            {
+                for (int i = 0; i < numJobs; i++)
+                {
+                    DateTime dateTime = DateTime.UtcNow;
+                    Job job = Job.At(this,dateTime.AddSeconds(seconds), ActionPayload);
+                    target.ScheduleJob(job);
+                }
+                target.RemoveJobsByRequester(this);
+
+                _jobCalledEvent.WaitOne(TimeSpan.FromSeconds(seconds * 2));
+                Assert.IsFalse(_called);
+            }
+            Assert.IsFalse(_called);
+        }
+
+
+
        
 
         [Test]
@@ -68,7 +90,7 @@ namespace ermeX.Tests.Threading.Scheduler
             using (var target = new JobScheduler())
             {
                 DateTime dateTime = DateTime.UtcNow;
-                Job job = Job.At(dateTime.AddSeconds(seconds), ActionPayload);
+                Job job = Job.At(this,dateTime.AddSeconds(seconds), ActionPayload);
 
                 target.ScheduleJob(job);
             }
@@ -82,7 +104,7 @@ namespace ermeX.Tests.Threading.Scheduler
             using (var target = new JobScheduler())
             {
                 DateTime dateTime = DateTime.UtcNow;
-                Job job = Job.At(dateTime.AddMilliseconds(1), LongActionPayload);
+                Job job = Job.At(this,dateTime.AddMilliseconds(1), LongActionPayload);
 
                 target.ScheduleJob(job);
                 Thread.Sleep(250);
@@ -97,7 +119,7 @@ namespace ermeX.Tests.Threading.Scheduler
             using (var target = new JobScheduler())
             {
                 DateTime dateTime = DateTime.UtcNow;
-                Job job = Job.At(dateTime.AddSeconds(120), ActionPayload);
+                Job job = Job.At(this,dateTime.AddSeconds(120), ActionPayload);
 
                 target.ScheduleJob(job);
                 Thread.Sleep(250);
@@ -112,7 +134,7 @@ namespace ermeX.Tests.Threading.Scheduler
             using (var target = new JobScheduler())
             {
                 DateTime dateTime = DateTime.UtcNow.Subtract(TimeSpan.FromDays(1));
-                Job job = Job.At(dateTime, ActionPayload);
+                Job job = Job.At(this,dateTime, ActionPayload);
 
                 target.ScheduleJob(job);
                 _jobCalledEvent.WaitOne(TimeSpan.FromSeconds(4));

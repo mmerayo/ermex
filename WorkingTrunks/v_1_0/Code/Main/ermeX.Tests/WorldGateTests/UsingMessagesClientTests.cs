@@ -143,13 +143,13 @@ namespace ermeX.Tests.WorldGateTests
 
             var autoResetEvent = new AutoResetEvent(false);
 
-            var handler = WorldGate.Suscribe<TestMessageHandlerSeveralMessagesWithInheritance>();
+            var handler = WorldGate.Suscribe<TestMessageHandlerSeveralMessagesWithInheritance>(); //this one is subscribed to two messages
             handler.SetReceivedEvent( autoResetEvent);
             handler.ExpectedMessages = 2;
             var dummyDomainEntity = new DummyDomainEntity3 { Data = RandomHelper.GetRandomString(), DateTime = RandomHelper.GetRandomDateTime() };
             WorldGate.Publish(dummyDomainEntity);
           
-            autoResetEvent.WaitOne(new TimeSpan(0, 0, 25));
+            autoResetEvent.WaitOne(new TimeSpan(0, 1, 0));
             var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity3>();
 
             Assert.IsNotNull(lastEntityReceived);
