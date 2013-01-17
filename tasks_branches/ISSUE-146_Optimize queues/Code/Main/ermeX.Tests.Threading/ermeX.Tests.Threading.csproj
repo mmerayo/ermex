@@ -114,13 +114,11 @@
     <Compile Include="Queues\TestProducerParallelConsumerPriorityQueue.cs" />
     <Compile Include="Queues\TestProducerSequentialConsumerQueue.cs" />
     <Compile Include="Scheduler\JobSchedulerTests.cs" />
-    <Compile Include="Worker\DummyWorker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queues\DummyQueueItem.cs" />
     <Compile Include="Queues\ITestQueue.cs" />
     <Compile Include="Queues\TestProducerConsumerQueueBase.cs" />
     <Compile Include="Queues\TestProducerParallelConsumerQueue.cs" />
-    <Compile Include="Worker\WorkerTester.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ermeX\KeyFile.snk">

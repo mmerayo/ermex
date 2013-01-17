@@ -150,8 +150,6 @@
     <Compile Include="Common\Serialization\Dummy\DummySerializationEntityBase.cs" />
     <Compile Include="Common\Serialization\JsonSerializerTests.cs" />
     <Compile Include="Common\Serialization\ObjectSerializerTests.cs" />
-    <Compile Include="Threading\DummyWorker.cs" />
-    <Compile Include="Threading\WorkerTester.cs" />
     <Compile Include="Dialogs\MyComponentsDialogTester.cs" />
     <Compile Include="Dialogs\PublishedServiceDialogTester.cs" />
     <Compile Include="Dialogs\MessageSuscriptionsDialogTester.cs" />
