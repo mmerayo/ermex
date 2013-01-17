@@ -19,7 +19,7 @@ Make sure you select one combination of the following before you compile from th
 
 
 == Source control ==
-ermeX uses subversion. 
+ermeX uses subversion. You'll need a client like http://tortoisesvn.net/
 
 === SVN Folders ===
 
