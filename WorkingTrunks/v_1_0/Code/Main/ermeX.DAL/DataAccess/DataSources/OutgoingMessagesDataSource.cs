@@ -115,27 +115,11 @@ namespace ermeX.DAL.DataAccess.DataSources
                            new Tuple<string, object>("PublishedTo", destinationComponent)) > 0;
         }
 
-        public IEnumerable<OutgoingMessage> GetByStatus(params Message.MessageStatus[] status)
+        public IEnumerable<OutgoingMessage> GetByStatus(Message.MessageStatus status)
         {
-            if (status.Length == 0)
-                return GetAll();
-
-            var res = DataAccessExecutor.Perform(session =>
-            {
-                var result = new List<OutgoingMessage>();
-                foreach (var messageStatus in status)
-                {
-                    var dataAccessOperationResult = GetByStatus(session, messageStatus);
-                    if (!dataAccessOperationResult.Success)
-                        throw new DataException("Could not perform the operation GetByStatus");
-                    result.AddRange(dataAccessOperationResult.ResultValue);
-                }
-
-                return new DataAccessOperationResult<IEnumerable<OutgoingMessage>>(true, result);
-            });
-
+            var res = DataAccessExecutor.Perform(session => GetByStatus(session, status));
             if (!res.Success)
-                throw new DataException("Could not perform the operation GetByStatus");
+                throw new DataException("Couldnt perform the operation GetByStatus");
 
             return res.ResultValue;
         }

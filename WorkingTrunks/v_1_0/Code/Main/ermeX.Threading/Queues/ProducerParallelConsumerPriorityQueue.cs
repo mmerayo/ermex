@@ -58,8 +58,7 @@ namespace ermeX.Threading.Queues
                 lock (_locker)
                 {
                     if (Queue.Count == 0)
-                        throw new InvalidOperationException("The queue is empty");//SHOULD THIS RETURN NULL?
-                    Queue.Sort(Comparer); //This mechanism must be improved
+                        throw new InvalidOperationException("The queue is empty");
                     TQueueItem result = Queue[0];
                     Queue.RemoveAt(0);
                     return result;
@@ -71,6 +70,7 @@ namespace ermeX.Threading.Queues
                 lock (_locker)
                 {
                     Queue.Add(item);
+                    Queue.Sort(Comparer);
                 }
             }
         }

@@ -16,17 +16,12 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-namespace ermeX.Bus.Publishing.Dispatching.Messages
-{
-    internal interface IMessageDistributor
-    {
-        /// <summary>
-        /// Number of threads active currently
-        /// </summary>
-        int CurrentThreadNumber { get; }
+using ermeX.Common;
+using ermeX.Threading;
 
-        int Count { get; }
-        void EnqueueItem(MessageDistributor.MessageDistributorMessage item);
-        void Dispose();
+namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers
+{
+    internal interface IIncomingMessagesProcessorWorker : IWorker
+    {
     }
 }

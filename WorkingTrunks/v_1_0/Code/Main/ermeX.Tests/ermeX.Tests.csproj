@@ -165,6 +165,9 @@
     <Compile Include="Services\Mock\IMockTestClient.cs" />
     <Compile Include="Services\Mock\MockEndPoint.cs" />
     <Compile Include="Services\Mock\MockConnectivityProvider.cs" />
+    <Compile Include="Services\Receiving\Handlers\InternalMessagesHandling\InternalMessagesHandlerTester.cs" />
+    <Compile Include="Services\Mock\MockMessagesDispatcherWorker.cs" />
+    <Compile Include="Services\Mock\MockMessagesProcessorWorker.cs" />
     <Compile Include="Services\Sending\Client\ServiceProxyTester.cs" />
     <Compile Include="Services\Receiving\ServerTesterBase.cs" />
     <Compile Include="Services\Mock\MockTestServerBase.cs" />
@@ -229,9 +232,13 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Services\Receiving\Handlers\InternalMessagesHandling\Schedulers\" />
+    <Folder Include="Services\Receiving\Handlers\InternalMessagesHandling\Workers\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Acceptance\TODO.txt" />
+    <Content Include="Services\Receiving\Handlers\InternalMessagesHandling\TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

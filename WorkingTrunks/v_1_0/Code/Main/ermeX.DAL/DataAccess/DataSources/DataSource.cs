@@ -544,12 +544,10 @@ namespace ermeX.DAL.DataAccess.DataSources
         {
             if (session == null) throw new ArgumentNullException("session");
             var criteria = session.CreateCriteria(typeof(TEntity));
-            criteria.Add(Restrictions.Eq("ComponentOwner", LocalComponentId));
             foreach (var arg in arguments)
                 criteria.Add(Restrictions.Eq(arg.Item1, arg.Item2));
-
-            criteria.SetProjection(Projections.Count("ComponentOwner"));
-
+            criteria.Add(Restrictions.Eq("ComponentOwner", LocalComponentId))
+                .SetProjection(Projections.Count(arguments[0].Item1));
             var count = (Int32)criteria.UniqueResult();
             criteria.SetCacheable(false);
             return count;

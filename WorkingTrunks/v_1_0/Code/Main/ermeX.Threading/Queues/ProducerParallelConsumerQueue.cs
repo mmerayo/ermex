@@ -150,7 +150,7 @@ namespace ermeX.Threading.Queues
                 }
                 try
                 {
-                    if(!Equals(item, default(TQueueItem)) && !Disposed)
+                    if(item!=null)
                         RunActionOnDequeue(item);
                 }catch(Exception ex)
                 {
@@ -167,8 +167,6 @@ namespace ermeX.Threading.Queues
         }
 
         #region IDisposable
-
-        protected bool Disposed { get; private set; }
         public void Dispose()
         {
             Dispose(true);
@@ -181,8 +179,6 @@ namespace ermeX.Threading.Queues
             {
                 Shutdown(disposing);
             }
-
-            Disposed = true;
         }
 
         ~ProducerParallelConsumerQueue()
@@ -226,7 +222,7 @@ namespace ermeX.Threading.Queues
 
         #endregion
 
-        
+
     }
 
     

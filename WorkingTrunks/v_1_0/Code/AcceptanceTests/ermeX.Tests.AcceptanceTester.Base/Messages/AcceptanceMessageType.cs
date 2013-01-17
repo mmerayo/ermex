@@ -25,11 +25,11 @@ namespace ermeX.Tests.AcceptanceTester.Base.Messages
             TheInt = RandomHelper.GetRandomInt(0, int.MaxValue);
             TheString = RandomHelper.GetRandomString(15);
 
-            TheArray = new int[RandomHelper.GetRandomInt(20)];
+            TheArray = new int[RandomHelper.GetRandomInt()];
             for (int i = 0; i < TheArray.Length; i++)
                 TheArray[i] = RandomHelper.GetRandomInt(0, 255);
 
-            int items = RandomHelper.GetRandomInt(20);
+            int items = RandomHelper.GetRandomInt();
             TheList = new List<string>(items);
             for (int i = 0; i < items; i++)
                 TheList.Add(RandomHelper.GetRandomString());

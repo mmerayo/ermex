@@ -127,18 +127,7 @@ namespace ermeX.Threading.Scheduling
             }
         }
 
-        public void RemoveJobsByRequester(object requester)
-        {
-            if (requester == null) throw new ArgumentNullException("requester");
-            lock (_syncRoot)
-            {
-                foreach (var job in _jobs)
-                {
-                    job.Value.RemoveAll(x => x.Requester == requester);
-                }
-            }
-        }
-
+        
         private void RunJobs(object state)
         {
             try
@@ -243,7 +232,5 @@ namespace ermeX.Threading.Scheduling
         }
 
         #endregion
-
-        
     }
 }

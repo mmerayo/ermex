@@ -27,11 +27,5 @@ namespace ermeX.Threading.Scheduling
         bool IsWorking();
         IEnumerable<Job> GetJobs();
         void ScheduleJob(Job job);
-
-        /// <summary>
-        /// Removes Scheduled jobs by action
-        /// </summary>
-        /// <param name="requester"></param>
-        void RemoveJobsByRequester(object requester);
     }
 }
