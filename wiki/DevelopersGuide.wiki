@@ -6,7 +6,7 @@ This guide is for ermeX tools developers. Not for final users
 
 
 == Solutions ==
-Currently, ermeX has two solutions:
+Currently, ermeX has two solutions *both in Visual Studio 2010* :
   * _Main_ : Main is the main solution, which contains the code and the unit & integration tests
   * _AcceptanceTests_ : Contains the acceptance tests. This solution can be used until we have a proper Quick Start solution to illustrate the usage of the tool through the class *WorldGate* . Please, note that it needs the merged dll to be generated previously by using the release runner with the Compile option(See utils for developers)
 
