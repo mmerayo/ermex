@@ -16,7 +16,6 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-using System;
 using System.Collections.Generic;
 using ermeX.Entities.Entities;
 
@@ -26,8 +25,6 @@ namespace ermeX.DAL.Interfaces
     {
         IncomingMessage GetNextDispatchableItem(int maxLatency);
         IEnumerable<IncomingMessage> GetMessagesToDispatch();
-        IEnumerable<IncomingMessage> GetByStatus(params Message.MessageStatus[] status);
-        bool ContainsMessageFor(Guid messageId, Guid destination); //TODO: NOW IS THE SUSCRIPTOR ID BUT IT MUST BE THE QUEUE
-        IEnumerable<IncomingMessage> GetNonDistributedMessages();
+        IEnumerable<IncomingMessage> GetByStatus(Message.MessageStatus status);
     }
 }

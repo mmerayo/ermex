@@ -4,14 +4,10 @@
     <assembly path="ermeX.Tests\bin\x64\Release\ermeX.Tests.dll" />
     <assembly path="ermeX.Tests.DAL.Integration\bin\x64\Release\ermeX.Tests.DAL.Integration.dll" />
 	<assembly path="ermeX.Tests.Bus.Publishing\bin\x64\Release\ermeX.Tests.Bus.Publishing.dll" />
-	<assembly path="ermeX.Tests.Bus.Listening\bin\x64\Release\ermeX.Tests.Bus.Listening.dll" />
-	<assembly path="ermeX.Tests.Threading\bin\x64\Release\ermeX.Tests.Threading.dll" />
   </Config>
   <Config name="Debug x64" binpathtype="Auto">
     <assembly path="ermeX.Tests\bin\x64\Debug\ermeX.Tests.dll" />
     <assembly path="ermeX.Tests.DAL.Integration\bin\x64\Debug\ermeX.Tests.DAL.Integration.dll" />
 	<assembly path="ermeX.Tests.Bus.Publishing\bin\x64\Debug\ermeX.Tests.Bus.Publishing.dll" />
-	<assembly path="ermeX.Tests.Bus.Listening\bin\x64\Debug\ermeX.Tests.Bus.Listening.dll" />
-	<assembly path="ermeX.Tests.Threading\bin\x64\Debug\ermeX.Tests.Threading.dll" />	
   </Config>
 </NUnitProject>

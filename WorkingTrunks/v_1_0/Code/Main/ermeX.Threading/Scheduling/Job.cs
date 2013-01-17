@@ -30,13 +30,10 @@ namespace ermeX.Threading.Scheduling
         public Action DoAction { get; private set; }
         public object Param { get; private set; }
 
-        public object Requester { get; private set; }
 
-
-        public static Job At(object requester, DateTime fireTime, Action doAction, object param = null)
+        public static Job At(DateTime fireTime, Action doAction, object param = null)
         {
-            if (requester == null) throw new ArgumentNullException("requester");
-            return new Job {Requester=requester, FireTime = fireTime.ToUniversalTime(), DoAction = doAction, Param = param};
+            return new Job {FireTime = fireTime.ToUniversalTime(), DoAction = doAction, Param = param};
         }
 
         public override string ToString()

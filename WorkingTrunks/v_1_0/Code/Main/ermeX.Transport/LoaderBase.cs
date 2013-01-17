@@ -143,22 +143,20 @@ namespace ermeX.Transport
 
         protected void Dispose(bool disposing)
         {
+            if (!_disposed)
                 if (disposing)
                 {
-                }
-            if (_servers != null)
-                while (_servers.Count > 0)
-                {
-                    var server = _servers[0];
-                    _servers.RemoveAt(0);
-                    server.Dispose();
-                }
-            _disposed = true;
-        }
+                    if (_servers != null)
+                        while (_servers.Count > 0)
+                        {
+                            var server = _servers[0];
+                            _servers.RemoveAt(0);
+                            server.Dispose();
+                        }
 
-        ~LoaderBase()
-        {
-            Dispose(false);
+
+                    _disposed = true;
+                }
         }
 
         #endregion

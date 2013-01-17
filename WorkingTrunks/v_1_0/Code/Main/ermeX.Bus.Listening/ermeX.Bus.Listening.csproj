@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -94,13 +94,13 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
-    <Compile Include="Handlers\InternalMessagesHandling\ReceptionMessageHandler.cs" />
+    <Compile Include="Handlers\InternalMessagesHandling\InternalMessageHandler.cs" />
     <Compile Include="Handlers\InternalMessagesHandling\Schedulers\IScheduler.cs" />
+    <Compile Include="Handlers\InternalMessagesHandling\Workers\IIncomingMessagesDispatcherWorker.cs" />
+    <Compile Include="Handlers\InternalMessagesHandling\Workers\IIncomingMessagesProcessorWorker.cs" />
     <Compile Include="Handlers\InternalMessagesHandling\Schedulers\IncommingMessagesFifoScheduler.cs" />
-    <Compile Include="Handlers\InternalMessagesHandling\WorkflowHandlers\QueueDispatcherManager.cs" />
-    <Compile Include="Handlers\InternalMessagesHandling\WorkflowHandlers\IQueueDispatcherManager.cs" />
-    <Compile Include="Handlers\InternalMessagesHandling\WorkflowHandlers\IReceptionMessageDistributor.cs" />
-    <Compile Include="Handlers\InternalMessagesHandling\WorkflowHandlers\ReceptionMessageDistributor.cs" />
+    <Compile Include="Handlers\InternalMessagesHandling\Workers\IncomingMessagesProcessorWorker.cs" />
+    <Compile Include="Handlers\InternalMessagesHandling\Workers\IncomingMessagesSyncDispatcherWorker.cs" />
     <Compile Include="Handlers\MessageHandlerBase.cs" />
     <Compile Include="Handlers\ServiceHandlerBase.cs" />
     <Compile Include="IListeningManager.cs" />

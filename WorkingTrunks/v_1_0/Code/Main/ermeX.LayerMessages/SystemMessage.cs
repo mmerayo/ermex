@@ -40,7 +40,7 @@ namespace ermeX.LayerMessages
         }
 
         [ProtoMember(1)]
-        public Guid MessageId{get;private set;}
+        public  Guid MessageId{get;private set;}
 
         [ProtoMember(2)]
         public DateTime CreatedTimeUtc { get; private set; }

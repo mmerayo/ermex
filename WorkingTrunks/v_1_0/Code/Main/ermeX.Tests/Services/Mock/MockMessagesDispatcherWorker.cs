@@ -16,17 +16,36 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-namespace ermeX.Bus.Publishing.Dispatching.Messages
-{
-    internal interface IMessageDistributor
-    {
-        /// <summary>
-        /// Number of threads active currently
-        /// </summary>
-        int CurrentThreadNumber { get; }
+using System;
+using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers;
 
-        int Count { get; }
-        void EnqueueItem(MessageDistributor.MessageDistributorMessage item);
-        void Dispose();
+
+using ermeX.Threading;
+
+namespace ermeX.Tests.Services.Mock
+{
+    internal class MockMessagesDispatcherWorker :Worker, IIncomingMessagesDispatcherWorker
+    {
+        public MockMessagesDispatcherWorker()
+            : base( "MockMessagesDispatcherWorker")
+        {
+        }
+
+        public MockMessagesDispatcherWorker(string workerName, TimeSpan forceWorkPeriod) : base( workerName, forceWorkPeriod)
+        {
+        }
+
+        public bool Started { get; private set; }
+       
+        public event Action<Guid, object> DispatchMessage;
+        public override void StartWorking(object data)
+        {
+            Started = true;
+            base.StartWorking(data);
+        }
+        protected override void DoWork(object data)
+        {
+            
+        }
     }
 }

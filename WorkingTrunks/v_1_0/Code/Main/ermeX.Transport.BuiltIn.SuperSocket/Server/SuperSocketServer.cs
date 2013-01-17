@@ -123,24 +123,24 @@ namespace ermeX.Transport.BuiltIn.SuperSocket.Server
 
         public override void Dispose()
         {
-            try
+            try{
+            if (RealServer != null)
             {
-                if (RealServer != null)
-                {
-                    if (RealServer.IsRunning)
-                        RealServer.Stop();
+                if (RealServer.IsRunning)
+                    RealServer.Stop();
 
-                    RealServer.Dispose();
-                    RealServer = null;
-                }
+                RealServer.Dispose();
+                RealServer = null;
+            }
 
-                base.Dispose();
+            base.Dispose();
             }
             catch (Exception ex)
             {
-                Logger.Warn(x => x("Dispose.{0}", ex));
-                throw;
+                Logger.Warn(x=>x("Dispose.{0}", ex));
+                throw ex;
             }
+
         }
 
         private ServiceResult _serverHandler_ChunkReceived(ChunkedServiceRequestMessage message)

@@ -36,7 +36,7 @@ namespace ermeX.Tests.Common.Dummies
         public DummyMessageHandler(bool asInternalMessageHandler = true)
         {
             if (asInternalMessageHandler)
-                OperationId = typeof(ReceptionMessageHandler).GUID;
+                OperationId = typeof(InternalMessageHandler).GUID;
         }
 
 
