@@ -38,7 +38,7 @@ namespace ermeX.ermeX.Component
     {
         static SoaComponent()
         {
-#if DEBUG
+#if DEBUG //TODO: MOVE TO THE TESTFIXTURESETUPS
             if(LogManager.Adapter is NoOpLoggerFactoryAdapter)
                 LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
 #endif

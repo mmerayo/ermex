@@ -41,6 +41,8 @@ namespace ermeX.Threading.Queues
             private List<TQueueItem> Queue { get; set; }
             private IComparer<TQueueItem> Comparer { get; set; }
 
+            private bool _needSort = false;
+
             public PriorityQueueWrapper( IComparer<TQueueItem> comparer)
             {
                 if (comparer == null) throw new ArgumentNullException("comparer");
@@ -58,7 +60,12 @@ namespace ermeX.Threading.Queues
                 lock (_locker)
                 {
                     if (Queue.Count == 0)
-                        throw new InvalidOperationException("The queue is empty");
+                        throw new InvalidOperationException("The queue is empty");//SHOULD THIS RETURN NULL?
+                    if (_needSort)
+                    {
+                        Queue.Sort(Comparer); //This mechanism must be improved
+                        _needSort = false;
+                    }
                     TQueueItem result = Queue[0];
                     Queue.RemoveAt(0);
                     return result;
@@ -70,7 +77,7 @@ namespace ermeX.Threading.Queues
                 lock (_locker)
                 {
                     Queue.Add(item);
-                    Queue.Sort(Comparer);
+                    _needSort = true;
                 }
             }
         }

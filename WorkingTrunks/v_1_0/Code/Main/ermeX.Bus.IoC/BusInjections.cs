@@ -24,7 +24,7 @@ using ermeX.Bus.Interfaces;
 using ermeX.Bus.Interfaces.Dispatching;
 using ermeX.Bus.Listening;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers;
-using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Workers;
+using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
 using ermeX.Bus.Publishing;
 using ermeX.Bus.Publishing.ClientProxies;
 using ermeX.Bus.Publishing.Dispatching;
@@ -75,9 +75,10 @@ namespace ermeX.Bus.IoC
             Bind<IMessageDistributor>().To<MessageDistributor>().InSingletonScope();
             Bind<IMessageSubscribersDispatcher>().To<MessageSubscribersDispatcher>().InSingletonScope();
 
-            Bind<IIncomingMessagesProcessorWorker>().To<IncomingMessagesProcessorWorker>().InSingletonScope();
-            Bind<IIncomingMessagesDispatcherWorker>().To<IncomingMessagesSyncDispatcherWorker>().InSingletonScope();
             Bind<IScheduler>().To<IncommingMessagesFifoScheduler>().InSingletonScope();
+
+            Bind<IQueueDispatcherManager>().To<QueueDispatcherManager>().InSingletonScope();
+            Bind<IReceptionMessageDistributor>().To<ReceptionMessageDistributor>().InSingletonScope();
         }
     }
 }

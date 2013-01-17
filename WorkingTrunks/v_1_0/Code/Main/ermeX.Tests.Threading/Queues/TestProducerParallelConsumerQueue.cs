@@ -32,27 +32,35 @@ namespace ermeX.Tests.Threading.Queues
 
         protected class DummyQueue : ProducerParallelConsumerQueue<DummyQueueItem>, ITestQueue
         {
+            public bool FailWhenHandling { get; set; }
             private readonly List<DummyQueueItem> _itemsRead = new List<DummyQueueItem>();
 
             private readonly object _locker = new object();
 
-            public DummyQueue(int initialWorkerCount, int maxThreadsNum)
+            public DummyQueue(int initialWorkerCount, int maxThreadsNum,bool failWhenHandling=false)
                 : base(initialWorkerCount, maxThreadsNum)
             {
-                
+                FailWhenHandling = failWhenHandling;
             }
 
             public DummyQueue(int initialWorkerCount, int maxThreadsNum, int queueSizeToCreateNewThread,
-                              TimeSpan maxLazyThreadAlive)
+                              TimeSpan maxLazyThreadAlive, bool failWhenHandling = false)
                 : base(initialWorkerCount, maxThreadsNum, queueSizeToCreateNewThread, maxLazyThreadAlive)
             {
+                FailWhenHandling = failWhenHandling;
             }
 
-            protected override Action<DummyQueueItem> RunActionOnDequeue
+            protected override Func<DummyQueueItem, bool> RunActionOnDequeue
             {
                 get
                 {
-                    return (item) => ItemsRead.Add(item);
+                    if(FailWhenHandling)
+                        throw new InvalidOperationException("Exception sample as the queue handler is configured to fail");
+                    return (item) =>
+                        {
+                            ItemsRead.Add(item);
+                            return true;
+                        };
                 }
             }
 
@@ -62,9 +70,9 @@ namespace ermeX.Tests.Threading.Queues
             }
         }
 
-        protected override ITestQueue GetTarget()
+        protected override ITestQueue GetTarget(bool failWhenHandling=false)
         {
-            return new DummyQueue(InitialWorkerCount, 64, 5, TimeSpan.FromSeconds(5));
+            return new DummyQueue(InitialWorkerCount, 64, 5, TimeSpan.FromSeconds(5),failWhenHandling);
         }
 
         [Test]

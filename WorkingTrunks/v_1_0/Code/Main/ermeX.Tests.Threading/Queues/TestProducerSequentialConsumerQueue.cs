@@ -26,26 +26,38 @@ using ermeX.Threading.Queues;
 
 namespace ermeX.Tests.Threading.Queues
 {
-    internal class TestProducerSequentialConsumerQueue : TestProducerConsumerQueueBase
+    internal sealed class TestProducerSequentialConsumerQueue : TestProducerConsumerQueueBase
     {
-
-        protected class DummyQueue : ProducerSequentialConsumerQueue<DummyQueueItem>, ITestQueue
+        private class DummyQueue : ProducerSequentialConsumerQueue<DummyQueueItem>, ITestQueue
         {
+            public bool FailWhenHandling { get; set; }
+            private int _numErrors = 0;
             private readonly List<DummyQueueItem> _itemsRead = new List<DummyQueueItem>();
 
             private readonly object _locker = new object();
 
+            public DummyQueue(bool failWhenHandling=false)
+            {
+                FailWhenHandling = failWhenHandling;
+            }
 
-            protected override Action<DummyQueueItem> RunActionOnDequeue
+
+            protected override Func<DummyQueueItem, bool> RunActionOnDequeue
             {
                 get
                 {
+                    if(FailWhenHandling)
+                    {
+                        throw new InvalidOperationException("Test Exception message. Errors: " + ++_numErrors);
+                    }
+
                     return (item) =>
                         {
                             lock (_locker)
                             {
                                 ItemsRead.Add(item);
                             }
+                            return true;
                         };
                 }
             }
@@ -54,11 +66,31 @@ namespace ermeX.Tests.Threading.Queues
             {
                 get { return _itemsRead; }
             }
+
+            public int NumErrors
+            {
+                get { return _numErrors; }
+            }
         }
 
-        protected override ITestQueue GetTarget()
+        protected override ITestQueue GetTarget(bool failWhenHandling = false)
         {
-            return new DummyQueue();
+            return new DummyQueue(failWhenHandling);
+        }
+
+        [Test]
+        public void When_Handling_Fails_Item_Is_Pushed_Back_To_Queue()
+        {
+            var dummyQueueItem = new DummyQueueItem(333, DateTime.Now);
+            using (var testQueue = (DummyQueue)GetTarget(true))
+            {
+                testQueue.EnqueueItem(dummyQueueItem);
+                Thread.Sleep(TimeSpan.FromMilliseconds(250)); //TODO: THIS IS NOT DETERMINISTIC
+                Console.WriteLine(testQueue.NumErrors);
+                Assert.IsTrue(testQueue.NumErrors>1); //WE NEED IT TO FAIL AT LEAST TWICE SO that asserts that was repushed in the queue
+            }
+
+
         }
 
         [Test]
@@ -71,21 +103,21 @@ namespace ermeX.Tests.Threading.Queues
             {
                 const int numThreads = 5;
                 const int numItemsToPush = 10;
-                var threads = new Thread[numThreads];
+                var threads = new Thread[numThreads]; //create many threads to push on the queue
                 for(int i=0;i<numThreads;i++)
                     threads[i]=new Thread(()=>
                         {
                             for (int y = 0; y < numItemsToPush; y++)
                                 testQueue.EnqueueItem(dummyQueueItem);
                         });
-                for(int i=0;i<numThreads;i++)
+                for(int i=0;i<numThreads;i++)  //start the threads
                     threads[i].Start();
                 int antThreads = 1;
                 int maxThreads = 0;
                 int count;
                 do
                 {
-                    var currentThreadNumber = testQueue.CurrentThreadNumber;
+                    var currentThreadNumber = testQueue.CurrentThreadNumber;  //detect and record the num of threads changes
                     if (!increased && currentThreadNumber > antThreads)
                     {
                         increased = true;

@@ -18,6 +18,8 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Threading;
+using Common.Logging;
+using Common.Logging.Simple;
 using NUnit.Framework;
 using ermeX.Tests.Common.RandomValues;
 
@@ -26,7 +28,16 @@ namespace ermeX.Tests.Threading.Queues
     [TestFixture]
     internal abstract class TestProducerConsumerQueueBase
     {
-        protected abstract ITestQueue GetTarget();
+        [TestFixtureSetUp]
+        protected virtual void OnFixtureStart()
+        {
+            //LogManager.Adapter=new ConsoleOutLoggerFactoryAdapter();
+        }
+
+
+        protected abstract ITestQueue GetTarget(bool failWhenHandling = false);
+
+
 
         [Test]
         public void CanEnqueueDequeue()
