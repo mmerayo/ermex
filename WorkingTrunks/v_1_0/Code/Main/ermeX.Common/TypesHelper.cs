@@ -210,7 +210,7 @@ namespace ermeX.Common
                     for (int index = 0; index < parameterInfos.Length; index++)
                     {
                         var parameterInfo = parameterInfos[index];
-                        if (parameterInfo.ParameterType != argTypes[index] && !argTypes[index].IsSubclassOf(parameterInfo.ParameterType))
+                        if (parameterInfo.ParameterType != argTypes[index] && !argTypes[index].IsSubclassOf(parameterInfo.ParameterType) && !argTypes[index].TypeImplements(parameterInfo.ParameterType))
                         {
                             found = false;
                             break;

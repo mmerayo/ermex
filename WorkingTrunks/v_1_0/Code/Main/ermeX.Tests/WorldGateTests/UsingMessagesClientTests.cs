@@ -156,7 +156,9 @@ namespace ermeX.Tests.WorldGateTests
             Assert.IsTrue(lastEntityReceived.Data == dummyDomainEntity.Data);
             Assert.IsTrue(lastEntityReceived.DateTime == dummyDomainEntity.DateTime);
 
-            Assert.IsTrue(handler.ReceivedMessages.Count==2);
+            Thread.Sleep(500);//we want to ensure that nothing else is delivered 
+
+            Assert.IsTrue(handler.ReceivedMessages.Count == 2, string.Format("Expected:2 Received: {0}", handler.ReceivedMessages.Count));
             var first = (DummyDomainEntity3) handler.ReceivedMessages[0];
             var second = (DummyDomainEntity3) handler.ReceivedMessages[1];
             Assert.IsTrue(first.Data == second.Data);
@@ -177,13 +179,13 @@ namespace ermeX.Tests.WorldGateTests
             var dummyDomainEntity = new DummyDomainEntity3 { Data = RandomHelper.GetRandomString(), DateTime = RandomHelper.GetRandomDateTime() };
             WorldGate.Publish(dummyDomainEntity);
           
-            autoResetEvent.WaitOne(new TimeSpan(0, 0, 25));
+            autoResetEvent.WaitOne(new TimeSpan(0, 1, 0));
             var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity3>();
 
             Assert.IsNotNull(lastEntityReceived);
             Assert.IsTrue(lastEntityReceived.Data == dummyDomainEntity.Data);
             Assert.IsTrue(lastEntityReceived.DateTime == dummyDomainEntity.DateTime);
-
+            Thread.Sleep(500);//ensure no more messages are received
             Assert.IsTrue(handler.ReceivedMessages.Count==2);
             var first = (DummyDomainEntity3) handler.ReceivedMessages[0];
             var second = (DummyDomainEntity3) handler.ReceivedMessages[1];
