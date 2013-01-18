@@ -77,6 +77,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                 BusMessage busMessage = incomingMessage.ToBusMessage();
 
                 var subscriptions = GetSubscriptions(busMessage.Data.MessageType.FullName);
+                
                 foreach (var messageSuscription in subscriptions)
                 {
                     Guid destination = messageSuscription.SuscriptionHandlerId;

@@ -58,7 +58,8 @@ namespace ermeX.Tests.Threading.Queues
                         throw new InvalidOperationException("Exception sample as the queue handler is configured to fail");
                     return (item) =>
                         {
-                            ItemsRead.Add(item);
+                            lock(_locker)
+                                ItemsRead.Add(item);
                             return true;
                         };
                 }
