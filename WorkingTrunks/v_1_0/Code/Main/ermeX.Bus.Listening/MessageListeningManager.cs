@@ -188,18 +188,32 @@ namespace ermeX.Bus.Listening
                     //invoke dispatch
                     var dispatchMethodInfos = TypesHelper.GetPublicInstanceMethods(type, "HandleMessage",
                                                                                    message.GetType());
-                    if(!dispatchMethodInfos.Any())
-                        Logger.Warn(x => x("MessageListeningManager:Couldnt find any public instance method called [{0}] in type [{1}] to handle message of type[{2}]", "HandleMessage", type.FullName, message.GetType()));
-                    
-                    var parameters = new[] {message};
-                    foreach (var dispatchMethodInfo in dispatchMethodInfos)
-                    {
-                        TypesHelper.InvokeFast(dispatchMethodInfo, handler, parameters);
-                        Logger.Trace(
+                    var incomingMessageSuscription = SuscriptionsDatasource.GetByHandlerId(suscriptionId);
+
+                    //get the target of the subscription, preventing duplicates due to inheritance
+                    var dispatchMethodInfo =
+                        dispatchMethodInfos.SingleOrDefault(
                             x =>
-                            x("MessageListeningManager: Invoked {0} passing argument {1}", dispatchMethodInfo.Name,
-                              message));
+                            x.GetParameters()[0].ParameterType.FullName == incomingMessageSuscription.BizMessageFullTypeName);
+
+
+                    if (dispatchMethodInfo == null)
+                    {
+                        Logger.Error(
+                            x =>
+                            x(
+                                "MessageListeningManager:Couldnt find any public instance method called [{0}] in type [{1}] to handle message of type[{2}]",
+                                "HandleMessage", type.FullName, message.GetType()));
+                        return;
                     }
+
+                    var parameters = new[] {message};
+
+                    TypesHelper.InvokeFast(dispatchMethodInfo, handler, parameters);
+                    Logger.Trace(
+                        x =>
+                        x("MessageListeningManager: Invoked {0} passing argument {1}", dispatchMethodInfo.Name,
+                          message));
                 }
                 else
                 {
@@ -211,7 +225,7 @@ namespace ermeX.Bus.Listening
             }catch(Exception ex)
             {
                 Logger.Error(ex);
-                throw ex;
+                throw;
             }
         }
 

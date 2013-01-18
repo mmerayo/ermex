@@ -181,6 +181,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
                     };
                 dataSource.Save(incomingMessage);
                 messages.Add(incomingMessage);
+                Thread.Sleep(1);//to ensure the createdtimeutc is different
             }
 
             _flagMessageReceivedWhentimes = numMessages; //flag the event when received
