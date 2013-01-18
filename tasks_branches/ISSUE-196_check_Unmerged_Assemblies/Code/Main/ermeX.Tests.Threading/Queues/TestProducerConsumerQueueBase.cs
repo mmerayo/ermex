@@ -18,8 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Threading;
-using Common.Logging;
-using Common.Logging.Simple;
+
 using NUnit.Framework;
 using ermeX.Tests.Common.RandomValues;
 
