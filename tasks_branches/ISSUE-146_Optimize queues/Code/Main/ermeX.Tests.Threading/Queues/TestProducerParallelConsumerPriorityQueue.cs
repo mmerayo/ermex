@@ -34,6 +34,7 @@ namespace ermeX.Tests.Threading.Queues
         {
             public bool FailWhenHandling { get; set; }
             private readonly List<DummyQueueItem> _itemsRead = new List<DummyQueueItem>();
+            private readonly object _locker=new object();
 
 
             public DummyQueue(int initialWorkerCount, int maxThreadsNum, bool failWhenHandling = false)
@@ -72,7 +73,8 @@ namespace ermeX.Tests.Threading.Queues
                         throw new InvalidOperationException("Exception sample as the queue handler is configured to fail");
                     return (item) =>
                         {
-                            ItemsRead.Add(item);
+                            lock(_locker)
+                                ItemsRead.Add(item);
                             return true;
                         };
                 }
