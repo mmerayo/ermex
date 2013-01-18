@@ -1,0 +1,1 @@
+﻿Acceptance: move to another assembly and use merged dll
