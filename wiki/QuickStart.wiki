@@ -19,3 +19,6 @@ All ermeX functionallity can be acchieved from the class WorldGate
 == How to create one service ==
 [PLACEHOLDER]
 ---
+== How to enable ermeX Logging ==
+[PLACEHOLDER]
+---
