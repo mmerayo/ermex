@@ -126,6 +126,10 @@
       <Project>{A67BD599-72DF-40F6-B632-AFB22B4B3D18}</Project>
       <Name>ermeX.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.NonMerged\ermeX.NonMerged.csproj">
+      <Project>{E72B0ECE-557C-4002-9368-2273101F76F3}</Project>
+      <Name>ermeX.NonMerged</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Threading\ermeX.Threading.csproj">
       <Project>{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}</Project>
       <Name>ermeX.Threading</Name>
