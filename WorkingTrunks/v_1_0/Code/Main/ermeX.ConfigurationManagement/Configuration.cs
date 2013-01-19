@@ -33,6 +33,7 @@ using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 
 
 using ermeX.Interfaces;
+using ermeX.NonMerged;
 
 namespace ermeX.ConfigurationManagement
 {
@@ -41,7 +42,10 @@ namespace ermeX.ConfigurationManagement
     /// </summary>
     public partial class Configuration
     {
-
+        static Configuration()
+        {
+            ResolveUnmerged.Prepare();
+        }
 
         private readonly RealConfigure _configuration;
 

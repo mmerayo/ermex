@@ -6,6 +6,7 @@
 	<assembly path="ermeX.Tests.Bus.Publishing\bin\x64\Release\ermeX.Tests.Bus.Publishing.dll" />
 	<assembly path="ermeX.Tests.Bus.Listening\bin\x64\Release\ermeX.Tests.Bus.Listening.dll" />
 	<assembly path="ermeX.Tests.Threading\bin\x64\Release\ermeX.Tests.Threading.dll" />
+	<assembly path="ermeX.Tests.NonMerged\bin\x64\Release\ermeX.Tests.NonMerged.dll" />
   </Config>
   <Config name="Debug x64" binpathtype="Auto">
     <assembly path="ermeX.Tests\bin\x64\Debug\ermeX.Tests.dll" />
@@ -13,5 +14,6 @@
 	<assembly path="ermeX.Tests.Bus.Publishing\bin\x64\Debug\ermeX.Tests.Bus.Publishing.dll" />
 	<assembly path="ermeX.Tests.Bus.Listening\bin\x64\Debug\ermeX.Tests.Bus.Listening.dll" />
 	<assembly path="ermeX.Tests.Threading\bin\x64\Debug\ermeX.Tests.Threading.dll" />	
+	<assembly path="ermeX.Tests.NonMerged\bin\x64\Debug\ermeX.Tests.NonMerged.dll" />
   </Config>
 </NUnitProject>
