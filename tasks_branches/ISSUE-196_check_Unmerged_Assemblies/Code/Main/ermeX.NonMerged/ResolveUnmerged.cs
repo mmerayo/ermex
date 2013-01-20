@@ -31,7 +31,6 @@ namespace ermeX.NonMerged
         static ResolveUnmerged()
         {
             UnmergedAssemblies.Add("Common.Logging",DataType.Any);
-            UnmergedAssemblies.Add("Ninject", DataType.Any);
 
             UnmergedAssemblies.Add("System.Data.SQLite", DataType.Specialized);
             ToCopy.Add("System.Data.SQLite","SQLite.Interop");
