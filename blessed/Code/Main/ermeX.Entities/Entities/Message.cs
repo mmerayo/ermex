@@ -1,10 +1,23 @@
 // /*---------------------------------------------------------------------------------------*/
-// If you viewing this code.....
-// The current code is under construction.
-// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
-// This is not a final product yet.
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using ermeX.Common;
 using ermeX.Entities.Base;
 using ermeX.LayerMessages;
 
@@ -14,31 +27,79 @@ namespace ermeX.Entities.Entities
     [Serializable]
     internal abstract class Message : ModelBase
     {
+        public enum MessageStatus : int
+        {
+            NotSet = 1,
+
+
+            /// <summary>
+            /// This is an special stutus to save the first stage, no copies created per subscriber yet
+            /// </summary>
+            SenderCollected =2,
+            /// <summary>
+            /// Is ready to deliver to subscriber. Its refered by outpoing message
+            /// </summary>
+            SenderDispatchPending=4,
+            /// <summary>
+            /// Marks the message as sent
+            /// </summary>
+            SenderSent=8,
+
+            /// <summary>
+            /// Marks the message as failed
+            /// </summary>
+            SenderFailed=16,
+
+            /// <summary>
+            /// Received but not created copy per local subscription
+            /// </summary>
+            ReceiverReceived=32,
+
+            /// <summary>
+            /// Ready to be delivered to the handler
+            /// </summary>
+            ReceiverDispatchable=64,
+
+            /// <summary>
+            /// its being dispatched now
+            /// </summary>
+            ReceiverDispatching=128
+        }
 
         protected Message()
         {
         }
 
-        protected Message(BusMessageData message)
+        protected Message(BusMessage message)
         {
             if (message == null) throw new ArgumentNullException("message");
-            if(message.Id<=0) throw new ArgumentOutOfRangeException("message","Save the message before");
             //TODO: REMOVE, AS the biz message should be handled only by the bizlayer
-            BusMessageId = message.Id;
-            TimePublishedUtc = message.CreatedTimeUtc;
+            PublishedBy= message.Publisher;
+            JsonMessage = message.Data.JsonMessage;
+            MessageId = message.MessageId;
+            CreatedTimeUtc = message.CreatedTimeUtc;
         }
 
         protected abstract string TableName { get; }
 
-        public virtual int BusMessageId { get; set; }
+        public virtual MessageStatus Status { get; set; }
 
-        public virtual DateTime TimePublishedUtc { get; set; }
+        public virtual string JsonMessage { get; set; }
 
+        public virtual Guid MessageId { get; set; }
+
+        public virtual DateTime CreatedTimeUtc { get; set; }
 
         public virtual Guid PublishedBy
         {
             get { return ComponentOwner; }
             set { ComponentOwner = value; }
+        }
+
+        public virtual BusMessage ToBusMessage()
+        {
+            BizMessage bizMessage = BizMessage.FromJson(JsonMessage);
+            return new BusMessage(MessageId,CreatedTimeUtc,PublishedBy,bizMessage);
         }
 
         //TODO: to compenentData object when provider specified
@@ -48,7 +109,9 @@ namespace ermeX.Entities.Entities
 
         protected string GetDbFieldName(string fieldName)
         {
-            return string.Format("{0}_{1}", TableName, fieldName);
+            return String.Format("{0}_{1}", TableName, fieldName);
         }
+
+        
     }
 }

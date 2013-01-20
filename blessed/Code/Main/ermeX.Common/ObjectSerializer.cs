@@ -1,8 +1,20 @@
 // /*---------------------------------------------------------------------------------------*/
-// If you viewing this code.....
-// The current code is under construction.
-// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
-// This is not a final product yet.
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.IO;
@@ -15,6 +27,8 @@ namespace ermeX.Common
     //TODO: INJECTABLE
     public static class ObjectSerializer
     {
+        private const PrefixStyle PrefixStyleInPlace = PrefixStyle.Fixed32;
+
         public static void SerializeObject<TSerialize>(string fileName, TSerialize source)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -80,7 +94,7 @@ namespace ermeX.Common
             using (var memoryStream = new MemoryStream(source))
             {
                 memoryStream.Position = 0;
-                result = Serializer.Deserialize<TResult>(memoryStream);
+                result = Serializer.DeserializeWithLengthPrefix<TResult>(memoryStream,PrefixStyleInPlace);
             }
 
             return result;
@@ -90,7 +104,7 @@ namespace ermeX.Common
         {
             var memoryStream = new MemoryStream();
 
-            Serializer.Serialize(memoryStream, source);
+            Serializer.SerializeWithLengthPrefix(memoryStream, source,PrefixStyleInPlace);
             memoryStream.Position = 0;
             return memoryStream;
         }
@@ -120,10 +134,10 @@ namespace ermeX.Common
                         result = true;
                     }
             }
-            else if (!metaType.GetSubtypes().Any(x => x.DerivedType.Type == typeToAppend))
+            else if (metaType.GetSubtypes().All(x => x.DerivedType.Type != typeToAppend))
             {
                 lock (SyncLock)
-                    if (!metaType.GetSubtypes().Any(x => x.DerivedType.Type == typeToAppend))
+                    if (metaType.GetSubtypes().All(x => x.DerivedType.Type != typeToAppend))
                     {
                         int max = metaType.GetSubtypes().Max(x => x.FieldNumber);
                         metaType.AddSubType(max + 100, typeToAppend);

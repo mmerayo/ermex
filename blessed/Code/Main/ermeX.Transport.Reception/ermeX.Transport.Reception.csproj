@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -74,8 +74,9 @@
     <Reference Include="Common.Logging">
       <HintPath>..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject">
-      <HintPath>..\packages\Ninject.2.2.1.4\lib\net40-Full\Ninject.dll</HintPath>
+    <Reference Include="Ninject, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -121,6 +122,10 @@
     <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
       <Name>ermeX.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Exceptions\ermeX.Exceptions.csproj">
+      <Project>{6A23DFD5-8894-4ABA-BA81-7AB2A7DAD552}</Project>
+      <Name>ermeX.Exceptions</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Interfaces\ermeX.Interfaces.csproj">
       <Project>{A67BD599-72DF-40F6-B632-AFB22B4B3D18}</Project>

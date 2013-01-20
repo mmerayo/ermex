@@ -1,8 +1,20 @@
 // /*---------------------------------------------------------------------------------------*/
-// If you viewing this code.....
-// The current code is under construction.
-// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
-// This is not a final product yet.
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Concurrent;
@@ -176,18 +188,32 @@ namespace ermeX.Bus.Listening
                     //invoke dispatch
                     var dispatchMethodInfos = TypesHelper.GetPublicInstanceMethods(type, "HandleMessage",
                                                                                    message.GetType());
-                    if(!dispatchMethodInfos.Any())
-                        Logger.Warn(x => x("MessageListeningManager:Couldnt find any public instance method called [{0}] in type [{1}] to handle message of type[{2}]", "HandleMessage", type.FullName, message.GetType()));
-                    
-                    var parameters = new[] {message};
-                    foreach (var dispatchMethodInfo in dispatchMethodInfos)
-                    {
-                        TypesHelper.InvokeFast(dispatchMethodInfo, handler, parameters);
-                        Logger.Trace(
+                    var incomingMessageSuscription = SuscriptionsDatasource.GetByHandlerId(suscriptionId);
+
+                    //get the target of the subscription, preventing duplicates due to inheritance
+                    var dispatchMethodInfo =
+                        dispatchMethodInfos.SingleOrDefault(
                             x =>
-                            x("MessageListeningManager: Invoked {0} passing argument {1}", dispatchMethodInfo.Name,
-                              message));
+                            x.GetParameters()[0].ParameterType.FullName == incomingMessageSuscription.BizMessageFullTypeName);
+
+
+                    if (dispatchMethodInfo == null)
+                    {
+                        Logger.Error(
+                            x =>
+                            x(
+                                "MessageListeningManager:Couldnt find any public instance method called [{0}] in type [{1}] to handle message of type[{2}]",
+                                "HandleMessage", type.FullName, message.GetType()));
+                        return;
                     }
+
+                    var parameters = new[] {message};
+
+                    TypesHelper.InvokeFast(dispatchMethodInfo, handler, parameters);
+                    Logger.Trace(
+                        x =>
+                        x("MessageListeningManager: Invoked {0} passing argument {1}", dispatchMethodInfo.Name,
+                          message));
                 }
                 else
                 {
@@ -199,7 +225,7 @@ namespace ermeX.Bus.Listening
             }catch(Exception ex)
             {
                 Logger.Error(ex);
-                throw ex;
+                throw;
             }
         }
 

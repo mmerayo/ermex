@@ -161,6 +161,8 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
             ConsoleColor foregroundColor = Console.ForegroundColor;
             Console.ForegroundColor = result? ConsoleColor.Yellow : ConsoleColor.Red;
             Console.WriteLine("The final result is: {0}", result ? "PASSED" : "FAILED");
+            
+            Environment.ExitCode = result ? 0 : 1;
             Console.ForegroundColor = foregroundColor;
         }
 
@@ -264,7 +266,7 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
 
             var cfg = Configuration.Configure(_currentComponentId)
                 .DiscoverServicesToPublish(new[] {this.GetType().Assembly}, new[] {typeof (ITesterService)})
-                .ListeningToPort(_portFrom);
+                .ListeningToTcpPort(_portFrom);
             cfg = _watcherOn ? cfg.SetSqlServerDb(connStr) : cfg.SetInMemoryDb();
 
             WorldGate.ConfigureAndStart(cfg);

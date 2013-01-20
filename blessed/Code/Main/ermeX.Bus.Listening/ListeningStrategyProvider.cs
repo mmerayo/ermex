@@ -1,8 +1,20 @@
 // /*---------------------------------------------------------------------------------------*/
-// If you viewing this code.....
-// The current code is under construction.
-// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
-// This is not a final product yet.
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using Common.Logging;
@@ -14,13 +26,16 @@ using ermeX.Transport.Interfaces;
 
 namespace ermeX.Bus.Listening
 {
+    /// <summary>
+    /// Loads services handlers and starts listening
+    /// </summary>
     internal class ListeningStrategyProvider : IListeningStrategyProvider
     {
         private bool _started;
 
         [Inject]
         public ListeningStrategyProvider(IBusSettings settings,
-                                         InternalMessageHandler internalMessageHandler,
+                                         ReceptionMessageHandler internalMessageHandler,
                                          IConnectivityManager connectivityManager)
         {
             if (settings == null) throw new ArgumentNullException("settings");
@@ -33,7 +48,7 @@ namespace ermeX.Bus.Listening
 
         private IBusSettings Settings { get; set; }
 
-        private InternalMessageHandler InternalMessageHandler { get; set; }
+        private ReceptionMessageHandler InternalMessageHandler { get; set; }
         private IConnectivityManager ConnectivityManager { get; set; }
         private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
         #region IListeningStrategyProvider Members
@@ -52,8 +67,6 @@ namespace ermeX.Bus.Listening
 
             Logger.Trace("ListeningStrategyProvider.StartListening: Component: " + Settings.ComponentId);
             InternalMessageHandler.RegisterSuscriber(onMessageReceived);
-            //TODO:if injection cannot be singleton remove singleton feature
-            InternalMessageHandler.StartWorkers();
 
             ConnectivityManager.StartListening();
             _started = true;
@@ -88,7 +101,7 @@ namespace ermeX.Bus.Listening
 
         private void LoadServiceHandlers()
         {
-            ConnectivityManager.RegisterHandler(InternalMessageHandler.OperationIdentifier, InternalMessageHandler);
+            ConnectivityManager.RegisterHandler(ReceptionMessageHandler.OperationIdentifier, InternalMessageHandler);
         }
     }
 }

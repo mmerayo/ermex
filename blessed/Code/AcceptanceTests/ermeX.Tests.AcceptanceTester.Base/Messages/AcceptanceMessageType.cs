@@ -10,6 +10,7 @@ namespace ermeX.Tests.AcceptanceTester.Base.Messages
 
         public AcceptanceMessageType(bool generateRandomValues = false)
         {
+            CreationUtc = DateTime.UtcNow;
             if (generateRandomValues)
                 GenerateRandomValues();
         }
@@ -19,17 +20,18 @@ namespace ermeX.Tests.AcceptanceTester.Base.Messages
         public int[] TheArray { get; set; }
         public List<string> TheList { get; set; }
         public DateTime TheDateTime { get; set; }
+        public DateTime CreationUtc { get; set; }
 
         public void GenerateRandomValues()
         {
             TheInt = RandomHelper.GetRandomInt(0, int.MaxValue);
             TheString = RandomHelper.GetRandomString(15);
 
-            TheArray = new int[RandomHelper.GetRandomInt()];
+            TheArray = new int[RandomHelper.GetRandomInt(20)];
             for (int i = 0; i < TheArray.Length; i++)
                 TheArray[i] = RandomHelper.GetRandomInt(0, 255);
 
-            int items = RandomHelper.GetRandomInt();
+            int items = RandomHelper.GetRandomInt(20);
             TheList = new List<string>(items);
             for (int i = 0; i < items; i++)
                 TheList.Add(RandomHelper.GetRandomString());

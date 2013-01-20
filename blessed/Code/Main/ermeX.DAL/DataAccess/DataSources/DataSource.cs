@@ -1,8 +1,20 @@
 // /*---------------------------------------------------------------------------------------*/
-// If you viewing this code.....
-// The current code is under construction.
-// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
-// This is not a final product yet.
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
@@ -15,6 +27,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.Interfaces;
 using ermeX.Entities.Base;
+using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.DataAccess.DataSources
 {
@@ -133,6 +146,9 @@ namespace ermeX.DAL.DataAccess.DataSources
                throw new DataException("could not perform RemoveAll");
         }
 
+       
+
+
         public DataAccessOperationResult<bool> RemoveAll(ISession session)
         {
             var result = GetAll(session);
@@ -145,7 +161,7 @@ namespace ermeX.DAL.DataAccess.DataSources
         ///   Removes a list of entitities from the datasource
         /// </summary>
         /// <param name="entities"> </param>
-        public virtual void Remove(IList<TEntity> entities)
+        public virtual void Remove(IEnumerable<TEntity> entities)
         {
             if (!DataAccessExecutor.Perform(session => this.Remove(session, entities)).Success)
                 throw new DataException("could not perform Remove");
@@ -165,20 +181,28 @@ namespace ermeX.DAL.DataAccess.DataSources
 #endif
             Remove(new[] {entity});
         }
+        protected DataAccessOperationResult<IEnumerable<TEntity>> Remove(ISession session, TEntity entity)
+        {
+            if (entity == null) throw new ArgumentNullException("entity");
+            var result = Remove(session, new List<TEntity>(){entity});
+            return result;
+        }
+
         /// <summary>
         ///   Removes a list of entitities from the datasource
         /// </summary>
         /// <param name="session"> </param>
         /// <param name="entities"> </param>
-        protected DataAccessOperationResult<IList<TEntity>> Remove(ISession session, IList<TEntity> entities)
+        protected DataAccessOperationResult<IEnumerable<TEntity>> Remove(ISession session, IEnumerable<TEntity> entities)
         {
             if (entities == null) throw new ArgumentNullException("entities");
          
-            var result=new DataAccessOperationResult<IList<TEntity>>();
-   
-            foreach (var entity in entities) //TODO: Transaction here
+            var result=new DataAccessOperationResult<IEnumerable<TEntity>>();
+
+            var resultValue = entities as List<TEntity> ?? entities.ToList();
+            foreach (var entity in resultValue) //TODO: Transaction here
                 session.Delete(entity);
-            result.ResultValue = entities;
+            result.ResultValue = resultValue;
             result.Success = true;
             return result;
         }
@@ -205,6 +229,30 @@ namespace ermeX.DAL.DataAccess.DataSources
                 throw new DataException("could not perform Remove");
         }
 
+        public void RemoveById(int id)
+        {
+            var result = DataAccessExecutor.Perform(session => RemoveById(session, id));
+            if (!result.Success)
+                throw new DataException("Couldnt perform the operation RemoveById");
+
+        }
+
+        public virtual DataAccessOperationResult<bool> RemoveById(ISession session, int id)
+        {
+            var resultValue = session.Get<TEntity>(id);
+
+            if (resultValue != null && resultValue.ComponentOwner != LocalComponentId)
+                throw new InvalidOperationException(
+                    "Attempt to retrieve one row from another component. Local component: " + LocalComponentId);
+
+            Remove(session, resultValue);
+
+            return new DataAccessOperationResult<bool>()
+            {
+                Success = true,
+                ResultValue = true
+            };
+        }
 
         /// <summary>
         ///   Gets all the entitites
@@ -257,7 +305,7 @@ namespace ermeX.DAL.DataAccess.DataSources
                         {ResultValue = criteria.List<TEntity>(), Success = true};
                 });
             if (!result.Success)
-                throw new DataException("Couldnt perform the operation GetAll");
+                throw new DataException("Couldnt perform the operation GetAllAbsolute");
 
             return result.ResultValue;
         }
@@ -355,6 +403,19 @@ namespace ermeX.DAL.DataAccess.DataSources
             IList<TEntity> result = criteria.List<TEntity>();
 
             return result;
+        }
+
+        public IList<TEntity> GetItemsByFields(Tuple<string, object>[] equalArguments, Tuple<string, object>[] differentArguments)
+        {
+            var result = DataAccessExecutor.Perform(session =>
+            {
+                IList<TEntity> itemsByFields = GetItemsByFields(session, equalArguments,differentArguments);
+                return new DataAccessOperationResult<IList<TEntity>>() { ResultValue = itemsByFields, Success = true };
+            });
+            if (!result.Success)
+                throw new DataException("Could not perform the operation GetAll");
+
+            return result.ResultValue;
         }
        
 
@@ -483,10 +544,12 @@ namespace ermeX.DAL.DataAccess.DataSources
         {
             if (session == null) throw new ArgumentNullException("session");
             var criteria = session.CreateCriteria(typeof(TEntity));
+            criteria.Add(Restrictions.Eq("ComponentOwner", LocalComponentId));
             foreach (var arg in arguments)
                 criteria.Add(Restrictions.Eq(arg.Item1, arg.Item2));
-            criteria.Add(Restrictions.Eq("ComponentOwner", LocalComponentId))
-                .SetProjection(Projections.Count(arguments[0].Item1));
+
+            criteria.SetProjection(Projections.Count("ComponentOwner"));
+
             var count = (Int32)criteria.UniqueResult();
             criteria.SetCacheable(false);
             return count;
@@ -503,6 +566,7 @@ namespace ermeX.DAL.DataAccess.DataSources
             return true;
         }
 
-       
+
+        
     }
 }

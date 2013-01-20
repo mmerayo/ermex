@@ -1,8 +1,20 @@
 // /*---------------------------------------------------------------------------------------*/
-// If you viewing this code.....
-// The current code is under construction.
-// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
-// This is not a final product yet.
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Concurrent;
@@ -198,7 +210,7 @@ namespace ermeX.Common
                     for (int index = 0; index < parameterInfos.Length; index++)
                     {
                         var parameterInfo = parameterInfos[index];
-                        if (parameterInfo.ParameterType != argTypes[index] && !argTypes[index].IsSubclassOf(parameterInfo.ParameterType))
+                        if (parameterInfo.ParameterType != argTypes[index] && !argTypes[index].IsSubclassOf(parameterInfo.ParameterType) && !argTypes[index].TypeImplements(parameterInfo.ParameterType))
                         {
                             found = false;
                             break;
@@ -218,16 +230,27 @@ namespace ermeX.Common
         public static object InvokeFast(MethodInfo method, object target,object[] args)
         {
             object result = null;
+
             if (Environment.Is64BitProcess)
             {
-                var invoker = ILHelper.GetMethodInvoker(method);
-                result = invoker(target, args);
+                try
+                {
+                    var invoker = ILHelper.GetMethodInvoker(method);
+                    result = invoker(target, args);
+                }
+                catch (EntryPointNotFoundException)
+                {
+                    result = method.Invoke(target, args);
+                    //TODO: THIS IS DUE A LIMITATION in the x86 COMPILER and its failing sometimes in the x64 as well
+                }
             }
-            else //TODO: THIS IS DUE A LIMITATION in the x86 COMPILER
+            else
+            {
                 result = method.Invoke(target, args);
+            }
+
             return result;
         }
-
 
         public static MethodInfo GetPublicInstanceMethod(string type, string methodName)
         {

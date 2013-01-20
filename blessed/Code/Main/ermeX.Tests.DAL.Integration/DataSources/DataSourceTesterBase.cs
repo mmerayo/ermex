@@ -1,10 +1,23 @@
 // /*---------------------------------------------------------------------------------------*/
-// If you viewing this code.....
-// The current code is under construction.
-// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
-// This is not a final product yet.
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using System.Threading;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
@@ -37,7 +50,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             expected.ComponentOwner = LocalComponentId;
             Assert.IsTrue(expected.Version == DateTime.MinValue.Ticks, "implementation of GetExpected must set version to 0");
 
-            TDataSource target = GetDataSourceTarget(engine);
+            TDataSource target = GetDataSource<TDataSource>(engine);
             target.Save(expected);
 
             Assert.IsTrue(expected.Version > DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 10)).Ticks);
@@ -53,12 +66,13 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         public void Updates_Version_When_Existing_With_Local(DbEngineType engine)
         {
             int id = InsertRecord(engine);
-            TDataSource target = GetDataSourceTarget(engine);
+            TDataSource target = GetDataSource<TDataSource>(engine);
             TModel expected = target.GetById(id);
             Assert.IsTrue(expected.Version != DateTime.MinValue.Ticks);
 
             expected = GetExpectedWithChanges(expected);
             long expVersion = expected.Version;
+            Thread.Sleep(50);
             target.Save(expected);
             DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
             var actual = dataAccessTestHelper.QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
@@ -72,7 +86,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         public void DontChange_Version_When_IsFromOtherComponent(DbEngineType engine)
         {
             int id = InsertRecord(engine);
-            TDataSource target = GetDataSourceTarget(engine);
+            TDataSource target = GetDataSource<TDataSource>(engine);
             TModel item = target.GetById(id);
             Assert.IsTrue(item.Version != DateTime.MinValue.Ticks);
             TModel expected = GetExpectedWithChanges(item);
@@ -92,22 +106,26 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 
             TModel expected = GetExpected(engine);
 
-            TDataSource target = GetDataSourceTarget(engine);
+            TDataSource target = GetDataSource<TDataSource>(engine);
 
             target.Save(expected);
 
             Assert.IsTrue(expected.Id > 0);
 
-            var actual = dataAccessTestHelper.QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
+            var actual = GetObjectFromRow(engine,expected) ;
             Assert.AreEqual(expected, actual);
         }
 
+        protected virtual TModel GetObjectFromRow(DbEngineType enginetype, TModel expected)
+        {
+            return GetDataHelper(enginetype).QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
+        }
 
         [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
         public void CanUpdateRecord(DbEngineType engine)
         {
             int id = InsertRecord(engine);
-            TDataSource target = GetDataSourceTarget(engine);
+            TDataSource target = GetDataSource<TDataSource>(engine);
             TModel item = target.GetById(id);
             TModel expected = GetExpectedWithChanges(item);
 
@@ -135,7 +153,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
                                                                     TableName, IdFieldName, id, SchemaName));
             Assert.IsTrue(numRecords == 1);
 
-            TDataSource target = GetDataSourceTarget(engine);
+            TDataSource target = GetDataSource<TDataSource>(engine);
             target.RemoveByProperty("Id", id.ToString());
             numRecords =
                 dataAccessTestHelper.QueryTestHelper.ExecuteScalar<int>(string.Format("Select count(*) from {3}.{0} where {1}={2}",
@@ -149,7 +167,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         {
             int id = InsertRecord(engine);
 
-            TDataSource target = GetDataSourceTarget(engine);
+            TDataSource target = GetDataSource<TDataSource>(engine);
             TModel actual = target.GetById(id);
             Assert.IsNotNull(actual);
             target.Remove(actual);
@@ -165,7 +183,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         {
             int id = InsertRecord(engine);
 
-            TDataSource target = GetDataSourceTarget(engine);
+            TDataSource target = GetDataSource<TDataSource>(engine);
             TModel actual = target.GetById(id);
             Assert.IsNotNull(actual);
 
@@ -180,6 +198,5 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 
         protected abstract TModel GetExpected(DbEngineType engine);
 
-        protected abstract TDataSource GetDataSourceTarget(DbEngineType engine);
     }
 }

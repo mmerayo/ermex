@@ -1,8 +1,20 @@
 // /*---------------------------------------------------------------------------------------*/
-// If you viewing this code.....
-// The current code is under construction.
-// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
-// This is not a final product yet.
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using SuperSocket.SocketBase;
@@ -111,24 +123,24 @@ namespace ermeX.Transport.BuiltIn.SuperSocket.Server
 
         public override void Dispose()
         {
-            try{
-            if (RealServer != null)
+            try
             {
-                if (RealServer.IsRunning)
-                    RealServer.Stop();
+                if (RealServer != null)
+                {
+                    if (RealServer.IsRunning)
+                        RealServer.Stop();
 
-                RealServer.Dispose();
-                RealServer = null;
-            }
+                    RealServer.Dispose();
+                    RealServer = null;
+                }
 
-            base.Dispose();
+                base.Dispose();
             }
             catch (Exception ex)
             {
-                Logger.Warn(x=>x("Dispose.{0}", ex));
-                throw ex;
+                Logger.Warn(x => x("Dispose.{0}", ex));
+                throw;
             }
-
         }
 
         private ServiceResult _serverHandler_ChunkReceived(ChunkedServiceRequestMessage message)
