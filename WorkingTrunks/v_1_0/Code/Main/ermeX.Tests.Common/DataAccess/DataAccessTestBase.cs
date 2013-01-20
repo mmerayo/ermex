@@ -18,6 +18,8 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
+using Common.Logging;
+using Common.Logging.Simple;
 using NUnit.Framework;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
@@ -99,7 +101,8 @@ namespace ermeX.Tests.Common.DataAccess
         [SetUp]
         public virtual void OnStartUp()
         {
-            
+            if (LogManager.Adapter is NoOpLoggerFactoryAdapter)
+                LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
         }
 
         [TestFixtureSetUp]
