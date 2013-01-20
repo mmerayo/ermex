@@ -87,7 +87,11 @@ namespace ermeX
         }
 
 
-
+        /// <summary>
+        /// Configures the component with the settings provided and starts it joining it to the ermeX Network
+        /// </summary>
+        /// <param name="settings"></param>        
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static void ConfigureAndStart(Configuration settings)
         {
             try
@@ -177,7 +181,12 @@ namespace ermeX
             }
         }
 
-
+        /// <summary>
+        /// Publishes one message 
+        /// </summary>
+        /// <typeparam name="TMessage">Message type. it must be a reference type</typeparam>
+        /// <param name="message">The message to be published</param>        
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static void Publish<TMessage>(TMessage message) where TMessage : class
         {
             try
@@ -198,11 +207,12 @@ namespace ermeX
         }
 
         /// <summary>
-        ///   Subscribes a type of handler for a messages type
+        ///  Subscribes a type of handler for a messages type
         /// </summary>
         /// <typeparam name="THandler"> the HandlerObject </typeparam>
         /// <param name="handlerType"> </param>
         /// <returns> The created object to handle the messages </returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static THandler Suscribe<THandler>(Type handlerType)
         {
             try
@@ -221,6 +231,7 @@ namespace ermeX
         /// </summary>
         /// <typeparam name="THandler"> the HandlerObject </typeparam>
         /// <returns> The created object to handle the messages </returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static THandler Suscribe<THandler>()
         {
             return Suscribe<THandler>(typeof (THandler));
@@ -231,6 +242,7 @@ namespace ermeX
         /// </summary>
         /// <param name="handlerType"> </param>
         /// <returns> The created object to handle the messages </returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static object Suscribe(Type handlerType)
         {
             return Instance.SubscriptionsManager.Subscribe(handlerType);
@@ -256,6 +268,7 @@ namespace ermeX
         /// </summary>
         /// <typeparam name="TService">Interface of the service</typeparam>
         /// <returns>The service proxy or null if the remote component is offline</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static TService GetServiceProxy<TService>()
             where TService : IService
         {
@@ -277,6 +290,7 @@ namespace ermeX
         /// <typeparam name="TService"></typeparam>
         /// <param name="componentId"></param>
         /// <returns>The service proxy or null if the remote component is offline</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static TService GetServiceProxy<TService>(Guid componentId)
             where TService : IService
         {
