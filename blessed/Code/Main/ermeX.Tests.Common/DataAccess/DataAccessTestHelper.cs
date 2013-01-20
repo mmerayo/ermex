@@ -1,8 +1,20 @@
 // /*---------------------------------------------------------------------------------------*/
-// If you viewing this code.....
-// The current code is under construction.
-// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
-// This is not a final product yet.
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
@@ -114,13 +126,16 @@ namespace ermeX.Tests.Common.DataAccess
         }
 
         private volatile QueryHelper _queryTestHelper = null;
+
         public QueryHelper QueryTestHelper
         {
             get
             {
                 if (_queryTestHelper == null)
-                    lock (_syncLock) if (_queryTestHelper == null)
-                       _queryTestHelper= QueryHelper.GetHelper(EngineType, DataAccessSettings.ConfigurationConnectionString);
+                    lock (_syncLock)
+                        if (_queryTestHelper == null)
+                            _queryTestHelper = QueryHelper.GetHelper(EngineType,
+                                                                     DataAccessSettings.ConfigurationConnectionString);
                 return _queryTestHelper;
             }
         }
@@ -260,13 +275,15 @@ namespace ermeX.Tests.Common.DataAccess
         }
 
         public int InsertOutgoingMessage( Guid destination, Guid owner,
-                                            int busMessageId, DateTime timePublished, int tries,
-                                            bool errored)
+                                            Guid busMessageId, DateTime timePublished, int tries,
+                                             Message.MessageStatus status, string jsonMessage)
         {
             string sqlQuery = String.Format(
-                "insert into ClientComponent.{6} ([{6}_PublishedBy],[{6}_PublishedTo],[{6}_BusMessageId],[{6}_TimePublishedUtc],[{6}_Tries],[{6}_Failed],{6}_ComponentOwner,{6}_Version,{6}_Delivering) VALUES('{0}','{1}','{2}',{3},'{4}','{5}','{0}',{7},0)",
-                owner, destination, busMessageId,  timePublished.Ticks, tries, errored,
-                OutgoingMessage.FinalTableName, DateTime.UtcNow.Ticks);
+                "insert into ClientComponent.{5} "+
+                "([{5}_PublishedBy],[{5}_PublishedTo],[{5}_CreatedTimeUtc],[{5}_Tries],{5}_ComponentOwner,{5}_Version,{5}_Status,{5}_JsonMessage,{5}_MessageId)" +
+                " VALUES('{0}','{1}',{3},'{4}','{0}',{6},'{7}','{8}','{2}')",
+                owner, destination, busMessageId,  timePublished.Ticks, tries, 
+                OutgoingMessage.FinalTableName, DateTime.UtcNow.Ticks,(int)status,jsonMessage);
             QueryTestHelper.ExecuteNonQuery(
                 sqlQuery);
             string lastIdSqlQuery = LastIdSqlQuery(OutgoingMessage.FinalTableName);
@@ -277,13 +294,14 @@ namespace ermeX.Tests.Common.DataAccess
         }
 
         public int InsertIncomingMessage( Guid destination, Guid owner,
-                                            int busMessageId, DateTime timePublished,
-                                            DateTime timeReceived, Guid suscriptionHandler)
+                                            Guid busMessageId, DateTime timePublished,
+                                            DateTime timeReceived, Guid suscriptionHandler, Message.MessageStatus status, string jsonMessage)
         {
             string sqlQuery = String.Format(
-                "insert into ClientComponent.{5} ([{5}_PublishedBy],[{5}_PublishedTo],[{5}_BusMessageId],[{5}_TimePublishedUtc],{5}_ComponentOwner,{5}_TimeReceivedUtc,{5}_SuscriptionHandlerId,{5}_Version) VALUES('{0}','{1}','{2}',{3},'{0}',{4},'{6}',{7})",
+                "insert into ClientComponent.{5} ([{5}_PublishedBy],[{5}_PublishedTo],[{5}_CreatedTimeUtc],{5}_ComponentOwner,{5}_TimeReceivedUtc,{5}_SuscriptionHandlerId,{5}_Version,{5}_Status,{5}_JsonMessage,{5}_MessageId)"+
+                " VALUES('{0}','{1}',{3},'{0}',{4},'{6}',{7},{8},'{9}','{2}')",
                 owner, destination, busMessageId,  timePublished.Ticks, timeReceived.Ticks,
-                IncomingMessage.FinalTableName, suscriptionHandler, DateTime.UtcNow.Ticks);
+                IncomingMessage.FinalTableName, suscriptionHandler, DateTime.UtcNow.Ticks, (int)status, jsonMessage);
             QueryTestHelper.ExecuteNonQuery(
                 sqlQuery);
             string lastIdSqlQuery = LastIdSqlQuery(IncomingMessage.FinalTableName);
@@ -293,19 +311,7 @@ namespace ermeX.Tests.Common.DataAccess
             return id;
         }
 
-        public int InsertBusMessage(Guid componentId, Guid ownerComponentId, DateTime versionUtc, Guid messageId, Guid publisher, DateTime createdTimeUtc, string jsonMessage, int status)
-        {
-            string sqlQuery = String.Format(
-                "INSERT INTO [ClientComponent].[{0}]" +
-                "([{0}_MessageId],[{0}_CreatedTimeUtc],[{0}_Publisher],[{0}_JsonMessage],[{0}_Version],[{0}_ComponentOwner],[{0}_Status])" +
-                "VALUES ('{1}',{2},'{3}','{4}',{5},'{6}',{7})", BusMessageData.TableName, messageId, createdTimeUtc.Ticks, publisher, jsonMessage, versionUtc.Ticks,
-                componentId,status);
-            QueryTestHelper.ExecuteNonQuery(
-                sqlQuery);
-            string lastIdSqlQuery = LastIdSqlQuery(BusMessageData.TableName);
-            var id = QueryTestHelper.ExecuteScalar<int>(lastIdSqlQuery);
-            return id;
-        }
+       
 
         public int InsertChunkedServiceRequestMessageData(Guid ownerComponentId, Guid guid, DateTime versionUtc,
             Guid correlationId, byte[] data, bool eof, Guid operation, int order)

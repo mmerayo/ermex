@@ -72,12 +72,15 @@ CREATE TABLE IncomingMessages (
                                                               UNIQUE,
     IncomingMessages_PublishedBy            GUID              NOT NULL,
     IncomingMessages_PublishedTo            GUID              NOT NULL,
-    IncomingMessages_BusMessageId             INTEGER              NOT NULL,
-    IncomingMessages_TimePublishedUtc       INTEGER           NOT NULL,
+    IncomingMessages_CreatedTimeUtc       INTEGER           NOT NULL,
     IncomingMessages_TimeReceivedUtc        INTEGER           NOT NULL,
     IncomingMessages_ComponentOwner         GUID              NOT NULL,
     IncomingMessages_Version                INTEGER           NOT NULL,
-    IncomingMessages_SuscriptionHandlerId   GUID              NOT NULL 
+    IncomingMessages_SuscriptionHandlerId   GUID              NOT NULL,
+	IncomingMessages_MessageId      GUID     NOT NULL,    
+    IncomingMessages_JsonMessage    NVARCHAR NOT NULL
+                                        COLLATE 'NOCASE',
+    IncomingMessages_Status        INTEGER  NOT NULL 
 );
 
 GO
@@ -114,13 +117,14 @@ CREATE TABLE OutgoingMessages (
                                                               UNIQUE,
     OutgoingMessages_PublishedBy            GUID              NOT NULL,
     OutgoingMessages_PublishedTo            GUID              NOT NULL,
-    OutgoingMessages_BusMessageId             INTEGER              NOT NULL,
-    OutgoingMessages_TimePublishedUtc       INTEGER           NOT NULL,
+    OutgoingMessages_CreatedTimeUtc       INTEGER           NOT NULL,
     OutgoingMessages_Tries                  INTEGER           NOT NULL,
-    OutgoingMessages_Failed                 BOOLEAN               NOT NULL,
     OutgoingMessages_Version                INTEGER           NOT NULL,
     OutgoingMessages_ComponentOwner         GUID              NOT NULL,
-    OutgoingMessages_Delivering             BOOLEAN               NOT NULL 
+	OutgoingMessages_MessageId      GUID     NOT NULL,
+    OutgoingMessages_JsonMessage    NVARCHAR NOT NULL
+                                        COLLATE 'NOCASE',
+    OutgoingMessages_Status        INTEGER  NOT NULL  
 );
 
 
@@ -154,23 +158,6 @@ CREATE UNIQUE INDEX ServicesDetails_idx_uniqueoperation ON ServicesDetails (
 );
 GO
 
-CREATE TABLE BusMessages ( 
-    BusMessages_Id             INTEGER  PRIMARY KEY AUTOINCREMENT
-                                        NOT NULL
-                                        UNIQUE,
-    BusMessages_MessageId      GUID     NOT NULL,
-    BusMessages_CreatedTimeUtc INTEGER  NOT NULL,
-    BusMessages_Publisher      GUID     NOT NULL,
-    BusMessages_JsonMessage    NVARCHAR NOT NULL
-                                        COLLATE 'NOCASE',
-    BusMessages_Status        INTEGER  NOT NULL,
-	
-	BusMessages_Version        INTEGER  NOT NULL,
-    BusMessages_ComponentOwner GUID     NOT NULL
-
-	 
-);
-GO
 
 
 CREATE TABLE ChunkedServiceRequestMessages ( 

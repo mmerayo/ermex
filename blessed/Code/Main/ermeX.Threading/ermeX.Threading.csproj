@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -90,9 +90,16 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
-    <Compile Include="IWorker.cs" />
+    <Compile Include="Queues\IProducerConsumerQueue.cs" />
+    <Compile Include="Queues\ProducerSequentialConsumerPriorityQueue.cs" />
+    <Compile Include="Queues\ProducerParallelConsumerPriorityQueue.cs" />
+    <Compile Include="Queues\ProducerParallelConsumerQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Worker.cs" />
+    <Compile Include="Queues\ProducerSequentialConsumerQueue.cs" />
+    <Compile Include="Queues\SystemTaskQueue.cs" />
+    <Compile Include="Scheduling\IJobScheduler.cs" />
+    <Compile Include="Scheduling\Job.cs" />
+    <Compile Include="Scheduling\JobScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ermeX\KeyFile.snk">

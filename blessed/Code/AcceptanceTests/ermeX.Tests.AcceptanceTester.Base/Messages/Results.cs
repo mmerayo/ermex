@@ -89,6 +89,7 @@ namespace ermeX.Tests.AcceptanceTester.Base.Messages
                 ReceivedData = new Dictionary<Guid, int>();
             }
 
+
             public Dictionary<Guid, int> ReceivedData { get; private set; }
 
             public int TotalPublished { get; private set; }

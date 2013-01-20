@@ -94,8 +94,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject">
-      <HintPath>..\packages\Ninject.2.2.1.4\lib\net40-Full\Ninject.dll</HintPath>
+    <Reference Include="Ninject, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\Build\Packages\nUnit\NUnit-2.5.6.10205\nunitbin\nunit.framework.dll</HintPath>
@@ -150,8 +151,6 @@
     <Compile Include="Common\Serialization\Dummy\DummySerializationEntityBase.cs" />
     <Compile Include="Common\Serialization\JsonSerializerTests.cs" />
     <Compile Include="Common\Serialization\ObjectSerializerTests.cs" />
-    <Compile Include="Common\Threading\DummyWorker.cs" />
-    <Compile Include="Common\Threading\WorkerTester.cs" />
     <Compile Include="Dialogs\MyComponentsDialogTester.cs" />
     <Compile Include="Dialogs\PublishedServiceDialogTester.cs" />
     <Compile Include="Dialogs\MessageSuscriptionsDialogTester.cs" />
@@ -165,11 +164,7 @@
     <Compile Include="Services\Mock\IMockTestClient.cs" />
     <Compile Include="Services\Mock\MockEndPoint.cs" />
     <Compile Include="Services\Mock\MockConnectivityProvider.cs" />
-    <Compile Include="Services\Receiving\Handlers\InternalMessagesHandling\InternalMessagesHandlerTester.cs" />
-    <Compile Include="Services\Mock\MockMessagesDispatcherWorker.cs" />
-    <Compile Include="Services\Mock\MockMessagesProcessorWorker.cs" />
     <Compile Include="Services\Sending\Client\ServiceProxyTester.cs" />
-    <Compile Include="Services\Sending\Workers\SendingMessageWorkerTester.cs" />
     <Compile Include="Services\Receiving\ServerTesterBase.cs" />
     <Compile Include="Services\Mock\MockTestServerBase.cs" />
     <Compile Include="Services\Sending\ServiceClientTesterBase.cs" />
@@ -233,13 +228,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\Receiving\Handlers\InternalMessagesHandling\Schedulers\" />
-    <Folder Include="Services\Receiving\Handlers\InternalMessagesHandling\Workers\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Acceptance\TODO.txt" />
-    <Content Include="Services\Receiving\Handlers\InternalMessagesHandling\TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

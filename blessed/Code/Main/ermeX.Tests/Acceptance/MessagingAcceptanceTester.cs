@@ -1,8 +1,20 @@
 // /*---------------------------------------------------------------------------------------*/
-// If you viewing this code.....
-// The current code is under construction.
-// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
-// This is not a final product yet.
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
@@ -32,8 +44,8 @@ namespace ermeX.Tests.Acceptance
         public void SendMessageAndReception(DbEngineType engineType)
         {
             //arrange
-             var senderListeningPort = new TestPort(9000,9100);
-             var receiverListeningPort = new TestPort(9101, 9200);
+             var senderListeningPort = new TestPort(9000);
+             var receiverListeningPort = new TestPort(9101);
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -75,11 +87,11 @@ namespace ermeX.Tests.Acceptance
         {
 
             //arrange
-            ushort senderListeningPort = new TestPort(9201, 9220);
-            ushort receiver1ListeningPort = new TestPort(9221, 9240);
-            ushort receiver2ListeningPort = new TestPort(9241, 9260);
-            ushort receiver3ListeningPort = new TestPort(9261, 9280);
-            ushort receiver4ListeningPort = new TestPort(9281, 9300);
+            ushort senderListeningPort = new TestPort(9000);
+            ushort receiver1ListeningPort = new TestPort(9000);
+            ushort receiver2ListeningPort = new TestPort(9000);
+            ushort receiver3ListeningPort = new TestPort(9000);
+            ushort receiver4ListeningPort = new TestPort(9000);
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -182,8 +194,8 @@ namespace ermeX.Tests.Acceptance
         public void SuscriptorCanReceiveMessagesAfterBeingOffline(DbEngineType engineType)
         {
             //arrange
-            var senderListeningPort = new TestPort(9301,9320);
-            var receiverListeningPort = new TestPort(9321, 9340);
+            var senderListeningPort = new TestPort(9000);
+            var receiverListeningPort = new TestPort(9000); 
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -230,8 +242,8 @@ namespace ermeX.Tests.Acceptance
         public void TwoComponentsCanReceiveMessagesAfterBeingOffLine(DbEngineType engineType)
         {
             //arrange
-            ushort senderListeningPort = new TestPort(9341, 9360); 
-            ushort receiverListeningPort = new TestPort(9361, 9380); 
+            ushort senderListeningPort = new TestPort(9000);
+            ushort receiverListeningPort = new TestPort(9000); 
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -290,8 +302,8 @@ namespace ermeX.Tests.Acceptance
         public void SuscriptorCanReceiveMessagesAfterBeing_Disconnected(DbEngineType engineType)
         {
             //arrange
-            var senderListeningPort = new TestPort(9381, 9390);
-            var receiverListeningPort = new TestPort(9391, 9400); 
+            var senderListeningPort = new TestPort(9000);
+            var receiverListeningPort = new TestPort(9000); 
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -344,8 +356,8 @@ namespace ermeX.Tests.Acceptance
         public void SuscriptorCanReceiveMessagesAfterBeing_Disconnected_And_Add_Subscriptions(DbEngineType engineType)
         {
             //arrange
-             ushort senderListeningPort = new TestPort(9401,9410);
-             ushort receiverListeningPort = new TestPort(9411, 9420);
+            ushort senderListeningPort = new TestPort(9000);
+            ushort receiverListeningPort = new TestPort(9000);
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -430,8 +442,8 @@ namespace ermeX.Tests.Acceptance
         public void TwoSuscriptions_Of_The_SameHandler_Are_HandledBy_TheSame_ObjectHandler(DbEngineType engineType)
         {
             //arrange
-             ushort senderListeningPort = new TestPort(9421, 9430); ;
-            ushort receiverListeningPort = new TestPort(9431, 9440); ;
+            ushort senderListeningPort = new TestPort(9000); ;
+            ushort receiverListeningPort = new TestPort(9000); ;
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -475,8 +487,8 @@ namespace ermeX.Tests.Acceptance
         public void TwoComponentsCanExchangeMessages(DbEngineType engineType)
         {
             //arrange
-             var senderListeningPort = new TestPort(9451, 9460); 
-             var receiverListeningPort = new TestPort(9461, 9470); 
+            var senderListeningPort = new TestPort(9000);
+            var receiverListeningPort = new TestPort(9000); 
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -536,7 +548,7 @@ namespace ermeX.Tests.Acceptance
         public void OneComponentCanSubscribeToItsOwnMessages(DbEngineType engineType)
         {
             //arrange
-            var listeningPort = new TestPort(9451, 9460);
+            var listeningPort = new TestPort(9000);
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -568,9 +580,9 @@ namespace ermeX.Tests.Acceptance
         public void SeveralComponentsCanExchangeMessages(DbEngineType engineType) //the server subscribes to messages that ar sent from the recivers and each receiver gets one message from the server
         {
             //arrange
-            ushort senderListeningPort = new TestPort(9511, 9520);
-            ushort receiver1ListeningPort = new TestPort(9521, 9530);
-            ushort receiver2ListeningPort = new TestPort(9531, 9540); 
+            ushort senderListeningPort = new TestPort(9000);
+            ushort receiver1ListeningPort = new TestPort(9000);
+            ushort receiver2ListeningPort = new TestPort(9000);
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -645,8 +657,8 @@ namespace ermeX.Tests.Acceptance
         public void MessagesAreDeliveredFIFO(DbEngineType engineType)
         {
             const int numberOfMessages = 10;    //arrange
-             var senderListeningPort = new TestPort(9551, 9560); 
-             var receiverListeningPort = new TestPort(9561, 9570); 
+            var senderListeningPort = new TestPort(9000);
+             var receiverListeningPort = new TestPort(9000); ; 
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -691,9 +703,9 @@ namespace ermeX.Tests.Acceptance
         {
             const int numberOfMessages = 26;
             //arrange
-            ushort senderListeningPort = new TestPort(9571, 9580); ;
-            ushort receiverListeningPort = new TestPort(9581, 9590); ;
-            ushort component2ListeningPort = new TestPort(9591, 9600); ;
+            ushort senderListeningPort = new TestPort(9000);
+            ushort receiverListeningPort = new TestPort(9000);
+            ushort component2ListeningPort = new TestPort(9000);
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -755,7 +767,8 @@ namespace ermeX.Tests.Acceptance
 
             using (var component = TestComponent.GetComponent())
             {
-                InitializeLonelyComponent(engineType, 8999, component, dbConnString);
+                var listeningPort = new TestPort(9000);
+                InitializeLonelyComponent(engineType, listeningPort, component, dbConnString);
 
                 Assert.DoesNotThrow(() => { if (component != null) component.Publish(new Int32()); });
                 Assert.DoesNotThrow(() => { if (component != null) component.Publish("this is a value"); });

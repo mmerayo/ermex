@@ -1,8 +1,20 @@
 // /*---------------------------------------------------------------------------------------*/
-// If you viewing this code.....
-// The current code is under construction.
-// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
-// This is not a final product yet.
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
@@ -20,6 +32,7 @@ using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.Tests.Common.DataAccess;
+using ermeX.Tests.Common.Networking;
 
 namespace ermeX.Tests.Common.SettingsProviders
 {
@@ -74,10 +87,11 @@ namespace ermeX.Tests.Common.SettingsProviders
         }
 
         public static Configuration GetServiceLayerSettingsSource(Guid componentId, DbEngineType engine,
-                                                                  List<DataSchemaType> schemasToApply,bool devLoggingOn=false)
+                                                                  bool devLoggingOn=false)
         {
 
-            Configuration result = Configuration.Configure(componentId).SendMessagesExpirationTime(TimeSpan.FromMinutes(5));
+            Configuration result = Configuration.Configure(componentId).SendMessagesExpirationTime(TimeSpan.FromMinutes(5))
+                .ListeningToTcpPort(new TestPort(20000));
             switch(engine)
             {
                 case DbEngineType.SqlServer2008:
@@ -174,7 +188,7 @@ namespace ermeX.Tests.Common.SettingsProviders
 
             public int MaxDelayDueToLatencySeconds
             {
-                get { throw new NotImplementedException(); }
+                get { return 20; }
             }
 
 
@@ -184,7 +198,7 @@ namespace ermeX.Tests.Common.SettingsProviders
                 set { _maxMessageKbBeforeChunking = value; }
             }
 
-            public ushort Port
+            public ushort TcpPort
             {
                 get { throw new NotImplementedException(); }
             }

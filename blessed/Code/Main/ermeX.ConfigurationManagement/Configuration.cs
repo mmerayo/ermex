@@ -1,8 +1,20 @@
 // /*---------------------------------------------------------------------------------------*/
-// If you viewing this code.....
-// The current code is under construction.
-// The reason you see this text is that lot of refactors/improvements have been identified and they will be implemented over the next iterations versions. 
-// This is not a final product yet.
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
@@ -21,6 +33,7 @@ using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 
 
 using ermeX.Interfaces;
+using ermeX.NonMerged;
 
 namespace ermeX.ConfigurationManagement
 {
@@ -29,7 +42,10 @@ namespace ermeX.ConfigurationManagement
     /// </summary>
     public partial class Configuration
     {
-
+        static Configuration()
+        {
+            ResolveUnmerged.Prepare();
+        }
 
         private readonly RealConfigure _configuration;
 
@@ -61,7 +77,7 @@ namespace ermeX.ConfigurationManagement
                                      MaxDelayDueToLatencySeconds = 60,
                                      MaxMessageKbBeforeChunking = 1024,
                                      //3MB
-                                     Port = 8135,
+                                     TcpPort = 8135,
 
                                      DevLoggingActive= false
                                  };
@@ -125,14 +141,14 @@ namespace ermeX.ConfigurationManagement
             return this;
         }
 
-        public Configuration ListeningToPort(ushort port)
+        public Configuration ListeningToTcpPort(ushort tcpPort)
         {
-            if (port <= 1023)
-                throw new ArgumentOutOfRangeException("port",
+            if (tcpPort <= 1023)
+                throw new ArgumentOutOfRangeException("tcpPort",
                                                       "The selected port cannot be in the range of the well-known ports");
 
 
-            _configuration.Port = port;
+            _configuration.TcpPort = tcpPort;
             return this;
         }
 
@@ -354,7 +370,7 @@ namespace ermeX.ConfigurationManagement
 
             public int MaxMessageKbBeforeChunking { get; set; }
 
-            public ushort Port { get; set; }
+            public ushort TcpPort { get; set; }
 
             #endregion
 
