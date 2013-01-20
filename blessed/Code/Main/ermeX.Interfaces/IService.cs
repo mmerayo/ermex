@@ -18,6 +18,10 @@
 // /*---------------------------------------------------------------------------------------*/
 namespace ermeX.Interfaces
 {
+    /// <summary>
+    /// Classes/interfaces implementing this interface can be published as Services to the ermeX Network
+    /// </summary>
+    /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
     public interface IService
     {
     }

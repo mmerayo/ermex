@@ -38,7 +38,7 @@ using ermeX.NonMerged;
 namespace ermeX.ConfigurationManagement
 {
     /// <summary>
-    ///   Holds the ermeX component configuration
+    /// Creates the ermeX component configuration
     /// </summary>
     public partial class Configuration
     {
@@ -90,6 +90,12 @@ namespace ermeX.ConfigurationManagement
             return _configuration as TConfigModule;
         }
 
+        /// <summary>
+        /// Sets the component identifier in the ermeX network
+        /// </summary>
+        /// <param name="componentId">Unique id for the current component</param>
+        /// <returns>The configuration settings updated</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static Configuration Configure(Guid componentId)
         {
             if (componentId == Guid.Empty)
@@ -98,25 +104,45 @@ namespace ermeX.ConfigurationManagement
         }
 
 
+        /// <summary>
+        /// Sets the current component to use Sqlserver as the active data storage
+        /// </summary>
+        /// <param name="dbConnString">Sql server connection stirng</param>
+        /// <returns>The configuration settings updated</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public Configuration SetSqlServerDb(string dbConnString)
         {
+            if(string.IsNullOrEmpty(dbConnString))
+                throw new ArgumentException("the connection string is not valid");
             _configuration.ConfigurationSourceType = DbEngineType.SqlServer2008;
             _configuration.ConfigurationConnectionString = dbConnString;
             return this;
         }
 
+        /// <summary>
+        /// Sets the current component to use SQLite, (not in-memory) as the active data storage
+        /// </summary>
+        /// <param name="dbConnString">SQLite connection string</param>
+        /// <returns>The configuration settings updated</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public Configuration SetSqliteDb(string dbConnString)
         {
+            if (string.IsNullOrEmpty(dbConnString))
+                throw new ArgumentException("the connection string is not valid");
+            
+            if(dbConnString.Contains("mode=memory"))
+                throw new InvalidOperationException("This setting dont support in memory db connection strings. Please use method SetInMemoryDb()");
             _configuration.ConfigurationSourceType = DbEngineType.Sqlite;
             _configuration.ConfigurationConnectionString = dbConnString;
             return this;
         }
 
         /// <summary>
-        /// This configuration sets an inmemory db.
+        /// This configuration sets an in-memory db.
+        /// No data is persisted, use only if message delivery between sessions is not mandatory
         /// </summary>
-        /// <returns></returns>
-        /// <remarks>No data is persisted, use only if message delivery between sessions is not mandatory</remarks>
+        /// <returns>The configuration settings updated</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public Configuration SetInMemoryDb()
         {
             return
@@ -134,7 +160,12 @@ namespace ermeX.ConfigurationManagement
         }
 
 
-
+        /// <summary>
+        /// Sets the outgoing messages expiration time.
+        /// </summary>
+        /// <param name="expireAfter"></param>
+        /// <returns>The configuration settings updated</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public Configuration SendMessagesExpirationTime(TimeSpan expireAfter)
         {
             _configuration.SendExpiringTime = expireAfter;
@@ -153,11 +184,12 @@ namespace ermeX.ConfigurationManagement
         }
 
         /// <summary>
-        ///   Component that will provide the rest of the components, services and suscriptions
+        /// Sets the Friend Component to join to the ermeX network. Any running component is valid
         /// </summary>
-        /// <param name="ermeXComponent"> </param>
-        /// <param name="componentId"> </param>
-        /// <returns> </returns>
+        /// <param name="ermeXComponent">The friend component ip configuration</param>
+        /// <param name="componentId">The friend component Id </param>
+        /// <returns>The configuration settings updated</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public Configuration RequestJoinTo(IPEndPoint ermeXComponent, Guid componentId)
         {
             if (ermeXComponent == null) throw new ArgumentNullException("ermeXComponent");
@@ -170,6 +202,14 @@ namespace ermeX.ConfigurationManagement
             return this;
         }
 
+        /// <summary>
+        /// Sets the Friend Component to join to the ermeX network. Any running component is valid
+        /// </summary>
+        /// <param name="remoteIp">The friend component ip</param>
+        /// <param name="remotePort">the friend component port</param>
+        /// <param name="componentId">The friend component Id </param>
+        /// <returns>The configuration settings updated</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public Configuration RequestJoinTo(string remoteIp, int remotePort, Guid componentId)
         {
             var strings = remoteIp.Split('.');
@@ -191,7 +231,13 @@ namespace ermeX.ConfigurationManagement
         }
 
 
-
+        /// <summary>
+        /// Automatically discovers and subscribe the message subscriptors of the current component, those that implement one or more times IHandleMessage[ofT]
+        /// </summary>
+        /// <param name="assemblies">The assemblies to perform the discovery and subscription</param>
+        /// <param name="suscriberTypesToExclude">types to not to subscribe in the process</param>
+        /// <returns>The configuration settings updated</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public Configuration DiscoverSubscriptors(Assembly[] assemblies, Type[] suscriberTypesToExclude)
         {
             _configuration.SearchMessageSuscriptionAssemblies = assemblies;
@@ -199,10 +245,17 @@ namespace ermeX.ConfigurationManagement
             return this;
         }
 
-        public Configuration DiscoverServicesToPublish(Assembly[] assemblies, Type[] suscriberTypesToExclude)
+        /// <summary>
+        /// Automatically discovers and publishes the services exposed by the current component, those that implement IService
+        /// </summary>
+        /// <param name="assemblies">The assemblies to perform the discovery and service publishing</param>
+        /// <param name="typesToExclude">types of services to not to publish in the process</param>
+        /// <returns>The configuration settings updated</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
+        public Configuration DiscoverServicesToPublish(Assembly[] assemblies, Type[] typesToExclude)
         {
             _configuration.SearchServicesToPublishAssemblies = assemblies;
-            _configuration.SearchServicesToPublishExcludeTypes = suscriberTypesToExclude;
+            _configuration.SearchServicesToPublishExcludeTypes = typesToExclude;
             return this;
         }
 
