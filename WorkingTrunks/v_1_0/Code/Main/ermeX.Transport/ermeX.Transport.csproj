@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -88,11 +88,11 @@
     <Compile Include="LayerInterfaces\IConcreteServiceLoader.cs" />
     <Compile Include="LoaderBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="..\ermeX\KeyFile.snk">
+      <Link>KeyFile.snk</Link>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\LayerInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="KeyFile.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ermeX.Common\ermeX.Common.csproj">
