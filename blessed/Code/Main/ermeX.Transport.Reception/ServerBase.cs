@@ -17,6 +17,7 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace ermeX.Transport.Reception
     {
         private const string ChunkMessagesFolderName = "Chunks";
         public static Guid ChunkedMessageOperation = new Guid("5A429BD6-ED3A-426F-9352-D3CB9585A447");
-        private readonly IDictionary<Guid, IServiceHandler> _handlers = new Dictionary<Guid, IServiceHandler>();
+        private readonly IDictionary<Guid, IServiceHandler> _handlers = new ConcurrentDictionary<Guid, IServiceHandler>();
         protected readonly object SyncLock=new object();
 
         protected ServerBase(ServerInfo serverInfo, IServiceDetailsDataSource dataSourceServices,IChunkedServiceRequestMessageDataSource chunkedServiceRequestMessageDataSource)
