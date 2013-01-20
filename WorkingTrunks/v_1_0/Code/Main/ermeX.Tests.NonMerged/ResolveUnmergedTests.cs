@@ -20,7 +20,7 @@ namespace ermeX.Tests.NonMerged
         }
 
         [Test]
-        public void CanResolveAssembly([Values("Common.Logging", "Ninject", "System.Data.SQLite")] string assemblyName)
+        public void CanResolveAssembly([Values( "Ninject", "System.Data.SQLite")] string assemblyName)
         {
             if (assemblyName == "System.Data.SQLite") //we do both tests as more than one test would have it for the next already loaded
             {

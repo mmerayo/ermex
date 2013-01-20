@@ -120,9 +120,6 @@
     <EmbeddedResource Include="..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll">
       <Link>Resources\Common.Logging.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\Ninject.2.2.1.4\lib\net40-Full\Ninject.dll">
-      <Link>Resources\Ninject.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\packages\Sqlite.1.0.83\x64\SQLite.Interop.dll">
       <Link>Resources\x64\SQLite.Interop.dll</Link>
     </EmbeddedResource>
