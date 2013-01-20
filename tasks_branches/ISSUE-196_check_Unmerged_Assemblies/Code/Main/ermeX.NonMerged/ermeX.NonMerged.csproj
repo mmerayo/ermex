@@ -120,9 +120,6 @@
     <EmbeddedResource Include="..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll">
       <Link>Resources\Common.Logging.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\Ninject.2.2.1.4\lib\net40-Full\Ninject.dll">
-      <Link>Resources\Ninject.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\packages\Sqlite.1.0.83\x64\SQLite.Interop.dll">
       <Link>Resources\x64\SQLite.Interop.dll</Link>
     </EmbeddedResource>
@@ -145,6 +142,11 @@
       <Project>{A6C2D141-25F0-4BFF-93BC-F9EF0CBDB3B1}</Project>
       <Name>ermeX.ConfigurationManagement.Settings</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll">
+      <Link>Resources\Ninject.dll</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
