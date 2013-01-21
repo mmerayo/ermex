@@ -17,10 +17,10 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System.Collections.Generic;
-using ermeX.Bus.Interfaces.Attributes;
+using ermeX;
 using ermeX.Bus.Synchronisation.Messages;
 using ermeX.Entities.Entities;
-using ermeX.Interfaces;
+
 
 namespace ermeX.Bus.Synchronisation.Dialogs.HandledByService
 {

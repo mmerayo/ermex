@@ -24,7 +24,7 @@ using System.Reflection;
 using Common.Logging;
 using Ninject;
 using ermeX.Bus.Interfaces;
-using ermeX.Bus.Interfaces.Attributes;
+using ermeX;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
@@ -32,7 +32,7 @@ using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.DAL.Interfaces;
 
 using ermeX.Entities.Entities;
-using ermeX.Interfaces;
+
 
 namespace ermeX.Bus.Listening
 {
