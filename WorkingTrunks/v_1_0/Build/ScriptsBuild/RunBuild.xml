@@ -107,10 +107,13 @@
   <Target Name="CreatePackageTask" Condition=" $(TaskIdName) == 'Pack' ">
 	<Message Text="CreatePackageTask:Start" />	
 	<Message Text="Creating package $(BuildReportsFolder)\ermeX_$(BuildTag).zip from: $(MergedBinFolder)"/> 
+	
 	<ItemGroup>
       <FilesToZip Include="$(MergedBinFolder)\*.dll"/>
-	  <FilesToZip Include="$(OutputPath)\*.chm"/>
+	  <FilesToZip Include="$(MergedBinFolder)\*.chm"/>
+	  <FilesToCopy Include="$(MergedBinFolder)\*.chm"/>
     </ItemGroup>
+	<Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(MergedBinFolder)"/>
     <MSBuild.ExtensionPack.Compression.Zip 
 		TaskAction="Create" 
 		CompressFiles="@(FilesToZip)"
