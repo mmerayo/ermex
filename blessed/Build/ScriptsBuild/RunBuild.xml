@@ -65,6 +65,7 @@
     
 	<MSBuild Projects="$(MSBuildProjectDirectory)\..\..\Code\Main\ermeX.sln" />	
 	<CallTarget Targets="MergeOutput" />
+	<CallTarget Targets="CreateNuGetSpecs" />
 	<MSBuild 
 		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\AcceptanceTests.sln" 
 		Properties="OutputPath=$(AcceptanceBinFolder);"/>
@@ -139,7 +140,36 @@
     <MakeDir Directories="$(BuildReportsFolder)" />
     <MakeDir Directories="$(MergedBinFolder)" />
   </Target>
-
+  
+  <Target Name="CreateNuGetSpecs">
+	<Message Text="CreateNuGetSpecs" />
+    <ItemGroup>
+      <TemplateFile Include=".\..\nuGet\template.nuspec" />
+      <nuGetTargetFile Include= "$(BuildReportsFolder)\ermeX_$(Platform).nuspec"/>	  
+    </ItemGroup>
+	<ReadLinesFromFile File="@(TemplateFile)">
+      <Output TaskParameter="Lines" ItemName="TemplateFileContents" />
+    </ReadLinesFromFile>
+	<!--Create copy of the template-->	
+	<WriteLinesToFile
+		 File="@(nuGetTargetFile)"
+		 Lines="@(TemplateFileContents)"
+		 Encoding="ASCII"
+		 Overwrite="true"/>
+	<!--Replace-->
+	<MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" 
+		TextEncoding="ASCII" 
+		RegexPattern='{platform}' 
+		Replacement='$(Platform)' 
+		Files="@(nuGetTargetFile)"/>
+	<MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" 
+		TextEncoding="ASCII"  
+		RegexPattern='{version}' 
+		Replacement='$(BuildVersion)' 
+		Files="@(nuGetTargetFile)"/>
+	
+  </Target>
+  
   <Target Name="SetVersionPrefix">
     <ItemGroup>
       <VersionFile Include="$(ermeXProjectDir)\..\..\..\Build\VersionPrefix.txt" />
@@ -186,7 +216,8 @@
 		ExcludeFile="$(ermeXProjectDir)\RemainPublicAfterMerge.txt"		
 		Closed="false"
 		/>
-	<!--<Copy SourceFiles="@(NotMergeable)" DestinationFolder="$(MergedBinFolder)"/>-->
+	<!-- copy it to reports for storage-->
+	<Copy SourceFiles="$(MergedBinFolder)\ermeX.dll" DestinationFolder="$(BuildReportsFolder)"/>
   </Target>
 
 </Project>
