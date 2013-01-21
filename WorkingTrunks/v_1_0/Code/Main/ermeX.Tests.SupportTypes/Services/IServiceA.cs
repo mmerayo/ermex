@@ -19,8 +19,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ermeX.Bus.Interfaces.Attributes;
-using ermeX.Interfaces;
+using ermeX;
+
 
 namespace ermeX.Tests.SupportTypes.Services
 {

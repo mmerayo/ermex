@@ -30,14 +30,17 @@ using ermeX.DAL.Interfaces;
 
 
 using ermeX.Entities.Entities;
-using ermeX.Interfaces;
+
 using ermeX.LayerMessages;
 using ermeX.Versioning;
 using ermeX.ermeX.Component;
 
+
 namespace ermeX
 {
-
+    /// <summary>
+    /// Interface that exposes all the functionallity of ermeX
+    /// </summary>
     public sealed class WorldGate : SoaComponent
     {
         #region Singleton
@@ -80,9 +83,12 @@ namespace ermeX
         [Inject]
         private IServicesManager ServicesManager { get; set; }
 
+        /// <summary>
+        /// Stops & Resets the component
+        /// </summary>
+        /// <remarks>Reconfigure after usage using method ConfigureAndStart</remarks>
         public static void Reset()
         {
-
             Instance.ResetAll();
         }
 
@@ -90,7 +96,7 @@ namespace ermeX
         /// <summary>
         /// Configures the component with the settings provided and starts it joining it to the ermeX Network
         /// </summary>
-        /// <param name="settings"></param>        
+        /// <param name="settings">The component configuration</param>        
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static void ConfigureAndStart(Configuration settings)
         {
@@ -238,9 +244,9 @@ namespace ermeX
         }
 
         /// <summary>
-        ///   Subscribes a type of handler for all messages types
+        ///   Subscribes a type of message handler
         /// </summary>
-        /// <param name="handlerType"> </param>
+        /// <param name="handlerType">The type of the message handler</param>
         /// <returns> The created object to handle the messages </returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static object Suscribe(Type handlerType)
@@ -248,7 +254,12 @@ namespace ermeX
             return Instance.SubscriptionsManager.Subscribe(handlerType);
         }
 
-
+        /// <summary>
+        /// Registers a service exposed by the component to the ermeX network
+        /// </summary>
+        /// <typeparam name="TServiceInterface">Service interface. <remarks>Implements IService</remarks></typeparam>
+        /// <param name="serviceImplementationType">Service Implementation<remarks>Implements TServiceInterface</remarks></param>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static void RegisterService<TServiceInterface>(Type serviceImplementationType)
             where TServiceInterface : IService
         {
@@ -287,8 +298,8 @@ namespace ermeX
         /// <summary>
         /// Gets the service proxy of one concrete component
         /// </summary>
-        /// <typeparam name="TService"></typeparam>
-        /// <param name="componentId"></param>
+        /// <typeparam name="TService">Interface of the service</typeparam>
+        /// <param name="componentId">The componentId that is performing the service requests. To use when there could be several exposing the same service</param>
         /// <returns>The service proxy or null if the remote component is offline</returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static TService GetServiceProxy<TService>(Guid componentId)

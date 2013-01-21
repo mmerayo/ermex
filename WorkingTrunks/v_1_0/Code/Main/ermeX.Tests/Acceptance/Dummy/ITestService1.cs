@@ -16,8 +16,8 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-using ermeX.Bus.Interfaces.Attributes;
-using ermeX.Interfaces;
+using ermeX;
+
 
 namespace ermeX.Tests.Acceptance.Dummy
 {

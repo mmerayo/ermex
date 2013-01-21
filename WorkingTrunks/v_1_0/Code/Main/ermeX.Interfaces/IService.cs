@@ -16,7 +16,7 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-namespace ermeX.Interfaces
+namespace ermeX//on purpose as is public
 {
     /// <summary>
     /// Classes/interfaces implementing this interface can be published as Services to the ermeX Network

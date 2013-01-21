@@ -20,7 +20,7 @@ using System;
 using Ninject;
 using ermeX.Biz.Interfaces;
 using ermeX.Bus.Interfaces;
-using ermeX.Interfaces;
+
 
 namespace ermeX.Biz.ServicesPublishing
 {
