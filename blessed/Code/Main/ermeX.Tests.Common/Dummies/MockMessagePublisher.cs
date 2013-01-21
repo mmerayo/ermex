@@ -18,7 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using ermeX.Bus.Interfaces;
-using ermeX.Interfaces;
+
 using ermeX.LayerMessages;
 
 namespace ermeX.Tests.Common.Dummies

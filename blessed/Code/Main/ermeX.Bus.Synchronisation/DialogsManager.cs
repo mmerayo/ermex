@@ -23,7 +23,7 @@ using System.Linq;
 using Common.Logging;
 using Ninject;
 using ermeX.Bus.Interfaces;
-using ermeX.Bus.Interfaces.Attributes;
+using ermeX;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByMessageQueue;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
@@ -35,7 +35,7 @@ using ermeX.DAL.Interfaces;
 
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
-using ermeX.Interfaces;
+
 
 namespace ermeX.Bus.Synchronisation
 {

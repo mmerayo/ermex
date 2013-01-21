@@ -29,7 +29,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
-using ermeX.Interfaces;
+
 using ermeX.LayerMessages;
 using ermeX.Transport.Interfaces;
 using ermeX.Transport.Interfaces.Entities;

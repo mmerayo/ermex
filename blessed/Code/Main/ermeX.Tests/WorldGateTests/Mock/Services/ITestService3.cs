@@ -17,8 +17,8 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using ermeX.Bus.Interfaces.Attributes;
-using ermeX.Interfaces;
+using ermeX;
+
 
 namespace ermeX.Tests.WorldGateTests.Mock
 {
