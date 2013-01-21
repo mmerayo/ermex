@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using NUnit.Framework;
-using ermeX.Bus.Interfaces.Attributes;
+using ermeX;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
 using ermeX.Common;

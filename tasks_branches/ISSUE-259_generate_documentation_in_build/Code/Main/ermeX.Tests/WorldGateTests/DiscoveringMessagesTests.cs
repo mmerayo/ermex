@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
-using ermeX.Bus.Interfaces.Attributes;
+using ermeX;
 using ermeX.Common;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;

@@ -17,7 +17,6 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using ermeX.Interfaces;
 
 namespace ermeX.Biz.Interfaces
 {
