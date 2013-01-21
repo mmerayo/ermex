@@ -111,7 +111,7 @@
 	<ItemGroup>
       <FilesToZip Include="$(MergedBinFolder)\*.dll"/>
 	  <FilesToZip Include="$(MergedBinFolder)\*.chm"/>
-	  <FilesToCopy Include="$(OutputPath)\*.chm"/>
+	  <FilesToCopy Include="$(OutputPath)*.chm"/>
     </ItemGroup>
 	<Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(MergedBinFolder)"/>
     <MSBuild.ExtensionPack.Compression.Zip 
