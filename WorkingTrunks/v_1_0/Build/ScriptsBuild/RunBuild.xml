@@ -9,6 +9,7 @@
     <MergedBinFolder>$(MergedFolder)</MergedBinFolder>
 	<TargetFrameworkVersion>v$(frameworkVersion)</TargetFrameworkVersion>
     <AcceptanceBinFolder>$(OutputPath)Acceptance</AcceptanceBinFolder>	
+	<DocumentationPrjFolder>.\Documentation</DocumentationPrjFolder>	
    </PropertyGroup>
 
 
@@ -41,6 +42,7 @@
     <Message Text="Build:Start" />  
 	
 	<CallTarget Targets="CompileTask" />
+	<CallTarget Targets="DocumentationTask"/>
     <CallTarget Targets="CreatePackageTask" />
 	<CallTarget Targets="RunTestsTask" />
 	<CallTarget Targets="RunAcceptanceTestsTask" />
@@ -68,6 +70,19 @@
 		Properties="OutputPath=$(AcceptanceBinFolder);"/>
 	<Message Text="CompileTask:End" />
   </Target>
+  
+   <Target Name="DocumentationTask" Condition=" $(TaskIdName) == 'DocumentationTask' ">
+    <ItemGroup>
+      <HelpFiles Include="$(OutputPath)*.chm"/>
+	</ItemGroup>
+	<Message Text="DocumentationTask:Start" />
+	<Message Text="$(TaskIdName)" />    
+	<MSBuild Projects="$(DocumentationPrjFolder)\ermeX.help.shfbproj" />
+	<Copy SourceFiles="@(HelpFiles)" DestinationFolder="$(MergedBinFolder)"/>
+	<Message Text="DocumentationTask:End" />
+  </Target>
+  
+  
   <!-- http://www.msbuildextensionpack.com/help/4.0.5.0/html/b9e622d0-2888-4ba5-a042-889adac0e220.htm -->
   <Target Name="RunTestsTask" Condition=" '$(TaskIdName)' == 'UnitTests' ">
 	<Message Text="RunTestsTask:Start" />	
@@ -93,6 +108,7 @@
 	<Message Text="Creating package $(BuildReportsFolder)\ermeX_$(BuildTag).zip from: $(MergedBinFolder)"/> 
 	<ItemGroup>
       <FilesToZip Include="$(MergedBinFolder)\*.dll"/>
+	  <FilesToZip Include="$(MergedBinFolder)\*.chm"/>
     </ItemGroup>
     <MSBuild.ExtensionPack.Compression.Zip 
 		TaskAction="Create" 
@@ -154,10 +170,9 @@
   
  
  <Target Name="MergeOutput" >
-    
     <ItemGroup>
       <Input Include="$(OutputPath)*dll" Exclude="$(OutputPath)*Test*;$(OutputPath)Moq.*;$(OutputPath)System.Data.SQLite.*;$(OutputPath)SQLite.Interop.*;$(OutputPath)nunit.*;$(OutputPath)log4net*;$(OutputPath)System*;$(OutputPath)mscorlib.*;$(OutputPath)Common.Logging*;"/>	  	     
-		<NotMergeable Include="$(OutputPath)SQLite.Interop.*;$(OutputPath)Common.Logging.dll;$(OutputPath)System.Data.SQLite.dll;"/>
+	  <NotMergeable Include="$(OutputPath)SQLite.Interop.*;$(OutputPath)Common.Logging.dll;$(OutputPath)System.Data.SQLite.dll;"/>
     </ItemGroup>
 	<Message Text="The build version is name is: $(BuildVersion)"/> 
     <ILMerge.MSBuild.Tasks.ILMerge

@@ -19,12 +19,19 @@
 using System;
 using System.Linq;
 
-namespace ermeX.Bus.Interfaces.Attributes
+namespace ermeX
 {
     //TODO: STORE IN DB
+    /// <summary>
+    /// Decorates the interface definition to be used as an ermeX Service
+    /// </summary>
     [AttributeUsage(AttributeTargets.Interface)]
     public class ServiceContractAttribute : Attribute
     {
+        /// <summary>
+        /// cctor
+        /// </summary>
+        /// <param name="guidServiceIdentifier">Unique identifier of the service in the ermeX network</param>
         public ServiceContractAttribute(string guidServiceIdentifier) : this(guidServiceIdentifier, false)
         {
         }
@@ -37,7 +44,10 @@ namespace ermeX.Bus.Interfaces.Attributes
             IsSystemService = isSystemService;
         }
 
-        public Guid ServiceIdentifier { get; private set; }
+        /// <summary>
+        /// Gets the service identifier
+        /// </summary>
+        internal Guid ServiceIdentifier { get; private set; }
 
         internal bool IsSystemService { get; private set; }
 

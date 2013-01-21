@@ -20,14 +20,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ermeX.Bus.Interfaces.Attributes
+namespace ermeX
 {
     //TODO: ATTRIBUTE FOR public services class and methods
 
+    /// <summary>
+    /// Decorates the method definition to be used as an ermeX operation
+    /// </summary>
+    /// <remarks>Use it in interfaces decorated with ServiceContract</remarks>
     [AttributeUsage(AttributeTargets.Method)]
     //TODO: CREATE PROPERTY OPERATION NAME AND USE IT INSTEAD OF THE methodinfoname i the whole app validating that is unique per definition
     public class ServiceOperationAttribute : Attribute
     {
+        /// <summary>
+        /// cctor
+        /// </summary>
+        /// <param name="operationIdentifier">Unique identifier of the service operation in the ermeX network</param>
         public ServiceOperationAttribute(string operationIdentifier)
         {
             if (string.IsNullOrEmpty(operationIdentifier))

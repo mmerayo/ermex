@@ -32,10 +32,10 @@ using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 
 
-using ermeX.Interfaces;
+
 using ermeX.NonMerged;
 
-namespace ermeX.ConfigurationManagement
+namespace ermeX //on purpose as is public
 {
     /// <summary>
     /// Creates the ermeX component configuration
@@ -163,7 +163,7 @@ namespace ermeX.ConfigurationManagement
         /// <summary>
         /// Sets the outgoing messages expiration time.
         /// </summary>
-        /// <param name="expireAfter"></param>
+        /// <param name="expireAfter">time to expire after a message was published</param>
         /// <returns>The configuration settings updated</returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public Configuration SendMessagesExpirationTime(TimeSpan expireAfter)
@@ -172,6 +172,12 @@ namespace ermeX.ConfigurationManagement
             return this;
         }
 
+        /// <summary>
+        /// Sets the TCP port that the ermeX component uses to listen to
+        /// </summary>
+        /// <param name="tcpPort">The port number to use</param>
+        /// <returns>The configuration settings updated</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public Configuration ListeningToTcpPort(ushort tcpPort)
         {
             if (tcpPort <= 1023)

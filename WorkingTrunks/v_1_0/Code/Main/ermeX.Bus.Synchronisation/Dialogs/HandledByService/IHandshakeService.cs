@@ -17,10 +17,10 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using ermeX.Bus.Interfaces.Attributes;
+using ermeX;
 using ermeX.Bus.Synchronisation.Messages;
 using ermeX.ConfigurationManagement.Status;
-using ermeX.Interfaces;
+
 
 namespace ermeX.Bus.Synchronisation.Dialogs.HandledByService
 {

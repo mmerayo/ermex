@@ -23,7 +23,7 @@ using System.Diagnostics;
 using NHibernate;
 using NHibernate.Criterion;
 using Ninject;
-using ermeX.Bus.Interfaces.Attributes;
+using ermeX;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;

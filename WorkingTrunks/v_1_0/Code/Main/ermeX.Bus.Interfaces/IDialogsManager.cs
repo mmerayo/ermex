@@ -19,7 +19,7 @@
 using System;
 using System.Collections.Generic;
 using ermeX.Entities.Entities;
-using ermeX.Interfaces;
+
 
 namespace ermeX.Bus.Interfaces
 {
