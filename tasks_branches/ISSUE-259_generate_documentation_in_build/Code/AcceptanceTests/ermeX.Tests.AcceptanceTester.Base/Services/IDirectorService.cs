@@ -1,6 +1,5 @@
 using System;
-using ermeX.Bus.Interfaces.Attributes;
-using ermeX.Interfaces;
+using ermeX;
 using ermeX.Tests.AcceptanceTester.Base.Messages;
 
 namespace ermeX.Tests.AcceptanceTester.Base.Services
