@@ -110,7 +110,7 @@
 	
 	<ItemGroup>
       <FilesToZip Include="$(MergedBinFolder)\*.dll"/>
-	  <FilesToZip Include="$(MergedBinFolder)\*.chm"/>
+	  <FilesToZip Include="$(MergedBinFolder)\ermeX.Documentation.chm"/>
 	  <FilesToCopy Include="$(OutputPath)*.chm"/>
     </ItemGroup>
 	<Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(MergedBinFolder)"/>
