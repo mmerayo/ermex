@@ -109,7 +109,7 @@
 	<Message Text="Creating package $(BuildReportsFolder)\ermeX_$(BuildTag).zip from: $(MergedBinFolder)"/> 
 	<ItemGroup>
       <FilesToZip Include="$(MergedBinFolder)\*.dll"/>
-	  <FilesToZip Include="$(MergedBinFolder)\*.chm"/>
+	  <FilesToZip Include="$(OutputPath)\*.chm"/>
     </ItemGroup>
     <MSBuild.ExtensionPack.Compression.Zip 
 		TaskAction="Create" 
