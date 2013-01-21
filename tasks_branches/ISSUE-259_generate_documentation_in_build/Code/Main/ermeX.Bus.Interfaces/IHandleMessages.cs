@@ -16,10 +16,19 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-namespace ermeX.Bus.Interfaces
+namespace ermeX
 {
+    /// <summary>
+    /// Interface of the message handlers
+    /// </summary>
+    /// <typeparam name="TMessage">type of message to handle</typeparam>
+    /// <remarks>implement this itnerface to create a message handler</remarks>
     public interface IHandleMessages<TMessage>
     {
+        /// <summary>
+        /// Invoked when a message [of TMessage] is published by any component in the ermeX network
+        /// </summary>
+        /// <param name="message">The type of message to handle<remarks>This can be a base type</remarks></param>
         void HandleMessage(TMessage message);
     }
 }

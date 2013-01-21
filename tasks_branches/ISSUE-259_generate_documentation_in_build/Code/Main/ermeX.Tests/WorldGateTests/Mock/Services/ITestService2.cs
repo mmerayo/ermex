@@ -16,8 +16,8 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-using ermeX.Bus.Interfaces.Attributes;
-using ermeX.Interfaces;
+using ermeX;
+
 using ermeX.Tests.Common.Dummies;
 
 namespace ermeX.Tests.WorldGateTests.Mock

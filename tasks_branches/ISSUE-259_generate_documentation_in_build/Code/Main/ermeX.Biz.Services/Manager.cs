@@ -22,7 +22,7 @@ using Ninject;
 using ermeX.Biz.Interfaces;
 using ermeX.Bus.Interfaces;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.Interfaces;
+
 
 namespace ermeX.Biz.Services
 {

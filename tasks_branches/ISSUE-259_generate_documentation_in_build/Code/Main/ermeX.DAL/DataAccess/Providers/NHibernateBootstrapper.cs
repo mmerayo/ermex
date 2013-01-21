@@ -27,11 +27,12 @@ using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.SqlCommand;
 using NHibernate.Tool.hbm2ddl;
+using ermeX;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.Mappings;
-
+using Config = NHibernate.Cfg.Configuration;
 namespace ermeX.DAL.DataAccess.Providers
 {
     internal static class NHibernateBootstrapper
@@ -53,7 +54,7 @@ namespace ermeX.DAL.DataAccess.Providers
         }
 #endif
 
-        private static Configuration _nhConfiguration;
+        private static NHibernate.Cfg.Configuration _nhConfiguration;
         private static readonly object SyncLock=new object();
         private static IDalSettings _currentSettings;
 
@@ -130,7 +131,7 @@ namespace ermeX.DAL.DataAccess.Providers
                     }
         }
 
-        private static void GetOrmConfiguration(Configuration cfg)
+        private static void GetOrmConfiguration(Config cfg)
         {
             //TODO: Add caching and others
             cfg.SetProperty("connection.release_mode", "on_close");

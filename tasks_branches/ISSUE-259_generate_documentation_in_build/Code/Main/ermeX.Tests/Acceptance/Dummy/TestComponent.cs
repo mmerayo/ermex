@@ -26,7 +26,7 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.Entities.Entities;
-using ermeX.Interfaces;
+
 
 
 namespace ermeX.Tests.Acceptance.Dummy

@@ -23,7 +23,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using NUnit.Framework;
-using ermeX.Bus.Interfaces.Attributes;
+using ermeX;
 using ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByMessageQueue;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
