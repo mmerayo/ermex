@@ -16,7 +16,7 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-namespace ermeX//on purpose as is public
+namespace ermeX//on purpose as is public //TODO: MOVE TO ermeX assembly
 {
     /// <summary>
     /// Classes/interfaces implementing this interface can be published as Services to the ermeX Network

@@ -94,6 +94,7 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL" />
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\Build\Packages\nUnit\NUnit-2.5.6.10205\nunitbin\nunit.framework.dll</HintPath>
     </Reference>
@@ -125,6 +126,62 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ermeX.Biz.Interfaces\ermeX.Biz.Interfaces.csproj">
+      <Project>{2A5A42E3-AC6B-4312-968B-9FEEEA8C8286}</Project>
+      <Name>ermeX.Biz.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Biz.IoC\ermeX.Biz.IoC.csproj">
+      <Project>{6E6F4849-39C6-42F3-BE1C-477420CE8CF9}</Project>
+      <Name>ermeX.Biz.IoC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Biz.Messaging\ermeX.Biz.Messaging.csproj">
+      <Project>{16D5EA67-6783-425C-8C5A-9ECCF6CD886C}</Project>
+      <Name>ermeX.Biz.Messaging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Biz.ServicesPublishing\ermeX.Biz.ServicesPublishing.csproj">
+      <Project>{7D94A3D6-0397-4A1C-B80F-6EAB0BB39DD0}</Project>
+      <Name>ermeX.Biz.ServicesPublishing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Biz.Services\ermeX.Biz.Services.csproj">
+      <Project>{761258C1-88AD-44A8-94AC-AEAE00D3107E}</Project>
+      <Name>ermeX.Biz.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Biz.Subscriptions\ermeX.Biz.Subscriptions.csproj">
+      <Project>{5D22F1C4-31D4-444C-9969-1A4A8E45405C}</Project>
+      <Name>ermeX.Biz.Subscriptions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Biz\ermeX.Biz.csproj">
+      <Project>{E19DA40A-2151-4A4F-A00B-565EF81B702A}</Project>
+      <Name>ermeX.Biz</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Bus.Interfaces\ermeX.Bus.Interfaces.csproj">
+      <Project>{9E3D8616-BD44-4E0A-A67C-182473CE2453}</Project>
+      <Name>ermeX.Bus.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Bus.IoC\ermeX.Bus.IoC.csproj">
+      <Project>{BBCDCC8A-C921-430F-990F-B7FC1DB2E4E4}</Project>
+      <Name>ermeX.Bus.IoC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Bus.Listening\ermeX.Bus.Listening.csproj">
+      <Project>{EC7959A4-3ACB-4619-ACCB-E6C9EA686C4D}</Project>
+      <Name>ermeX.Bus.Listening</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Bus.Publishing\ermeX.Bus.Publishing.csproj">
+      <Project>{AC2791B0-305E-44E5-B6C1-88771BDE7860}</Project>
+      <Name>ermeX.Bus.Publishing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Bus.Synchronisation\ermeX.Bus.Synchronisation.csproj">
+      <Project>{560852A4-AF6A-4440-BC97-9A5453DDD5FC}</Project>
+      <Name>ermeX.Bus.Synchronisation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Bus\ermeX.Bus.csproj">
+      <Project>{DA91A63E-958D-4478-94F7-44D12EA15F05}</Project>
+      <Name>ermeX.Bus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Common\ermeX.Common.csproj">
+      <Project>{49D6179A-5489-4CB0-A4AE-F40DB88B78B7}</Project>
+      <Name>ermeX.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.ConfigurationManagement.Config\ermeX.ConfigurationManagement.Config.csproj">
       <Project>{18D50277-2166-45E2-96CB-8F40E5494A87}</Project>
       <Name>ermeX.ConfigurationManagement.Config</Name>
@@ -133,13 +190,69 @@
       <Project>{A6C2D141-25F0-4BFF-93BC-F9EF0CBDB3B1}</Project>
       <Name>ermeX.ConfigurationManagement.Settings</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement\ermeX.ConfigurationManagement.csproj">
+      <Project>{C4536E30-DC91-4AA4-8860-ECBDAF1AE4DE}</Project>
+      <Name>ermeX.ConfigurationManagement</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.DAL.Interfaces\ermeX.DAL.Interfaces.csproj">
+      <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>
+      <Name>ermeX.DAL.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.DAL\ermeX.DAL.csproj">
+      <Project>{588A3C5F-C021-480E-B413-AEF2DEC4F97F}</Project>
+      <Name>ermeX.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
+      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
+      <Name>ermeX.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Exceptions\ermeX.Exceptions.csproj">
+      <Project>{6A23DFD5-8894-4ABA-BA81-7AB2A7DAD552}</Project>
+      <Name>ermeX.Exceptions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Interfaces\ermeX.Interfaces.csproj">
       <Project>{A67BD599-72DF-40F6-B632-AFB22B4B3D18}</Project>
       <Name>ermeX.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ermeX.Tests.Common\ermeX.Tests.Common.csproj">
-      <Project>{7E841F70-E81D-4AB8-B387-DD7383202915}</Project>
-      <Name>ermeX.Tests.Common</Name>
+    <ProjectReference Include="..\ermeX.LayerMessages\ermeX.LayerMessages.csproj">
+      <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
+      <Name>ermeX.LayerMessages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.NonMerged\ermeX.NonMerged.csproj">
+      <Project>{E72B0ECE-557C-4002-9368-2273101F76F3}</Project>
+      <Name>ermeX.NonMerged</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Threading\ermeX.Threading.csproj">
+      <Project>{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}</Project>
+      <Name>ermeX.Threading</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.BuiltIn.SuperSocket\ermeX.Transport.BuiltIn.SuperSocket.csproj">
+      <Project>{91BAFA98-AFBA-4CD0-BC04-AD1030C4E0F8}</Project>
+      <Name>ermeX.Transport.BuiltIn.SuperSocket</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Interfaces\ermeX.Transport.Interfaces.csproj">
+      <Project>{991296BF-95D5-4462-A7EF-574E56C679F3}</Project>
+      <Name>ermeX.Transport.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.IoC\ermeX.Transport.IoC.csproj">
+      <Project>{1CEFD1B8-E842-4BBB-B965-72E1DD6D4DE6}</Project>
+      <Name>ermeX.Transport.IoC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Publish\ermeX.Transport.Publish.csproj">
+      <Project>{214C51EE-B099-4288-AD16-E423F35D1870}</Project>
+      <Name>ermeX.Transport.Publish</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Reception\ermeX.Transport.Reception.csproj">
+      <Project>{37DF8B7E-E52C-4B91-B439-F65611BDA121}</Project>
+      <Name>ermeX.Transport.Reception</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport\ermeX.Transport.csproj">
+      <Project>{E7698635-4781-4A53-A16F-1800F8177A4B}</Project>
+      <Name>ermeX.Transport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Versioning\ermeX.Versioning.csproj">
+      <Project>{01A43626-806A-4657-BEAC-52E0EFFCD068}</Project>
+      <Name>ermeX.Versioning</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX\ermeX.csproj">
       <Project>{84423F30-093B-4345-A417-409C79FD945E}</Project>
