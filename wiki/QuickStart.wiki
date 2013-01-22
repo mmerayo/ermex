@@ -25,17 +25,28 @@ Two steps:
     ...
     }}}
 
-==== Component Identity ====
-Each component using has an unique id in an ermeX network, this is configured as below:
+==== Mandatory configuration ====
+  * Each component using has an unique id in an ermeX network, this is configured as below:
    {{{
    ...
     Configuration cfg = Configuration.Configure(ComponentId);
    ...
    }}}
+*ComponentId* should be always the same for a given component
+
+  * Specifying the port where the component listens:
+   {{{
+   ...
+   cfg = cfg.ListeningToTcpPort(myPort);
+   ...
+   }}}
 
 
 ==== Friend component ====
-To join in an ermeX network all your component need to know is another component in the network. The first component created dont need to join to any component
+To join in an ermeX network all your component need to know is another component in the network. As the first component created dont need to join to any component this invocation is not mandatory:
+   {{{
+   cfg = cfg.RequestJoinTo(remoteIP,remotePort,remoteComponentId)
+   }}}
 
 ==== Databases ====
 ermeX can use the following databases
