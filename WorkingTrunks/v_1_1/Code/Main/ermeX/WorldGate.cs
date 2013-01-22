@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using Ninject;
 using ermeX.Biz.Interfaces;
+using ermeX.Configuration;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
@@ -92,13 +93,21 @@ namespace ermeX
             Instance.ResetAll();
         }
 
+        /// <summary>
+        /// Initialises the component with the settings in the app.config file
+        /// </summary>
+        public static void ConfigureAndStart()
+        {
+            var settings = ConfigurationManager.GetSettingsFromConfig();
+            ConfigureAndStart(settings);
+        }
 
         /// <summary>
         /// Configures the component with the settings provided and starts it joining it to the ermeX Network
         /// </summary>
         /// <param name="settings">The component configuration</param>        
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-        public static void ConfigureAndStart(Configuration settings)
+        public static void ConfigureAndStart(Configurer settings)
         {
             try
             {
@@ -123,7 +132,7 @@ namespace ermeX
             }
         }
 
-        private static void PublishDiscoveredServices(Configuration settings)
+        private static void PublishDiscoveredServices(Configurer settings)
         {
             try
             {
@@ -140,7 +149,7 @@ namespace ermeX
             }
         }
 
-        private static void SubscribeDiscoveredMessageHandlers(Configuration settings)
+        private static void SubscribeDiscoveredMessageHandlers(Configurer settings)
         {
             try
             {
@@ -158,7 +167,7 @@ namespace ermeX
             }
         }
 
-        private static void RunUpgrades(Configuration settings)
+        private static void RunUpgrades(Configurer settings)
         {
             try
             {

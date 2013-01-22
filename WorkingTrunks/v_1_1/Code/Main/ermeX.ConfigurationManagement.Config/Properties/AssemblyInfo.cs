@@ -1,4 +1,4 @@
-// /*---------------------------------------------------------------------------------------*/
+﻿// /*---------------------------------------------------------------------------------------*/
 //        Licensed to the Apache Software Foundation (ASF) under one
 //        or more contributor license agreements.  See the NOTICE file
 //        distributed with this work for additional information
@@ -16,13 +16,23 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-namespace ermeX//on purpose as is public //TODO: MOVE TO ermeX assembly
-{
-    /// <summary>
-    /// Classes/interfaces implementing this interface can be published as Services to the ermeX Network
-    /// </summary>
-    /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-    public interface IService
-    {
-    }
-}
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+[assembly: AssemblyTitle("ermeX.ConfigurationManagement.Config")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+
+
+// Setting ComVisible to false makes the types in this assembly not visible 
+// to COM components.  If you need to access a type in this assembly from 
+// COM, set the ComVisible attribute to true on that type.
+[assembly: ComVisible(false)]
+
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("991bc92a-ea4a-49c0-9e32-b554ad51a8ea")]
+

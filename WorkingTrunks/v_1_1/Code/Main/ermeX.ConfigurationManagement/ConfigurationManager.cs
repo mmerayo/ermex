@@ -22,9 +22,12 @@ using System.Configuration;
 using System.Linq;
 using Ninject.Modules;
 using ermeX.Common;
+using ermeX.Configuration;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
+using Cfg = ermeX.Configuration.Configurer;
+
 
 namespace ermeX.ConfigurationManagement
 {
@@ -95,6 +98,48 @@ namespace ermeX.ConfigurationManagement
                 moduleTypes.Select(moduleType => ObjectBuilder.FromType<INinjectModule>(moduleType, settings)));
 
             return result.ToArray();
+        }
+
+
+        public static Cfg GetSettingsFromConfig()
+        {
+            var config = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var target = (ermeXConfiguration) config.GetSection("ermeXConfiguration");
+
+            //local component
+            LocalComponent componentDefinition = target.ComponentDefinition;
+            var result =
+                Cfg.Configure(componentDefinition.ComponentId).ListeningToTcpPort((ushort) componentDefinition.TcpPort).
+                    SendMessagesExpirationTime(TimeSpan.FromDays(componentDefinition.MessagesExpirationDays));
+            if (componentDefinition.DiscoverSubscriptors)
+                result = result.DiscoverSubscriptors();
+            if (componentDefinition.DiscoverServices)
+                result = result.DiscoverServicesToPublish();
+
+            //friend component
+            FriendComponentElement friendComponent = componentDefinition.FriendComponent;
+            if (!friendComponent.RemoteComponentId.IsEmpty())
+            {
+                result = result.RequestJoinTo(friendComponent.RemoteIp, friendComponent.RemoteTcpPort,
+                                              friendComponent.RemoteComponentId);
+            }
+
+            //database
+            Database database = componentDefinition.Database;
+            switch (database.DbType)
+            {
+                case DbType.InMemory:
+                    result = result.SetInMemoryDb();
+                    break;
+                case DbType.SQLite:
+                    result = result.SetSqliteDb(((PhisicalDatabase) database).ConnectionString);
+                    break;
+                case DbType.SqlServer:
+                    result = result.SetSqlServerDb(((PhisicalDatabase) database).ConnectionString);
+                    break;
+            }
+
+            return result;
         }
     }
 }

@@ -35,21 +35,21 @@ using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 
 using ermeX.NonMerged;
 
-namespace ermeX //on purpose as is public
+namespace ermeX.Configuration //on purpose as is public
 {
     /// <summary>
     /// Creates the ermeX component configuration
     /// </summary>
-    public partial class Configuration
+    public  class Configurer
     {
-        static Configuration()
+        static Configurer()
         {
             ResolveUnmerged.Prepare();
         }
 
         private readonly RealConfigure _configuration;
 
-        private Configuration(Guid componentId)
+        private Configurer(Guid componentId)
         {
             if (componentId == Guid.Empty)
                 throw new ArgumentException("the value cannot be empty", "componentId");
@@ -73,7 +73,7 @@ namespace ermeX //on purpose as is public
                                      //IClientconfigurationSettings
                                      
                                      //TODO: MUST CHANGE FOR TESTS 
-                                     SendExpiringTime = TimeSpan.FromDays(31),
+                                     SendExpiringTime =  TimeSpan.FromDays(31),
                                      MaxDelayDueToLatencySeconds = 60,
                                      MaxMessageKbBeforeChunking = 1024,
                                      //3MB
@@ -96,11 +96,11 @@ namespace ermeX //on purpose as is public
         /// <param name="componentId">Unique id for the current component</param>
         /// <returns>The configuration settings updated</returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-        public static Configuration Configure(Guid componentId)
+        public static Configurer Configure(Guid componentId)
         {
             if (componentId == Guid.Empty)
                 throw new ArgumentException("the value cannot be empty", "componentId");
-            return new Configuration(componentId);
+            return new Configurer(componentId);
         }
 
 
@@ -110,7 +110,7 @@ namespace ermeX //on purpose as is public
         /// <param name="dbConnString">Sql server connection stirng</param>
         /// <returns>The configuration settings updated</returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-        public Configuration SetSqlServerDb(string dbConnString)
+        public Configurer SetSqlServerDb(string dbConnString)
         {
             if(string.IsNullOrEmpty(dbConnString))
                 throw new ArgumentException("the connection string is not valid");
@@ -125,7 +125,7 @@ namespace ermeX //on purpose as is public
         /// <param name="dbConnString">SQLite connection string</param>
         /// <returns>The configuration settings updated</returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-        public Configuration SetSqliteDb(string dbConnString)
+        public Configurer SetSqliteDb(string dbConnString)
         {
             if (string.IsNullOrEmpty(dbConnString))
                 throw new ArgumentException("the connection string is not valid");
@@ -143,7 +143,7 @@ namespace ermeX //on purpose as is public
         /// </summary>
         /// <returns>The configuration settings updated</returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-        public Configuration SetInMemoryDb()
+        public Configurer SetInMemoryDb()
         {
             return
                 SetInMemoryDb(string.Format("FullUri=file:{0}?mode=memory&cache=shared;Version=3;BinaryGuid=False",
@@ -151,7 +151,7 @@ namespace ermeX //on purpose as is public
 
         }
 
-        internal Configuration SetInMemoryDb(string connectionString) //for tests
+        internal Configurer SetInMemoryDb(string connectionString) //for tests
         {
             _configuration.ConfigurationSourceType = DbEngineType.SqliteInMemory;
             _configuration.ConfigurationConnectionString = connectionString;
@@ -166,7 +166,7 @@ namespace ermeX //on purpose as is public
         /// <param name="expireAfter">time to expire after a message was published</param>
         /// <returns>The configuration settings updated</returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-        public Configuration SendMessagesExpirationTime(TimeSpan expireAfter)
+        public Configurer SendMessagesExpirationTime(TimeSpan expireAfter)
         {
             _configuration.SendExpiringTime = expireAfter;
             return this;
@@ -178,7 +178,7 @@ namespace ermeX //on purpose as is public
         /// <param name="tcpPort">The port number to use</param>
         /// <returns>The configuration settings updated</returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-        public Configuration ListeningToTcpPort(ushort tcpPort)
+        public Configurer ListeningToTcpPort(ushort tcpPort)
         {
             if (tcpPort <= 1023)
                 throw new ArgumentOutOfRangeException("tcpPort",
@@ -196,7 +196,7 @@ namespace ermeX //on purpose as is public
         /// <param name="componentId">The friend component Id </param>
         /// <returns>The configuration settings updated</returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-        public Configuration RequestJoinTo(IPEndPoint ermeXComponent, Guid componentId)
+        public Configurer RequestJoinTo(IPEndPoint ermeXComponent, Guid componentId)
         {
             if (ermeXComponent == null) throw new ArgumentNullException("ermeXComponent");
 
@@ -216,7 +216,7 @@ namespace ermeX //on purpose as is public
         /// <param name="componentId">The friend component Id </param>
         /// <returns>The configuration settings updated</returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-        public Configuration RequestJoinTo(string remoteIp, int remotePort, Guid componentId)
+        public Configurer RequestJoinTo(string remoteIp, int remotePort, Guid componentId)
         {
             var strings = remoteIp.Split('.');
             var bytes = new byte[strings.Length];
@@ -236,15 +236,26 @@ namespace ermeX //on purpose as is public
             _configuration.DevLoggingActive = true;
         }
 
+        /// <summary>
+        /// Automatically discovers all subscriptors in the AppDomain
+        /// </summary>
+        /// <returns>The configuration settings updated</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
+        public Configurer DiscoverSubscriptors()
+        {
+            string excludeAssemblyNameStartsWith = GetType().Namespace.Split('.')[0];
+            var assemblies = TypesHelper.GetAssembliesFromDomain(excludeAssemblyNameStartsWith);
+            return DiscoverSubscriptors(assemblies, null);
+        }
 
         /// <summary>
         /// Automatically discovers and subscribe the message subscriptors of the current component, those that implement one or more times IHandleMessage[ofT]
         /// </summary>
         /// <param name="assemblies">The assemblies to perform the discovery and subscription</param>
-        /// <param name="suscriberTypesToExclude">types to not to subscribe in the process</param>
+        /// <param name="suscriberTypesToExclude">types to not to subscribe in the process. <remarks>null to not to exclude any</remarks>></param>
         /// <returns>The configuration settings updated</returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-        public Configuration DiscoverSubscriptors(Assembly[] assemblies, Type[] suscriberTypesToExclude)
+        public Configurer DiscoverSubscriptors(Assembly[] assemblies, Type[] suscriberTypesToExclude)
         {
             _configuration.SearchMessageSuscriptionAssemblies = assemblies;
             _configuration.SearchMessageSuscriptionExcludeTypes = suscriberTypesToExclude;
@@ -255,14 +266,26 @@ namespace ermeX //on purpose as is public
         /// Automatically discovers and publishes the services exposed by the current component, those that implement IService
         /// </summary>
         /// <param name="assemblies">The assemblies to perform the discovery and service publishing</param>
-        /// <param name="typesToExclude">types of services to not to publish in the process</param>
+        /// <param name="typesToExclude">types of services to not to publish in the process<remarks>null to not to exclude any</remarks></param>
         /// <returns>The configuration settings updated</returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-        public Configuration DiscoverServicesToPublish(Assembly[] assemblies, Type[] typesToExclude)
+        public Configurer DiscoverServicesToPublish(Assembly[] assemblies, Type[] typesToExclude)
         {
             _configuration.SearchServicesToPublishAssemblies = assemblies;
             _configuration.SearchServicesToPublishExcludeTypes = typesToExclude;
             return this;
+        }
+
+        /// <summary>
+        /// Automatically discovers all services in the AppDomain
+        /// </summary>
+        /// <returns>The configuration settings updated</returns>
+        /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
+        public Configurer DiscoverServicesToPublish()
+        {
+            string excludeAssemblyNameStartsWith = GetType().Namespace.Split('.')[0];
+            var assemblies = TypesHelper.GetAssembliesFromDomain(excludeAssemblyNameStartsWith);
+            return DiscoverSubscriptors(assemblies, null);
         }
 
         internal IEnumerable<DiscoveredSubscription> GetDiscoveredSubscriptions()
@@ -357,10 +380,7 @@ namespace ermeX //on purpose as is public
 
 
        
-    }
-
-    public partial class Configuration
-    {
+    
         internal class DiscoveredSubscription
         {
             public Type HandlerType { get; set; }
@@ -450,6 +470,5 @@ namespace ermeX //on purpose as is public
 
         #endregion
 
-        
     }
 }

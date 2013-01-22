@@ -146,7 +146,10 @@ namespace ermeX.Tests.Common.Networking
 
         ~TestPort()
         {
-            Dispose(false);
+            try
+            {
+                Dispose(false);
+            }catch{}
         }
 
         public static implicit operator ushort(TestPort port)
