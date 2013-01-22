@@ -44,6 +44,7 @@
 	<CallTarget Targets="CompileTask" />
 	<CallTarget Targets="DocumentationTask"/>
     <CallTarget Targets="CreatePackageTask" />
+	<CallTarget Targets="StoreTask" />
 	<CallTarget Targets="RunTestsTask" />
 	<CallTarget Targets="RunAcceptanceTestsTask" />
     <Message Text="Build:End" />
@@ -109,9 +110,9 @@
 	<Message Text="Creating package $(BuildReportsFolder)\ermeX_$(BuildTag).zip from: $(MergedBinFolder)"/> 
 	
 	<ItemGroup>
-      <FilesToZip Include="$(MergedBinFolder)\*.dll"/>
+      <FilesToZip Include="$(MergedBinFolder)\ermeX.dll"/>
 	  <FilesToZip Include="$(MergedBinFolder)\ermeX.Documentation.chm"/>
-	  <FilesToCopy Include="$(OutputPath)*.chm"/>
+	  <FilesToCopy Include="$(OutputPath)ermeX.Documentation.chm"/>
     </ItemGroup>
 	<Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(MergedBinFolder)"/>
     <MSBuild.ExtensionPack.Compression.Zip 
@@ -121,6 +122,28 @@
 		ZipFileName="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>
 	
 	<Message Text="CreatePackageTask:End" />
+  </Target>
+  
+  <Target Name="StoreTask" Condition=" $(TaskIdName) == 'StoreTask' ">
+	<Message Text="StoreTask:Start" />	
+	<ItemGroup>
+      <FilesToStore Include="$(BuildReportsFolder)\ermeX_$(Platform).nuspec"/>	 
+	  <FilesToStore Include="$(BuildReportsFolder)\ermeX.dll"/>
+	  <FilesToStore Include="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>
+    </ItemGroup>
+	
+    <MSBuild.ExtensionPack.Compression.Zip 
+		TaskAction="Create" 
+		CompressFiles="@(FilesToStore)"
+		RemoveRoot="$(BuildReportsFolder)"
+		ZipFileName="$(BuildReportsFolder)\ermeX_Store_$(BuildTag).zip"/>
+	
+	
+	<Delete Files="$(BuildReportsFolder)\ermeX_$(Platform).nuspec"/>
+	<Delete Files="$(BuildReportsFolder)\ermeX.dll"/>
+	<Delete Files="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>
+	
+	<Message Text="StoreTask:End" />
   </Target>
   
    <Target Name="RunAcceptanceTestsTask" Condition=" $(TaskIdName) == 'AcceptanceTests' ">
