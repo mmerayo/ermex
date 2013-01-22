@@ -7,31 +7,31 @@
     the code is regenerated.
 </auto-generated>
 -->
-<xs:schema xmlns:tns="ermeX" elementFormDefault="qualified" targetNamespace="ermeX" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:element name="ermeXSection" type="tns:ermeX.ermeXSectionCT" />
-	<xs:complexType name="ermeX.ermeXSectionCT">
+<xs:schema xmlns:tns="ermeX.Configuration" elementFormDefault="qualified" targetNamespace="ermeX.Configuration" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="ermeXConfiguration" type="tns:ermeX.Configuration.ermeXConfigurationCT" />
+	<xs:complexType name="ermeX.Configuration.ermeXConfigurationCT">
 		<xs:sequence>
-			<xs:element minOccurs="0" name="componentDefinition" type="tns:ermeX.ComponentElementCT">
+			<xs:element minOccurs="0" name="componentDefinition" type="tns:ermeX.Configuration.LocalComponentCT">
 				<xs:annotation>
 					<xs:documentation>The ComponentDefinition.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="ermeX.ComponentElementCT">
+	<xs:complexType name="ermeX.Configuration.LocalComponentCT">
 		<xs:sequence>
-			<xs:element minOccurs="0" name="friendComponent" type="tns:ermeX.FriendComponentElementCT">
+			<xs:element minOccurs="0" name="friendComponent" type="tns:ermeX.Configuration.FriendComponentElementCT">
 				<xs:annotation>
 					<xs:documentation>the friend component settings. Its used to join to the network. Dont configure if this component is the first added and the others will join to it</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element minOccurs="0" name="database" type="tns:ermeX.DatabaseElementCT">
+			<xs:element minOccurs="0" name="database" type="tns:ermeX.Configuration.DatabaseCT">
 				<xs:annotation>
 					<xs:documentation>The Database.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="componentId" use="required" type="xs:string">
+		<xs:attribute name="componentId" use="required">
 			<xs:annotation>
 				<xs:documentation>The unique identifier of the ermeX component in the ermeX network</xs:documentation>
 			</xs:annotation>
@@ -41,7 +41,7 @@
 				<xs:documentation>TCP port the components listens to</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="messagesExpirationDays" use="required" type="xs:time">
+		<xs:attribute name="messagesExpirationDays" use="required" type="xs:int">
 			<xs:annotation>
 				<xs:documentation>the days after a message is expired. </xs:documentation>
 			</xs:annotation>
@@ -57,30 +57,35 @@
 			</xs:annotation>
 		</xs:attribute>
 	</xs:complexType>
-	<xs:complexType name="ermeX.FriendComponentElementCT">
+	<xs:complexType name="ermeX.Configuration.FriendComponentElementCT">
 		<xs:sequence>
 		</xs:sequence>
-		<xs:attribute name="remoteIp" use="required" type="xs:string">
+		<xs:attribute name="remoteIp" use="optional" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>the remote component IP</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="remoteTcpPort" use="required" type="xs:int">
+		<xs:attribute name="remoteTcpPort" use="optional" type="xs:int">
 			<xs:annotation>
 				<xs:documentation>the remote component TcpPort</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="remoteComponentId" use="required" type="xs:string">
+		<xs:attribute name="remoteComponentId" use="optional">
 			<xs:annotation>
 				<xs:documentation>The remote component id in the ermeX Network</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 	</xs:complexType>
-	<xs:complexType name="ermeX.DatabaseElementCT">
+	<xs:complexType name="ermeX.Configuration.DatabaseCT">
 		<xs:sequence>
 		</xs:sequence>
+		<xs:attribute name="dbType" use="required" type="tns:DbType">
+			<xs:annotation>
+				<xs:documentation>the db type. Values: InMemory, SQLite, SqlServer</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
-	<xs:complexType name="ermeX.PhisicalDatabaseElementCT">
+	<xs:complexType name="ermeX.Configuration.PhisicalDatabaseCT">
 		<xs:sequence>
 		</xs:sequence>
 		<xs:attribute name="connectionString" use="required" type="xs:string">
@@ -88,27 +93,84 @@
 				<xs:documentation>the connectionstring of the database</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="dbType" use="required" type="tns:DbType">
+			<xs:annotation>
+				<xs:documentation>the db type. Values: InMemory, SQLite, SqlServer</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
-	<xs:complexType name="ermeX.SqlServerDatabaseElementCT">
+	<xs:complexType name="ermeX.Configuration.SqlServerDatabaseCT">
 		<xs:sequence>
 		</xs:sequence>
+		<xs:attribute name="dbType" use="optional" type="tns:DbType">
+			<xs:annotation>
+				<xs:documentation>The DbType.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="connectionString" use="required" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>the connectionstring of the database</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="dbType" use="required" type="tns:DbType">
+			<xs:annotation>
+				<xs:documentation>the db type. Values: InMemory, SQLite, SqlServer</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
-	<xs:complexType name="ermeX.SqliteDatabaseElementCT">
+	<xs:complexType name="ermeX.Configuration.SqliteDatabaseCT">
 		<xs:sequence>
 		</xs:sequence>
+		<xs:attribute name="dbType" use="optional" type="tns:DbType">
+			<xs:annotation>
+				<xs:documentation>The DbType.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="connectionString" use="required" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>the connectionstring of the database</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="dbType" use="required" type="tns:DbType">
+			<xs:annotation>
+				<xs:documentation>the db type. Values: InMemory, SQLite, SqlServer</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
-	<xs:complexType name="ermeX.InMemoryDatabaseElementCT">
+	<xs:complexType name="ermeX.Configuration.InMemoryDatabaseCT">
 		<xs:sequence>
 		</xs:sequence>
+		<xs:attribute name="dbType" use="optional" type="tns:DbType">
+			<xs:annotation>
+				<xs:documentation>The DbType.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="dbType" use="required" type="tns:DbType">
+			<xs:annotation>
+				<xs:documentation>the db type. Values: InMemory, SQLite, SqlServer</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
+	<xs:simpleType name="DbType">
+		<xs:annotation>
+			<xs:documentation>DbType.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="InMemory">
+				<xs:annotation>
+					<xs:documentation>InMemory.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SQLite">
+				<xs:annotation>
+					<xs:documentation>SQLite.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SqlServer">
+				<xs:annotation>
+					<xs:documentation>SqlServer.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
 </xs:schema>

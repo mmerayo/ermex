@@ -26,6 +26,7 @@ using ermeX;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
 using ermeX.Common;
+using ermeX.Configuration;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.Entities.Entities;
@@ -195,7 +196,7 @@ namespace ermeX.Tests.Dialogs
                         });
                 result.Components.Add(tuple);
 
-                Configuration serviceLayerSettingsSource;
+                Configurer serviceLayerSettingsSource;
 
                 //db settings                
 

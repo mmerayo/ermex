@@ -61,7 +61,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_Receive_PublishedMessage( DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             var autoResetEvent = new AutoResetEvent(false);
@@ -82,7 +82,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_Receive_Several_Messages(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             var autoResetEvent = new AutoResetEvent(false);
@@ -116,7 +116,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void BaseTypeHandler_Receives_Inherited_Message(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             var autoResetEvent = new AutoResetEvent(false);
@@ -138,7 +138,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void BaseTypeHandler_And_ConcreteHandlerType_Receives_Inherited_Message(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             var autoResetEvent = new AutoResetEvent(false);
@@ -168,7 +168,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void InterfaceTypeHandler_And_ConcreteHandlerType_Receives_Inherited_Message(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             var autoResetEvent = new AutoResetEvent(false);

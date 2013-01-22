@@ -8,32 +8,32 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ermeX
+namespace ermeX.Configuration
 {
     
     
     /// <summary>
-    /// The ermeXSection Configuration Section.
+    /// The ermeXConfiguration Configuration Section.
     /// </summary>
-    public partial class ermeXSection : global::System.Configuration.ConfigurationSection
+    public partial class ermeXConfiguration : global::System.Configuration.ConfigurationSection
     {
         
         #region Singleton Instance
         /// <summary>
-        /// The XML name of the ermeXSection Configuration Section.
+        /// The XML name of the ermeXConfiguration Configuration Section.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
-        internal const string ermeXSectionSectionName = "ermeXSection";
+        internal const string ermeXConfigurationSectionName = "ermeXConfiguration";
         
         /// <summary>
-        /// Gets the ermeXSection instance.
+        /// Gets the ermeXConfiguration instance.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
-        public static global::ermeX.ermeXSection Instance
+        public static global::ermeX.Configuration.ermeXConfiguration Instance
         {
             get
             {
-                return ((global::ermeX.ermeXSection)(global::System.Configuration.ConfigurationManager.GetSection(global::ermeX.ermeXSection.ermeXSectionSectionName)));
+                return ((global::ermeX.Configuration.ermeXConfiguration)(global::System.Configuration.ConfigurationManager.GetSection(global::ermeX.Configuration.ermeXConfiguration.ermeXConfigurationSectionName)));
             }
         }
         #endregion
@@ -53,12 +53,12 @@ namespace ermeX
         /// the parser doesn't throw an exception because it encounters the unknown "xmlns" attribute.
         /// </remarks>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.ermeXSection.XmlnsPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.ermeXConfiguration.XmlnsPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
         public string Xmlns
         {
             get
             {
-                return ((string)(base[global::ermeX.ermeXSection.XmlnsPropertyName]));
+                return ((string)(base[global::ermeX.Configuration.ermeXConfiguration.XmlnsPropertyName]));
             }
         }
         #endregion
@@ -70,7 +70,7 @@ namespace ermeX
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         public override bool IsReadOnly()
         {
-            return true;
+            return false;
         }
         #endregion
         
@@ -86,29 +86,29 @@ namespace ermeX
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         [global::System.ComponentModel.DescriptionAttribute("The ComponentDefinition.")]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.ermeXSection.ComponentDefinitionPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
-        public virtual global::ermeX.ComponentElement ComponentDefinition
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.ermeXConfiguration.ComponentDefinitionPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
+        public virtual global::ermeX.Configuration.LocalComponent ComponentDefinition
         {
             get
             {
-                return ((global::ermeX.ComponentElement)(base[global::ermeX.ermeXSection.ComponentDefinitionPropertyName]));
+                return ((global::ermeX.Configuration.LocalComponent)(base[global::ermeX.Configuration.ermeXConfiguration.ComponentDefinitionPropertyName]));
             }
             set
             {
-                base[global::ermeX.ermeXSection.ComponentDefinitionPropertyName] = value;
+                base[global::ermeX.Configuration.ermeXConfiguration.ComponentDefinitionPropertyName] = value;
             }
         }
         #endregion
     }
 }
-namespace ermeX
+namespace ermeX.Configuration
 {
     
     
     /// <summary>
-    /// The ComponentElement Configuration Element.
+    /// the configuration of the local component
     /// </summary>
-    public partial class ComponentElement : global::System.Configuration.ConfigurationElement
+    public partial class LocalComponent : global::System.Configuration.ConfigurationElement
     {
         
         #region IsReadOnly override
@@ -118,7 +118,7 @@ namespace ermeX
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         public override bool IsReadOnly()
         {
-            return true;
+            return false;
         }
         #endregion
         
@@ -130,17 +130,20 @@ namespace ermeX
         internal const string ComponentIdPropertyName = "componentId";
         
         /// <summary>
-        /// Gets the unique identifier of the ermeX component in the ermeX network
+        /// Gets or sets the unique identifier of the ermeX component in the ermeX network
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         [global::System.ComponentModel.DescriptionAttribute("The unique identifier of the ermeX component in the ermeX network")]
-        [global::System.ComponentModel.ReadOnlyAttribute(true)]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.ComponentElement.ComponentIdPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false)]
-        public virtual string ComponentId
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.LocalComponent.ComponentIdPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false)]
+        public virtual global::System.Guid ComponentId
         {
             get
             {
-                return ((string)(base[global::ermeX.ComponentElement.ComponentIdPropertyName]));
+                return ((global::System.Guid)(base[global::ermeX.Configuration.LocalComponent.ComponentIdPropertyName]));
+            }
+            set
+            {
+                base[global::ermeX.Configuration.LocalComponent.ComponentIdPropertyName] = value;
             }
         }
         #endregion
@@ -153,17 +156,20 @@ namespace ermeX
         internal const string TcpPortPropertyName = "tcpPort";
         
         /// <summary>
-        /// Gets tCP port the components listens to
+        /// Gets or sets tCP port the components listens to
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         [global::System.ComponentModel.DescriptionAttribute("TCP port the components listens to")]
-        [global::System.ComponentModel.ReadOnlyAttribute(true)]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.ComponentElement.TcpPortPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false)]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.LocalComponent.TcpPortPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false, DefaultValue=8135)]
         public virtual int TcpPort
         {
             get
             {
-                return ((int)(base[global::ermeX.ComponentElement.TcpPortPropertyName]));
+                return ((int)(base[global::ermeX.Configuration.LocalComponent.TcpPortPropertyName]));
+            }
+            set
+            {
+                base[global::ermeX.Configuration.LocalComponent.TcpPortPropertyName] = value;
             }
         }
         #endregion
@@ -176,17 +182,20 @@ namespace ermeX
         internal const string MessagesExpirationDaysPropertyName = "messagesExpirationDays";
         
         /// <summary>
-        /// Gets the days after a message is expired. 
+        /// Gets or sets the days after a message is expired. 
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         [global::System.ComponentModel.DescriptionAttribute("the days after a message is expired. ")]
-        [global::System.ComponentModel.ReadOnlyAttribute(true)]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.ComponentElement.MessagesExpirationDaysPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false, DefaultValue=31)]
-        public virtual global::System.TimeSpan MessagesExpirationDays
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.LocalComponent.MessagesExpirationDaysPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false, DefaultValue=31)]
+        public virtual int MessagesExpirationDays
         {
             get
             {
-                return ((global::System.TimeSpan)(base[global::ermeX.ComponentElement.MessagesExpirationDaysPropertyName]));
+                return ((int)(base[global::ermeX.Configuration.LocalComponent.MessagesExpirationDaysPropertyName]));
+            }
+            set
+            {
+                base[global::ermeX.Configuration.LocalComponent.MessagesExpirationDaysPropertyName] = value;
             }
         }
         #endregion
@@ -199,18 +208,21 @@ namespace ermeX
         internal const string DiscoverSubscriptorsPropertyName = "discoverSubscriptors";
         
         /// <summary>
-        /// Gets indicates if the message subscriptor types should be discovered when the component is started
+        /// Gets or sets indicates if the message subscriptor types should be discovered when the component is started
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         [global::System.ComponentModel.DescriptionAttribute("indicates if the message subscriptor types should be discovered when the componen" +
             "t is started")]
-        [global::System.ComponentModel.ReadOnlyAttribute(true)]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.ComponentElement.DiscoverSubscriptorsPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false, DefaultValue=true)]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.LocalComponent.DiscoverSubscriptorsPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false, DefaultValue=true)]
         public virtual bool DiscoverSubscriptors
         {
             get
             {
-                return ((bool)(base[global::ermeX.ComponentElement.DiscoverSubscriptorsPropertyName]));
+                return ((bool)(base[global::ermeX.Configuration.LocalComponent.DiscoverSubscriptorsPropertyName]));
+            }
+            set
+            {
+                base[global::ermeX.Configuration.LocalComponent.DiscoverSubscriptorsPropertyName] = value;
             }
         }
         #endregion
@@ -223,17 +235,20 @@ namespace ermeX
         internal const string DiscoverServicesPropertyName = "discoverServices";
         
         /// <summary>
-        /// Gets indicates if the services should be discovered when the component is started
+        /// Gets or sets indicates if the services should be discovered when the component is started
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         [global::System.ComponentModel.DescriptionAttribute("indicates if the services should be discovered when the component is started")]
-        [global::System.ComponentModel.ReadOnlyAttribute(true)]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.ComponentElement.DiscoverServicesPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false, DefaultValue=true)]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.LocalComponent.DiscoverServicesPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false, DefaultValue=true)]
         public virtual bool DiscoverServices
         {
             get
             {
-                return ((bool)(base[global::ermeX.ComponentElement.DiscoverServicesPropertyName]));
+                return ((bool)(base[global::ermeX.Configuration.LocalComponent.DiscoverServicesPropertyName]));
+            }
+            set
+            {
+                base[global::ermeX.Configuration.LocalComponent.DiscoverServicesPropertyName] = value;
             }
         }
         #endregion
@@ -251,16 +266,16 @@ namespace ermeX
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         [global::System.ComponentModel.DescriptionAttribute("the friend component settings. Its used to join to the network. Dont configure if" +
             " this component is the first added and the others will join to it")]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.ComponentElement.FriendComponentPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
-        public virtual global::ermeX.FriendComponentElement FriendComponent
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.LocalComponent.FriendComponentPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
+        public virtual global::ermeX.Configuration.FriendComponentElement FriendComponent
         {
             get
             {
-                return ((global::ermeX.FriendComponentElement)(base[global::ermeX.ComponentElement.FriendComponentPropertyName]));
+                return ((global::ermeX.Configuration.FriendComponentElement)(base[global::ermeX.Configuration.LocalComponent.FriendComponentPropertyName]));
             }
             set
             {
-                base[global::ermeX.ComponentElement.FriendComponentPropertyName] = value;
+                base[global::ermeX.Configuration.LocalComponent.FriendComponentPropertyName] = value;
             }
         }
         #endregion
@@ -273,23 +288,27 @@ namespace ermeX
         internal const string DatabasePropertyName = "database";
         
         /// <summary>
-        /// Gets the Database.
+        /// Gets or sets the Database.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         [global::System.ComponentModel.DescriptionAttribute("The Database.")]
-        [global::System.ComponentModel.ReadOnlyAttribute(true)]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.ComponentElement.DatabasePropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
-        public virtual global::ermeX.DatabaseElement Database
+        [global::System.Configuration.CallbackValidatorAttribute(Type=typeof(global::ermeX.Configuration.DatabaseCallbackValidatorClass), CallbackMethodName="ValidateCallback")]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.LocalComponent.DatabasePropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
+        public virtual global::ermeX.Configuration.Database Database
         {
             get
             {
-                return ((global::ermeX.DatabaseElement)(base[global::ermeX.ComponentElement.DatabasePropertyName]));
+                return ((global::ermeX.Configuration.Database)(base[global::ermeX.Configuration.LocalComponent.DatabasePropertyName]));
+            }
+            set
+            {
+                base[global::ermeX.Configuration.LocalComponent.DatabasePropertyName] = value;
             }
         }
         #endregion
     }
 }
-namespace ermeX
+namespace ermeX.Configuration
 {
     
     
@@ -306,7 +325,7 @@ namespace ermeX
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         public override bool IsReadOnly()
         {
-            return true;
+            return false;
         }
         #endregion
         
@@ -322,16 +341,16 @@ namespace ermeX
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         [global::System.ComponentModel.DescriptionAttribute("the remote component IP")]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.FriendComponentElement.RemoteIpPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false)]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.FriendComponentElement.RemoteIpPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
         public virtual string RemoteIp
         {
             get
             {
-                return ((string)(base[global::ermeX.FriendComponentElement.RemoteIpPropertyName]));
+                return ((string)(base[global::ermeX.Configuration.FriendComponentElement.RemoteIpPropertyName]));
             }
             set
             {
-                base[global::ermeX.FriendComponentElement.RemoteIpPropertyName] = value;
+                base[global::ermeX.Configuration.FriendComponentElement.RemoteIpPropertyName] = value;
             }
         }
         #endregion
@@ -348,16 +367,16 @@ namespace ermeX
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         [global::System.ComponentModel.DescriptionAttribute("the remote component TcpPort")]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.FriendComponentElement.RemoteTcpPortPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false)]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.FriendComponentElement.RemoteTcpPortPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
         public virtual int RemoteTcpPort
         {
             get
             {
-                return ((int)(base[global::ermeX.FriendComponentElement.RemoteTcpPortPropertyName]));
+                return ((int)(base[global::ermeX.Configuration.FriendComponentElement.RemoteTcpPortPropertyName]));
             }
             set
             {
-                base[global::ermeX.FriendComponentElement.RemoteTcpPortPropertyName] = value;
+                base[global::ermeX.Configuration.FriendComponentElement.RemoteTcpPortPropertyName] = value;
             }
         }
         #endregion
@@ -374,29 +393,29 @@ namespace ermeX
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         [global::System.ComponentModel.DescriptionAttribute("The remote component id in the ermeX Network")]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.FriendComponentElement.RemoteComponentIdPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false)]
-        public virtual string RemoteComponentId
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.FriendComponentElement.RemoteComponentIdPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
+        public virtual global::System.Guid RemoteComponentId
         {
             get
             {
-                return ((string)(base[global::ermeX.FriendComponentElement.RemoteComponentIdPropertyName]));
+                return ((global::System.Guid)(base[global::ermeX.Configuration.FriendComponentElement.RemoteComponentIdPropertyName]));
             }
             set
             {
-                base[global::ermeX.FriendComponentElement.RemoteComponentIdPropertyName] = value;
+                base[global::ermeX.Configuration.FriendComponentElement.RemoteComponentIdPropertyName] = value;
             }
         }
         #endregion
     }
 }
-namespace ermeX
+namespace ermeX.Configuration
 {
     
     
     /// <summary>
-    /// The DatabaseElement Configuration Element.
+    /// The Database Configuration Element.
     /// </summary>
-    public partial class DatabaseElement : global::System.Configuration.ConfigurationElement
+    public partial class Database : global::System.Configuration.ConfigurationElement
     {
         
         #region IsReadOnly override
@@ -406,19 +425,45 @@ namespace ermeX
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         public override bool IsReadOnly()
         {
-            return true;
+            return false;
+        }
+        #endregion
+        
+        #region DbType Property
+        /// <summary>
+        /// The XML name of the <see cref="DbType"/> property.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
+        internal const string DbTypePropertyName = "dbType";
+        
+        /// <summary>
+        /// Gets or sets the db type. Values: InMemory, SQLite, SqlServer
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
+        [global::System.ComponentModel.DescriptionAttribute("the db type. Values: InMemory, SQLite, SqlServer")]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.Database.DbTypePropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false, DefaultValue=DbType.InMemory)]
+        public virtual global::ermeX.Configuration.DbType DbType
+        {
+            get
+            {
+                return ((global::ermeX.Configuration.DbType)(base[global::ermeX.Configuration.Database.DbTypePropertyName]));
+            }
+            set
+            {
+                base[global::ermeX.Configuration.Database.DbTypePropertyName] = value;
+            }
         }
         #endregion
     }
 }
-namespace ermeX
+namespace ermeX.Configuration
 {
     
     
     /// <summary>
-    /// The PhisicalDatabaseElement Configuration Element.
+    /// The PhisicalDatabase Configuration Element.
     /// </summary>
-    public partial class PhisicalDatabaseElement : global::ermeX.DatabaseElement
+    public partial class PhisicalDatabase : global::ermeX.Configuration.Database
     {
         
         #region IsReadOnly override
@@ -428,7 +473,7 @@ namespace ermeX
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         public override bool IsReadOnly()
         {
-            return true;
+            return false;
         }
         #endregion
         
@@ -440,30 +485,33 @@ namespace ermeX
         internal const string ConnectionStringPropertyName = "connectionString";
         
         /// <summary>
-        /// Gets the connectionstring of the database
+        /// Gets or sets the connectionstring of the database
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         [global::System.ComponentModel.DescriptionAttribute("the connectionstring of the database")]
-        [global::System.ComponentModel.ReadOnlyAttribute(true)]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.PhisicalDatabaseElement.ConnectionStringPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false)]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.PhisicalDatabase.ConnectionStringPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false)]
         public virtual string ConnectionString
         {
             get
             {
-                return ((string)(base[global::ermeX.PhisicalDatabaseElement.ConnectionStringPropertyName]));
+                return ((string)(base[global::ermeX.Configuration.PhisicalDatabase.ConnectionStringPropertyName]));
+            }
+            set
+            {
+                base[global::ermeX.Configuration.PhisicalDatabase.ConnectionStringPropertyName] = value;
             }
         }
         #endregion
     }
 }
-namespace ermeX
+namespace ermeX.Configuration
 {
     
     
     /// <summary>
-    /// The SqlServerDatabaseElement Configuration Element.
+    /// The SqlServerDatabase Configuration Element.
     /// </summary>
-    public partial class SqlServerDatabaseElement : global::ermeX.PhisicalDatabaseElement
+    public partial class SqlServerDatabase : global::ermeX.Configuration.PhisicalDatabase
     {
         
         #region IsReadOnly override
@@ -473,19 +521,45 @@ namespace ermeX
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         public override bool IsReadOnly()
         {
-            return true;
+            return false;
+        }
+        #endregion
+        
+        #region DbType Property
+        /// <summary>
+        /// The XML name of the <see cref="DbType"/> property.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
+        internal const string DbTypePropertyName = "dbType";
+        
+        /// <summary>
+        /// Gets or sets the DbType.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
+        [global::System.ComponentModel.DescriptionAttribute("The DbType.")]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.SqlServerDatabase.DbTypePropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false, DefaultValue=DbType.SqlServer)]
+        public virtual global::ermeX.Configuration.DbType DbType
+        {
+            get
+            {
+                return ((global::ermeX.Configuration.DbType)(base[global::ermeX.Configuration.SqlServerDatabase.DbTypePropertyName]));
+            }
+            set
+            {
+                base[global::ermeX.Configuration.SqlServerDatabase.DbTypePropertyName] = value;
+            }
         }
         #endregion
     }
 }
-namespace ermeX
+namespace ermeX.Configuration
 {
     
     
     /// <summary>
-    /// The SqliteDatabaseElement Configuration Element.
+    /// The SqliteDatabase Configuration Element.
     /// </summary>
-    public partial class SqliteDatabaseElement : global::ermeX.PhisicalDatabaseElement
+    public partial class SqliteDatabase : global::ermeX.Configuration.PhisicalDatabase
     {
         
         #region IsReadOnly override
@@ -495,19 +569,45 @@ namespace ermeX
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         public override bool IsReadOnly()
         {
-            return true;
+            return false;
+        }
+        #endregion
+        
+        #region DbType Property
+        /// <summary>
+        /// The XML name of the <see cref="DbType"/> property.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
+        internal const string DbTypePropertyName = "dbType";
+        
+        /// <summary>
+        /// Gets or sets the DbType.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
+        [global::System.ComponentModel.DescriptionAttribute("The DbType.")]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.SqliteDatabase.DbTypePropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false, DefaultValue=DbType.SQLite)]
+        public virtual global::ermeX.Configuration.DbType DbType
+        {
+            get
+            {
+                return ((global::ermeX.Configuration.DbType)(base[global::ermeX.Configuration.SqliteDatabase.DbTypePropertyName]));
+            }
+            set
+            {
+                base[global::ermeX.Configuration.SqliteDatabase.DbTypePropertyName] = value;
+            }
         }
         #endregion
     }
 }
-namespace ermeX
+namespace ermeX.Configuration
 {
     
     
     /// <summary>
-    /// The InMemoryDatabaseElement Configuration Element.
+    /// The InMemoryDatabase Configuration Element.
     /// </summary>
-    public partial class InMemoryDatabaseElement : global::ermeX.DatabaseElement
+    public partial class InMemoryDatabase : global::ermeX.Configuration.Database
     {
         
         #region IsReadOnly override
@@ -517,8 +617,97 @@ namespace ermeX
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
         public override bool IsReadOnly()
         {
-            return true;
+            return false;
         }
         #endregion
+        
+        #region DbType Property
+        /// <summary>
+        /// The XML name of the <see cref="DbType"/> property.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
+        internal const string DbTypePropertyName = "dbType";
+        
+        /// <summary>
+        /// Gets or sets the DbType.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
+        [global::System.ComponentModel.DescriptionAttribute("The DbType.")]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::ermeX.Configuration.InMemoryDatabase.DbTypePropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false, DefaultValue=DbType.InMemory)]
+        public virtual global::ermeX.Configuration.DbType DbType
+        {
+            get
+            {
+                return ((global::ermeX.Configuration.DbType)(base[global::ermeX.Configuration.InMemoryDatabase.DbTypePropertyName]));
+            }
+            set
+            {
+                base[global::ermeX.Configuration.InMemoryDatabase.DbTypePropertyName] = value;
+            }
+        }
+        #endregion
+    }
+}
+namespace ermeX.Configuration
+{
+    
+    
+    /// <summary>
+    /// DbType.
+    /// </summary>
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
+    public enum DbType
+    {
+        
+        /// <summary>
+        /// InMemory.
+        /// </summary>
+        InMemory,
+        
+        /// <summary>
+        /// SQLite.
+        /// </summary>
+        SQLite,
+        
+        /// <summary>
+        /// SqlServer.
+        /// </summary>
+        SqlServer,
+    }
+}
+namespace ermeX.Configuration
+{
+    
+    
+    /// <summary>
+    /// Class for the Database callback validator
+    /// </summary>
+    public partial class DatabaseCallbackValidatorClass
+    {
+        
+        /// <summary>
+        /// Validation callback for the Database callback validator
+        /// </summary>
+        /// <param name="value">The value to validate.</param>
+        /// <exception cref="global::System.ArgumentException">The value was not valid.</exception>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.0.5")]
+        public static void ValidateCallback(object value)
+        {
+            // IMPORTANT NOTE: The code below does not build by default.
+            // You have placed a callback validator on this property.
+            // Copy the commented code below to a separate file and 
+            // implement the method.
+            // 
+            // public partial class DatabaseCallbackValidatorClass
+            // {
+            //     
+            //     public static void Validate(object value)
+            //     {
+            //         throw new global::System.NotImplementedException();
+            //     }
+            // }
+            // 
+            global::ermeX.Configuration.DatabaseCallbackValidatorClass.Validate(value);
+        }
     }
 }
