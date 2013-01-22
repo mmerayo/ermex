@@ -25,7 +25,19 @@ Two steps:
 ermeX can use the following databases
   * SQL Server: method _SetSqlServerDb(...)_ uses a previously created db (it can be empty) and you pass the connection string to it
   * SQLite: method _SetSqliteDb(...)_ uses an SQLite db
-  * In-Memory: method _SetInMemoryDb(...)_ to use only if message delivery between sessions is not mandatory as the db when the component is disposed
+  * In-Memory: method _SetInMemoryDb(...)_ to use only if message delivery between sessions is not mandatory, as the db is removed when the component is disposed
+
+== How to stop the component ==
+ermeX dont need to be stopped after is started as it will be implictly done when is disposed, when the host application finishes.
+
+You can stop the component to be reconfigured and restarted by:
+
+   {{{
+   WorldGate.Reset();
+   }}}
+
+
+
 
 == How to subscribe to a message ==
 [PLACEHOLDER]
