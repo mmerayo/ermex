@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Project ToolsVersion="$(frameworkVersion)" DefaultTargets="AfterBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+
+  <PropertyGroup>
+    <MSBuildExtensionsPath>$(MSBuildProjectDirectory)\..\Packages\msBuildTaskExtensions</MSBuildExtensionsPath>
+    <ermeXProjectDir>$(MSBuildProjectDirectory)\..\..\Code\Main\ermeX</ermeXProjectDir>
+    <MergedBinFolder>$(MergedFolder)</MergedBinFolder>
+	<TargetFrameworkVersion>v$(frameworkVersion)</TargetFrameworkVersion>
+    <AcceptanceBinFolder>$(OutputPath)Acceptance</AcceptanceBinFolder>	
+	<DocumentationPrjFolder>.\Documentation</DocumentationPrjFolder>	
+   </PropertyGroup>
+
+
+  <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />-->
+  <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks" />
+  <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.VersionNumber.targets" />
+  <!--<UsingTask TaskName="MSBuild.ExtensionPack.Framework.AssemblyInfo" AssemblyFile="$(ProjectDir)..\..\..\Code\Build\Packages\msBuildTaskExtensions\MSBuild.ExtensionPack.dll" />-->
+  <UsingTask TaskName="ILMerge.MSBuild.Tasks.ILMerge" AssemblyFile="$(MSBuildProjectDirectory)\..\Packages\ILMerge\V4x86\ILMerge.MSBuild.Tasks.dll" />
+
+  <Target Name="PrintVariablesBuild">
+    <Message Text="Variables:" Importance="high"/>
+	<Message Text="TaskIdName: $(TaskIdName)"/>
+    <Message Text="MergedBinFolder: $(MergedBinFolder)"/>
+    <Message Text="MSBuildProjectDirectory: $(MSBuildProjectDirectory)"/>
+    <Message Text="OutputPath: $(OutputPath)"/>    
+	<Message Text="TargetFrameworkVersion: $(TargetFrameworkVersion)"/>	
+    <Message Text="ermeXProjectDir: $(ermeXProjectDir)"/>
+	<Message Text="AcceptanceBinFolder: $(AcceptanceBinFolder)"/>
+    <!--<MSBuild.ExtensionPack.UI.Console TaskAction="ReadLine" UserPrompt="Press [Enter] to continue…"/>-->
+  </Target>
+
+  <Target Name="BeforeBuild" DependsOnTargets="PrintVariablesBuild">
+    <Message Text="BeforeBuild:Start" />
+	<CallTarget Targets="SetVersionPrefix" />
+    <Message Text="The build version is: $(BuildVersion)"/> <!--iMPORTANT so is created here-->
+    <Message Text="BeforeBuild:End" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="BeforeBuild">
+    <Message Text="Build:Start" />  
+	
+	<CallTarget Targets="CompileTask" />
+	<CallTarget Targets="DocumentationTask"/>
+    <CallTarget Targets="CreatePackageTask" />
+	<CallTarget Targets="StoreTask" />
+	<CallTarget Targets="RunTestsTask" />
+	<CallTarget Targets="RunAcceptanceTestsTask" />
+    <Message Text="Build:End" />
+  </Target>
+
+  <Target Name="AfterBuild" DependsOnTargets="Build">
+    <Message Text="AfterBuild:Start" />
+    
+    <Message Text="AfterBuild:End" />
+  </Target>
+
+  <!--***USER TASKS****-->
+  <Target Name="CompileTask" Condition=" $(TaskIdName) == 'Compile' ">
+	<Message Text="CompileTask:Start" />
+	<Message Text="$(TaskIdName)" />
+ 
+	<CallTarget Targets="CleanLastBuild" />
+    <CallTarget Targets="CreateOutputDirectories" />
+    
+	<MSBuild Projects="$(MSBuildProjectDirectory)\..\..\Code\Main\ermeX.sln" />	
+	<CallTarget Targets="MergeOutput" />
+	<CallTarget Targets="CreateNuGetSpecs" />
+	<MSBuild 
+		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\AcceptanceTests.sln" 
+		Properties="OutputPath=$(AcceptanceBinFolder);"/>
+	<Message Text="CompileTask:End" />
+  </Target>
+  
+   <Target Name="DocumentationTask" Condition=" $(TaskIdName) == 'DocumentationTask' ">
+    <ItemGroup>
+      <HelpFiles Include="$(OutputPath)*.chm"/>
+	</ItemGroup>
+	<Message Text="DocumentationTask:Start" />
+	<Message Text="$(TaskIdName)" />    
+	<MSBuild Projects="$(DocumentationPrjFolder)\ermeX.help.shfbproj" />
+	<Copy SourceFiles="@(HelpFiles)" DestinationFolder="$(MergedBinFolder)"/>
+	<Message Text="DocumentationTask:End" />
+  </Target>
+  
+  
+  <!-- http://www.msbuildextensionpack.com/help/4.0.5.0/html/b9e622d0-2888-4ba5-a042-889adac0e220.htm -->
+  <Target Name="RunTestsTask" Condition=" '$(TaskIdName)' == 'UnitTests' ">
+	<Message Text="RunTestsTask:Start" />	
+	<PropertyGroup>		
+		<Is32 Condition="'$(Platform)' == 'x86'" >true</Is32>
+		<Is32 Condition="'$(Platform)' == 'x64'" >false</Is32>
+	</PropertyGroup>
+	
+	<ItemGroup>
+      <AssembliesToTest Include="$(OutputPath)*Tests*.dll"/>
+    </ItemGroup>
+    <NUnit Assemblies="@(AssembliesToTest)" 
+		ToolPath="$(nUnitPath)" 
+		Framework="$(nUnitFramework)" 
+		OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml"
+		Use32Bit="$(Is32)" 
+		Labels="true"
+		/>
+	<Message Text="RunTestsTask:End" />
+  </Target>
+  <Target Name="CreatePackageTask" Condition=" $(TaskIdName) == 'Pack' ">
+	<Message Text="CreatePackageTask:Start" />	
+	<Message Text="Creating package $(BuildReportsFolder)\ermeX_$(BuildTag).zip from: $(MergedBinFolder)"/> 
+	
+	<ItemGroup>
+      <FilesToZip Include="$(MergedBinFolder)\ermeX.dll"/>
+	  <FilesToZip Include="$(MergedBinFolder)\ermeX.Documentation.chm"/>
+	  <FilesToCopy Include="$(OutputPath)ermeX.Documentation.chm"/>
+    </ItemGroup>
+	<Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(MergedBinFolder)"/>
+    <MSBuild.ExtensionPack.Compression.Zip 
+		TaskAction="Create" 
+		CompressFiles="@(FilesToZip)"
+		RemoveRoot="$(MergedBinFolder)"
+		ZipFileName="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>
+	
+	<Message Text="CreatePackageTask:End" />
+  </Target>
+  
+  <Target Name="StoreTask" Condition=" $(TaskIdName) == 'StoreTask' ">
+	<Message Text="StoreTask:Start" />	
+	<ItemGroup>
+      <FilesToStore Include="$(BuildReportsFolder)\ermeX_$(Platform).nuspec"/>	 
+	  <FilesToStore Include="$(BuildReportsFolder)\ermeX.dll"/>
+	  <FilesToStore Include="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>
+    </ItemGroup>
+	
+    <MSBuild.ExtensionPack.Compression.Zip 
+		TaskAction="Create" 
+		CompressFiles="@(FilesToStore)"
+		RemoveRoot="$(BuildReportsFolder)"
+		ZipFileName="$(BuildReportsFolder)\ermeX_Store_$(BuildTag).zip"/>
+	
+	
+	<Delete Files="$(BuildReportsFolder)\ermeX_$(Platform).nuspec"/>
+	<Delete Files="$(BuildReportsFolder)\ermeX.dll"/>
+	<Delete Files="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>
+	
+	<Message Text="StoreTask:End" />
+  </Target>
+  
+   <Target Name="RunAcceptanceTestsTask" Condition=" $(TaskIdName) == 'AcceptanceTests' ">
+	<Message Text="RunAcceptanceTestsTask:Start" />	
+	<Message Text="Running: $(AcceptanceBinFolder)\ermeX.Tests.AcceptanceTester.exe"/>
+	<Exec Command="$(AcceptanceBinFolder)\ermeX.Tests.AcceptanceTester.exe AllJoinToSameFriendComponent true 60000 61000 5 100 false 0"/>
+	
+	<Message Text="RunAcceptanceTestsTask:End" />
+  </Target>
+
+  <!-- HELPER METHODS-->
+  <Target Name="CleanLastBuild">
+    <RemoveDir Directories="$(OutputPath)" />
+    <RemoveDir Directories="$(BuildReportsFolder)" />
+    <RemoveDir Directories="$(MergedBinFolder)" />
+  </Target>
+
+  <Target Name="CreateOutputDirectories">
+    <MakeDir Directories="$(OutputPath)" />
+    <MakeDir Directories="$(BuildReportsFolder)" />
+    <MakeDir Directories="$(MergedBinFolder)" />
+  </Target>
+  
+  <Target Name="CreateNuGetSpecs">
+	<Message Text="CreateNuGetSpecs" />
+    <ItemGroup>
+      <TemplateFile Include=".\..\nuGet\template.nuspec" />
+      <nuGetTargetFile Include= "$(BuildReportsFolder)\ermeX_$(Platform).nuspec"/>	  
+    </ItemGroup>
+	<ReadLinesFromFile File="@(TemplateFile)">
+      <Output TaskParameter="Lines" ItemName="TemplateFileContents" />
+    </ReadLinesFromFile>
+	<!--Create copy of the template-->	
+	<WriteLinesToFile
+		 File="@(nuGetTargetFile)"
+		 Lines="@(TemplateFileContents)"
+		 Encoding="ASCII"
+		 Overwrite="true"/>
+	<!--Replace-->
+	<MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" 
+		TextEncoding="ASCII" 
+		RegexPattern='{platform}' 
+		Replacement='$(Platform)' 
+		Files="@(nuGetTargetFile)"/>
+	<MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" 
+		TextEncoding="ASCII"  
+		RegexPattern='{version}' 
+		Replacement='$(BuildVersion)' 
+		Files="@(nuGetTargetFile)"/>
+	
+  </Target>
+  
+  <Target Name="SetVersionPrefix">
+    <ItemGroup>
+      <VersionFile Include="$(ermeXProjectDir)\..\..\..\Build\VersionPrefix.txt" />
+      <AssemblyInfoFiles Include="$(ermeXProjectDir)\Properties\ProjectInfo.cs" />
+    </ItemGroup>
+
+    <ReadLinesFromFile File="@(VersionFile)">
+      <Output TaskParameter="Lines" ItemName="FileContents" />
+    </ReadLinesFromFile>
+    <CreateProperty Value="@(FileContents)">
+      <Output PropertyName="BuildPrefix" TaskParameter="Value"/>
+    </CreateProperty>
+
+    <CreateProperty Value="$(BuildPrefix)$(BMinorNumber).$(BRevisionNumber)">
+      <Output PropertyName="BuildVersion" TaskParameter="Value"/>
+    </CreateProperty>
+	<CreateProperty Value="$(frameworkVersion)_$(Platform)_$(BuildVersion)">
+      <Output PropertyName="BuildTag" TaskParameter="Value"/>
+    </CreateProperty>
+
+    <MSBuild.ExtensionPack.Framework.AssemblyInfo
+			UpdateAssemblyInformationalVersion="False"
+			AssemblyInfoFiles="@(AssemblyInfoFiles)"
+			AssemblyFileVersion="$(BuildVersion)"
+			AssemblyVersion="$(BuildVersion)" />
+
+  </Target>
+  
+ 
+ <Target Name="MergeOutput" >
+    <ItemGroup>
+      <Input Include="$(OutputPath)*dll" Exclude="$(OutputPath)*Test*;$(OutputPath)Moq.*;$(OutputPath)System.Data.SQLite.*;$(OutputPath)SQLite.Interop.*;$(OutputPath)nunit.*;$(OutputPath)log4net*;$(OutputPath)System*;$(OutputPath)mscorlib.*;$(OutputPath)Common.Logging*;"/>	  	     
+	  <NotMergeable Include="$(OutputPath)SQLite.Interop.*;$(OutputPath)Common.Logging.dll;$(OutputPath)System.Data.SQLite.dll;"/>
+    </ItemGroup>
+	<Message Text="The build version is name is: $(BuildVersion)"/> 
+    <ILMerge.MSBuild.Tasks.ILMerge
+		InputAssemblies="@(Input)"
+		SnkFile="$(ermeXProjectDir)\KeyFile.snk"
+		TargetAssemblyVersion="$(BuildVersion)"
+		AttributeFile="$(OutputPath)ermeX.dll"		
+		DebugInfo="true"
+		OutputFile="$(MergedBinFolder)\ermeX.dll"
+		Internalize="true"
+		ExcludeFile="$(ermeXProjectDir)\RemainPublicAfterMerge.txt"		
+		Closed="false"
+		/>
+	<!-- copy it to reports for storage-->
+	<Copy SourceFiles="$(MergedBinFolder)\ermeX.dll" DestinationFolder="$(BuildReportsFolder)"/>
+  </Target>
+
+</Project>
