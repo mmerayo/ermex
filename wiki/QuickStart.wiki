@@ -12,14 +12,30 @@ The configuration can be done programatically. You place the configuration code 
 Two steps:
   * Prepare the configuration:
      {{{
-   Configuration cfg = Configuration.Configure(ComponentId).ListeningToTcpPort(6666)
+     ...
+     Configuration cfg = Configuration.Configure(ComponentId).ListeningToTcpPort(6666)
                   .RequestJoinTo(remoteIP,remotePort,remoteComponentId);
+     ...
      }}}
 
   * Start the component using the configuration:
     {{{
+    ...
        WorldGate.ConfigureAndStart(cfg); 
+    ...
     }}}
+
+==== Component Identity ====
+Each component using has an unique id in an ermeX network, this is configured as below:
+   {{{
+   ...
+    Configuration cfg = Configuration.Configure(ComponentId);
+   ...
+   }}}
+
+
+==== Friend component ====
+To join in an ermeX network all your component need to know is another component in the network. The first component created dont need to join to any component
 
 ==== Databases ====
 ermeX can use the following databases
@@ -36,12 +52,9 @@ You can stop the component to be reconfigured and restarted by:
    WorldGate.Reset();
    }}}
 
-
-
-
 == How to subscribe to a message ==
-[PLACEHOLDER]
----
+The subscription to messages can be done in two different ways
+
 == How to publish a message ==
 [PLACEHOLDER]
 ---
