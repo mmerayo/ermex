@@ -64,7 +64,7 @@ You can stop the component to be reconfigured and restarted by:
    }}}
 
 == How to subscribe to a message ==
-First you need a subscriptor. This is any type that implements the interface ermeX.IHandleMessages<<TheMessageTypeIWantToBeNotified>>.
+First you need a subscriptor. This is any type that implements the interface ermeX.IHandleMessages[of TheMessageTypeIWantToBeNotified].
 
 The handler will be invoked everytime a message of the type you specified in the generic parameter is published to the ermeX network
 
