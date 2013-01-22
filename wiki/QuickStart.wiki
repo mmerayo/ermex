@@ -97,7 +97,44 @@ This is done by invoking the following method.
 
 
 == How to publish one service ==
-See http://code.google.com/p/ermex/
+First you need to create the service interface and the service implementation.
+
+  * The service interface is any that implements ermeX.IService and is decorated as follows.
+    {{{
+    ...
+   [ServiceContract("D6AA6A10-E8BC-4854-AEE8-7AEEDF2C6B1D")]
+   public interface IMyService : IService 
+   {
+       [ServiceOperation("D314C873-2E7A-4C4C-8A2E-06ED6BA49FDB")]
+       MyResultType MyMethod(MyBizData theData);
+   }
+   ...
+   }}}
+  * The service implementation implements the interface, and its methods will be invoked remotely
+   {{{
+   public class MyServiceImpl:IMyService
+   {...}
+   ...
+   }}}
+The handler will be invoked everytime a message of the type you specified in the generic parameter is published to the ermeX network
+
+
+The subscription to messages can be done in two different ways
+  * By configuration:
+    Its done when setting up the configuration, you provide the assemblies where the subscriptors are, and specify the types you don't want to subscribe.
+    {{{
+    ...
+    cfg = cfg.DiscoverSubscriptors(assemblies,typesToExclude);
+    ...
+    }}}
+  * Dinamically: 
+    Its done once the component was started
+    {{{
+    ...
+    WorldGate.Suscribe<MyHandler>();
+    ...
+    }}}
+_Note that you could subscribe to the same message many times with the same subscriber. Also you could subscribe to base types receiving all the messages that implement the base type_
 
 == How to request one service ==
 See http://code.google.com/p/ermex/
