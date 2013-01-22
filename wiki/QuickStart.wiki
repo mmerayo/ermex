@@ -12,7 +12,7 @@ The configuration can be done programatically. You place the configuration code 
 Two steps:
   * Prepare the configuration:
      {{{
-   Configuration cfg =     Configuration.Configure(ComponentId).ListeningToTcpPort(6666)
+   Configuration cfg = Configuration.Configure(ComponentId).ListeningToTcpPort(6666)
                   .RequestJoinTo(remoteIP,remotePort,remoteComponentId);
      }}}
 
@@ -20,7 +20,13 @@ Two steps:
     {{{
        WorldGate.ConfigureAndStart(cfg); 
     }}}
----
+
+==== Databases ====
+ermeX can use the following databases
+  * SQL Server: method _SetSqlServerDb(...)_ uses a previously created db (it can be empty) and you pass the connection string to it
+  * SQLite: method _SetSqliteDb(...)_ uses an SQLite db
+  * In-Memory: method _SetInMemoryDb(...)_ to use only if message delivery between sessions is not mandatory as the db when the component is disposed
+
 == How to subscribe to a message ==
 [PLACEHOLDER]
 ---
