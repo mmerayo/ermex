@@ -143,10 +143,14 @@ The subscription to messages can be done in two different ways
 _Note that services which methods dont return anything(void) can be published by several components_
 
 == How to request one service ==
-See http://code.google.com/p/ermex/
-
-== How to create one service ==
-See http://code.google.com/p/ermex/
+   {{{
+   ...
+   MyBizData data = new MyBizData(){...} 
+   ...
+   var myService = WorldGate.GetServiceProxy<IMyService>(); 
+   MyResultType result= myService.MyMethod(data);
+   ...
+}}}
 
 == How to enable ermeX Logging ==
 ermex uses Common.Logging, http://netcommon.sourceforge.net/ 
