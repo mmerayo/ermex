@@ -1,4 +1,4 @@
 * v1.0 to v1.1
-	- Created configuration from config file
+	- Created configuration from config file, that needs to be documented
 	- New public method, ConfigureAndStart without parameters to read from it
 	- Configuration class is now Configure and it was moved to the namespace ermeX.Configuration
