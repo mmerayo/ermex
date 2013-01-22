@@ -64,7 +64,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_GetServiceProxy( DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             WorldGate.RegisterService<ITestService>(typeof (TestService));
@@ -76,7 +76,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_InvokeProxyEmptyMethod(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             WorldGate.RegisterService<ITestService>(typeof (TestService));
@@ -101,7 +101,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_InvokeProxyReturnMethod(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             WorldGate.RegisterService<ITestService>(typeof (TestService));
@@ -118,7 +118,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_InvokeProxy_OneParameterMethod(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             WorldGate.RegisterService<ITestService>(typeof (TestService));
@@ -136,7 +136,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_InvokeProxy_ReturnMethodOneParam(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             WorldGate.RegisterService<ITestService>(typeof (TestService));
@@ -156,7 +156,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_InvokeProxy_SeveralParametersMethod(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             WorldGate.RegisterService<ITestService>(typeof (TestService));
@@ -177,7 +177,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_InvokeProxy_Several_ValueTypes_ParametersMethod(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             WorldGate.RegisterService<ITestService3>(typeof(TestService));
@@ -200,7 +200,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_InvokeProxy_CustomValueType_ParameterMethod(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             WorldGate.RegisterService<ITestService3>(typeof(TestService));
@@ -231,7 +231,7 @@ namespace ermeX.Tests.WorldGateTests
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_InvokeProxy_EnumType_ParameterMethod(DbEngineType dbEngine)
         {
-            Configuration cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
             WorldGate.ConfigureAndStart(cfg);
 
             WorldGate.RegisterService<ITestService3>(typeof(TestService));

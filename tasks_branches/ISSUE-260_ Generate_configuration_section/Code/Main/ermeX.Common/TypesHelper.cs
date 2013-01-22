@@ -156,6 +156,12 @@ namespace ermeX.Common
             return result;
         }
 
+        public static Assembly[] GetAssembliesFromDomain(string excludeAssemblyNameStartsWith)
+        {
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(x=>!x.FullName.Split(',')[0].StartsWith(excludeAssemblyNameStartsWith)).ToArray();
+            return assemblies;
+        }
+
         public static bool TypeImplements<TBase>(this Type implementationType)
         {
             return implementationType.TypeImplements(typeof (TBase));
@@ -295,7 +301,7 @@ namespace ermeX.Common
             }
         }
 
-        public static Type[] GetConcreteTypesImplementingGenericType(Type genericType, Assembly[] searchAssemblies, string namespaceStarstWith)
+        public static Type[] GetConcreteTypesImplementingGenericType(Type genericType, Assembly[] searchAssemblies, string namespaceStartsWith)
         {
             if (genericType == null) throw new ArgumentNullException("genericType");
             if (searchAssemblies == null)
@@ -307,9 +313,9 @@ namespace ermeX.Common
             {
                 var typesList = assembly.GetTypes();
 
-                if(!string.IsNullOrEmpty(namespaceStarstWith))
+                if(!string.IsNullOrEmpty(namespaceStartsWith))
                 {
-                    typesList= typesList.Where(x => !string.IsNullOrEmpty(x.Namespace) && x.Namespace.StartsWith(namespaceStarstWith)).ToArray();
+                    typesList= typesList.Where(x => !string.IsNullOrEmpty(x.Namespace) && x.Namespace.StartsWith(namespaceStartsWith)).ToArray();
                 }
                 foreach (var type in typesList)
                 {

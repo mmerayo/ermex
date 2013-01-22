@@ -26,6 +26,7 @@ using System.Threading;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Interfaces.Dispatching;
 using ermeX.Common;
+using ermeX.Configuration;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
@@ -86,11 +87,11 @@ namespace ermeX.Tests.Common.SettingsProviders
             return CurrentDbs[engineType].GetConnectionString();
         }
 
-        public static Configuration GetServiceLayerSettingsSource(Guid componentId, DbEngineType engine,
+        public static Configurer GetServiceLayerSettingsSource(Guid componentId, DbEngineType engine,
                                                                   bool devLoggingOn=false)
         {
 
-            Configuration result = Configuration.Configure(componentId).SendMessagesExpirationTime(TimeSpan.FromMinutes(5))
+            var result = Configurer.Configure(componentId).SendMessagesExpirationTime(TimeSpan.FromMinutes(5))
                 .ListeningToTcpPort(new TestPort(20000));
             switch(engine)
             {

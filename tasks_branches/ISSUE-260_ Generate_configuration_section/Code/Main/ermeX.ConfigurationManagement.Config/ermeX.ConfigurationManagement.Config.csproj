@@ -8,7 +8,7 @@
     <ProjectGuid>{18D50277-2166-45E2-96CB-8F40E5494A87}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ermeX.ConfigurationManagement.Config</RootNamespace>
+    <RootNamespace>ermeX.Configuration</RootNamespace>
     <AssemblyName>ermeX.ConfigurationManagement.Config</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -113,6 +113,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ConfigurationSection.csd</DependentUpon>
     </Compile>
+    <Compile Include="DatabaseCallbackValidatorClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
