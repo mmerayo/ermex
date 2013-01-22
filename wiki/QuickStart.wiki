@@ -64,7 +64,24 @@ You can stop the component to be reconfigured and restarted by:
    }}}
 
 == How to subscribe to a message ==
+First you need a subscriptor. This is any type that implements the interface ermeX.IHandleMessages<TheMessageTypeIWantToBeNotified>. The handler will be invoked everytime a message of the type you specified in the generic parameter is published to the ermeX network
+
+
 The subscription to messages can be done in two different ways
+  * By configuration:
+    Its done when setting up the configuration, you provide the assemblies where the subscriptors are, and specify the types you don't want to subscribe.
+    {{{
+    ...
+    cfg = cfg.DiscoverSubscriptors(assemblies,typesToExclude);
+    ...
+    }}}
+  * Dinamically: 
+    Its done once the component was started
+    {{{
+    ...
+    WorldGate.Suscribe<MyHandler>();
+    ...
+    }}}
 
 == How to publish a message ==
 [PLACEHOLDER]
