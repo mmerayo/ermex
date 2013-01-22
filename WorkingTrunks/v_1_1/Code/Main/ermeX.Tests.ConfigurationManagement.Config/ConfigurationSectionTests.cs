@@ -26,6 +26,7 @@ using Common.Logging.Simple;
 using NUnit.Framework;
 using ermeX.Configuration;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
+using ermeX.Tests.Common.Networking;
 
 namespace ermeX.Tests.ConfigurationManagement.Config
 {
@@ -144,7 +145,8 @@ namespace ermeX.Tests.ConfigurationManagement.Config
 
             target.ComponentDefinition = new LocalComponent()
                 {
-                    ComponentId = Guid.NewGuid()
+                    ComponentId = Guid.NewGuid(),
+                    TcpPort = new TestPort(6666)
                 };
             config.Save(ConfigurationSaveMode.Minimal);
 
