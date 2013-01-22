@@ -113,28 +113,34 @@ First you need to create the service interface and the service implementation.
   * The service implementation implements the interface, and its methods will be invoked remotely
    {{{
    public class MyServiceImpl:IMyService
-   {...}
+   {
+     public MyResultType MyMethod(MyBizData theData)
+     {
+         MyResultType result;
+         result= DoSomething();
+         return result;
+     }
+   }
    ...
    }}}
-The handler will be invoked everytime a message of the type you specified in the generic parameter is published to the ermeX network
 
 
 The subscription to messages can be done in two different ways
   * By configuration:
-    Its done when setting up the configuration, you provide the assemblies where the subscriptors are, and specify the types you don't want to subscribe.
+    Its done when setting up the configuration, you provide the assemblies where the services are, and specify the types you don't want to publish in those assemblies.
     {{{
     ...
-    cfg = cfg.DiscoverSubscriptors(assemblies,typesToExclude);
+    cfg = cfg.DiscoverServicesToPublish(assemblies,typesToExclude);
     ...
     }}}
   * Dinamically: 
     Its done once the component was started
     {{{
     ...
-    WorldGate.Suscribe<MyHandler>();
+    WorldGate.RegisterService<IMyService>();
     ...
     }}}
-_Note that you could subscribe to the same message many times with the same subscriber. Also you could subscribe to base types receiving all the messages that implement the base type_
+_Note that services which methods dont return anything(void) can be published by several components_
 
 == How to request one service ==
 See http://code.google.com/p/ermex/
