@@ -98,14 +98,13 @@ This is done by invoking the following method.
 
 == How to publish one service ==
 See http://code.google.com/p/ermex/
----
+
 == How to request one service ==
 See http://code.google.com/p/ermex/
----
+
 == How to create one service ==
 See http://code.google.com/p/ermex/
----
+
 == How to enable ermeX Logging ==
 ermex uses Common.Logging, http://netcommon.sourceforge.net/ 
 The logger name for ermeX logging is _ermeX_
----
