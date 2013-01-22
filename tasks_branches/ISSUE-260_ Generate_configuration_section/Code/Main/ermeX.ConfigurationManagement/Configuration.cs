@@ -73,7 +73,7 @@ namespace ermeX //on purpose as is public
                                      //IClientconfigurationSettings
                                      
                                      //TODO: MUST CHANGE FOR TESTS 
-                                     SendExpiringTime = TimeSpan.FromDays(31),
+                                     SendExpiringTime =  TimeSpan.FromDays(31),
                                      MaxDelayDueToLatencySeconds = 60,
                                      MaxMessageKbBeforeChunking = 1024,
                                      //3MB
