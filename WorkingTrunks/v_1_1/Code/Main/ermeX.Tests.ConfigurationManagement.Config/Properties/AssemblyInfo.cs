@@ -1,4 +1,4 @@
-// /*---------------------------------------------------------------------------------------*/
+﻿// /*---------------------------------------------------------------------------------------*/
 //        Licensed to the Apache Software Foundation (ASF) under one
 //        or more contributor license agreements.  See the NOTICE file
 //        distributed with this work for additional information
@@ -16,13 +16,18 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-namespace ermeX//on purpose as is public //TODO: MOVE TO ermeX assembly
-{
-    /// <summary>
-    /// Classes/interfaces implementing this interface can be published as Services to the ermeX Network
-    /// </summary>
-    /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
-    public interface IService
-    {
-    }
-}
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+[assembly: AssemblyTitle("ermeX.Tests.ConfigurationManagement.Config")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+
+[assembly: ComVisible(false)]
+
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("8017fa5b-8cca-4692-996f-1e36dc177b94")]

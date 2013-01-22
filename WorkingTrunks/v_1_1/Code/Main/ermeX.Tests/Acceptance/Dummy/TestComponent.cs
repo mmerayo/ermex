@@ -23,6 +23,7 @@ using System.Reflection;
 using System.Security.Permissions;
 using System.Threading;
 using ermeX.Common;
+using ermeX.Configuration;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.Entities.Entities;
@@ -93,7 +94,7 @@ namespace ermeX.Tests.Acceptance.Dummy
 
         public void Start(DbEngineType engineType, string dbConnString, ushort listeningPort)
         {
-            Configuration cfg = Configuration.Configure(ComponentId)
+            var cfg = Configurer.Configure(ComponentId)
                 .ListeningToTcpPort(listeningPort);
             switch (engineType)
             {
@@ -119,7 +120,7 @@ namespace ermeX.Tests.Acceptance.Dummy
         public void Start(DbEngineType engineType,string dbConnString, ushort listeningPort, Guid joinToComponentId, ushort jointToPort)
         {
 
-            Configuration cfg = Configuration.Configure(ComponentId)
+            var cfg = Configurer.Configure(ComponentId)
                 .ListeningToTcpPort(listeningPort)
                 .RequestJoinTo(Networking.GetLocalhostIp(), jointToPort, joinToComponentId);
             switch (engineType)

@@ -25,6 +25,7 @@ using ermeX;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
 using ermeX.Common;
+using ermeX.Configuration;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
@@ -235,7 +236,7 @@ namespace ermeX.Tests.Dialogs
                                  interfaceType.FullName, operationIdentifier, DateTime.UtcNow, true);
         }
 
-        protected void AssertReceivedJoinRequestMessage(Configuration serviceLayerSettingsSource, Guid operationIdentifier,
+        protected void AssertReceivedJoinRequestMessage(Configurer serviceLayerSettingsSource, Guid operationIdentifier,
                                                       DummyTestSuperSocketServer<ServiceRequestMessage> server)
         {
             var actual = server.ReceivedMessages.Where(x => x.Operation == operationIdentifier).ToList();
