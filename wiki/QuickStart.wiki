@@ -1,8 +1,24 @@
 == Introduction ==
-All ermeX functionallity can be acchieved from the class WorldGate see help
+All ermeX functionallity is in the namespace ermeX.
+
 ---
+== What is an ermeX Network?==
+An ermeX Nerwork is a set of components interconnected using ermeX
+---
+
 == How to configure ermeX ==
-[PLACEHOLDER]
+The configuration can be done programatically. You place the configuration code at your component startup so its introduced to the ermeX Network.
+
+Two steps:
+  # Prepare the configuration:
+     {{{
+   Configuration cfg =     Configuration.Configure(ComponentId).ListeningToTcpPort(6666)
+                  .RequestJoinTo(remoteIP,remotePort,remoteComponentId);
+     }}}
+  # Start the component using the configuration:
+    {{{
+       WorldGate.ConfigureAndStart(cfg); 
+    }}}
 ---
 == How to subscribe to a message ==
 [PLACEHOLDER]
