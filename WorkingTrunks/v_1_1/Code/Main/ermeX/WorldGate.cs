@@ -215,8 +215,8 @@ namespace ermeX
         /// <summary>
         ///  Subscribes a type of handler for a messages type
         /// </summary>
-        /// <typeparam name="THandler"> the HandlerObject </typeparam>
-        /// <param name="handlerType"> </param>
+        /// <typeparam name="THandler"> the Handler type to be returned </typeparam>
+        /// <param name="handlerType"> the subscriber implementation type </param>
         /// <returns> The created object to handle the messages </returns>
         /// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
         public static THandler Suscribe<THandler>(Type handlerType)
