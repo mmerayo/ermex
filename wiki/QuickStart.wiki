@@ -84,19 +84,28 @@ The subscription to messages can be done in two different ways
     WorldGate.Suscribe<MyHandler>();
     ...
     }}}
+_Note that you could subscribe to the same message many times with the same subscriber. Also you could subscribe to base types receiving all the messages that implement the base type_
 
 == How to publish a message ==
-[PLACEHOLDER]
----
+When you publish a message to the ermeX network It is received by all the subscribers.
+This is done by invoking the following method.
+   {{{
+   ...
+   WorldGate.Publish(message); 
+   ...
+   }}}
+
+
 == How to publish one service ==
-[PLACEHOLDER]
+See http://code.google.com/p/ermex/
 ---
 == How to request one service ==
-[PLACEHOLDER]
+See http://code.google.com/p/ermex/
 ---
 == How to create one service ==
-[PLACEHOLDER]
+See http://code.google.com/p/ermex/
 ---
 == How to enable ermeX Logging ==
-[PLACEHOLDER]
+ermex uses Common.Logging, http://netcommon.sourceforge.net/ 
+The logger name for ermeX logging is _ermeX_
 ---
