@@ -1,4 +1,4 @@
-= DEVELOPMENT GUIDE =
+= CONTRIBUTION GUIDELINES =
 
 This guide is for ermeX tools developers. Not for final users
 
