@@ -1,4 +1,4 @@
-﻿namespace TargetDevice
+﻿namespace DrinksMachine
 {
     partial class Form1
     {
