@@ -114,7 +114,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Tests.ConfigurationMa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Upgrade Notes", "Upgrade Notes", "{70A0F11D-56B6-47F5-9F31-30DD6695B9A6}"
 	ProjectSection(SolutionItems) = preProject
-		Upgrades.txt = Upgrades.txt
+		ChangeLog.txt = ChangeLog.txt
 	EndProjectSection
 EndProject
 Global
