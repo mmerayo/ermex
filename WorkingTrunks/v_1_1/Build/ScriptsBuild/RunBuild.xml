@@ -170,7 +170,7 @@
   <Target Name="CreateNuGetSpecs">
 	<Message Text="CreateNuGetSpecs" />
     <ItemGroup>
-      <TemplateFile Include=".\..\nuGet\template.nuspec" />
+      <TemplateFile Include=".\..\Packages\nuGet\template.nuspec" />
       <nuGetTargetFile Include= "$(BuildReportsFolder)\ermeX_$(Platform).nuspec"/>	  
     </ItemGroup>
 	<ReadLinesFromFile File="@(TemplateFile)">
