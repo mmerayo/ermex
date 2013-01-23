@@ -33,13 +33,28 @@ namespace ermeX.Tests.ConfigurationManagement.Config
     [TestFixture]
     public class ConfigurationSectionTests
     {
-
+        private bool _mustResetWorldGate = false;
         [TestFixtureSetUp]
         public void OnStartUp()
         {
             if (LogManager.Adapter is NoOpLoggerFactoryAdapter)
                 LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
         }
+
+        [SetUp]
+        public void OnSetUp()
+        {
+            _mustResetWorldGate = false;
+        }
+
+        [TearDown]
+        public void OnTearDown()
+        {
+            if(_mustResetWorldGate)
+                WorldGate.Reset();
+        }
+
+
         [Test]
         public void Validates_NormalSettings()
         {
@@ -150,7 +165,9 @@ namespace ermeX.Tests.ConfigurationManagement.Config
                 };
             config.Save(ConfigurationSaveMode.Minimal);
 
-            Assert.DoesNotThrow(()=>WorldGate.ConfigureAndStart());
+            _mustResetWorldGate = true;
+            Assert.DoesNotThrow(WorldGate.ConfigureAndStart);
+            
         }
 
         [Ignore("TODO")]
