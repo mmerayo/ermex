@@ -1,0 +1,1 @@
+﻿PARAMETERS: componentId TcpPort [friendComponentId FriendPort]
