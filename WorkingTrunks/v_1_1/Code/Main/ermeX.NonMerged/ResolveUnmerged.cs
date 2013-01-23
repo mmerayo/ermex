@@ -56,10 +56,28 @@ namespace ermeX.NonMerged
 
         public static void Prepare()
         {
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
         }
 
-        
+        static void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        {
+            Dictionary<string, string>.ValueCollection valueCollection = ToCopy.Values;
+            var applicationFolderPath = PathUtils.GetApplicationFolderPath();
+            foreach (var value in valueCollection)
+            {
+                string filename = Path.Combine(applicationFolderPath, string.Format("{0}.dll", value));
+                if(File.Exists(filename))
+                {
+                    try
+                    {
+                        File.Delete(filename);
+                    }catch(IOException) 
+                    {}
+                }
+            }
+        }
+
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
