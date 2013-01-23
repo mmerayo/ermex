@@ -24,14 +24,39 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Common;
 
-namespace DrinksMachine
+namespace StockBoyPanel
 {
-    public partial class Form1 : Form
+    public partial class FrmOperationsPanel : Form
     {
-        public Form1()
+        public LocalComponentInfo ComponentInfo { get; set; }
+
+        public FrmOperationsPanel(LocalComponentInfo componentInfo)
         {
+            if (componentInfo == null) throw new ArgumentNullException("componentInfo");
+            ComponentInfo = componentInfo;
             InitializeComponent();
         }
+
+        private void FrmOperationsPanel_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                Text = string.Format("Beverages machine with ermeX Id: {0}", ComponentInfo.ComponentId);
+            }
+            catch (Exception ex)
+            {
+                OnError(ex.ToString());
+            }
+        }
+
+        private void OnError(string message)
+        {
+            MessageBox.Show(message,
+                            string.Format("An error happened in the panel {0}:", ComponentInfo.ComponentId),
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
     }
 }

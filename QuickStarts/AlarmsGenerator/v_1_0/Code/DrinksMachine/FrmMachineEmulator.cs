@@ -24,14 +24,42 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Common;
 
-namespace StockBoyPanel
+namespace DrinksMachine
 {
-    public partial class Form1 : Form
+    public partial class FrmMachineEmulator : Form
     {
-        public Form1()
+        private LocalComponentInfo ComponentInfo { get; set; }
+
+        public FrmMachineEmulator()
         {
             InitializeComponent();
+        }
+
+        public FrmMachineEmulator(LocalComponentInfo componentInfo)
+        {
+            if (componentInfo == null) throw new ArgumentNullException("componentInfo");
+            ComponentInfo = componentInfo;
+        }
+
+        private void FrmMachineEmulator_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                Text = string.Format("Beverages machine with ermeX Id: {0}", ComponentInfo.ComponentId);
+            }
+            catch (Exception ex)
+            {
+                OnError(ex.ToString());
+            }
+        }
+
+        private void OnError(string message)
+        {
+            MessageBox.Show(message,
+                            string.Format("An error happened in the machine emulator {0}:", ComponentInfo.ComponentId),
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }
