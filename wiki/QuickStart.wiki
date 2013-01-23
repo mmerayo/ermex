@@ -1,9 +1,9 @@
 == Introduction ==
 All ermeX functionallity is in the namespace ermeX.
 
-
-== What is an ermeX Network?==
-An ermeX Nerwork is a set of components interconnected using ermeX
+== Concepts==
+  * *ermeX Component:* components using ermeX.dll
+  * *ermeX Network:* a set of ermeX components 
 ---
 
 == How to configure and Start ermeX ==
@@ -26,7 +26,7 @@ Two steps:
     }}}
 
 ==== Mandatory configuration ====
-  * Each component using has an unique id in an ermeX network, this is configured as below:
+  * Each ermeX component has an unique id in an ermeX network, this is configured as below:
    {{{
    ...
     Configuration cfg = Configuration.Configure(ComponentId);
