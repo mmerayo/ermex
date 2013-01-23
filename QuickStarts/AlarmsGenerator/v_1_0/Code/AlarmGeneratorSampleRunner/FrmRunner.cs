@@ -22,10 +22,12 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -54,14 +56,14 @@ namespace AlarmGeneratorSampleRunner
         private sealed class ProcessInfo
         {
 
-            public Process TheProcess { get;  set; }
+            public Process TheProcess { get; set; }
             public Guid TheComponentId { get; set; }
-            public int ThePort { get;  set; }
+            public int ThePort { get; set; }
 
         }
 
-        private readonly Dictionary<int, ProcessInfo> _currentProcesses=new Dictionary<int, ProcessInfo>();
-        
+        private readonly Dictionary<int, ProcessInfo> _currentProcesses = new Dictionary<int, ProcessInfo>();
+
         private Status CurrentStatus { get; set; }
 
         public FrmRunner()
@@ -71,6 +73,24 @@ namespace AlarmGeneratorSampleRunner
             SetStatus(Status.Stopped);
         }
 
+        private void FrmRunner_Load(object sender, EventArgs e)
+        {
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
+        }
+
+        void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        {
+            try
+            {
+                FinishProcesses();
+            }
+            catch (Exception ex)
+            {
+                OnError(ex.ToString());
+            }
+        }
+
+
         private void SetStatus(Status newStatus)
         {
             if (CurrentStatus == newStatus)
@@ -79,9 +99,7 @@ namespace AlarmGeneratorSampleRunner
             CurrentStatus = newStatus;
 
             btnStart.Enabled = CurrentStatus == Status.Stopped;
-            btnNewMachine.Enabled = CurrentStatus == Status.Running;
-            btnNewPanel.Enabled = CurrentStatus == Status.Running;
-            btnStop.Enabled = CurrentStatus == Status.Running;
+            btnNewPanel.Enabled = btnNewMachine.Enabled = btnStop.Enabled = CurrentStatus == Status.Running;
         }
 
 
@@ -108,6 +126,7 @@ namespace AlarmGeneratorSampleRunner
             try
             {
                 //Finish the processes
+                FinishProcesses();
 
                 //changes the status
                 SetStatus(Status.Stopped);
@@ -118,11 +137,14 @@ namespace AlarmGeneratorSampleRunner
             }
         }
 
+
+
         private void btnNewMachine_Click(object sender, EventArgs e)
         {
             try
             {
                 //Adds a new machine by creating a process that emulates the device
+                StartNewMachine();
 
                 //changes the status
                 SetStatus(Status.Stopped);
@@ -138,6 +160,7 @@ namespace AlarmGeneratorSampleRunner
             try
             {
                 //Adds a new machine by creating a process that emulates the device
+                StartNewPanel();
 
                 //changes the status
                 SetStatus(Status.Stopped);
@@ -147,7 +170,6 @@ namespace AlarmGeneratorSampleRunner
                 OnError(ex.ToString());
             }
         }
-
 
         private void StartNewPanel()
         {
@@ -159,10 +181,7 @@ namespace AlarmGeneratorSampleRunner
 
             //starts the Panel process
             StartProccess("StockBoyPanel.exe", componentId, port);
-
         }
-
-       
 
         private void StartNewMachine()
         {
@@ -173,7 +192,7 @@ namespace AlarmGeneratorSampleRunner
             int port = GetFreePort(2000, 50000);
 
             //starts the Panel process
-            StartProccess("DrinksMachine.exe", componentId,port);
+            StartProccess("DrinksMachine.exe", componentId, port);
         }
 
         /// <summary>
@@ -182,30 +201,35 @@ namespace AlarmGeneratorSampleRunner
         /// <param name="exeFile"></param>
         /// <param name="componentId"> </param>
         /// <param name="port"> </param>
-        private int StartProccess(string exeFile, Guid componentId,int port)
+        private int StartProccess(string exeFile, Guid componentId, int port)
         {
+
+            //Build the arguments, if its the first we dont need to tel the process to join another component otherwise will join a random one
             string arguments = string.Format("{0} {1}", componentId, port);
 
-            //if there are existing we add the friend component to the arguments
-            if(_currentProcesses.Count>0)
+            if (_currentProcesses.Count > 0)
             {
-                //the friend component is one of the created
+                //the friend component is one of the created so the new component will join the ermeX network through any of the existing
                 int index = GetRandomInt(_currentProcesses.Count - 1);
 
-                var friend = _currentProcesses[index];
+                var friend = _currentProcesses.ElementAt(index).Value;
+                Debug.Assert(friend != null);
 
-                arguments += string.Format(" {0} {1}", friend.TheComponentId, friend.ThePort); //so the the process will configure ermeX to join the network through the friend
+                arguments += string.Format(" {0} {1}", friend.TheComponentId, friend.ThePort);
+                //so the the process will configure ermeX to join the network through the friend
             }
 
+            //start the process
+            string fileName = Path.Combine(GetApplicationFolderPath(), exeFile);
             var process = new Process
                 {
                     StartInfo =
                         {
-                            FileName = exeFile,
+                            FileName = fileName,
                             Arguments = arguments,
                         }
                 };
-
+            process.EnableRaisingEvents = true;
             process.Exited += new EventHandler(process_Exited);
             process.Start();
 
@@ -217,20 +241,31 @@ namespace AlarmGeneratorSampleRunner
                     ThePort = port
                 };
 
-            
+
             _currentProcesses.Add(result, processInfo);
-            
-            Debug.Assert(result>0);
+
+            Debug.Assert(result > 0);
             return result;
         }
 
         private void process_Exited(object sender, EventArgs e)
         {
             var process = (Process) sender;
-            Debug.Assert(process!=null); //TODO: REMOVE THIS
-            
+            Debug.Assert(process != null); //TODO: REMOVE THIS
+
             var pId = process.Id;
             _currentProcesses.Remove(pId); //it must contain it
+        }
+
+        private void FinishProcesses()
+        {
+            var processes = new List<ProcessInfo>(_currentProcesses.Values);
+            foreach (var p in processes)
+            {
+                Process theProcess = p.TheProcess;
+                theProcess.Kill();
+                theProcess.WaitForExit(5000);
+            }
         }
 
         private void OnError(string message)
@@ -238,9 +273,12 @@ namespace AlarmGeneratorSampleRunner
             MessageBox.Show(message, "An error happened:", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        
-        private static bool PortIsBusy(ushort port)
+
+        private bool PortIsBusy(ushort port)
         {
+            if (_currentProcesses.Values.Any(x => x.ThePort == port))
+                return true;
+
             IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
             IPEndPoint[] endpoints = ipGlobalProperties.GetActiveTcpListeners();
 
@@ -248,7 +286,7 @@ namespace AlarmGeneratorSampleRunner
             return endpoints.Any(t => t.Port == port);
         }
 
-        private static ushort GetFreePort(ushort bottomRange, ushort topRange)
+        private ushort GetFreePort(ushort bottomRange, ushort topRange)
         {
             var x = bottomRange;
             var y = topRange;
@@ -270,8 +308,22 @@ namespace AlarmGeneratorSampleRunner
 
         public static int GetRandomInt(int maxValue)
         {
-            var random = new Random((int)DateTime.Now.Ticks);
+            var random = new Random((int) DateTime.Now.Ticks);
             return random.Next(0, maxValue < int.MaxValue ? maxValue + 1 : int.MaxValue);
+        }
+
+        private string _applicationFolderPath = null;
+
+        public string GetApplicationFolderPath()
+        {
+            if (_applicationFolderPath == null)
+            {
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                var uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                _applicationFolderPath = Path.GetDirectoryName(path);
+            }
+            return _applicationFolderPath;
         }
     }
 }
