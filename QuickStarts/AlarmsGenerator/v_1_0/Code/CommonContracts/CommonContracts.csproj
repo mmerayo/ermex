@@ -110,9 +110,10 @@
     <Compile Include="..\AlarmGeneratorSampleRunner\Properties\CommonInfo.cs">
       <Link>Properties\CommonInfo.cs</Link>
     </Compile>
-    <Compile Include="DrinkType.cs" />
-    <Compile Include="MachineStatus.cs" />
+    <Compile Include="enums\DrinkType.cs" />
+    <Compile Include="Messages\MachineStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IMachineStatusService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.txt" />

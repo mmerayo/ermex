@@ -16,18 +16,15 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-using System;
-
-namespace Common
+namespace CommonContracts.enums
 {
     /// <summary>
-    /// Friend Component Data
+    /// The type of drinks in stock
     /// </summary>
-    public sealed class FriendComponentInfo : ComponentInfo
+    public enum DrinkType
     {
-
-        public FriendComponentInfo(Guid componentId,int port):base(componentId,port)
-        {
-        }
+        Green = 1,
+        Orange,
+        Red
     }
 }

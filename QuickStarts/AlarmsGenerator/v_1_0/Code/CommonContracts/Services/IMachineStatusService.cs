@@ -1,4 +1,4 @@
-// /*---------------------------------------------------------------------------------------*/
+﻿// /*---------------------------------------------------------------------------------------*/
 //        Licensed to the Apache Software Foundation (ASF) under one
 //        or more contributor license agreements.  See the NOTICE file
 //        distributed with this work for additional information
@@ -17,17 +17,25 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using ermeX;
 
-namespace Common
+namespace CommonContracts.Services
 {
     /// <summary>
-    /// Friend Component Data
+    /// This is the interface of the service used to explictly request the status of one machine
     /// </summary>
-    public sealed class FriendComponentInfo : ComponentInfo
+    /// <remarks>As its methods dont retrun values can be exposed by several components</remarks>
+    [ServiceContract("8BF21C7F-0181-430A-90F8-747C242632C3")] //Guid taken from: http://www.get-a-guid.com/
+    public interface IMachineStatusService:IService
     {
-
-        public FriendComponentInfo(Guid componentId,int port):base(componentId,port)
-        {
-        }
+        /// <summary>
+        /// Forces publishing the status by the receiver
+        /// </summary>
+        /// <remarks>Used when the Stock man starts its panel to collect the existing machines and their statuses</remarks>
+        [ServiceOperation("08E1C865-A938-4A04-8649-9EE1BE5FDC30")] //Guid taken from: http://www.get-a-guid.com/
+        void PublishStatus();
     }
 }

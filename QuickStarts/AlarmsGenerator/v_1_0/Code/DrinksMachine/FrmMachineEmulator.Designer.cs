@@ -45,8 +45,8 @@
             this.tips = new System.Windows.Forms.ToolTip(this.components);
             this.lblInfo = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.txtName = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.txtName = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbOrange)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRed)).BeginInit();
@@ -211,14 +211,6 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Machine name:";
             // 
-            // txtName
-            // 
-            this.txtName.Location = new System.Drawing.Point(15, 19);
-            this.txtName.MaxLength = 15;
-            this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(122, 20);
-            this.txtName.TabIndex = 0;
-            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(157, 19);
@@ -228,6 +220,14 @@
             this.button1.Text = "Update";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // txtName
+            // 
+            this.txtName.Location = new System.Drawing.Point(15, 19);
+            this.txtName.MaxLength = 15;
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(122, 20);
+            this.txtName.TabIndex = 0;
             // 
             // FrmMachineEmulator
             // 
@@ -245,6 +245,7 @@
             this.MinimizeBox = false;
             this.Name = "FrmMachineEmulator";
             this.Text = "Form1";
+            this.Activated += new System.EventHandler(this.FrmMachineEmulator_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmMachineEmulator_FormClosing);
             this.Load += new System.EventHandler(this.FrmMachineEmulator_Load);
             this.groupBox1.ResumeLayout(false);

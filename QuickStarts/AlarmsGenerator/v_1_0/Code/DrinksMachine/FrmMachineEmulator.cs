@@ -28,11 +28,16 @@ using System.Text;
 using System.Windows.Forms;
 using Common;
 using CommonContracts;
+using CommonContracts.Messages;
+using CommonContracts.Services;
+using CommonContracts.enums;
+using DrinksMachine.ServiceImplementations;
 using ermeX;
 
 namespace DrinksMachine
 {
-    public partial class FrmMachineEmulator : Form
+
+    public partial class FrmMachineEmulator : Form,IStatusPublisher
     {
         private const int InitialDrinks = 7;
 
@@ -52,6 +57,8 @@ namespace DrinksMachine
         private string _lastInfoMessage = string.Empty;
         private readonly Timer _timer = new Timer();
 
+        //stores a value indicating if the component was connected, we use this since we connected in the activate event
+        private bool _connected = false;
         private LocalComponentInfo ComponentInfo { get; set; }
 
         public FrmMachineEmulator(LocalComponentInfo componentInfo)
@@ -60,6 +67,8 @@ namespace DrinksMachine
 
             if (componentInfo == null) throw new ArgumentNullException("componentInfo");
             ComponentInfo = componentInfo;
+            txtName.Text = componentInfo.FriendlyName;
+            StatusService.SetStatusPublisher(this);
         }
 
         private void FrmMachineEmulator_Load(object sender, EventArgs e)
@@ -82,21 +91,12 @@ namespace DrinksMachine
                 //Show current stock
                 RefreshStock();
 
-                ShowInfo("Connecting to ermeX network...");
-
-                //connect
-                ConnectToNetwork();
-
-
             }
             catch (Exception ex)
             {
                 OnError(ex.ToString());
             }
         }
-
-
-
 
         private void OnError(string message)
         {
@@ -174,6 +174,10 @@ namespace DrinksMachine
         }
 
 
+        /// <summary>
+        /// Shows a message
+        /// </summary>
+        /// <param name="messageToShow"></param>
         private void ShowInfo(string messageToShow)
         {
             lock (lblInfo)
@@ -186,7 +190,11 @@ namespace DrinksMachine
 
         }
 
-
+        /// <summary>
+        /// This event is raised by the timer
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ClearInfo(object sender, EventArgs e)
         {
             lock (lblInfo)
@@ -204,27 +212,50 @@ namespace DrinksMachine
         /// </summary>
         private void ConnectToNetwork()
         {
-            //basic onfiguration
-            var cfg = Configuration.Configure(ComponentInfo.ComponentId).ListeningToTcpPort((ushort) ComponentInfo.Port);
-
-            //we configure the component to use an in-memory storage, it wont persist between sessions
-            cfg = cfg.SetInMemoryDb(); //this is the default value anyway
-
-            //If is not the network creator(the first) then set up the component to join to
-            if (ComponentInfo.FriendComponent != null)
+            lock (this)
             {
-                string localhostIp = Utils.GetLocalhostIp();
-                cfg = cfg.RequestJoinTo(localhostIp,
-                                        ComponentInfo.FriendComponent.Port, ComponentInfo.FriendComponent.ComponentId);
+                if (!_connected)
+                {
+                    ShowInfo("Connecting to ermeX network...");
+                    var current = this.Cursor;
+                    this.Enabled = false;
+                    this.Cursor = Cursors.WaitCursor;
+                    //basic onfiguration
+                    var cfg =
+                        Configuration.Configure(ComponentInfo.ComponentId).ListeningToTcpPort(
+                            (ushort) ComponentInfo.Port);
+
+                    //we configure the component to use an in-memory storage, it wont persist between sessions
+                    cfg = cfg.SetInMemoryDb(); //this is the default mode anyway
+
+                    //If is not the network creator(the first) then set up the component to join to
+                    if (ComponentInfo.FriendComponent != null)
+                    {
+                        string localhostIp = Utils.GetLocalhostIp();
+                        cfg = cfg.RequestJoinTo(localhostIp,
+                                                ComponentInfo.FriendComponent.Port,
+                                                ComponentInfo.FriendComponent.ComponentId);
+                    }
+
+                    //now lets connect
+                    WorldGate.ConfigureAndStart(cfg);
+                    this.Enabled = true;
+                    this.Cursor = current;
+                    ShowInfo("Connected");
+                    _connected = true;
+                }
             }
 
-            //now lets connect
-            WorldGate.ConfigureAndStart(cfg);
+            //updates the status in the currently connected components
+            PublishStatus();
         }
 
         private void FrmMachineEmulator_FormClosing(object sender, FormClosingEventArgs e)
         {
             _timer.Dispose();
+
+            //resets the worldgate disconnecting from the network
+            WorldGate.Reset();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -253,20 +284,23 @@ namespace DrinksMachine
             }
         }
 
-        private void PublishStatus()
+        public void PublishStatus()
         {
-            var current = this.Cursor;
-            this.Enabled = false;
-            this.Cursor = Cursors.WaitCursor;
-            
-            //Get the status
-            var message = GetStatus();
-            
-            //publish machine status
-            WorldGate.Publish(message);
+            lock (this)
+            {
+                var current = this.Cursor;
+                this.Enabled = false;
+                this.Cursor = Cursors.WaitCursor;
 
-            this.Enabled = true;
-            this.Cursor = current;
+                //Get the status
+                var message = GetStatus();
+
+                //publish machine status
+                WorldGate.Publish(message);
+
+                this.Enabled = true;
+                this.Cursor = current;
+            }
         }
 
         private MachineStatus GetStatus()
@@ -279,5 +313,13 @@ namespace DrinksMachine
                 };
             return machineStatus;
         }
+
+        private void FrmMachineEmulator_Activated(object sender, EventArgs e)
+        {
+            //connect
+            ConnectToNetwork();
+        }
+
+       
     }
 }
