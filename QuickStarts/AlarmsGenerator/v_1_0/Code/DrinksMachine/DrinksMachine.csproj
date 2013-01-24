@@ -96,6 +96,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="IStatusPublisher.cs" />
+    <Compile Include="ServiceImplementations\StatusService.cs" />
     <EmbeddedResource Include="FrmMachineEmulator.resx">
       <DependentUpon>FrmMachineEmulator.cs</DependentUpon>
     </EmbeddedResource>

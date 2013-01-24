@@ -18,10 +18,9 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using CommonContracts.enums;
 
-namespace CommonContracts
+namespace CommonContracts.Messages
 {
     /// <summary>
     /// Message with the machine status details
