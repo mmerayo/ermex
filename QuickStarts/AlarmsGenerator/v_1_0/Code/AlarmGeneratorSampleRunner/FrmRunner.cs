@@ -16,19 +16,15 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 namespace AlarmGeneratorSampleRunner
@@ -36,35 +32,8 @@ namespace AlarmGeneratorSampleRunner
     //NOTE: this assembly is not the focus of the QuickStart
     public partial class FrmRunner : Form
     {
-
-        /// <summary>
-        /// Enumerates the status of the view
-        /// </summary>
-        private enum Status
-        {
-            /// <summary>
-            /// The emulation is running
-            /// </summary>
-            Running = 1,
-
-            /// <summary>
-            /// the emulation is stopped
-            /// </summary>
-            Stopped = 0
-        }
-
-        private sealed class ProcessInfo
-        {
-
-            public Process TheProcess { get; set; }
-            public Guid TheComponentId { get; set; }
-            public int ThePort { get; set; }
-
-        }
-
         private readonly Dictionary<int, ProcessInfo> _currentProcesses = new Dictionary<int, ProcessInfo>();
-
-        private Status CurrentStatus { get; set; }
+        private string _applicationFolderPath;
 
         public FrmRunner()
         {
@@ -73,12 +42,14 @@ namespace AlarmGeneratorSampleRunner
             SetStatus(Status.Stopped);
         }
 
+        private Status CurrentStatus { get; set; }
+
         private void FrmRunner_Load(object sender, EventArgs e)
         {
-            AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
+            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
         }
 
-        void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        private void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
             try
             {
@@ -138,7 +109,6 @@ namespace AlarmGeneratorSampleRunner
         }
 
 
-
         private void btnNewMachine_Click(object sender, EventArgs e)
         {
             try
@@ -192,7 +162,7 @@ namespace AlarmGeneratorSampleRunner
             int port = GetFreePort(2000, 50000);
 
             //starts the Panel process
-            StartProccess("DrinksMachine.exe","Machine_Name", componentId, port);
+            StartProccess("DrinksMachine.exe", "Machine_Name", componentId, port);
         }
 
         /// <summary>
@@ -204,7 +174,7 @@ namespace AlarmGeneratorSampleRunner
         /// <param name="port"> </param>
         private int StartProccess(string exeFile, string friendlyName, Guid componentId, int port)
         {
-            friendlyName = friendlyName.Replace(' ', '_'); 
+            friendlyName = friendlyName.Replace(' ', '_');
 
             //Build the arguments, if its the first we dont need to tel the process to join another component otherwise will join a random one
             string arguments = string.Format("{0} {1} {2}", friendlyName, componentId, port);
@@ -214,7 +184,7 @@ namespace AlarmGeneratorSampleRunner
                 //the friend component is one of the created so the new component will join the ermeX network through any of the existing
                 int index = GetRandomInt(_currentProcesses.Count - 1);
 
-                var friend = _currentProcesses.ElementAt(index).Value;
+                ProcessInfo friend = _currentProcesses.ElementAt(index).Value;
                 Debug.Assert(friend != null);
 
                 arguments += string.Format(" {0} {1}", friend.TheComponentId, friend.ThePort);
@@ -232,11 +202,11 @@ namespace AlarmGeneratorSampleRunner
                         }
                 };
             process.EnableRaisingEvents = true;
-            process.Exited += new EventHandler(process_Exited);
+            process.Exited += process_Exited;
             process.Start();
 
-            var result = process.Id;
-            var processInfo = new ProcessInfo()
+            int result = process.Id;
+            var processInfo = new ProcessInfo
                 {
                     TheProcess = process,
                     TheComponentId = componentId,
@@ -255,14 +225,14 @@ namespace AlarmGeneratorSampleRunner
             var process = (Process) sender;
             Debug.Assert(process != null); //TODO: REMOVE THIS
 
-            var pId = process.Id;
+            int pId = process.Id;
             _currentProcesses.Remove(pId); //it must contain it
         }
 
         private void FinishProcesses()
         {
             var processes = new List<ProcessInfo>(_currentProcesses.Values);
-            foreach (var p in processes)
+            foreach (ProcessInfo p in processes)
             {
                 Process theProcess = p.TheProcess;
                 theProcess.Kill();
@@ -290,15 +260,15 @@ namespace AlarmGeneratorSampleRunner
 
         private ushort GetFreePort(ushort bottomRange, ushort topRange)
         {
-            var x = bottomRange;
-            var y = topRange;
+            ushort x = bottomRange;
+            ushort y = topRange;
             if (bottomRange > topRange)
             {
                 x = topRange;
                 y = bottomRange;
             }
 
-            for (var i = x; i <= y; i++)
+            for (ushort i = x; i <= y; i++)
             {
                 if (!PortIsBusy(i))
                     return i;
@@ -314,8 +284,6 @@ namespace AlarmGeneratorSampleRunner
             return random.Next(0, maxValue < int.MaxValue ? maxValue + 1 : int.MaxValue);
         }
 
-        private string _applicationFolderPath = null;
-
         public string GetApplicationFolderPath()
         {
             if (_applicationFolderPath == null)
@@ -327,5 +295,36 @@ namespace AlarmGeneratorSampleRunner
             }
             return _applicationFolderPath;
         }
+
+        #region Nested type: ProcessInfo
+
+        private sealed class ProcessInfo
+        {
+            public Process TheProcess { get; set; }
+            public Guid TheComponentId { get; set; }
+            public int ThePort { get; set; }
+        }
+
+        #endregion
+
+        #region Nested type: Status
+
+        /// <summary>
+        /// Enumerates the status of the view
+        /// </summary>
+        private enum Status
+        {
+            /// <summary>
+            /// The emulation is running
+            /// </summary>
+            Running = 1,
+
+            /// <summary>
+            /// the emulation is stopped
+            /// </summary>
+            Stopped = 0
+        }
+
+        #endregion
     }
 }

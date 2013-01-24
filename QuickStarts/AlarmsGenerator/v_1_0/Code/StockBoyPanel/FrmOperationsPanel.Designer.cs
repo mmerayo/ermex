@@ -93,7 +93,6 @@
             this.MinimizeBox = false;
             this.Name = "FrmOperationsPanel";
             this.Text = "Form1";
-            this.Load += new System.EventHandler(this.FrmOperationsPanel_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

@@ -16,6 +16,7 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using System.Collections.Generic;
 using CommonContracts.enums;
@@ -40,6 +41,6 @@ namespace CommonContracts.Messages
         /// <summary>
         /// The current stock per drink
         /// </summary>
-        public Dictionary<DrinkType, int> CurrentStock { get; set; } 
+        public Dictionary<DrinkType, int> CurrentStock { get; set; }
     }
 }

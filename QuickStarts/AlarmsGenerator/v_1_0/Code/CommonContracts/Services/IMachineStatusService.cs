@@ -16,10 +16,7 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using ermeX;
 
 namespace CommonContracts.Services
@@ -29,7 +26,7 @@ namespace CommonContracts.Services
     /// </summary>
     /// <remarks>As its methods dont retrun values can be exposed by several components</remarks>
     [ServiceContract("8BF21C7F-0181-430A-90F8-747C242632C3")] //Guid taken from: http://www.get-a-guid.com/
-    public interface IMachineStatusService:IService
+    public interface IMachineStatusService : IService
     {
         /// <summary>
         /// Forces publishing the status by the receiver
