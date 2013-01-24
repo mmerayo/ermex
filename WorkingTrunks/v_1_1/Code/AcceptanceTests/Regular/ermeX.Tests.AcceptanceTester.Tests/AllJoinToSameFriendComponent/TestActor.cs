@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using ermeX.Common;
-using ermeX.Configuration;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.Tests.AcceptanceTester.Base.Messages;
@@ -193,7 +192,7 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
                 connStr = SqlDbHelper.GetConnectionString(_dbName);
             }
 
-            var cfg = Configurer.Configure(_currentComponentId)
+            var cfg = Configuration.Configure(_currentComponentId)
                 .ListeningToTcpPort(_port)
                 .DiscoverServicesToPublish(new[] {this.GetType().Assembly}, new[] {typeof (IDirectorService)})
                 .DiscoverSubscriptors(new[] {this.GetType().Assembly}, null)

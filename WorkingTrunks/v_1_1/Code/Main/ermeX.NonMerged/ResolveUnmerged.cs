@@ -35,10 +35,13 @@ namespace ermeX.NonMerged
 
         private enum DataType
         {
+            /// <summary>
+            /// The assembly is not specialised depending on the build
+            /// </summary>
             Any = 1,
 
             /// <summary>
-            /// The assembly is different for each build
+            /// The assembly is different for each build x86,x64
             /// </summary>
             Specialized = 2,
 
@@ -49,6 +52,7 @@ namespace ermeX.NonMerged
         static ResolveUnmerged()
         {
             UnmergedAssemblies.Add("Common.Logging",DataType.Any);
+            UnmergedAssemblies.Add("log4net", DataType.Any);
 
             UnmergedAssemblies.Add("System.Data.SQLite", DataType.Specialized);
             ToCopy.Add("System.Data.SQLite","SQLite.Interop");

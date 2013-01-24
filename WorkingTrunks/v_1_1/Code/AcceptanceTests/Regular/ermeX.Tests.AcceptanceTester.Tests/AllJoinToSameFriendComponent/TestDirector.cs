@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using ermeX.Common;
-using ermeX.Configuration;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.Tests.AcceptanceTester.Base.Messages;
@@ -265,7 +264,7 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
                 _dbName = "In-Memory";
             }
 
-            var cfg = Configurer.Configure(_currentComponentId)
+            var cfg = Configuration.Configure(_currentComponentId)
                 .DiscoverServicesToPublish(new[] {this.GetType().Assembly}, new[] {typeof (ITesterService)})
                 .ListeningToTcpPort(_portFrom);
             cfg = _watcherOn ? cfg.SetSqlServerDb(connStr) : cfg.SetInMemoryDb();
