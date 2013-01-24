@@ -180,7 +180,7 @@ namespace AlarmGeneratorSampleRunner
             int port = GetFreePort(2000, 50000);
 
             //starts the Panel process
-            StartProccess("StockBoyPanel.exe", componentId, port);
+            StartProccess("StockBoyPanel.exe", "Panel_Name", componentId, port);
         }
 
         private void StartNewMachine()
@@ -192,20 +192,22 @@ namespace AlarmGeneratorSampleRunner
             int port = GetFreePort(2000, 50000);
 
             //starts the Panel process
-            StartProccess("DrinksMachine.exe", componentId, port);
+            StartProccess("DrinksMachine.exe","Machine_Name", componentId, port);
         }
 
         /// <summary>
         /// Starts one process
         /// </summary>
         /// <param name="exeFile"></param>
+        /// <param name="friendlyName"> </param>
         /// <param name="componentId"> </param>
         /// <param name="port"> </param>
-        private int StartProccess(string exeFile, Guid componentId, int port)
+        private int StartProccess(string exeFile, string friendlyName, Guid componentId, int port)
         {
+            friendlyName = friendlyName.Replace(' ', '_'); 
 
             //Build the arguments, if its the first we dont need to tel the process to join another component otherwise will join a random one
-            string arguments = string.Format("{0} {1}", componentId, port);
+            string arguments = string.Format("{0} {1} {2}", friendlyName, componentId, port);
 
             if (_currentProcesses.Count > 0)
             {
