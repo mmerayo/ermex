@@ -143,6 +143,11 @@
       <Name>ermeX.ConfigurationManagement.Settings</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\packages\SuperSocket%281.4 SP5%29.Binaries\Net40\Release\log4net.dll">
+      <Link>Resources\log4net.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
