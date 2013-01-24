@@ -43,7 +43,7 @@ namespace StockBoyPanel
         {
             try
             {
-                Text = string.Format("Beverages machine with ermeX Id: {0}", ComponentInfo.ComponentId);
+                Text = string.Format("Stockman panel with ermeX Id: {0}", ComponentInfo.ComponentId);
             }
             catch (Exception ex)
             {
