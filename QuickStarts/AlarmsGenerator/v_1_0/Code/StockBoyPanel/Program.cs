@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Common;
+using ermeX;
 
 namespace StockBoyPanel
 {
@@ -37,9 +38,10 @@ namespace StockBoyPanel
             
             //parse the arguments
             var componentInfo = LocalComponentInfo.FromCallParameters(args);
+            
             Application.Run(new FrmOperationsPanel(componentInfo));
-
-
         }
+
+       
     }
 }

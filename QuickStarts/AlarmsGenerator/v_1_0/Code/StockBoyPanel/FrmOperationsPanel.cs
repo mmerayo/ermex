@@ -25,6 +25,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Common;
+using ermeX;
 
 namespace StockBoyPanel
 {
@@ -43,7 +44,7 @@ namespace StockBoyPanel
         {
             try
             {
-                Text = string.Format("Stockman panel with ermeX Id: {0}", ComponentInfo.ComponentId);
+                Text = string.Format("Stockman panel: {0}", ComponentInfo.FriendlyName);
             }
             catch (Exception ex)
             {
@@ -54,8 +55,31 @@ namespace StockBoyPanel
         private void OnError(string message)
         {
             MessageBox.Show(message,
-                            string.Format("An error happened in the panel {0}:", ComponentInfo.ComponentId),
+                            string.Format("An error happened in the panel {0}:", ComponentInfo.FriendlyName),
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        /// <summary>
+        /// Connects to the ermex network
+        /// </summary>
+        private void ConnectToNetwork()
+        {
+            //basic onfiguration
+            var cfg = Configuration.Configure(ComponentInfo.ComponentId).ListeningToTcpPort((ushort)ComponentInfo.Port);
+
+            //we configure the component to use an in-memory storage, it wont persist between sessions
+            cfg = cfg.SetInMemoryDb(); //this is the default value anyway
+
+            //If is not the network creator(the first) then set up the component to join to
+            if (ComponentInfo.FriendComponent != null)
+            {
+                string localhostIp = Utils.GetLocalhostIp();
+                cfg = cfg.RequestJoinTo(localhostIp,
+                                        ComponentInfo.FriendComponent.Port, ComponentInfo.FriendComponent.ComponentId);
+            }
+
+            //now lets connect
+            WorldGate.ConfigureAndStart(cfg);
         }
 
     }
