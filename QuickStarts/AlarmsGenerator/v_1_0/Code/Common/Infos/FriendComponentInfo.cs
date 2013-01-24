@@ -16,17 +16,17 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 
-namespace Common
+namespace Common.Infos
 {
     /// <summary>
     /// Friend Component Data
     /// </summary>
     public sealed class FriendComponentInfo : ComponentInfo
     {
-
-        public FriendComponentInfo(Guid componentId,int port):base(componentId,port)
+        public FriendComponentInfo(Guid componentId, int port) : base(componentId, port)
         {
         }
     }

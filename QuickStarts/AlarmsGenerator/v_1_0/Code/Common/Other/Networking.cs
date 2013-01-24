@@ -16,25 +16,32 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Common
+using System.Net;
+using System.Net.Sockets;
+
+namespace Common.Other
 {
-    /// <summary>
-    /// Component data
-    /// </summary>
-    public abstract class ComponentInfo
+    public static class Networking
     {
-        protected ComponentInfo(Guid componentId, int port)
+        public static string GetLocalhostIp(AddressFamily addressFamily)
         {
-            ComponentId = componentId;
-            Port = port;
+            IPHostEntry host;
+            string result = null;
+            host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (IPAddress ip in host.AddressList)
+            {
+                if (ip.AddressFamily == addressFamily)
+                {
+                    result = ip.ToString();
+                }
+            }
+            return result;
         }
 
-        public Guid ComponentId { get; private set; }
-        public int Port { get; private set; }
+        public static string GetLocalhostIp()
+        {
+            return GetLocalhostIp(AddressFamily.InterNetwork);
+        }
     }
 }

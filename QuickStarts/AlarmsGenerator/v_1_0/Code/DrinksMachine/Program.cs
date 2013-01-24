@@ -16,33 +16,28 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Windows.Forms;
-using Common;
-using ermeX;
+using Common.Infos;
 
 namespace DrinksMachine
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             //parse the arguments
-            var componentInfo = LocalComponentInfo.FromCallParameters(args);
+            LocalComponentInfo componentInfo = LocalComponentInfo.FromCallParameters(args);
 
             Application.Run(new FrmMachineEmulator(componentInfo));
         }
-
-        
     }
 }

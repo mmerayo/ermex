@@ -16,28 +16,23 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using Common;
-using CommonContracts;
+using Common.Base;
+using Common.Infos;
+using Common.Other;
 using CommonContracts.Messages;
-using CommonContracts.Services;
 using CommonContracts.enums;
 using DrinksMachine.ServiceImplementations;
 using ermeX;
 
 namespace DrinksMachine
 {
-
-    public partial class FrmMachineEmulator : Form,IStatusPublisher
+    public partial class FrmMachineEmulator : FormComponentBase, IStatusPublisher
     {
         private const int InitialDrinks = 7;
 
@@ -53,30 +48,62 @@ namespace DrinksMachine
                 {DrinkType.Red, InitialDrinks}
             };
 
-        //used to show the information for a while
-        private string _lastInfoMessage = string.Empty;
-        private readonly Timer _timer = new Timer();
-
-        //stores a value indicating if the component was connected, we use this since we connected in the activate event
-        private bool _connected = false;
-        private LocalComponentInfo ComponentInfo { get; set; }
-
-        public FrmMachineEmulator(LocalComponentInfo componentInfo)
+        public FrmMachineEmulator(LocalComponentInfo componentInfo):base(componentInfo)
         {
             InitializeComponent();
-
-            if (componentInfo == null) throw new ArgumentNullException("componentInfo");
-            ComponentInfo = componentInfo;
+           
             txtName.Text = componentInfo.FriendlyName;
+
+            //indicates the StatusService that hte current instance is the publisher
             StatusService.SetStatusPublisher(this);
         }
+
+        #region base class overrides
+
+        protected override Label InfoLabel
+        {
+            get { return lblInfo; }
+        }
+
+        protected override void ConnectToNetwork()
+        {
+            base.ConnectToNetwork();
+            
+            //updates the status in the currently connected components
+            PublishStatus();
+        }
+
+        #endregion base class overrides
+
+        #region IStatusPublisher Members
+
+        public void PublishStatus()
+        {
+            lock (this)
+            {
+                Cursor current = Cursor;
+                Enabled = false;
+                Cursor = Cursors.WaitCursor;
+
+                //Get the status
+                MachineStatus message = GetStatus();
+
+                //publish machine status
+                WorldGate.Publish(message);
+
+                Enabled = true;
+                Cursor = current;
+            }
+        }
+
+        #endregion
+
+        #region view event handlers
 
         private void FrmMachineEmulator_Load(object sender, EventArgs e)
         {
             try
             {
-                _timer.Interval = 2000;
-                _timer.Tick += new EventHandler(ClearInfo);
                 Text = string.Format("Beverages machine: {0}", ComponentInfo.FriendlyName);
 
                 btnBuyGreen.Image = new Bitmap(pbGreen.Image, btnBuyGreen.Width, btnBuyGreen.Height);
@@ -90,7 +117,6 @@ namespace DrinksMachine
 
                 //Show current stock
                 RefreshStock();
-
             }
             catch (Exception ex)
             {
@@ -98,11 +124,10 @@ namespace DrinksMachine
             }
         }
 
-        private void OnError(string message)
+        private void FrmMachineEmulator_Activated(object sender, EventArgs e)
         {
-            MessageBox.Show(message,
-                            string.Format("An error happened in the machine emulator {0}:", ComponentInfo.FriendlyName),
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //connects to the network when is activated
+            ConnectToNetwork();
         }
 
         private void Buy_Drink_Click(object sender, EventArgs e)
@@ -130,7 +155,6 @@ namespace DrinksMachine
                 }
                 //Shows the new stock
                 RefreshStock();
-
             }
             catch (Exception ex)
             {
@@ -138,127 +162,7 @@ namespace DrinksMachine
             }
         }
 
-        private void CheckAlarms(DrinkType drinkType)
-        {
-            if (_stock[drinkType] == FewItemsAlarm)
-            {
-                ShowInfo(string.Format(@"Sending alarm ""Few Items"" for {0}",
-                                       Enum.GetName(typeof (DrinkType), drinkType)));
-
-                //send alarm
-                PublishStatus();
-                return;
-            }
-
-            if (_stock[drinkType] == 0)
-            {
-                ShowInfo(string.Format(@"Sending alarm ""No Items"" for {0}",
-                                       Enum.GetName(typeof (DrinkType), drinkType)));
-
-                //send alarm
-                PublishStatus();
-                return;
-            }
-
-        }
-
-        /// <summary>
-        /// shows the current stock
-        /// </summary>
-        private void RefreshStock()
-        {
-            lblGreenStock.Text = _stock[DrinkType.Green].ToString(CultureInfo.InvariantCulture);
-            lblOrangeStock.Text = _stock[DrinkType.Orange].ToString(CultureInfo.InvariantCulture);
-            lblRedStock.Text = _stock[DrinkType.Red].ToString(CultureInfo.InvariantCulture);
-
-        }
-
-
-        /// <summary>
-        /// Shows a message
-        /// </summary>
-        /// <param name="messageToShow"></param>
-        private void ShowInfo(string messageToShow)
-        {
-            lock (lblInfo)
-            {
-                _lastInfoMessage = messageToShow;
-                lblInfo.Text = messageToShow;
-                lblInfo.Invalidate();
-            }
-            _timer.Start();
-
-        }
-
-        /// <summary>
-        /// This event is raised by the timer
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ClearInfo(object sender, EventArgs e)
-        {
-            lock (lblInfo)
-            {
-                if (lblInfo.Text == _lastInfoMessage)
-                {
-                    lblInfo.Text = _lastInfoMessage = string.Empty;
-                    _timer.Stop();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Connects to the ermex network
-        /// </summary>
-        private void ConnectToNetwork()
-        {
-            lock (this)
-            {
-                if (!_connected)
-                {
-                    ShowInfo("Connecting to ermeX network...");
-                    var current = this.Cursor;
-                    this.Enabled = false;
-                    this.Cursor = Cursors.WaitCursor;
-                    //basic onfiguration
-                    var cfg =
-                        Configuration.Configure(ComponentInfo.ComponentId).ListeningToTcpPort(
-                            (ushort) ComponentInfo.Port);
-
-                    //we configure the component to use an in-memory storage, it wont persist between sessions
-                    cfg = cfg.SetInMemoryDb(); //this is the default mode anyway
-
-                    //If is not the network creator(the first) then set up the component to join to
-                    if (ComponentInfo.FriendComponent != null)
-                    {
-                        string localhostIp = Utils.GetLocalhostIp();
-                        cfg = cfg.RequestJoinTo(localhostIp,
-                                                ComponentInfo.FriendComponent.Port,
-                                                ComponentInfo.FriendComponent.ComponentId);
-                    }
-
-                    //now lets connect
-                    WorldGate.ConfigureAndStart(cfg);
-                    this.Enabled = true;
-                    this.Cursor = current;
-                    ShowInfo("Connected");
-                    _connected = true;
-                }
-            }
-
-            //updates the status in the currently connected components
-            PublishStatus();
-        }
-
-        private void FrmMachineEmulator_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            _timer.Dispose();
-
-            //resets the worldgate disconnecting from the network
-            WorldGate.Reset();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+        private void UpdateName_Click(object sender, EventArgs e)
         {
             try
             {
@@ -284,25 +188,44 @@ namespace DrinksMachine
             }
         }
 
-        public void PublishStatus()
+
+        #endregion view event handlers
+
+        #region private methods
+
+        private void CheckAlarms(DrinkType drinkType)
         {
-            lock (this)
+            if (_stock[drinkType] == FewItemsAlarm)
             {
-                var current = this.Cursor;
-                this.Enabled = false;
-                this.Cursor = Cursors.WaitCursor;
+                ShowInfo(string.Format(@"Sending alarm ""Few Items"" for {0}",
+                                       Enum.GetName(typeof (DrinkType), drinkType)));
 
-                //Get the status
-                var message = GetStatus();
+                //send alarm
+                PublishStatus();
+                return;
+            }
 
-                //publish machine status
-                WorldGate.Publish(message);
+            if (_stock[drinkType] == 0)
+            {
+                ShowInfo(string.Format(@"Sending alarm ""No Items"" for {0}",
+                                       Enum.GetName(typeof (DrinkType), drinkType)));
 
-                this.Enabled = true;
-                this.Cursor = current;
+                //send alarm
+                PublishStatus();
+                return;
             }
         }
 
+        /// <summary>
+        /// shows the current stock
+        /// </summary>
+        private void RefreshStock()
+        {
+            lblGreenStock.Text = _stock[DrinkType.Green].ToString(CultureInfo.InvariantCulture);
+            lblOrangeStock.Text = _stock[DrinkType.Orange].ToString(CultureInfo.InvariantCulture);
+            lblRedStock.Text = _stock[DrinkType.Red].ToString(CultureInfo.InvariantCulture);
+        }
+        
         private MachineStatus GetStatus()
         {
             var machineStatus = new MachineStatus
@@ -314,12 +237,6 @@ namespace DrinksMachine
             return machineStatus;
         }
 
-        private void FrmMachineEmulator_Activated(object sender, EventArgs e)
-        {
-            //connect
-            ConnectToNetwork();
-        }
-
-       
+        #endregion private methods
     }
 }

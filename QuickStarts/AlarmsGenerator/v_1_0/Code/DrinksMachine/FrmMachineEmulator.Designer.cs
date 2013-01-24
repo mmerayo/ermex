@@ -219,7 +219,7 @@
             this.button1.TabIndex = 1;
             this.button1.Text = "Update";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.UpdateName_Click);
             // 
             // txtName
             // 
@@ -246,7 +246,6 @@
             this.Name = "FrmMachineEmulator";
             this.Text = "Form1";
             this.Activated += new System.EventHandler(this.FrmMachineEmulator_Activated);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmMachineEmulator_FormClosing);
             this.Load += new System.EventHandler(this.FrmMachineEmulator_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

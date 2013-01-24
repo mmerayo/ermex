@@ -16,71 +16,26 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using Common;
+using Common.Base;
+using Common.Infos;
+using Common.Other;
 using ermeX;
 
 namespace StockBoyPanel
 {
-    public partial class FrmOperationsPanel : Form
+    public partial class FrmOperationsPanel : FormComponentBase
     {
-        public LocalComponentInfo ComponentInfo { get; set; }
-
-        public FrmOperationsPanel(LocalComponentInfo componentInfo)
+        public FrmOperationsPanel(LocalComponentInfo componentInfo):base(componentInfo)
         {
-            if (componentInfo == null) throw new ArgumentNullException("componentInfo");
-            ComponentInfo = componentInfo;
             InitializeComponent();
         }
 
-        private void FrmOperationsPanel_Load(object sender, EventArgs e)
+        protected override Label InfoLabel
         {
-            try
-            {
-                Text = string.Format("Stockman panel: {0}", ComponentInfo.FriendlyName);
-            }
-            catch (Exception ex)
-            {
-                OnError(ex.ToString());
-            }
+            get { throw new NotImplementedException(); }
         }
-
-        private void OnError(string message)
-        {
-            MessageBox.Show(message,
-                            string.Format("An error happened in the panel {0}:", ComponentInfo.FriendlyName),
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        /// <summary>
-        /// Connects to the ermex network
-        /// </summary>
-        private void ConnectToNetwork()
-        {
-            //basic onfiguration
-            var cfg = Configuration.Configure(ComponentInfo.ComponentId).ListeningToTcpPort((ushort)ComponentInfo.Port);
-
-            //we configure the component to use an in-memory storage, it wont persist between sessions
-            cfg = cfg.SetInMemoryDb(); //this is the default value anyway
-
-            //If is not the network creator(the first) then set up the component to join to
-            if (ComponentInfo.FriendComponent != null)
-            {
-                string localhostIp = Utils.GetLocalhostIp();
-                cfg = cfg.RequestJoinTo(localhostIp,
-                                        ComponentInfo.FriendComponent.Port, ComponentInfo.FriendComponent.ComponentId);
-            }
-
-            //now lets connect
-            WorldGate.ConfigureAndStart(cfg);
-        }
-
     }
 }
