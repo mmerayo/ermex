@@ -17,26 +17,27 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using System.Windows.Forms;
-using Common.Infos;
+using Common.Base;
+using CommonContracts.Messages;
 
-namespace DrinksMachine
+namespace StockBoyPanel.DataSources
 {
-    internal static class Program
+    /// <summary>
+    /// This class mantains the current machines info. Its important for this sample
+    /// </summary>
+    internal class MachinesDataSource:DataSource<Guid,MachineStatus>
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        private static void Main(string[] args)
+        #region Singleton
+
+        public static readonly MachinesDataSource Default = new MachinesDataSource();
+
+        private MachinesDataSource() { }
+        
+        #endregion
+
+        protected override Guid GetKey(MachineStatus item)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            //parse the arguments
-            LocalComponentInfo componentInfo = LocalComponentInfo.FromCallParameters(args);
-
-            Application.Run(new FrmMachineEmulator(componentInfo));
+            return item.Id;
         }
     }
 }

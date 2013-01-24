@@ -32,10 +32,17 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.ermeXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuConnect = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuDisconnect = new System.Windows.Forms.ToolStripMenuItem();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.lblInfo = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.dgMachines = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgMachines)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -61,29 +68,73 @@
             // ermeXToolStripMenuItem
             // 
             this.ermeXToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.connectToolStripMenuItem,
-            this.disconnectToolStripMenuItem});
+            this.mnuConnect,
+            this.mnuDisconnect});
             this.ermeXToolStripMenuItem.Name = "ermeXToolStripMenuItem";
             this.ermeXToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
             this.ermeXToolStripMenuItem.Text = "ermeX";
             // 
-            // connectToolStripMenuItem
+            // mnuConnect
             // 
-            this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.connectToolStripMenuItem.Text = "Connect";
+            this.mnuConnect.Name = "mnuConnect";
+            this.mnuConnect.Size = new System.Drawing.Size(152, 22);
+            this.mnuConnect.Text = "Connect";
+            this.mnuConnect.Click += new System.EventHandler(this.mnuConnect_Click);
             // 
-            // disconnectToolStripMenuItem
+            // mnuDisconnect
             // 
-            this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.disconnectToolStripMenuItem.Text = "Disconnect";
+            this.mnuDisconnect.Enabled = false;
+            this.mnuDisconnect.Name = "mnuDisconnect";
+            this.mnuDisconnect.Size = new System.Drawing.Size(152, 22);
+            this.mnuDisconnect.Text = "Disconnect";
+            this.mnuDisconnect.Click += new System.EventHandler(this.mnuDisconnect_Click);
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.lblInfo);
+            this.groupBox4.Location = new System.Drawing.Point(311, 210);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(553, 40);
+            this.groupBox4.TabIndex = 12;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Info";
+            // 
+            // lblInfo
+            // 
+            this.lblInfo.AutoSize = true;
+            this.lblInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblInfo.ForeColor = System.Drawing.Color.Navy;
+            this.lblInfo.Location = new System.Drawing.Point(6, 16);
+            this.lblInfo.Name = "lblInfo";
+            this.lblInfo.Size = new System.Drawing.Size(51, 16);
+            this.lblInfo.TabIndex = 9;
+            this.lblInfo.Text = "label1";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.dgMachines);
+            this.groupBox1.Location = new System.Drawing.Point(320, 13);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(280, 191);
+            this.groupBox1.TabIndex = 13;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Machines";
+            // 
+            // dgMachines
+            // 
+            this.dgMachines.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgMachines.Location = new System.Drawing.Point(17, 19);
+            this.dgMachines.Name = "dgMachines";
+            this.dgMachines.Size = new System.Drawing.Size(244, 150);
+            this.dgMachines.TabIndex = 0;
             // 
             // FrmOperationsPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(891, 274);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -96,6 +147,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgMachines)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -106,8 +161,12 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem ermeXToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mnuConnect;
+        private System.Windows.Forms.ToolStripMenuItem mnuDisconnect;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Label lblInfo;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.DataGridView dgMachines;
     }
 }
 

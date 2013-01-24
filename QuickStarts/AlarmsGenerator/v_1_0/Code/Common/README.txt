@@ -1,1 +1,5 @@
 ﻿THIS ASSEMBLY IS NOT THE TARGET OF THE QUICK START, IT JUST SUPPORTS THE EMULATION
+
+WOULD YOU LIKE TO UPDATE THIS EXAMPLE TO USE A Mode-View-ViewModel? REQUEST JOIN HERE mailto:mmerayo30@gmail.com OR HERE http://code.google.com/p/ermex/
+
+WOULD YOU LIKE TO UPDATE THIS EXAMPLE TO USE A Mode-View-ViewModel? REQUEST JOIN HERE mailto:mmerayo30@gmail.com OR HERE http://code.google.com/p/ermex/

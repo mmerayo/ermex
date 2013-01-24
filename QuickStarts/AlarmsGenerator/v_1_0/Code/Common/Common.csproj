@@ -111,6 +111,7 @@
     <Compile Include="..\AlarmGeneratorSampleRunner\Properties\CommonInfo.cs">
       <Link>Properties\CommonInfo.cs</Link>
     </Compile>
+    <Compile Include="Base\DataSource.cs" />
     <Compile Include="Base\FormComponentBase.cs">
       <SubType>Form</SubType>
     </Compile>

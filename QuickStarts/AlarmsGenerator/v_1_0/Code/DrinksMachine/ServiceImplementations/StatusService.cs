@@ -16,13 +16,12 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-
 using System;
 using CommonContracts.Services;
 
 namespace DrinksMachine.ServiceImplementations
 {
-    internal sealed class StatusService : IMachineStatusService
+    public sealed class StatusService : IMachineStatusService
     {
         private static IStatusPublisher _publisher;
 
