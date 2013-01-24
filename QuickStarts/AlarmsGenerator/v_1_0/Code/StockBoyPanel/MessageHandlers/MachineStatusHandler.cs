@@ -17,26 +17,37 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using System.Windows.Forms;
-using Common.Infos;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using CommonContracts.Messages;
+using StockBoyPanel.DataSources;
+using ermeX;
 
-namespace DrinksMachine
+namespace StockBoyPanel.MessageHandlers
 {
-    internal static class Program
+    /// <summary>
+    /// This class is an ermeX message handler
+    /// </summary>
+    public class MachineStatusHandler:IHandleMessages<MachineStatus>
     {
         /// <summary>
-        /// The main entry point for the application.
+        /// This method is invoked everytime the component receives a message of type MachineStatus or inheritors
+        /// and updates the MachinesDataSource collection
         /// </summary>
-        [STAThread]
-        private static void Main(string[] args)
+        /// <param name="message"></param>
+        public void HandleMessage(MachineStatus message)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            try
+            {
+                MachinesDataSource.Default.Save(message);
+            }
+            catch (Exception ex)
+            {
+                //log exception, rethrow if you want to retry the message handling as it remains on top of the delivery queue
 
-            //parse the arguments
-            LocalComponentInfo componentInfo = LocalComponentInfo.FromCallParameters(args);
-
-            Application.Run(new FrmMachineEmulator(componentInfo));
+                throw;
+            }
         }
     }
 }

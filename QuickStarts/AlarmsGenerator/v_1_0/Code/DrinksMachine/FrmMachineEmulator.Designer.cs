@@ -47,6 +47,7 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
             this.txtName = new System.Windows.Forms.TextBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbOrange)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRed)).BeginInit();
@@ -54,6 +55,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -64,7 +66,7 @@
             this.groupBox1.Controls.Add(this.pbRed);
             this.groupBox1.Controls.Add(this.lblGreenStock);
             this.groupBox1.Controls.Add(this.pbGreen);
-            this.groupBox1.Location = new System.Drawing.Point(160, 63);
+            this.groupBox1.Location = new System.Drawing.Point(201, 72);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(109, 168);
             this.groupBox1.TabIndex = 1;
@@ -139,7 +141,7 @@
             this.pictureBox1.Image = global::DrinksMachine.Properties.Resources.Machine;
             this.pictureBox1.Location = new System.Drawing.Point(13, 6);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(128, 232);
+            this.pictureBox1.Size = new System.Drawing.Size(182, 280);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -149,7 +151,7 @@
             this.groupBox2.Controls.Add(this.btnBuyOrange);
             this.groupBox2.Controls.Add(this.btnBuyRed);
             this.groupBox2.Controls.Add(this.btnBuyGreen);
-            this.groupBox2.Location = new System.Drawing.Point(288, 63);
+            this.groupBox2.Location = new System.Drawing.Point(329, 72);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(109, 168);
             this.groupBox2.TabIndex = 8;
@@ -194,7 +196,7 @@
             this.lblInfo.AutoSize = true;
             this.lblInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblInfo.ForeColor = System.Drawing.Color.Navy;
-            this.lblInfo.Location = new System.Drawing.Point(157, 237);
+            this.lblInfo.Location = new System.Drawing.Point(6, 16);
             this.lblInfo.Name = "lblInfo";
             this.lblInfo.Size = new System.Drawing.Size(51, 16);
             this.lblInfo.TabIndex = 9;
@@ -204,7 +206,7 @@
             // 
             this.groupBox3.Controls.Add(this.button1);
             this.groupBox3.Controls.Add(this.txtName);
-            this.groupBox3.Location = new System.Drawing.Point(160, 6);
+            this.groupBox3.Location = new System.Drawing.Point(201, 15);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(237, 51);
             this.groupBox3.TabIndex = 10;
@@ -229,13 +231,23 @@
             this.txtName.Size = new System.Drawing.Size(122, 20);
             this.txtName.TabIndex = 0;
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.lblInfo);
+            this.groupBox4.Location = new System.Drawing.Point(201, 246);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(427, 40);
+            this.groupBox4.TabIndex = 11;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Info";
+            // 
             // FrmMachineEmulator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(640, 262);
+            this.ClientSize = new System.Drawing.Size(640, 298);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.lblInfo);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pictureBox1);
@@ -256,8 +268,9 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -280,6 +293,7 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox txtName;
+        private System.Windows.Forms.GroupBox groupBox4;
     }
 }
 

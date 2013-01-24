@@ -16,10 +16,9 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-
 namespace DrinksMachine
 {
-    internal interface IStatusPublisher
+    public interface IStatusPublisher
     {
         void PublishStatus();
     }

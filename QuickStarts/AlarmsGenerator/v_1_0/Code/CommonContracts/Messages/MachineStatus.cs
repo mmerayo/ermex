@@ -16,7 +16,6 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-
 using System;
 using System.Collections.Generic;
 using CommonContracts.enums;
@@ -37,6 +36,12 @@ namespace CommonContracts.Messages
         /// The machine name
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Indicates whether the machine is connected or not
+        /// </summary>
+        /// <remarks>The machine will update this value when is connected or disconnected </remarks>
+        public bool IsConnected { get; set; }
 
         /// <summary>
         /// The current stock per drink

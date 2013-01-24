@@ -16,7 +16,6 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-
 using System.Reflection;
 
 [assembly: AssemblyCompany("Miguel Merayo")]

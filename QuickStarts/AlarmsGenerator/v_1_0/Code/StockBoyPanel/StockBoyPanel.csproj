@@ -88,12 +88,14 @@
     <Compile Include="..\AlarmGeneratorSampleRunner\Properties\CommonInfo.cs">
       <Link>Properties\CommonInfo.cs</Link>
     </Compile>
+    <Compile Include="DataSources\MachinesDataSource.cs" />
     <Compile Include="FrmOperationsPanel.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmOperationsPanel.Designer.cs">
       <DependentUpon>FrmOperationsPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="MessageHandlers\MachineStatusHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FrmOperationsPanel.resx">
@@ -125,6 +127,10 @@
     <None Include="Resources\Reponedor.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonContracts\CommonContracts.csproj">
+      <Project>{918DFF41-09E5-47F6-B2DC-510492A2BDCA}</Project>
+      <Name>CommonContracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{ECF1C208-6043-4B8A-8B3E-F35C3586FEB4}</Project>
       <Name>Common %28Common\Common%29</Name>

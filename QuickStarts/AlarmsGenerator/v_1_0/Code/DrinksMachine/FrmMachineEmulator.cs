@@ -16,7 +16,6 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -26,6 +25,7 @@ using Common.Base;
 using Common.Infos;
 using Common.Other;
 using CommonContracts.Messages;
+using CommonContracts.Services;
 using CommonContracts.enums;
 using DrinksMachine.ServiceImplementations;
 using ermeX;
@@ -51,12 +51,15 @@ namespace DrinksMachine
         public FrmMachineEmulator(LocalComponentInfo componentInfo):base(componentInfo)
         {
             InitializeComponent();
-           
+            base.ConnectionStatusChanged += new ConnectionStatusChangedHandler(FrmMachineEmulator_ConnectionStatusChanged);
+
             txtName.Text = componentInfo.FriendlyName;
 
             //indicates the StatusService that hte current instance is the publisher
             StatusService.SetStatusPublisher(this);
         }
+
+       
 
         #region base class overrides
 
@@ -65,13 +68,7 @@ namespace DrinksMachine
             get { return lblInfo; }
         }
 
-        protected override void ConnectToNetwork()
-        {
-            base.ConnectToNetwork();
-            
-            //updates the status in the currently connected components
-            PublishStatus();
-        }
+       
 
         #endregion base class overrides
 
@@ -81,18 +78,26 @@ namespace DrinksMachine
         {
             lock (this)
             {
-                Cursor current = Cursor;
-                Enabled = false;
-                Cursor = Cursors.WaitCursor;
-
                 //Get the status
                 MachineStatus message = GetStatus();
+                base.PublishMessage(message);
+            }
+        }
 
-                //publish machine status
-                WorldGate.Publish(message);
+        protected override void RegisterServices()
+        {
+            base.RegisterServices();
 
-                Enabled = true;
-                Cursor = current;
+            //the machine exposes its status service like this
+            WorldGate.RegisterService<IMachineStatusService>(typeof(StatusService));
+        }
+
+        void FrmMachineEmulator_ConnectionStatusChanged(ConnectionStatus newStatus)
+        {
+            if (CurrentConnectionStatus == ConnectionStatus.Connected)
+            {
+                //updates the current component status to the current connected components
+                PublishStatus();
             }
         }
 
