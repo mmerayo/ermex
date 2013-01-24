@@ -58,35 +58,55 @@ namespace ermeX.Common
             return typeArray;
         }
 
-        private static readonly Func<string, bool, bool,Type> GetTypeFromDomainImpl = Memoizer.Memoize(
-            (string fullName, bool throwExceptionIfNotFound ,bool onlySearchInternalAssemblies)=>
+        private static readonly Func<string, bool, bool, Type> GetTypeFromDomainImpl = Memoizer.Memoize(
+            (string fullName, bool throwExceptionIfNotFound, bool onlySearchInternalAssemblies) =>
+            {
+                if (String.IsNullOrEmpty(fullName)) throw new ArgumentNullException("fullName");
+                var result = Type.GetType(fullName);
+                if (result == null)
                 {
-                    if (String.IsNullOrEmpty(fullName)) throw new ArgumentNullException("fullName");
-                    var result = Type.GetType(fullName);
-                    if (result == null)
+                    var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                    if (onlySearchInternalAssemblies)
+                        assemblies = assemblies.Where(x => x.GetName().FullName.StartsWith("ermeX")).ToArray();
+
+                    foreach (var assembly in assemblies)
                     {
-                        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-                        if (onlySearchInternalAssemblies)
-                            assemblies = assemblies.Where(x => x.GetName().FullName.StartsWith("ermeX")).ToArray();
-
-                        foreach (var assembly in assemblies)
-                        {
-                            result = assembly.GetType(fullName, false);
-                            if (result != null)
-                                break;
-                        }
+                        result = assembly.GetType(fullName, false);
+                        if (result != null)
+                            break;
                     }
-                    if (result == null && throwExceptionIfNotFound)
-                        throw new InvalidOperationException(String.Format("The type was not found: {0}", fullName));
-
-                    return result;
                 }
+                if (result == null && throwExceptionIfNotFound)
+                    throw new InvalidOperationException(String.Format("The type was not found: {0}", fullName));
+
+                return result;
+            }
             );
 
+        //TODO: THE SECOND PARAMETER SHOULD BE FALSE BY DEFAULT
         public static Type GetTypeFromDomain(string fullName, bool throwExceptionIfNotFound = true,
                                              bool onlySearchInternalAssemblies = true)
         {
             return GetTypeFromDomainImpl(fullName, throwExceptionIfNotFound, onlySearchInternalAssemblies);
+            //if (String.IsNullOrEmpty(fullName)) throw new ArgumentNullException("fullName");
+            //var result = Type.GetType(fullName);
+            //if (result == null)
+            //{
+            //    var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            //    if (onlySearchInternalAssemblies)
+            //        assemblies = assemblies.Where(x => x.GetName().FullName.StartsWith("ermeX")).ToArray();
+
+            //    foreach (var assembly in assemblies)
+            //    {
+            //        result = assembly.GetType(fullName, false);
+            //        if (result != null)
+            //            break;
+            //    }
+            //}
+            //if (result == null && throwExceptionIfNotFound)
+            //    throw new InvalidOperationException(String.Format("The type was not found: {0}", fullName));
+
+            //return result;
         }
 
         private static readonly Func<string, bool, bool, Type> GetTypeFromDomainByClassNameImpl = Memoizer.Memoize
@@ -182,7 +202,7 @@ namespace ermeX.Common
 
         public static MethodInfo[] GetPublicInstanceMethods(string fullTypeName)
         {
-            return GetPublicInstanceMethods(GetTypeFromDomain(fullTypeName));
+            return GetPublicInstanceMethods(GetTypeFromDomain(fullTypeName,true,false));
         }
 
         /// <summary>
@@ -422,7 +442,7 @@ namespace ermeX.Common
 
         public static object ConvertFrom(string convertToType, object valueToConvert)
         {
-            Type targetType = GetTypeFromDomain(convertToType);
+            Type targetType = GetTypeFromDomain(convertToType,true,false);
             TypeConverter tc = TypeDescriptor.GetConverter(targetType);
             return tc.ConvertFrom(null, CultureInfo.InvariantCulture, valueToConvert);
         }
@@ -430,7 +450,7 @@ namespace ermeX.Common
 
         public static Type[] GetInheritanceChain(string typeFullName,bool includeInterfaces=false)
         {
-            Type type = GetTypeFromDomain(typeFullName);
+            Type type = GetTypeFromDomain(typeFullName,true,false);
 
             var result = new List<Type>();
             var currentType = type;

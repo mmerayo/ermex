@@ -240,7 +240,7 @@ namespace ermeX.Transport.Reception
                     _handlers.Values.SingleOrDefault(x => x.GetType().FullName == current.ServiceImplementationTypeName);
             else
             {
-                var serviceType = TypesHelper.GetTypeFromDomain(current.ServiceInterfaceTypeName);
+                var serviceType = TypesHelper.GetTypeFromDomain(current.ServiceInterfaceTypeName,true,false);
                 if (!IoCManager.Kernel.GetBindings(serviceType).Any())
                     //they are all binded by the MesaggeListeningManager
                 {
