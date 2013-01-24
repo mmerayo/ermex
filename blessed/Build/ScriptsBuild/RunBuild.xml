@@ -68,8 +68,12 @@
 	<CallTarget Targets="MergeOutput" />
 	<CallTarget Targets="CreateNuGetSpecs" />
 	<MSBuild 
-		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\AcceptanceTests.sln" 
-		Properties="OutputPath=$(AcceptanceBinFolder);"/>
+		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\Regular\AcceptanceTests.sln" 
+		Properties="OutputPath=$(AcceptanceBinFolder)\Regular;"/>
+	<MSBuild 
+		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\Basic\BasicTest.sln" 
+		Properties="OutputPath=$(AcceptanceBinFolder)\Basic;"/>	
+		
 	<Message Text="CompileTask:End" />
   </Target>
   
@@ -148,8 +152,11 @@
   
    <Target Name="RunAcceptanceTestsTask" Condition=" $(TaskIdName) == 'AcceptanceTests' ">
 	<Message Text="RunAcceptanceTestsTask:Start" />	
-	<Message Text="Running: $(AcceptanceBinFolder)\ermeX.Tests.AcceptanceTester.exe"/>
-	<Exec Command="$(AcceptanceBinFolder)\ermeX.Tests.AcceptanceTester.exe AllJoinToSameFriendComponent true 60000 61000 5 100 false 0"/>
+	<Message Text="Running: $(AcceptanceBinFolder)\Basic\ermeX.BasicTest.exe"/>
+	<Exec Command="$(AcceptanceBinFolder)\Basic\ermeX.BasicTest.exe"/>
+	
+	<Message Text="Running: $(AcceptanceBinFolder)\Regular\ermeX.Tests.AcceptanceTester.exe"/>
+	<Exec Command="$(AcceptanceBinFolder)\Regular\ermeX.Tests.AcceptanceTester.exe AllJoinToSameFriendComponent true 60000 61000 5 100 false 0"/>
 	
 	<Message Text="RunAcceptanceTestsTask:End" />
   </Target>
