@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using ermeX.Configuration;
 
 namespace ermeX.BasicTest
 {
@@ -32,7 +33,7 @@ namespace ermeX.BasicTest
             try
             {
                 int port = RandomHelper.GetRandomInt(5000, 20000);
-                var cfg = Configuration.Configure(Guid.NewGuid()).ListeningToTcpPort((ushort) port).SetInMemoryDb();
+                var cfg = Configurer.Configure(Guid.NewGuid()).ListeningToTcpPort((ushort) port).SetInMemoryDb();
                 WorldGate.ConfigureAndStart(cfg);
                 WorldGate.Reset();
             }catch(Exception ex)
