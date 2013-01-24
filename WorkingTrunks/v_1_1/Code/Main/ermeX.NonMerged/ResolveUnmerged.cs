@@ -76,7 +76,7 @@ namespace ermeX.NonMerged
                     try
                     {
                         File.Delete(filename);
-                    }catch(IOException) 
+                    }catch(Exception) 
                     {}
                 }
             }
