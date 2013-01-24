@@ -100,7 +100,7 @@ namespace ermeX.Transport.Reception.ServicesHandling
                         requestParameter.PTypeName != stringTypeFullName)
                         requestParameter.ParameterValue = TypesHelper.ConvertFrom(requestParameter.PTypeName,
                                                                                   requestParameter.ParameterValue);
-                    else if (TypesHelper.GetTypeFromDomain(requestParameter.PTypeName).IsEnum)
+                    else if (TypesHelper.GetTypeFromDomain(requestParameter.PTypeName,true,false).IsEnum)
                         requestParameter.ParameterValue = TypesHelper.ConvertFrom(requestParameter.PTypeName,
                                                                                   requestParameter.ParameterValue.ToString());
                     
