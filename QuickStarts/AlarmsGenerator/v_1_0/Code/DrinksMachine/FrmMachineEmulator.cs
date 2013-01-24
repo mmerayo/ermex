@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -30,15 +31,33 @@ namespace DrinksMachine
 {
     public partial class FrmMachineEmulator : Form
     {
-        private LocalComponentInfo ComponentInfo { get; set; }
+        private const int InitialDrinks = 7;
 
-        public FrmMachineEmulator()
+        /// <summary>
+        /// When this amount is reached an alarm is raised
+        /// </summary>
+        private const int AlarmItems = 5;
+
+        private enum Drinks
         {
-            InitializeComponent();
+            Green=1,
+            Orange,
+            Red
         }
+
+        private readonly Dictionary<Drinks, int> _stock = new Dictionary<Drinks, int>(3)
+            {
+                {Drinks.Green, InitialDrinks},
+                {Drinks.Orange, InitialDrinks},
+                {Drinks.Red, InitialDrinks}
+            };
+
+        private LocalComponentInfo ComponentInfo { get; set; }
 
         public FrmMachineEmulator(LocalComponentInfo componentInfo)
         {
+            InitializeComponent();
+
             if (componentInfo == null) throw new ArgumentNullException("componentInfo");
             ComponentInfo = componentInfo;
         }
@@ -47,7 +66,23 @@ namespace DrinksMachine
         {
             try
             {
+                ShowInfo("Loading form..");
                 Text = string.Format("Beverages machine with ermeX Id: {0}", ComponentInfo.ComponentId);
+
+                btnBuyGreen.Image= new Bitmap(pbGreen.Image, btnBuyGreen.Width, btnBuyGreen.Height);
+                btnBuyGreen.Tag = Drinks.Green;
+
+                btnBuyOrange.Image = new Bitmap(pbOrange.Image, btnBuyOrange.Width, btnBuyOrange.Height);
+                btnBuyOrange.Tag = Drinks.Orange;
+
+                btnBuyRed.Image = new Bitmap(pbRed.Image, btnBuyRed.Width, btnBuyRed.Height);
+                btnBuyRed.Tag = Drinks.Red;
+
+                //Show current stock
+                RefreshStock();
+
+                ShowInfo(string.Empty);
+
             }
             catch (Exception ex)
             {
@@ -60,6 +95,47 @@ namespace DrinksMachine
             MessageBox.Show(message,
                             string.Format("An error happened in the machine emulator {0}:", ComponentInfo.ComponentId),
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void Buy_Drink_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var drinkType = (Drinks) ((Button) sender).Tag;
+
+                if(_stock[drinkType]==0)
+                {
+                    MessageBox.Show("We apologise, there are no more drinks until they are replaced", "No more drinks",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                //decreases the current stock
+                _stock[drinkType]--;
+
+                //Shows the new stock
+                RefreshStock();
+
+                //Check status
+            }
+            catch (Exception ex)
+            {
+                OnError(ex.ToString());
+            }
+        }
+
+        private void RefreshStock()
+        {
+            lblGreenStock.Text = _stock[Drinks.Green].ToString(CultureInfo.InvariantCulture);
+            lblOrangeStock.Text = _stock[Drinks.Orange].ToString(CultureInfo.InvariantCulture);
+            lblRedStock.Text = _stock[Drinks.Red].ToString(CultureInfo.InvariantCulture);
+            
+        }
+
+        private void ShowInfo(string messageToShow)
+        {
+            lblInfo.Text = messageToShow;
+            lblInfo.Invalidate();
         }
     }
 }

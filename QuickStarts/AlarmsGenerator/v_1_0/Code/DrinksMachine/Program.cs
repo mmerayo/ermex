@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Common;
+using ermeX;
 
 namespace DrinksMachine
 {
@@ -37,7 +38,22 @@ namespace DrinksMachine
 
             //parse the arguments
             var componentInfo = LocalComponentInfo.FromCallParameters(args);
+
+            ConnectToNetwork(componentInfo);
+
             Application.Run(new FrmMachineEmulator(componentInfo));
+        }
+
+        /// <summary>
+        /// Connects to the ermex network
+        /// </summary>
+        /// <param name="componentInfo"></param>
+        private static void ConnectToNetwork(LocalComponentInfo componentInfo)
+        {
+            var cfg = Configuration.Configure(componentInfo.ComponentId).ListeningToTcpPort((ushort) componentInfo.Port);
+            
+            //If is not the network creator(the first) then set up the component to join to
+            cfg.RequestJoinTo( componentInfo.FriendComponent.ComponentId,)
         }
     }
 }
