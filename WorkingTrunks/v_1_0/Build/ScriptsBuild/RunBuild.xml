@@ -68,7 +68,7 @@
 	<CallTarget Targets="MergeOutput" />
 	<CallTarget Targets="CreateNuGetSpecs" />
 	<MSBuild 
-		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\AcceptanceTests.sln" 
+		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\Regular\AcceptanceTests.sln" 
 		Properties="OutputPath=$(AcceptanceBinFolder);"/>
 	<Message Text="CompileTask:End" />
   </Target>

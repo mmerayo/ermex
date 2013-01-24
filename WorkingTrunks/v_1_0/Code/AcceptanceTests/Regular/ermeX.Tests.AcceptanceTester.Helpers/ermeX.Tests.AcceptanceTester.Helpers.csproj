@@ -90,7 +90,7 @@
     <Compile Include="..\ermeX.Tests.AcceptanceTester\Properties\AcceptanceAssemblyInfo.cs">
       <Link>Properties\AcceptanceAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\..\Main\ermeX.Tests.Common\RandomValues\RandomHelper.cs">
+    <Compile Include="..\..\..\Main\ermeX.Tests.Common\RandomValues\RandomHelper.cs">
       <Link>FromTestsCommon\RandomHelper.cs</Link>
     </Compile>
     <Compile Include="Db\ITestSqlServerInfo.cs" />
