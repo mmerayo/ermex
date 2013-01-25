@@ -89,6 +89,12 @@
       <Link>Properties\CommonInfo.cs</Link>
     </Compile>
     <Compile Include="DataSources\MachinesDataSource.cs" />
+    <Compile Include="FrmFill.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmFill.Designer.cs">
+      <DependentUpon>FrmFill.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmOperationsPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,6 +105,9 @@
     <Compile Include="MessageHandlers\MachineStatusHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FrmFill.resx">
+      <DependentUpon>FrmFill.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmOperationsPanel.resx">
       <DependentUpon>FrmOperationsPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -125,6 +134,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.txt" />
+    <None Include="Resources\red.jpg" />
+    <None Include="Resources\orange.jpg" />
+    <None Include="Resources\Machine.jpg" />
+    <None Include="Resources\green.jpg" />
+    <None Include="Resources\thumb_up.ico" />
+    <None Include="Resources\thumb_down.ico" />
+    <None Include="Resources\Fatcow-Farm-Fresh-Hand.ico" />
     <None Include="Resources\Reponedor.jpg" />
   </ItemGroup>
   <ItemGroup>

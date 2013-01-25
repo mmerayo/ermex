@@ -16,10 +16,14 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
+using CommonContracts.enums;
+
 namespace DrinksMachine
 {
     public interface IStatusPublisher
     {
         void PublishStatus();
+        void AddItems(DrinkType drink, int numItemsToAdd);
     }
 }

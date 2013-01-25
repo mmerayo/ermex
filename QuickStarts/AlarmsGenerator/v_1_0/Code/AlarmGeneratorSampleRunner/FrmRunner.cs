@@ -164,7 +164,7 @@ namespace AlarmGeneratorSampleRunner
             int count = this._currentProcesses.Values.Count(x => !x.IsMachine) + 1;
 
             //starts the Panel process
-            StartProccess("StockBoyPanel.exe", "PanelName_"+count, componentId, port, false);
+            StartProccess("StockBoyPanel.exe", "UserName_"+count, componentId, port, false);
         }
 
         private void StartNewMachine()
