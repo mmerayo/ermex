@@ -186,16 +186,36 @@ namespace ermeX.Tests.WorldGateTests
 
             DateTime theDateTime=RandomHelper.GetRandomDateTime();
             Guid theGuid=Guid.NewGuid();
-            var actual= target.ReturnMethodWithSeveralParametersValueTypes(theGuid, theDateTime);
+            int theInt32 = 3;
+            short theInt16 = 222;
+            ushort theUshort = 352;
+            long theInt64 = 123;
+            ulong theUlong = 9999;
+            uint theUint = 654654;
+            float theFloat = (float)55.222;
+            double theDouble = 654654.3232;
+            decimal theDecimal = new decimal(999999999999999999.99);
+            var actual= target.ReturnMethodWithSeveralParametersValueTypes(theGuid, theDateTime,theInt32,
+                theUint,theInt16,theUshort,theInt64,theUlong,theFloat,theDouble,theDecimal);
             Assert.IsFalse(actual.IsEmpty());
 
             TestService.Refresh();
             Assert.IsTrue(TestService.Tracker.ReturnMethodWithSeveralParametersValueTypesCalled == 1);
-            Assert.IsTrue(TestService.Tracker.ParametersLastCall.Count == 2);
+            Assert.IsTrue(TestService.Tracker.ParametersLastCall.Count == 11);
             Assert.IsTrue(Guid.Parse(TestService.Tracker.ParametersLastCall[0].ToString()) == theGuid);//TODO: REMOVE WHEN CHANGED SERIALIZER
             Assert.IsTrue((DateTime)TestService.Tracker.ParametersLastCall[1]== theDateTime);
-
+            Assert.IsTrue(Convert.ToInt32(TestService.Tracker.ParametersLastCall[2]) == theInt32);
+            Assert.IsTrue(Convert.ToUInt32(TestService.Tracker.ParametersLastCall[3]) == theUint);
+            Assert.IsTrue(Convert.ToInt16(TestService.Tracker.ParametersLastCall[4]) == theInt16);
+            Assert.IsTrue(Convert.ToUInt16(TestService.Tracker.ParametersLastCall[5]) == theUshort);
+            Assert.IsTrue(Convert.ToInt64(TestService.Tracker.ParametersLastCall[6]) == theInt64);
+            Assert.IsTrue(Convert.ToUInt64(TestService.Tracker.ParametersLastCall[7]) == theUlong);
+            Assert.IsTrue(Convert.ToSingle(TestService.Tracker.ParametersLastCall[8]) == theFloat);
+            Assert.IsTrue(Convert.ToDouble(TestService.Tracker.ParametersLastCall[9]) == theDouble);
+            Assert.IsTrue(Convert.ToDecimal(TestService.Tracker.ParametersLastCall[10]) == theDecimal);
         }
+
+
 
         [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void Can_InvokeProxy_CustomValueType_ParameterMethod(DbEngineType dbEngine)

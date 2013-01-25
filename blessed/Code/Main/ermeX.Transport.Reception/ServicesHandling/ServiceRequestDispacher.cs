@@ -96,14 +96,34 @@ namespace ermeX.Transport.Reception.ServicesHandling
             if (message.Parameters != null)
                 foreach (var requestParameter in message.Parameters.Values)
                 {
-                    if (requestParameter.ParameterValue is string &&
-                        requestParameter.PTypeName != stringTypeFullName)
+                    //if it is string but we expect another type
+                     if (requestParameter.ParameterValue is string &&
+                             requestParameter.PTypeName != stringTypeFullName)
+                     {
+                         requestParameter.ParameterValue = TypesHelper.ConvertFrom(requestParameter.PTypeName,
+                                                                                      requestParameter.ParameterValue);
+                         continue;
+                     }
+
+
+                    Type type = TypesHelper.GetTypeFromDomain(requestParameter.PTypeName, true, false);
+                    if (type.IsEnum)
+                    {
+                        requestParameter.ParameterValue = TypesHelper.ConvertFrom(requestParameter.PTypeName,
+                                                                                  requestParameter.ParameterValue.
+                                                                                      ToString());
+                        continue;
+                    }
+
+                    if (type.IsValueType && requestParameter.ParameterValue.GetType() != type)
+                    {
                         requestParameter.ParameterValue = TypesHelper.ConvertFrom(requestParameter.PTypeName,
                                                                                   requestParameter.ParameterValue);
-                    else if (TypesHelper.GetTypeFromDomain(requestParameter.PTypeName).IsEnum)
-                        requestParameter.ParameterValue = TypesHelper.ConvertFrom(requestParameter.PTypeName,
-                                                                                  requestParameter.ParameterValue.ToString());
-                    
+                        continue;
+                    }
+
+
+
                 }
             return message;
         }
