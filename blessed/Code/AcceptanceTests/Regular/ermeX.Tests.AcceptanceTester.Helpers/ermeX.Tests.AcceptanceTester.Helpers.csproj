@@ -85,8 +85,27 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="ermeX">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath Condition="'$(Platform)' == 'x64'">..\..\..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x64\ermeX.dll</HintPath>
+      <HintPath Condition="'$(Platform)' == 'x86'">..\..\..\..\Build\BuildArtifacts\Merged\$(TargetFrameworkVersion)\x86\ermeX.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath Condition="'$(Platform)' == 'x64'">..\..\..\Main\packages\Sqlite.1.0.83\x64\System.Data.SQLite.dll</HintPath>
+      <HintPath Condition="'$(Platform)' == 'x86'">..\..\..\Main\packages\Sqlite.1.0.83\x86\System.Data.SQLite.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\Main\ermeX.Tests.Common\DataAccess\ITestDbEngine.cs">
+      <Link>FromTestsCommon\ITestDbEngine.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Main\ermeX.Tests.Common\DataAccess\SqliteDbEngine.cs">
+      <Link>FromTestsCommon\SqliteDbEngine.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Main\ermeX.Tests.Common\Networking\TestPort.cs">
+      <Link>FromTestsCommon\TestPort.cs</Link>
+    </Compile>
     <Compile Include="..\ermeX.Tests.AcceptanceTester\Properties\AcceptanceAssemblyInfo.cs">
       <Link>Properties\AcceptanceAssemblyInfo.cs</Link>
     </Compile>
@@ -98,6 +117,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
