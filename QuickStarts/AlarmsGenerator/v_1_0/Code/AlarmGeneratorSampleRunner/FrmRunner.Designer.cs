@@ -95,6 +95,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "QuickStart Runner";
             this.TopMost = true;
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmRunner_FormClosed);
             this.Load += new System.EventHandler(this.FrmRunner_Load);
             this.ResumeLayout(false);
 

@@ -33,11 +33,12 @@ namespace AlarmGeneratorSampleRunner
     {
         private readonly Dictionary<int, ProcessInfo> _currentProcesses = new Dictionary<int, ProcessInfo>();
         private string _applicationFolderPath;
+        private readonly Timer _timer=new Timer();
 
         public FrmRunner()
         {
             InitializeComponent();
-
+            CheckForIllegalCrossThreadCalls = false;
             SetStatus(Status.Stopped);
         }
 
@@ -45,7 +46,23 @@ namespace AlarmGeneratorSampleRunner
 
         private void FrmRunner_Load(object sender, EventArgs e)
         {
+            _timer.Interval = 5000;
+            _timer.Tick += new EventHandler(_timer_Tick);
             AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
+
+        }
+
+        void _timer_Tick(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.Default;
+            this.Enabled = true;
+            _timer.Stop();
+        }
+        private void SleepInteraction()
+        {
+            this.Enabled = false;
+            this.Cursor = Cursors.WaitCursor;
+            _timer.Start();
         }
 
         private void CurrentDomain_ProcessExit(object sender, EventArgs e)
@@ -115,8 +132,6 @@ namespace AlarmGeneratorSampleRunner
                 //Adds a new machine by creating a process that emulates the device
                 StartNewMachine();
 
-                //changes the status
-                SetStatus(Status.Stopped);
             }
             catch (Exception ex)
             {
@@ -131,8 +146,6 @@ namespace AlarmGeneratorSampleRunner
                 //Adds a new machine by creating a process that emulates the device
                 StartNewPanel();
 
-                //changes the status
-                SetStatus(Status.Stopped);
             }
             catch (Exception ex)
             {
@@ -148,8 +161,10 @@ namespace AlarmGeneratorSampleRunner
             //Gets the new component port
             int port = GetFreePort(2000, 50000);
 
+            int count = this._currentProcesses.Values.Count(x => !x.IsMachine) + 1;
+
             //starts the Panel process
-            StartProccess("StockBoyPanel.exe", "Panel_Name", componentId, port);
+            StartProccess("StockBoyPanel.exe", "PanelName_"+count, componentId, port, false);
         }
 
         private void StartNewMachine()
@@ -160,8 +175,10 @@ namespace AlarmGeneratorSampleRunner
             //Gets the new component port
             int port = GetFreePort(2000, 50000);
 
+            int count = this._currentProcesses.Values.Count(x => x.IsMachine)+1;
+
             //starts the Panel process
-            StartProccess("DrinksMachine.exe", "Machine_Name", componentId, port);
+            StartProccess("DrinksMachine.exe", "MachineName_"+count, componentId, port, true);
         }
 
         /// <summary>
@@ -171,7 +188,7 @@ namespace AlarmGeneratorSampleRunner
         /// <param name="friendlyName"> </param>
         /// <param name="componentId"> </param>
         /// <param name="port"> </param>
-        private int StartProccess(string exeFile, string friendlyName, Guid componentId, int port)
+        private void StartProccess(string exeFile, string friendlyName, Guid componentId, int port, bool isMachine)
         {
             friendlyName = friendlyName.Replace(' ', '_');
 
@@ -181,9 +198,13 @@ namespace AlarmGeneratorSampleRunner
             if (_currentProcesses.Count > 0)
             {
                 //the friend component is one of the created so the new component will join the ermeX network through any of the existing
-                int index = GetRandomInt(_currentProcesses.Count - 1);
+                ProcessInfo friend;
+                do
+                {
+                    int index = GetRandomInt(_currentProcesses.Count - 1);
+                    friend = _currentProcesses.ElementAt(index).Value;
+                } while (!friend.IsMachine);
 
-                ProcessInfo friend = _currentProcesses.ElementAt(index).Value;
                 Debug.Assert(friend != null);
 
                 arguments += string.Format(" {0} {1}", friend.TheComponentId, friend.ThePort);
@@ -204,32 +225,57 @@ namespace AlarmGeneratorSampleRunner
             process.Exited += process_Exited;
             process.Start();
 
-            int result = process.Id;
+            int key = process.Id;
             var processInfo = new ProcessInfo
                 {
                     TheProcess = process,
                     TheComponentId = componentId,
-                    ThePort = port
+                    ThePort = port,
+                    IsMachine = isMachine
                 };
 
 
-            _currentProcesses.Add(result, processInfo);
+            _currentProcesses.Add(key, processInfo);
 
-            Debug.Assert(result > 0);
-            return result;
+            Debug.Assert(key > 0);
+
+            SleepInteraction();
         }
+
+       
 
         private void process_Exited(object sender, EventArgs e)
         {
-            var process = (Process) sender;
-            Debug.Assert(process != null); //TODO: REMOVE THIS
+            try
+            {
+                lock (this)
+                {
+                    this.Enabled = false;
+                    var process = (Process) sender;
+                    Debug.Assert(process != null); //TODO: REMOVE THIS
 
-            int pId = process.Id;
-            _currentProcesses.Remove(pId); //it must contain it
+                    int pId = process.Id;
+                    _currentProcesses.Remove(pId); //it must contain it
+
+                    if (!_finishingProcesses && !_currentProcesses.Values.Any(x => x.IsMachine) &&
+                        _currentProcesses.Count > 0)
+                    {
+                        FinishProcesses();
+                        OnError(
+                            "Finished all processes as there were not machines on and the network of this sample is started by a machine with a random configuration");
+                    }
+                    this.Enabled = true;
+                }
+            }catch(Exception ex)
+            {
+                OnError(ex.ToString());
+            }
         }
 
+        private bool _finishingProcesses = false;
         private void FinishProcesses()
         {
+            _finishingProcesses = true;
             var processes = new List<ProcessInfo>(_currentProcesses.Values);
             foreach (ProcessInfo p in processes)
             {
@@ -237,6 +283,7 @@ namespace AlarmGeneratorSampleRunner
                 theProcess.Kill();
                 theProcess.WaitForExit(5000);
             }
+            _finishingProcesses = false;
         }
 
         private void OnError(string message)
@@ -295,6 +342,8 @@ namespace AlarmGeneratorSampleRunner
             return _applicationFolderPath;
         }
 
+        
+
         #region Nested type: ProcessInfo
 
         private sealed class ProcessInfo
@@ -302,6 +351,11 @@ namespace AlarmGeneratorSampleRunner
             public Process TheProcess { get; set; }
             public Guid TheComponentId { get; set; }
             public int ThePort { get; set; }
+
+            /// <summary>
+            /// The machines are connected since they start
+            /// </summary>
+            public bool IsMachine { get; set; }
         }
 
         #endregion
@@ -325,5 +379,10 @@ namespace AlarmGeneratorSampleRunner
         }
 
         #endregion
+
+        private void FrmRunner_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            _timer.Dispose();
+        }
     }
 }

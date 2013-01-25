@@ -131,17 +131,18 @@ namespace Common.Base
         protected FormComponentBase(LocalComponentInfo componentInfo)
         {
             this.Activated += FormComponentBase_Activated;
-
+            this.Load += FormComponentBase_Load;
             if (componentInfo == null) throw new ArgumentNullException("componentInfo");
             ComponentInfo = componentInfo;
 
         }
 
+       
+
         protected override void Dispose(bool disposing)
         {
             if(disposing)
             {
-                this.Activated -= FormComponentBase_Activated;
                 _timer.Dispose();
             }
             //resets the worldgate disconnecting the component from the network
@@ -171,6 +172,25 @@ namespace Common.Base
             _timer.Tick += ClearInfo;
             _timer.Start();
         }
+        private void FormComponentBase_Load(object sender, EventArgs e)
+        {
+            Text = string.Format("Component: {0} Id: {1}", ComponentInfo.FriendlyName,ComponentInfo.ComponentId);
+        }
+
+        /// <summary>
+        /// Shows a message for 2 seconds.<seealso cref="_timer"/>
+        /// </summary>
+        /// <param name="messageToShow">The message to show</param>
+        protected void ShowInfo(string messageToShow)
+        {
+            lock (InfoLabel)
+            {
+                _lastInfoMessage = messageToShow;
+                InfoLabel.Text = messageToShow;
+                InfoLabel.Invalidate();
+                _timer.Enabled = true;
+            }
+        }
 
         /// <summary>
         /// This event is raised by the timer
@@ -184,7 +204,7 @@ namespace Common.Base
                 if (InfoLabel.Text == _lastInfoMessage)
                 {
                     InfoLabel.Text = _lastInfoMessage = string.Empty;
-                    _timer.Enabled=false;
+                    _timer.Enabled = false;
                 }
             }
         }
@@ -205,28 +225,12 @@ namespace Common.Base
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        /// <summary>
-        /// Shows a message for 2 seconds.<seealso cref="_timer"/>
-        /// </summary>
-        /// <param name="messageToShow">The message to show</param>
-        protected void ShowInfo(string messageToShow)
-        {
-            lock (InfoLabel)
-            {
-                _lastInfoMessage = messageToShow;
-                InfoLabel.Text = messageToShow;
-                InfoLabel.Invalidate();
-
-                _timer.Enabled = true;
-            }
-        }
 
         /// <summary>
         /// Connects to the ermex network
         /// </summary>
         protected void ConnectToNetwork()
         {
-
             lock (this)
             {
                 if (CurrentConnectionStatus == ConnectionStatus.Disconnected)
@@ -248,6 +252,7 @@ namespace Common.Base
 
                         //we configure the component to use an in-memory storage, it wont persist between sessions
                         cfg = cfg.SetInMemoryDb(); //this is the default mode anyway
+                        //cfg =cfg.SetSqlServerDb(@"Server=localhost\SQLEXPRESS;Database=QS;User Id=ubiqUser;Password=sqlsql;"); //using sql server
 
                         //If is not the network creator(the first) then set up the component to join to
                         if (ComponentInfo.FriendComponent != null)

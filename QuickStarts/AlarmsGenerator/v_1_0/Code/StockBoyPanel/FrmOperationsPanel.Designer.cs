@@ -77,7 +77,7 @@
             // mnuConnect
             // 
             this.mnuConnect.Name = "mnuConnect";
-            this.mnuConnect.Size = new System.Drawing.Size(152, 22);
+            this.mnuConnect.Size = new System.Drawing.Size(133, 22);
             this.mnuConnect.Text = "Connect";
             this.mnuConnect.Click += new System.EventHandler(this.mnuConnect_Click);
             // 
@@ -85,16 +85,16 @@
             // 
             this.mnuDisconnect.Enabled = false;
             this.mnuDisconnect.Name = "mnuDisconnect";
-            this.mnuDisconnect.Size = new System.Drawing.Size(152, 22);
+            this.mnuDisconnect.Size = new System.Drawing.Size(133, 22);
             this.mnuDisconnect.Text = "Disconnect";
             this.mnuDisconnect.Click += new System.EventHandler(this.mnuDisconnect_Click);
             // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.lblInfo);
-            this.groupBox4.Location = new System.Drawing.Point(311, 210);
+            this.groupBox4.Location = new System.Drawing.Point(320, 210);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(553, 40);
+            this.groupBox4.Size = new System.Drawing.Size(544, 40);
             this.groupBox4.TabIndex = 12;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Info";
@@ -106,26 +106,31 @@
             this.lblInfo.ForeColor = System.Drawing.Color.Navy;
             this.lblInfo.Location = new System.Drawing.Point(6, 16);
             this.lblInfo.Name = "lblInfo";
-            this.lblInfo.Size = new System.Drawing.Size(51, 16);
+            this.lblInfo.Size = new System.Drawing.Size(0, 16);
             this.lblInfo.TabIndex = 9;
-            this.lblInfo.Text = "label1";
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.dgMachines);
             this.groupBox1.Location = new System.Drawing.Point(320, 13);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(280, 191);
+            this.groupBox1.Size = new System.Drawing.Size(544, 191);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Machines";
             // 
             // dgMachines
             // 
+            this.dgMachines.AllowUserToAddRows = false;
+            this.dgMachines.AllowUserToDeleteRows = false;
+            this.dgMachines.AllowUserToOrderColumns = true;
+            this.dgMachines.AllowUserToResizeColumns = false;
+            this.dgMachines.AllowUserToResizeRows = false;
             this.dgMachines.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgMachines.Location = new System.Drawing.Point(17, 19);
             this.dgMachines.Name = "dgMachines";
-            this.dgMachines.Size = new System.Drawing.Size(244, 150);
+            this.dgMachines.ReadOnly = true;
+            this.dgMachines.Size = new System.Drawing.Size(509, 150);
             this.dgMachines.TabIndex = 0;
             // 
             // FrmOperationsPanel

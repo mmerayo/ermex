@@ -17,11 +17,13 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using Common.Base;
 using Common.Infos;
 using Common.Other;
-using CommonContracts.Messages;
 using CommonContracts.Services;
 using StockBoyPanel.DataSources;
 using StockBoyPanel.MessageHandlers;
@@ -34,28 +36,76 @@ namespace StockBoyPanel
     /// </summary>
     public partial class FrmOperationsPanel : FormComponentBase
     {
+        readonly List<MachineStatusView> _currentViewItems = new List<MachineStatusView>();
+
         public FrmOperationsPanel(LocalComponentInfo componentInfo) : base(componentInfo)
         {
             InitializeComponent();
+
             ConnectionStatusChanged += FrmOperationsPanel_ConnectionStatusChanged;
             MachinesDataSource.Default.CollectionChanged += new EventHandler(Default_CollectionChanged);
         }
 
         void Default_CollectionChanged(object sender, EventArgs e)
         {
-            dgMachines.DataSource = MachinesDataSource.Default.Data;
+            Cursor current = Cursor;
+
+            lock (this)
+            {
+                try
+                {
+                    Enabled = false;
+                    Cursor = Cursors.WaitCursor;
+                    
+                    ShowInfo("Updating machines..");
+                    
+                    var machineStatuses = MachinesDataSource.Default.Data;
+                    _currentViewItems.Clear();
+                    _currentViewItems.AddRange(machineStatuses.Select(item => (MachineStatusView)item).OrderBy(x=>x.ComponentName));
+
+                    if (dgMachines.InvokeRequired)
+                    {
+                        this.Invoke(new Action(BindGrid));
+                    }
+                    else
+                    {
+                        BindGrid();
+                    }
+                    ShowInfo("Done");
+
+                }
+                catch (Exception ex)
+                {
+                    OnError(ex);
+                }
+                finally
+                {
+                    Enabled = true;
+                    Cursor = current;
+                }
+            }
+        }
+
+        private void BindGrid( )
+        {
+            var source = new BindingSource();
+            source.ResetBindings(false);
+            source.AllowNew = false;
+            source.DataSource = _currentViewItems;
+            dgMachines.DataSource = source;
         }
 
         #region base
 
         private void FrmOperationsPanel_ConnectionStatusChanged(ConnectionStatus newStatus)
         {
-            mnuConnect.Enabled = newStatus==ConnectionStatus.Disconnected;
-            mnuDisconnect.Enabled = newStatus==ConnectionStatus.Connected;
+            mnuConnect.Enabled = newStatus == ConnectionStatus.Disconnected;
+            dgMachines.Enabled = mnuDisconnect.Enabled = newStatus == ConnectionStatus.Connected;
 
-            if(CurrentConnectionStatus==ConnectionStatus.Connected)
+            if (CurrentConnectionStatus == ConnectionStatus.Connected)
+            {
                 RequestMachinesStatus();
-
+            }
         }
 
         protected override Label InfoLabel
@@ -126,6 +176,7 @@ namespace StockBoyPanel
         {
             var machineStatusService = WorldGate.GetServiceProxy<IMachineStatusService>();
             machineStatusService.PublishStatus();
+            ShowInfo("Requested machines to publish their status");
         }
 
         #endregion private methods
