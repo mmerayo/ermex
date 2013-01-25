@@ -18,6 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using CommonContracts.Services;
+using CommonContracts.enums;
 
 namespace DrinksMachine.ServiceImplementations
 {
@@ -35,10 +36,22 @@ namespace DrinksMachine.ServiceImplementations
             if (_publisher == null)
             {
                 //log exception if there was a logging system
-                return;
+                throw new InvalidOperationException("The _publsher has not been set");
             }
 
             _publisher.PublishStatus();
+        }
+
+        public void AddItems(DrinkType drink, int numItemsToAdd)
+        {
+            if(numItemsToAdd<0)
+                throw new ArgumentOutOfRangeException("numItemsToAdd");
+            if (_publisher == null)
+            {
+                //log exception if there was a logging system
+                throw new InvalidOperationException("The _publsher has not been set");
+            }
+            _publisher.AddItems(drink, numItemsToAdd);
         }
 
         #endregion

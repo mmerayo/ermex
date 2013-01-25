@@ -69,21 +69,47 @@ namespace DrinksMachine
             get { return lblInfo; }
         }
 
-       
+        protected override void Disconnect()
+        {
+            PublishStatus(false);
+            base.Disconnect();
+        }
 
         #endregion base class overrides
 
         #region IStatusPublisher Members
 
-        public void PublishStatus()
+        public void PublishStatus(bool connected)
         {
             lock (this)
             {
                 //Get the status
-                MachineStatus message = GetStatus();
+                MachineStatus message = GetStatus(connected);
                 base.PublishMessage(message);
             }
         }
+        public void PublishStatus()
+        {
+            PublishStatus(true);
+        }
+
+        public void AddItems(DrinkType drink, int numItemsToAdd)
+        {
+            lock(_stock)
+            {
+                _stock[drink] += numItemsToAdd;
+                
+                //So the clients get the update
+                PublishStatus();
+                ShowInfo(string.Format(@"Publishing new status as new items of {0} where added to the stock",
+                                       Enum.GetName(typeof(DrinkType), drink)));
+                RefreshStock();
+
+                this.BringToFront();
+            }
+        }
+
+        #endregion
 
         protected override void RegisterServices()
         {
@@ -102,7 +128,7 @@ namespace DrinksMachine
             }
         }
 
-        #endregion
+        
 
         #region view event handlers
 
@@ -226,18 +252,29 @@ namespace DrinksMachine
         /// </summary>
         private void RefreshStock()
         {
-            lblGreenStock.Text = _stock[DrinkType.Green].ToString(CultureInfo.InvariantCulture);
-            lblOrangeStock.Text = _stock[DrinkType.Orange].ToString(CultureInfo.InvariantCulture);
-            lblRedStock.Text = _stock[DrinkType.Red].ToString(CultureInfo.InvariantCulture);
+            lock (_stock)
+            {
+                lblGreenStock.Text = _stock[DrinkType.Green].ToString(CultureInfo.InvariantCulture);
+                btnBuyGreen.Enabled = _stock[DrinkType.Green] > 0;
+                
+                lblOrangeStock.Text = _stock[DrinkType.Orange].ToString(CultureInfo.InvariantCulture);
+                btnBuyOrange.Enabled = _stock[DrinkType.Orange] > 0;
+
+                lblRedStock.Text = _stock[DrinkType.Red].ToString(CultureInfo.InvariantCulture);
+                btnBuyRed.Enabled = _stock[DrinkType.Red] > 0;
+            }
+
+
         }
         
-        private MachineStatus GetStatus()
+        private MachineStatus GetStatus(bool connected)
         {
             var machineStatus = new MachineStatus
                 {
                     Id = ComponentInfo.ComponentId,
                     Name = ComponentInfo.FriendlyName,
-                    CurrentStock = _stock
+                    CurrentStock = _stock,
+                    IsConnected = connected
                 };
             return machineStatus;
         }

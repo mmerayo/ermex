@@ -16,6 +16,8 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
+using CommonContracts.enums;
 using ermeX;
 
 namespace CommonContracts.Services
@@ -33,5 +35,14 @@ namespace CommonContracts.Services
         /// <remarks>Used when the Stock man starts its panel to collect the existing machines and their statuses</remarks>
         [ServiceOperation("08E1C865-A938-4A04-8649-9EE1BE5FDC30")] //Guid taken from: http://www.get-a-guid.com/
         void PublishStatus();
+
+        /// <summary>
+        /// Adds items to the stock
+        /// </summary>
+        /// <remarks>Used by the Stock man panel to add items. 
+        /// THIS IS NOT A REAL WORLD SOLUTION, as the client application could invoke all the services
+        /// This just illustrates how to specify a single component to attand the request  </remarks>
+        [ServiceOperation("F16A532A-5E26-493A-8FAD-7CE2BED2A1C7")] //Guid taken from: http://www.get-a-guid.com/
+        void AddItems(DrinkType drink, int numItemsToAdd);
     }
 }

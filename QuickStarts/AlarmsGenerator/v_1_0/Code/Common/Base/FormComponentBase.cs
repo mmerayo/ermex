@@ -151,7 +151,7 @@ namespace Common.Base
             base.Dispose(disposing);
         }
 
-        protected void Disconnect()
+        protected virtual void Disconnect()
         {
             lock (this)
             {
@@ -189,6 +189,7 @@ namespace Common.Base
                 InfoLabel.Text = messageToShow;
                 InfoLabel.Invalidate();
                 _timer.Enabled = true;
+                _timer.Start();
             }
         }
 

@@ -37,6 +37,7 @@
             // 
             // btnStart
             // 
+            this.btnStart.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnStart.Location = new System.Drawing.Point(34, 12);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(106, 55);
@@ -47,6 +48,7 @@
             // 
             // btnNewMachine
             // 
+            this.btnNewMachine.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnNewMachine.Enabled = false;
             this.btnNewMachine.Location = new System.Drawing.Point(324, 12);
             this.btnNewMachine.Name = "btnNewMachine";
@@ -58,6 +60,7 @@
             // 
             // btnNewPanel
             // 
+            this.btnNewPanel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnNewPanel.Enabled = false;
             this.btnNewPanel.Location = new System.Drawing.Point(466, 12);
             this.btnNewPanel.Name = "btnNewPanel";
@@ -69,6 +72,7 @@
             // 
             // btnStop
             // 
+            this.btnStop.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnStop.Enabled = false;
             this.btnStop.Location = new System.Drawing.Point(174, 12);
             this.btnStop.Name = "btnStop";

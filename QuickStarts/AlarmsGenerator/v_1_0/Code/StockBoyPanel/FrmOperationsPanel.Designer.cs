@@ -38,19 +38,22 @@
             this.lblInfo = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dgMachines = new System.Windows.Forms.DataGridView();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.txtName = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgMachines)).BeginInit();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox1
             // 
             this.pictureBox1.Image = global::StockBoyPanel.Properties.Resources.Reponedor;
-            this.pictureBox1.Location = new System.Drawing.Point(13, 43);
+            this.pictureBox1.Location = new System.Drawing.Point(13, 85);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(292, 207);
+            this.pictureBox1.Size = new System.Drawing.Size(292, 165);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -133,11 +136,30 @@
             this.dgMachines.Size = new System.Drawing.Size(509, 150);
             this.dgMachines.TabIndex = 0;
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.txtName);
+            this.groupBox3.Location = new System.Drawing.Point(13, 28);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(292, 51);
+            this.groupBox3.TabIndex = 14;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "User name:";
+            // 
+            // txtName
+            // 
+            this.txtName.Location = new System.Drawing.Point(15, 19);
+            this.txtName.MaxLength = 15;
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(271, 20);
+            this.txtName.TabIndex = 0;
+            // 
             // FrmOperationsPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(891, 274);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.pictureBox1);
@@ -156,6 +178,8 @@
             this.groupBox4.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgMachines)).EndInit();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -172,6 +196,8 @@
         private System.Windows.Forms.Label lblInfo;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.DataGridView dgMachines;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.TextBox txtName;
     }
 }
 
