@@ -18,6 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
@@ -109,7 +110,6 @@ namespace DrinksMachine
         {
             try
             {
-                Text = string.Format("Beverages machine: {0}", ComponentInfo.FriendlyName);
 
                 btnBuyGreen.Image = new Bitmap(pbGreen.Image, btnBuyGreen.Width, btnBuyGreen.Height);
                 btnBuyGreen.Tag = DrinkType.Green;

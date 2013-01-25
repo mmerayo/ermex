@@ -90,6 +90,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonContracts\CommonContracts.csproj">
+      <Project>{918DFF41-09E5-47F6-B2DC-510492A2BDCA}</Project>
+      <Name>CommonContracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DrinksMachine\DrinksMachine.csproj">
       <Project>{67D11254-2654-4AC6-8517-DB9B2C5C659C}</Project>
       <Name>DrinksMachine</Name>

@@ -95,6 +95,7 @@
     <Compile Include="FrmOperationsPanel.Designer.cs">
       <DependentUpon>FrmOperationsPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="MachineStatusView.cs" />
     <Compile Include="MessageHandlers\MachineStatusHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
