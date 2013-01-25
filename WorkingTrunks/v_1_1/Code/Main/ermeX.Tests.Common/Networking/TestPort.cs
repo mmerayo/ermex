@@ -29,7 +29,7 @@ using ermeX.Tests.Common.DataAccess;
 using Network = ermeX.Common.Networking;
 namespace ermeX.Tests.Common.Networking
 {
-    internal sealed class TestPort : IDisposable
+    public sealed class TestPort : IDisposable
     {
         private const string DbName = "PortBooking";
         private const string LockDbCreationMutexName = "ermeX.Tests.Common.Networking.SharedPorts";
@@ -160,6 +160,11 @@ namespace ermeX.Tests.Common.Networking
         public static implicit operator int(TestPort port)
         {
             return port.PortNumber;
+        }
+
+        public override string ToString()
+        {
+            return ((ushort)PortNumber).ToString();
         }
     }
 }
