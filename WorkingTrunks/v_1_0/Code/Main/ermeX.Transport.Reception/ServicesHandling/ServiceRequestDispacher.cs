@@ -104,19 +104,21 @@ namespace ermeX.Transport.Reception.ServicesHandling
                                                                                       requestParameter.ParameterValue);
                          continue;
                      }
-                    Type type = Type.GetType(requestParameter.PTypeName);
-                    if (type.IsValueType && requestParameter.ParameterValue.GetType() != type)
-                    {
-                        requestParameter.ParameterValue = TypesHelper.ConvertFrom(requestParameter.PTypeName,
-                                                                                  requestParameter.ParameterValue);
-                        continue;
-                    }
 
-                    if (TypesHelper.GetTypeFromDomain(requestParameter.PTypeName,true,false).IsEnum)
+
+                    Type type = TypesHelper.GetTypeFromDomain(requestParameter.PTypeName, true, false);
+                    if (type.IsEnum)
                     {
                         requestParameter.ParameterValue = TypesHelper.ConvertFrom(requestParameter.PTypeName,
                                                                                   requestParameter.ParameterValue.
                                                                                       ToString());
+                        continue;
+                    }
+
+                    if (type.IsValueType && requestParameter.ParameterValue.GetType() != type)
+                    {
+                        requestParameter.ParameterValue = TypesHelper.ConvertFrom(requestParameter.PTypeName,
+                                                                                  requestParameter.ParameterValue);
                         continue;
                     }
 
