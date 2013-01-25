@@ -39,11 +39,8 @@ using ermeX.Transport.Interfaces.ServiceOperations;
 
 namespace ermeX.Bus.Publishing.ClientProxies
 {
-
     internal sealed class ServiceCallsProxy : IInterceptor, IServiceCallsProxy
     {
-       
-
         [Inject]
         public ServiceCallsProxy(IServiceRequestManager serviceRequestsManager, IServiceDetailsDataSource dataSource, 
             IAppComponentDataSource componentDataSource, IDialogsManager dialogsManager,IBusSettings settings,
@@ -132,59 +129,78 @@ namespace ermeX.Bus.Publishing.ClientProxies
             }
         }
 
+        //TODO huge refactor in the whole services invocation model pending
         private void DoInvoke(IInvocation invocation)
         {
             string interfaceTypeName = invocation.Method.DeclaringType.FullName;
             string methodName = invocation.Method.Name;
 
             //TODO: refactor
-            ServiceDetails svc;
-            IServiceOperationResult<object> result;
-            if (DestinationComponent.IsEmpty())//TODO: REFACTOR BOTH
+            ServiceDetails svc=null;
+            IServiceOperationResult<object> result=null;
+            if (DestinationComponent.IsEmpty()) //TODO: REFACTOR BOTH
             {
-                svc = DataSource.GetByMethodName(interfaceTypeName, methodName);
-                if (svc == null)
-                    throw new ermeXUndefinedServiceException(interfaceTypeName,methodName);
-                   
+                var methods = DataSource.GetByMethodName(interfaceTypeName, methodName);
+                if (methods.Count == 0)
+                    throw new ermeXUndefinedServiceException(interfaceTypeName, methodName);
+                if(methods.Count>1 && invocation.Method.ReturnType !=typeof(void))
+                    throw new InvalidOperationException("There are several services that return values, the system only supports one service definition if returns values");
 
-                Logger.Trace(x=>x("Invoking service of component:{2} - {0}.{1}", svc.ServiceInterfaceTypeName,
-                                           svc.ServiceImplementationMethodName,svc.Publisher));
+                foreach (var method in methods)
+                {
+                    svc = method;
 
-                
+                    //if (svc == null)
+                    //    throw new ermeXUndefinedServiceException(interfaceTypeName, methodName);
+
+                    Logger.Trace(x => x("Invoking service of component:{2} - {0}.{1}", svc.ServiceInterfaceTypeName,
+                                        svc.ServiceImplementationMethodName, svc.Publisher));
+
+                    //TODO MUST BE DONE IN PARALLEL as they dont return values
                     result = ServiceRequestsManager.DoRequest(invocation.Method.ReturnType,
                                                               new Tuple<Guid, Guid>(svc.Publisher,
                                                                                     svc.OperationIdentifier),
                                                               invocation.Arguments);
-                
+                   
+                    if (result.OperationResult != OperationResultType.Success)
+                        throw new ermeXServiceRequestReturnedErrors(interfaceTypeName, methodName, result.InnerException,
+                                                           (DestinationComponent.IsEmpty()
+                                                                ? (Guid?)null
+                                                                : DestinationComponent));
+                }
+
             }
             else
             {
                 svc = DataSource.GetByMethodName(interfaceTypeName, methodName, DestinationComponent);
                 if (svc == null)
-                    throw new ermeXUndefinedServiceException(interfaceTypeName, methodName,DestinationComponent);
+                    throw new ermeXUndefinedServiceException(interfaceTypeName, methodName, DestinationComponent);
 
-                Logger.Trace(x=>x("Invoking service of component:{2} - {0}.{1}", svc.ServiceInterfaceTypeName,
-                                           svc.ServiceImplementationMethodName, DestinationComponent));
+                Logger.Trace(x => x("Invoking service of component:{2} - {0}.{1}", svc.ServiceInterfaceTypeName,
+                                    svc.ServiceImplementationMethodName, DestinationComponent));
                 result =
                     ServiceRequestsManager.DoRequest(invocation.Method.ReturnType,
                                                      new Tuple<Guid, Guid>(DestinationComponent, svc.OperationIdentifier),
                                                      invocation.Arguments);
-                
-                
+
+
             }
 
-            Logger.Debug(x=>x("Invoked service of component:{2} - {0}.{1}.Result:{3}", svc.ServiceInterfaceTypeName,
-                                           svc.ServiceImplementationMethodName, svc.Publisher,result.OperationResult));
+            Logger.Debug(x => x("Invoked service of component:{2} - {0}.{1}.Result:{3}", svc.ServiceInterfaceTypeName,
+                                svc.ServiceImplementationMethodName, svc.Publisher, result.OperationResult));
 
             if (result.OperationResult == OperationResultType.Success)
                 invocation.ReturnValue = result.ResultValue;
             else
             {
-                throw new ermeXServiceRequestReturnedErrors(interfaceTypeName, methodName, result.InnerException, (DestinationComponent.IsEmpty() ? (Guid?)null : DestinationComponent));
+                throw new ermeXServiceRequestReturnedErrors(interfaceTypeName, methodName, result.InnerException,
+                                                            (DestinationComponent.IsEmpty()
+                                                                 ? (Guid?) null
+                                                                 : DestinationComponent));
             }
 
-            Logger.Trace(x=>x("Service: {0}.{1} Invoked SUCESSFULLY", svc.ServiceInterfaceTypeName,
-                                       svc.ServiceImplementationMethodName));
+            Logger.Trace(x => x("Service: {0}.{1} Invoked SUCESSFULLY", svc.ServiceInterfaceTypeName,
+                                svc.ServiceImplementationMethodName));
         }
 
         #endregion

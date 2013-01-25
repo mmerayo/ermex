@@ -116,20 +116,20 @@ namespace ermeX.DAL.DataAccess.DataSources
         }
 
 
-        public ServiceDetails GetByMethodName(string interfaceTypeName, string methodName)
+        public IList<ServiceDetails> GetByMethodName(string interfaceTypeName, string methodName)
         {
-            return GetItemByFields(new[]
+            return GetItemsByFields(new[]
                                        {
-                                           new Tuple<string, object>("ComponentOwner", LocalComponentId),
+                                           new Tuple<string, object>("ComponentOwner", LocalComponentId),//TODO:redundant
                                            new Tuple<string, object>("ServiceInterfaceTypeName", interfaceTypeName),
                                            new Tuple<string, object>("ServiceImplementationMethodName", methodName)
                                        });
         }
-        public ServiceDetails GetByMethodName(ISession session, string interfaceTypeName, string methodName)
+        public IList<ServiceDetails> GetByMethodName(ISession session, string interfaceTypeName, string methodName)
         {
-            return GetItemByFields(session,new[]
+            return GetItemsByFields(session,new[]
                                        {
-                                           new Tuple<string, object>("ComponentOwner", LocalComponentId),
+                                           new Tuple<string, object>("ComponentOwner", LocalComponentId),//TODO:redundant
                                            new Tuple<string, object>("ServiceInterfaceTypeName", interfaceTypeName),
                                            new Tuple<string, object>("ServiceImplementationMethodName", methodName)
                                        });
@@ -140,7 +140,7 @@ namespace ermeX.DAL.DataAccess.DataSources
             return GetItemByFields(session,
                 new[]
                     {
-                        new Tuple<string, object>("ComponentOwner", LocalComponentId),
+                        new Tuple<string, object>("ComponentOwner", LocalComponentId),//TODO:redundant
                         new Tuple<string, object>("ServiceInterfaceTypeName", interfaceTypeName),
                         new Tuple<string, object>("ServiceImplementationMethodName", methodName),
                         new Tuple<string, object>("Publisher", publisherComponent)
@@ -152,7 +152,7 @@ namespace ermeX.DAL.DataAccess.DataSources
             return GetItemByFields(
                 new[]
                     {
-                        new Tuple<string, object>("ComponentOwner", LocalComponentId),
+                        new Tuple<string, object>("ComponentOwner", LocalComponentId), //TODO:redundant
                         new Tuple<string, object>("ServiceInterfaceTypeName", interfaceTypeName),
                         new Tuple<string, object>("ServiceImplementationMethodName", methodName),
                         new Tuple<string, object>("Publisher", publisherComponent)
