@@ -442,9 +442,55 @@ namespace ermeX.Common
 
         public static object ConvertFrom(string convertToType, object valueToConvert)
         {
-            Type targetType = GetTypeFromDomain(convertToType,true,false);
-            TypeConverter tc = TypeDescriptor.GetConverter(targetType);
-            return tc.ConvertFrom(null, CultureInfo.InvariantCulture, valueToConvert);
+            const string int16 = "System.Int16";
+            const string uint16 = "System.UInt16";
+
+            const string int32 = "System.Int32";
+            const string uint32 = "System.UInt32";
+
+            const string int64 = "System.Int64";
+            const string uint64 = "System.UInt64";
+            const string single = "System.Single";
+            const string tdouble = "System.Double";
+            const string tDecimal = "System.Decimal";
+
+            Type targetType = GetTypeFromDomain(convertToType, true, false);
+            object result;
+            switch (convertToType)
+            {
+                case int16:
+                    result = Convert.ToInt16(valueToConvert);
+                    break;
+                case int32:
+                    result = Convert.ToInt32(valueToConvert);
+                    break;
+                case int64:
+                    result = Convert.ToInt64(valueToConvert);
+                    break;
+                case uint16:
+                    result = Convert.ToUInt16(valueToConvert);
+                    break;
+                case uint32:
+                    result = Convert.ToUInt32(valueToConvert);
+                    break;
+                case uint64:
+                    result = Convert.ToUInt64(valueToConvert);
+                    break;
+                case single:
+                    result = Convert.ToSingle(valueToConvert);
+                    break;
+                case tdouble:
+                    result = Convert.ToDouble(valueToConvert);
+                    break;
+                case tDecimal:
+                    result = Convert.ToDecimal(valueToConvert);
+                    break;
+                default:
+                    TypeConverter tc = TypeDescriptor.GetConverter(targetType);
+                    result = tc.ConvertFrom(null, CultureInfo.InvariantCulture, valueToConvert);
+                    break;
+            }
+            return result;
         }
 
 

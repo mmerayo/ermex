@@ -31,7 +31,8 @@ namespace ermeX.Tests.WorldGateTests.Mock
     public interface ITestService3 : IService
     {
         [ServiceOperation("84E88870-4457-444D-839B-B3A2BBCB7C33")]
-        Guid ReturnMethodWithSeveralParametersValueTypes(Guid param1, DateTime param2);
+        Guid ReturnMethodWithSeveralParametersValueTypes(Guid param1, DateTime param2, int param3, uint param4,
+                                                         short param5, ushort param6, long param7,ulong param8,float param9, double param10,decimal param11);
 
         [ServiceOperation("13CAFB26-D17C-4CE7-8667-AF7787E41172")]
         MyCustomStruct ReturnCustomStructMethod(MyCustomStruct data);
