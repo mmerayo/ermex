@@ -35,7 +35,7 @@ using ermeX.Entities.Base;
 namespace ermeX.DAL.DataAccess.Helpers
 {
     /// <summary>
-    ///   Use this only for the versioning and the tests
+    /// Use this only for the versioning and the tests
     /// </summary>
     internal abstract class QueryHelper
     {
