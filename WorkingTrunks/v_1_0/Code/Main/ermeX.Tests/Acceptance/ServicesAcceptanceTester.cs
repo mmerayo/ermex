@@ -662,7 +662,6 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Ignore("FIX")]
         [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void SeveralComponents_Can_Serve_Same_Service_NoReturnValues(DbEngineType engineType)
         {
@@ -673,7 +672,7 @@ namespace ermeX.Tests.Acceptance
             var c3Port = new TestPort(12000);
 
             using (var component1 = TestComponent.GetComponent())
-            using (var component2 = TestComponent.GetComponent())
+            using (var component2 = TestComponent.GetComponent(true))
             using (var component3 = TestComponent.GetComponent())
             {
                 InitializeLonelyComponent(engineType, c1Port, component1, dbConnString);
@@ -689,7 +688,7 @@ namespace ermeX.Tests.Acceptance
                 component3.RegisterService<ITestService3>(1, registeredEvent2, finishedEvent2);
                 WaitHandle.WaitAll(new[] { registeredEvent1, registeredEvent2}, TimeSpan.FromSeconds(20));
                
-                var serviceProxy = component1.GetServiceProxy<ITestService3>();
+                var serviceProxy = component2.GetServiceProxy<ITestService3>();
 
                 serviceProxy.EmptyMethod();
 
@@ -701,6 +700,10 @@ namespace ermeX.Tests.Acceptance
                 Assert.IsTrue(component3.Tracker.EmptyMethodCalled == 1, string.Format("component3.Tracker.EmptyMethodCalled: {0}", component3.Tracker.EmptyMethodCalled));
                 Assert.IsTrue(component3.Tracker.ParametersLastCall.Count == 0);
             }
+
+            c1Port.Dispose();
+            c2Port.Dispose();
+            c3Port.Dispose();
         }
 
    }
