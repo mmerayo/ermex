@@ -96,14 +96,32 @@ namespace ermeX.Transport.Reception.ServicesHandling
             if (message.Parameters != null)
                 foreach (var requestParameter in message.Parameters.Values)
                 {
-                    if (requestParameter.ParameterValue is string &&
-                        requestParameter.PTypeName != stringTypeFullName)
+                    //if it is string but we expect another type
+                     if (requestParameter.ParameterValue is string &&
+                             requestParameter.PTypeName != stringTypeFullName)
+                     {
+                         requestParameter.ParameterValue = TypesHelper.ConvertFrom(requestParameter.PTypeName,
+                                                                                      requestParameter.ParameterValue);
+                         continue;
+                     }
+                    Type type = Type.GetType(requestParameter.PTypeName);
+                    if (type.IsValueType && requestParameter.ParameterValue.GetType() != type)
+                    {
                         requestParameter.ParameterValue = TypesHelper.ConvertFrom(requestParameter.PTypeName,
                                                                                   requestParameter.ParameterValue);
-                    else if (TypesHelper.GetTypeFromDomain(requestParameter.PTypeName,true,false).IsEnum)
+                        continue;
+                    }
+
+                    if (TypesHelper.GetTypeFromDomain(requestParameter.PTypeName,true,false).IsEnum)
+                    {
                         requestParameter.ParameterValue = TypesHelper.ConvertFrom(requestParameter.PTypeName,
-                                                                                  requestParameter.ParameterValue.ToString());
-                    
+                                                                                  requestParameter.ParameterValue.
+                                                                                      ToString());
+                        continue;
+                    }
+
+
+
                 }
             return message;
         }
