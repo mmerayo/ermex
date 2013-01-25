@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Project ToolsVersion="$(frameworkVersion)" DefaultTargets="AfterBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<MSBuildExtensionsPath>$(MSBuildProjectDirectory)\..\Packages\msBuildTaskExtensions</MSBuildExtensionsPath>
+		<SolutionDir>$(MSBuildProjectDirectory)\..\..\Code</SolutionDir>
+		<PropertiesProjectFile>$(SolutionDir)\AlarmGeneratorSampleRunner\Properties\CommonInfo.cs</PropertiesProjectFile>
+		<VersionPrefixFile>$(MSBuildProjectDirectory)\..\VersionPrefix.txt</VersionPrefixFile>
+		<TargetFrameworkVersion>v$(frameworkVersion)</TargetFrameworkVersion>		
+	</PropertyGroup>  
+   
+	<Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks" />
+	<Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.VersionNumber.targets" />
+  
+	<Target Name="PrintVariablesBuild">
+		<Message Text="Variables:" Importance="high"/>
+		<Message Text="TaskIdName: $(TaskIdName)"/>		
+		<Message Text="MSBuildProjectDirectory: $(MSBuildProjectDirectory)"/>
+		<Message Text="OutputPath: $(OutputPath)"/>    
+		<Message Text="TargetFrameworkVersion: $(TargetFrameworkVersion)"/>	
+		<Message Text="PropertiesProjectDir: $(PropertiesProjectDir)"/>	
+		<Message Text="BMinorNumber: $(BMinorNumber)" />
+		<Message Text="BRevisionNumber: $(BRevisionNumber)" />
+		
+	</Target>
+	<Target Name="BeforeBuild" DependsOnTargets="PrintVariablesBuild">
+		<Message Text="BeforeBuild:Start" />
+		<CallTarget Targets="SetVersionPrefix" />
+		<Message Text="The build version is: $(BuildVersion)"/> <!--iMPORTANT so is created here-->
+		<Message Text="BeforeBuild:End" />
+	</Target>
+	<Target Name="Build" DependsOnTargets="BeforeBuild">
+		<Message Text="Build:Start" />  	
+		<CallTarget Targets="CompileTask" />
+        <CallTarget Targets="PackTask" />		
+		<Message Text="Build:End" />
+	</Target>
+	<Target Name="AfterBuild" DependsOnTargets="Build">
+		<Message Text="AfterBuild:Start" />    
+		<Message Text="AfterBuild:End" />
+	</Target>
+	
+	<!-- SetVersionPrefix -->
+	<Target Name="SetVersionPrefix">
+		<ItemGroup>
+		  <VersionFile Include="$(VersionPrefixFile)" />
+		  <AssemblyInfoFiles Include="$(PropertiesProjectFile)" />
+		</ItemGroup>
+
+		<ReadLinesFromFile File="@(VersionFile)">
+		  <Output TaskParameter="Lines" ItemName="FileContents" />
+		</ReadLinesFromFile>
+		<CreateProperty Value="@(FileContents)">
+		  <Output PropertyName="BuildPrefix" TaskParameter="Value"/>
+		</CreateProperty>
+
+		<CreateProperty Value="$(BuildPrefix)$(BMinorNumber).$(BRevisionNumber)">
+		  <Output PropertyName="BuildVersion" TaskParameter="Value"/>
+		</CreateProperty>
+		<CreateProperty Value="$(frameworkVersion)_$(Platform)_$(BuildVersion)">
+		  <Output PropertyName="BuildTag" TaskParameter="Value"/>
+		</CreateProperty>
+         <Message Text="BuildVersion: $(BuildVersion)" />
+		<MSBuild.ExtensionPack.Framework.AssemblyInfo
+				UpdateAssemblyInformationalVersion="False"
+				AssemblyInfoFiles="@(AssemblyInfoFiles)"
+				AssemblyFileVersion="$(BuildVersion)"
+				AssemblyVersion="$(BuildVersion)" />
+
+	</Target>
+	<!-- END SetVersionPrefix -->
+	
+	<!-- Compile -->
+	<Target Name="CompileTask" Condition=" $(TaskIdName) == 'Compile' ">
+		<Message Text="CompileTask:Start" />
+		<Message Text="$(TaskIdName)" />
+	 
+		<CallTarget Targets="CleanLastBuild" />
+		<CallTarget Targets="CreateOutputDirectories" />
+		
+		<MSBuild Projects="$(SolutionDir)\QuickStartAlarmsGenerator.sln" />			
+		
+		<Message Text="CompileTask:End" />
+	</Target>
+	<Target Name="CleanLastBuild">
+		<RemoveDir Directories="$(OutputPath)" />
+		<RemoveDir Directories="$(outputSourceCodeFolder)" />
+		<RemoveDir Directories="$(BuildReportsFolder)" />		
+	</Target>
+
+	<Target Name="CreateOutputDirectories">
+		<MakeDir Directories="$(OutputPath)" />		
+		<MakeDir Directories="$(BuildReportsFolder)" />		
+	</Target>
+	<!-- END Compile -->
+	
+	<!-- Pack task -->
+	<Target Name="PackTask" Condition=" $(TaskIdName) == 'Pack' ">
+		<Message Text="PackTask:Start" />
+		
+		<!--http://www.msbuildextensionpack.com/help/4.0.5.0/html/bccddf04-f5ee-21d4-0f64-bb1b42b08257.htm-->
+		<MSBuild.ExtensionPack.Subversion.Svn TaskAction="Export" Item="$(SolutionDir)" Destination="$(outputSourceCodeFolder)"/><!--it needs sliksvn client installed-->
+		
+		<ItemGroup>
+			<FilesToZip Include="$(OutputPath)*.dll;$(OutputPath)*.exe" Exclude="$(OutputPath)*.pdb"/>
+			<FilesToZip Include="$(outputSourceCodeFolder)\**\*.*"/>
+		</ItemGroup>
+		
+		<MSBuild.ExtensionPack.Compression.Zip 
+		TaskAction="Create" 
+		CompressFiles="@(FilesToZip)"
+		RemoveRoot="$(artifactsFolder)"
+		ZipFileName="$(BuildReportsFolder)\ermeX_AlarmsQuickStart_$(BuildTag).zip"/>
+		
+		<Message Text="PackTask:End" />
+	</Target>
+	<!-- END Pack task -->
+</Project>
