@@ -40,7 +40,7 @@ namespace ermeX.DAL.Interfaces
 
         IList<ServiceDetails> GetByInterfaceType(Type interfaceType);
         IList<ServiceDetails> GetByInterfaceType(string interfaceTypeFullName);
-        ServiceDetails GetByMethodName(string interfaceTypeName, string methodName);
+        IList<ServiceDetails> GetByMethodName(string interfaceTypeName, string methodName);
         ServiceDetails GetByMethodName(string interfaceTypeName, string methodName, Guid publisherComponent);
         IList<ServiceDetails> GetLocalCustomServices();
     }

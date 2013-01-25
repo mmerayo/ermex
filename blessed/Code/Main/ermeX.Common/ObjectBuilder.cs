@@ -30,7 +30,7 @@ namespace ermeX.Common
     {
         public static TResult FromTypeName<TResult>(string fullName)
         {
-            var type = TypesHelper.GetTypeFromDomain(fullName);
+            var type = TypesHelper.GetTypeFromDomain(fullName,true,false);
             return FromType<TResult>(type);
         }
 

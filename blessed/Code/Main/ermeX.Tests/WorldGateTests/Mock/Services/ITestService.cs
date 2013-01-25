@@ -23,6 +23,7 @@ using ermeX.Transport.Interfaces;
 
 namespace ermeX.Tests.WorldGateTests.Mock
 {
+    //TODO: TEST ENUMERATIONS
     [ServiceContract("8CC7D387-F944-486A-8405-59EF910EC869")]
     public interface ITestService : IService
     {
@@ -43,9 +44,6 @@ namespace ermeX.Tests.WorldGateTests.Mock
 
         [ServiceOperation("592F3F00-DFB1-4C77-94F0-1719885EC7A3")]
         DummyDomainEntity ReturnMethodWithSeveralParameters(DummyDomainEntity param1, DummyDomainEntity param2);
-
-       
-        
     }
 
     //TODO: Replace WHEN supported generig services see issue-99

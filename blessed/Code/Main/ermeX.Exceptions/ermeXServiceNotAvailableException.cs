@@ -29,7 +29,7 @@ namespace ermeX.Exceptions
             : this(interfaceName, methodName, null){    }
         public ermeXServiceNotAvailableException(string interfaceName, string methodName,Exception innerException) : this(interfaceName, methodName,innerException, null) { }
         public ermeXServiceNotAvailableException(string interfaceName, string methodName,Exception innerException, Guid? destinationComponent) 
-            : base(string.Format("Component:{2} Service: {0}.{1} is not defined locally", interfaceName, methodName,
+            : base(string.Format("Component:{2} Service: {0}.{1} is not defined locally or the current assembly has not referenced it", interfaceName, methodName,
             destinationComponent.HasValue ? destinationComponent.Value.ToString() : "Unspecified"),innerException) { }
     }
 }
