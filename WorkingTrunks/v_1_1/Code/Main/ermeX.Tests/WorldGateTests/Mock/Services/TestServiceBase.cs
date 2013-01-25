@@ -98,12 +98,22 @@ namespace ermeX.Tests.WorldGateTests.Mock
             return new DummyDomainEntity {Id = Guid.NewGuid()};
         }
 
-        public Guid ReturnMethodWithSeveralParametersValueTypes(Guid param1, DateTime param2)
+        public Guid ReturnMethodWithSeveralParametersValueTypes(Guid param1, DateTime param2, int param3, uint param4,
+                                                         short param5, ushort param6, long param7,ulong param8,float param9, double param10,decimal param11)
         {
             tr.ReturnMethodWithSeveralParametersValueTypesCalled++;
             tr.ParametersLastCall.Clear();
             tr.ParametersLastCall.Add(param1);
             tr.ParametersLastCall.Add(param2);
+            tr.ParametersLastCall.Add(param3);
+            tr.ParametersLastCall.Add(param4);
+            tr.ParametersLastCall.Add(param5); 
+            tr.ParametersLastCall.Add(param6);
+            tr.ParametersLastCall.Add(param7);
+            tr.ParametersLastCall.Add(param8);
+            tr.ParametersLastCall.Add(param9);
+            tr.ParametersLastCall.Add(param10);
+            tr.ParametersLastCall.Add(param11);
             SerializeTracker();
             CheckExpectedRequests();
             return  Guid.NewGuid() ;
