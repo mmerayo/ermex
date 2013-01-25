@@ -12,6 +12,7 @@ using ermeX.Tests.AcceptanceTester.Base.Messages;
 using ermeX.Tests.AcceptanceTester.Base.Services;
 using ermeX.Tests.AcceptanceTester.Base.TestExecution;
 using ermeX.Tests.AcceptanceTester.Helpers.Db;
+using ermeX.Tests.Common.Networking;
 
 namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
 {
@@ -39,8 +40,7 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
         }
 
         //TODO: THIS SHOULDNT BE static once the service instance can be set
-        private static  ushort _portFrom;
-        private static ushort _portTo;
+        private static readonly List<TestPort> Ports=new List<TestPort>();
         private static int _componentsNumber;
         private static int _numberOfMessagesEachComponentSends;
         private static Dictionary<Guid, ComponentInfo> _components;
@@ -53,8 +53,10 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
         public TestDirector(ushort portFrom, ushort portTo, int componentsNumber, int numberOfMessagesEachComponentSends, bool watcherOn, int waitSecondsEachComponent)
         {
             WaitSecondsEachComponent = waitSecondsEachComponent;
-            _portFrom = portFrom;
-            _portTo = portTo;
+
+            for(int i=0;i<=componentsNumber;i++)
+                Ports.Add(new TestPort(portFrom));
+
             _componentsNumber = componentsNumber;
             _numberOfMessagesEachComponentSends = numberOfMessagesEachComponentSends;
             _watcherOn = watcherOn;
@@ -77,6 +79,12 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
 
                 if (!process.HasExited)
                     process.Kill();
+            }
+
+            while(Ports.Count!=0)
+            {
+                Ports[0].Dispose();
+                Ports.RemoveAt(0);
             }
 
             if (!_watcherOn)
@@ -212,14 +220,12 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
 
         private void CreateComponents()
         {
-            int startPort = _portFrom + 1;
-
             for (int i = 0; i < _componentsNumber; i++)
             {
                 string exeFile = Path.Combine(PathUtils.GetApplicationFolderPath(), "ermeX.Tests.AcceptanceTester.exe");
                 
                 Guid componentCreatedId = Guid.NewGuid();
-                string arguments = GetTesterArguments(componentCreatedId, i, startPort);
+                string arguments = GetTesterArguments(componentCreatedId, i);
 
 
                 var value = new ComponentInfo(componentCreatedId)
@@ -233,11 +239,11 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
             }
         }
 
-        private static string GetTesterArguments(Guid componentCreatedId, int i, int startPort)
+        private static string GetTesterArguments(Guid componentCreatedId, int i)
         {
             return string.Format("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}", "AllJoinToSameFriendComponent","false",
-                                 Networking.GetFreePort((ushort)(startPort + i), _portTo),
-                                 _portFrom,
+                                 Ports[i + 1].ToString(),
+                                 Ports[0],
                                  _numberOfMessagesEachComponentSends,
                                  _currentComponentId,
                                  componentCreatedId,
@@ -266,7 +272,7 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
 
             var cfg = Configuration.Configure(_currentComponentId)
                 .DiscoverServicesToPublish(new[] {this.GetType().Assembly}, new[] {typeof (ITesterService)})
-                .ListeningToTcpPort(_portFrom);
+                .ListeningToTcpPort(Ports[0]);
             cfg = _watcherOn ? cfg.SetSqlServerDb(connStr) : cfg.SetInMemoryDb();
 
             WorldGate.ConfigureAndStart(cfg);
