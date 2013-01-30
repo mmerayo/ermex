@@ -66,9 +66,9 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ermeX, Version=1.0.587.271, Culture=neutral, PublicKeyToken=55440e77d194bd94, processorArchitecture=x86">
+    <Reference Include="ermeX, Version=1.0.598.298, Culture=neutral, PublicKeyToken=55440e77d194bd94, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ermeX_x86.1.0.587.271\lib\net40\ermeX.dll</HintPath>
+      <HintPath>..\packages\ermeX_x86.1.0.598.298\lib\net40\ermeX.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
