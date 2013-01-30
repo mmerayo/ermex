@@ -8,7 +8,7 @@
   </storage>
   <location class="org.jenkinsci.plugins.periodicbackup.LocalDirectory">
     <enabled>true</enabled>
-    <path>D:\DevProjects\ermeX\CI_Backup\Configurations</path>
+    <path>V:\DevProjects\ermeX\CI_Backup\Configurations</path>
   </location>
-  <timestamp>2013-01-10 12:00:07.755 CET</timestamp>
+  <timestamp>2013-01-30 17:35:06.210 CET</timestamp>
 </org.jenkinsci.plugins.periodicbackup.BackupObject>
