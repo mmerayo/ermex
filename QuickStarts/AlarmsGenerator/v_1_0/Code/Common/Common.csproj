@@ -95,8 +95,9 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ermeX">
-      <HintPath>..\packages\ermeX_x86.1.0.587.271\lib\net40\ermeX.dll</HintPath>
+    <Reference Include="ermeX, Version=1.0.598.298, Culture=neutral, PublicKeyToken=55440e77d194bd94, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ermeX_x86.1.0.598.298\lib\net40\ermeX.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -125,13 +126,13 @@
     <Content Include="README.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\CommonContracts\CommonContracts.csproj">
       <Project>{918DFF41-09E5-47F6-B2DC-510492A2BDCA}</Project>
       <Name>CommonContracts</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

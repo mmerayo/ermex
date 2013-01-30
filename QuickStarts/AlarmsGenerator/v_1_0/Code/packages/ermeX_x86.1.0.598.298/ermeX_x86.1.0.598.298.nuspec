@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>ermeX_x86</id>
+    <version>1.0.598.298</version>
+    <title>ermeX x86</title>
+    <authors>Miguel Merayo</authors>
+    <owners>Miguel Merayo</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>http://code.google.com/p/ermex</projectUrl>
+    <iconUrl>http://ermex.googlecode.com/svn/wiki/logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>ermeX is a fast library implementing a Service Bus with a minimal usage complexity.</description>
+    <copyright>2013</copyright>
+    <language>en-US</language>
+    <tags>C# Messaging Queues ESB</tags>
+    <references>
+      <reference file="ermeX.dll" />
+    </references>
+  </metadata>
+</package>
