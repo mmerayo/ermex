@@ -42,7 +42,6 @@ namespace ermeX.Transport.Reception
 
     internal abstract class ServerBase : IServer
     {
-        private const string ChunkMessagesFolderName = "Chunks";
         public static Guid ChunkedMessageOperation = new Guid("5A429BD6-ED3A-426F-9352-D3CB9585A447");
         private readonly IDictionary<Guid, IServiceHandler> _handlers = new ConcurrentDictionary<Guid, IServiceHandler>();
         protected readonly object SyncLock=new object();
@@ -51,11 +50,6 @@ namespace ermeX.Transport.Reception
         {
             if (serverInfo == null) throw new ArgumentNullException("serverInfo");
             if (dataSourceServices == null) throw new ArgumentNullException("dataSourceServices");
-
-            if (!Directory.Exists(ChunksFolder))
-            {
-                Directory.CreateDirectory(PathUtils.GetApplicationFolderPath(ChunkMessagesFolderName));
-            }
 
             ServerInfo = serverInfo;
             DataSourceServices = dataSourceServices;
@@ -68,11 +62,6 @@ namespace ermeX.Transport.Reception
         internal IServiceDetailsDataSource DataSourceServices { get; set; }
         private IChunkedServiceRequestMessageDataSource ChunkedServiceRequestMessageDataSource { get; set; }
         protected readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
-
-        private static string ChunksFolder
-        {
-            get { return PathUtils.GetApplicationFolderPath(ChunkMessagesFolderName); }
-        }
 
         #region IDisposable
 
