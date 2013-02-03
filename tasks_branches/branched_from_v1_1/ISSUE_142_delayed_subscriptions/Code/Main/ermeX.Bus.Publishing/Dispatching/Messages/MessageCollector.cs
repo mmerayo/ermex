@@ -25,6 +25,7 @@ using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Interfaces.Dispatching;
 using ermeX.Common;
+using ermeX.Common.Observer;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
@@ -37,7 +38,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
     /// <summary>
     /// Collects messages and restore the previous messages and remove expired messages
     /// </summary>
-    internal sealed class MessageCollector : IMessagePublisherDispatcherStrategy
+    internal sealed class MessageCollector : IMessagePublisherDispatcherStrategy,Common.Observer.IObserver<OutgoingMessageSuscription>
     {
         private const int CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched = 100;
         private DispatcherStatus _status = DispatcherStatus.Stopped;
@@ -45,17 +46,18 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         [Inject]
         public MessageCollector(IBusSettings settings,
                                 SystemTaskQueue systemTaskQueue,
-                                IOutgoingMessagesDataSource outgoingMessagesDataSource,IMessageDistributor distributor )
+                                IOutgoingMessagesDataSource outgoingMessagesDataSource, IMessageDistributor distributor, IOutgoingMessageSuscriptionsDataSource outgoingMessageSuscriptions )
         {
             if (settings == null) throw new ArgumentNullException("settings");
             if (systemTaskQueue == null) throw new ArgumentNullException("systemTaskQueue");
             if (outgoingMessagesDataSource == null) throw new ArgumentNullException("outgoingMessagesDataSource");
             if (distributor == null) throw new ArgumentNullException("distributor");
+            if (outgoingMessageSuscriptions == null) throw new ArgumentNullException("outgoingMessageSuscriptions");
             Settings = settings;
             SystemTaskQueue = systemTaskQueue;
             OutgoingMessagesDataSource = outgoingMessagesDataSource;
             MessageDistributor = distributor;
-
+            OutgoingMessageSuscriptions = (Common.Observer.IObservable<OutgoingMessageSuscription>)outgoingMessageSuscriptions;
         }
 
         #region IDisposable
@@ -82,6 +84,8 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             }
         }
 
+        
+
         ~MessageCollector()
         {
             Dispose(false);
@@ -93,6 +97,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         private SystemTaskQueue SystemTaskQueue { get; set; }
         private IOutgoingMessagesDataSource OutgoingMessagesDataSource { get; set; }
         private IMessageDistributor MessageDistributor { get; set; }
+        private Common.Observer.IObservable<OutgoingMessageSuscription> OutgoingMessageSuscriptions { get; set; }
         private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
         private int _dispatchedItems = 0;
 
@@ -118,7 +123,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             MessageDistributor.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outGoingMessage));
 
             //every CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched removes expired items
-            if (++_dispatchedItems%CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched == 0)
+            if (++_dispatchedItems % CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched == 0)
                 SystemTaskQueue.EnqueueItem(RemoveExpiredMessages);
 
             Logger.Trace(x => x("MessageCollector: Dispatched message num: {0}", _dispatchedItems));
@@ -167,6 +172,9 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
                 RemoveExpiredMessages();
 
+                //subscribe to new subscriptions
+                OutgoingMessageSuscriptions.AddObserver(this);
+
                 SendAllMessagesInQueue();
 
                 Status = DispatcherStatus.Started;
@@ -180,11 +188,36 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
                 MessageDistributor.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outgoingMessage));
         }
 
+        public void Notify(NotifiableDalAction action, OutgoingMessageSuscription entity)
+        {
+            switch (action)
+            {
+                case NotifiableDalAction.Add:
+                    SendMessagesPublishedBeforeSubscriptionWasReceived(entity);
+                    break;
+                case NotifiableDalAction.Update:
+                    break;
+                case NotifiableDalAction.Remove:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("action");
+            }
+        }
+
+        private void SendMessagesPublishedBeforeSubscriptionWasReceived(OutgoingMessageSuscription newSubscription)
+        {
+            var outgoingMessages = OutgoingMessagesDataSource.GetByStatus(Message.MessageStatus.SenderCollected); //TODO: Overload to satisfy this functionallity
+            foreach (var outgoingMessage in outgoingMessages)
+                if (outgoingMessage.CreatedTimeUtc >= newSubscription.DateLastUpdateUtc)//check if the subscription was generated before
+                    MessageDistributor.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outgoingMessage));
+        }
+
         public void Stop()
         {
             lock (this)
             {
                 Status = DispatcherStatus.Stopping;
+                OutgoingMessageSuscriptions.RemoveObserver(this);
                 Status = DispatcherStatus.Stopped;
             }
         }
