@@ -132,6 +132,10 @@
       <Project>{EC7959A4-3ACB-4619-ACCB-E6C9EA686C4D}</Project>
       <Name>ermeX.Bus.Listening</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Common\ermeX.Common.csproj">
+      <Project>{49D6179A-5489-4CB0-A4AE-F40DB88B78B7}</Project>
+      <Name>ermeX.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.ConfigurationManagement.Settings\ermeX.ConfigurationManagement.Settings.csproj">
       <Project>{A6C2D141-25F0-4BFF-93BC-F9EF0CBDB3B1}</Project>
       <Name>ermeX.ConfigurationManagement.Settings</Name>

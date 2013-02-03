@@ -22,8 +22,10 @@ using System.Data;
 using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
+using Ninject;
 using Remotion.Linq.Utilities;
 using ermeX.Common.Observer;
+using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.Interfaces;
@@ -77,16 +79,16 @@ namespace ermeX.DAL.DataAccess.DataSources
         /// </summary>
         /// <param name="settings"> </param>
         /// <param name="ownerComponentId"> prevents several components running on the same db </param>
-        protected DataSource(IDalSettings settings, Guid ownerComponentId,IDataAccessExecutor dataAccessExecutor,SystemTaskQueue systemTaskQueue)
+        protected DataSource(IDalSettings settings, Guid ownerComponentId,IDataAccessExecutor dataAccessExecutor)
         {
             if (settings == null) throw new ArgumentNullException("settings");
             if (dataAccessExecutor == null) throw new ArgumentNullException("dataAccessExecutor");
-            if (systemTaskQueue == null) throw new ArgumentNullException("systemTaskQueue");
+           
             DataAccessSettings = settings;
 
             LocalComponentId = ownerComponentId;
             DataAccessExecutor = dataAccessExecutor;
-            SystemTaskQueue = systemTaskQueue;
+            
         }
 
         protected internal IDalSettings DataAccessSettings { get; private set; }
@@ -97,7 +99,19 @@ namespace ermeX.DAL.DataAccess.DataSources
 
         public Guid LocalComponentId { get; protected set; }
         public IDataAccessExecutor DataAccessExecutor { get; set; }
-        protected SystemTaskQueue SystemTaskQueue { get; set; }
+        private volatile SystemTaskQueue _systemTaskQueue;
+        protected SystemTaskQueue SystemTaskQueue 
+        {
+            get
+            {
+                if (_systemTaskQueue == null)
+                    lock (this)
+                        if (_systemTaskQueue == null)
+                            _systemTaskQueue = IoCManager.Kernel.Get<SystemTaskQueue>();
+                return _systemTaskQueue;
+            }
+            
+        }
 
 
         /// <summary>
