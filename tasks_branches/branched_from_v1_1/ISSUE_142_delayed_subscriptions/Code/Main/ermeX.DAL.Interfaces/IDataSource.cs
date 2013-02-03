@@ -86,7 +86,7 @@ namespace ermeX.DAL.Interfaces
         /// </summary>
         /// <param name="propertyName"> </param>
         /// <param name="propertyValue"> </param>
-        void RemoveByProperty(string propertyName, string propertyValue);
+        void RemoveByProperty(string propertyName, object propertyValue);
 
         /// <summary>
         ///   Gets an item by a field value or null
