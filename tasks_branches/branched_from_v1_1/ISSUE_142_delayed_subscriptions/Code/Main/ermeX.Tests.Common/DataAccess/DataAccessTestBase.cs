@@ -22,6 +22,7 @@ using Common.Logging;
 using Common.Logging.Simple;
 using NUnit.Framework;
 using ermeX.Common;
+using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.DataAccess.DataSources;

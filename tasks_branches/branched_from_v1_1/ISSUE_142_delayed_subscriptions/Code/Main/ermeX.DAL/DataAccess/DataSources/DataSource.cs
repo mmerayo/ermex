@@ -79,16 +79,17 @@ namespace ermeX.DAL.DataAccess.DataSources
         /// </summary>
         /// <param name="settings"> </param>
         /// <param name="ownerComponentId"> prevents several components running on the same db </param>
-        protected DataSource(IDalSettings settings, Guid ownerComponentId,IDataAccessExecutor dataAccessExecutor)
+        protected DataSource(IDalSettings settings, Guid ownerComponentId, IDataAccessExecutor dataAccessExecutor, SystemTaskQueue systemTaskQueue)
         {
             if (settings == null) throw new ArgumentNullException("settings");
             if (dataAccessExecutor == null) throw new ArgumentNullException("dataAccessExecutor");
-           
+            if (systemTaskQueue == null) throw new ArgumentNullException("systemTaskQueue");
+
             DataAccessSettings = settings;
 
             LocalComponentId = ownerComponentId;
             DataAccessExecutor = dataAccessExecutor;
-            
+            SystemTaskQueue = systemTaskQueue;
         }
 
         protected internal IDalSettings DataAccessSettings { get; private set; }
@@ -99,19 +100,7 @@ namespace ermeX.DAL.DataAccess.DataSources
 
         public Guid LocalComponentId { get; protected set; }
         public IDataAccessExecutor DataAccessExecutor { get; set; }
-        private volatile SystemTaskQueue _systemTaskQueue;
-        protected SystemTaskQueue SystemTaskQueue 
-        {
-            get
-            {
-                if (_systemTaskQueue == null)
-                    lock (this)
-                        if (_systemTaskQueue == null)
-                            _systemTaskQueue = IoCManager.Kernel.Get<SystemTaskQueue>();
-                return _systemTaskQueue;
-            }
-            
-        }
+        protected SystemTaskQueue SystemTaskQueue { get; set; }
 
 
         /// <summary>
