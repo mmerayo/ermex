@@ -154,7 +154,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             Assert.IsTrue(numRecords == 1);
 
             TDataSource target = GetDataSource<TDataSource>(engine);
-            target.RemoveByProperty("Id", id.ToString());
+            target.RemoveByProperty("Id", id);
             numRecords =
                 dataAccessTestHelper.QueryTestHelper.ExecuteScalar<int>(string.Format("Select count(*) from {3}.{0} where {1}={2}",
                                                                                       TableName, IdFieldName, id, SchemaName));

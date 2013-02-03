@@ -257,7 +257,7 @@ namespace ermeX.DAL.DataAccess.DataSources
         /// </summary>
         /// <param name="propertyName"> </param>
         /// <param name="propertyValue"> </param>
-        public virtual void RemoveByProperty(string propertyName, string propertyValue)
+        public virtual void RemoveByProperty(string propertyName, object propertyValue)
         {
             if (string.IsNullOrEmpty(propertyName)) throw new ArgumentNullException("propertyName");
             if (propertyValue == null) throw new ArgumentNullException("propertyValue");
