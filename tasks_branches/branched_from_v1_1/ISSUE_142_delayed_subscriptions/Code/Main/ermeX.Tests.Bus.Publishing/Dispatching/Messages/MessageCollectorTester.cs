@@ -49,7 +49,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
             var mock = new Mock<IMessageDistributor>();
             mock.Setup(x=>x.EnqueueItem(It.IsAny<MessageDistributor.MessageDistributorMessage>())).Callback(messageReceived);
             mockedDistributor = mock.Object;
-            return new MessageCollector(settings,  _systemQueue, outgoingDataSource,mockedDistributor);
+            var outgoingMessageSuscriptionsDataSource = GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine);
+            return new MessageCollector(settings,  _systemQueue, outgoingDataSource,mockedDistributor,outgoingMessageSuscriptionsDataSource);
         }
 
         public override void OnStartUp()
