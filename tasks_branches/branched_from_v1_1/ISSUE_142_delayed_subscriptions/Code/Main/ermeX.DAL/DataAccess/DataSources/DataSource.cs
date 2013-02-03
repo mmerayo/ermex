@@ -69,7 +69,7 @@ namespace ermeX.DAL.DataAccess.DataSources
                 foreach (var observer in _observers)
                 {
                     Common.Observer.IObserver<TEntity> item = observer;
-                    SystemTaskQueue.EnqueueItem(() => item.Notify(action, entity));
+                    SystemTaskQueue.Instance.EnqueueItem(() => item.Notify(action, entity));
                 }
         }
 
@@ -79,17 +79,15 @@ namespace ermeX.DAL.DataAccess.DataSources
         /// </summary>
         /// <param name="settings"> </param>
         /// <param name="ownerComponentId"> prevents several components running on the same db </param>
-        protected DataSource(IDalSettings settings, Guid ownerComponentId, IDataAccessExecutor dataAccessExecutor, SystemTaskQueue systemTaskQueue)
+        protected DataSource(IDalSettings settings, Guid ownerComponentId, IDataAccessExecutor dataAccessExecutor)
         {
             if (settings == null) throw new ArgumentNullException("settings");
             if (dataAccessExecutor == null) throw new ArgumentNullException("dataAccessExecutor");
-            if (systemTaskQueue == null) throw new ArgumentNullException("systemTaskQueue");
 
             DataAccessSettings = settings;
 
             LocalComponentId = ownerComponentId;
             DataAccessExecutor = dataAccessExecutor;
-            SystemTaskQueue = systemTaskQueue;
         }
 
         protected internal IDalSettings DataAccessSettings { get; private set; }
@@ -100,7 +98,6 @@ namespace ermeX.DAL.DataAccess.DataSources
 
         public Guid LocalComponentId { get; protected set; }
         public IDataAccessExecutor DataAccessExecutor { get; set; }
-        protected SystemTaskQueue SystemTaskQueue { get; set; }
 
 
         /// <summary>
@@ -246,7 +243,7 @@ namespace ermeX.DAL.DataAccess.DataSources
                 TEntity item = entity;
 
                 session.Delete(entity);
-                SystemTaskQueue.EnqueueItem(()=>Notify(NotifiableDalAction.Remove,item));
+                SystemTaskQueue.Instance.EnqueueItem(()=>Notify(NotifiableDalAction.Remove,item));
             }
             result.ResultValue = resultValue;
             result.Success = true;

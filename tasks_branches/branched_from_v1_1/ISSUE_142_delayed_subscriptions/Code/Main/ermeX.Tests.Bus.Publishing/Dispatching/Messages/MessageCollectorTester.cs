@@ -40,7 +40,6 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
     {
         readonly List<MessageDistributor.MessageDistributorMessage> _sentMessages = new List<MessageDistributor.MessageDistributorMessage>();
         readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
-        private readonly SystemTaskQueue _systemQueue=new SystemTaskQueue();
 
         private MessageCollector GetInstance(DbEngineType dbEngine,Action<MessageDistributor.MessageDistributorMessage> messageReceived, out IMessageDistributor mockedDistributor)
         {
@@ -50,7 +49,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
             mock.Setup(x=>x.EnqueueItem(It.IsAny<MessageDistributor.MessageDistributorMessage>())).Callback(messageReceived);
             mockedDistributor = mock.Object;
             var outgoingMessageSuscriptionsDataSource = GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine);
-            return new MessageCollector(settings,  _systemQueue, outgoingDataSource,mockedDistributor,outgoingMessageSuscriptionsDataSource);
+            return new MessageCollector(settings,   outgoingDataSource,mockedDistributor,outgoingMessageSuscriptionsDataSource);
         }
 
         public override void OnStartUp()

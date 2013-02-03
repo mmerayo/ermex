@@ -40,7 +40,6 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling
 
         readonly List<ReceptionMessageDistributor.MessageDistributorMessage> _sentMessages = new List<ReceptionMessageDistributor.MessageDistributorMessage>();
         readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
-        private readonly SystemTaskQueue _systemQueue = new SystemTaskQueue();
 
         private ReceptionMessageHandler GetInstance(DbEngineType dbEngine, Action<ReceptionMessageDistributor.MessageDistributorMessage> messageReceived, out IReceptionMessageDistributor mockedDistributor)
         {
@@ -56,7 +55,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling
 
             var queueMock = mock2.Object;
 
-            return new ReceptionMessageHandler(dataSource,mockedDistributor,settings,_systemQueue,queueMock);
+            return new ReceptionMessageHandler(dataSource,mockedDistributor,settings,queueMock);
         }
 
         public override void OnStartUp()

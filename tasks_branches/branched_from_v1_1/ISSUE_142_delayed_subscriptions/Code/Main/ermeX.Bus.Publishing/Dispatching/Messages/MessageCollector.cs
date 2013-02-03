@@ -45,16 +45,13 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         [Inject]
         public MessageCollector(IBusSettings settings,
-                                SystemTaskQueue systemTaskQueue,
                                 IOutgoingMessagesDataSource outgoingMessagesDataSource, IMessageDistributor distributor, IOutgoingMessageSuscriptionsDataSource outgoingMessageSuscriptions )
         {
             if (settings == null) throw new ArgumentNullException("settings");
-            if (systemTaskQueue == null) throw new ArgumentNullException("systemTaskQueue");
             if (outgoingMessagesDataSource == null) throw new ArgumentNullException("outgoingMessagesDataSource");
             if (distributor == null) throw new ArgumentNullException("distributor");
             if (outgoingMessageSuscriptions == null) throw new ArgumentNullException("outgoingMessageSuscriptions");
             Settings = settings;
-            SystemTaskQueue = systemTaskQueue;
             OutgoingMessagesDataSource = outgoingMessagesDataSource;
             MessageDistributor = distributor;
             OutgoingMessageSuscriptions = (Common.Observer.IObservable<OutgoingMessageSuscription>)outgoingMessageSuscriptions;
@@ -94,7 +91,6 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         #endregion
 
         private IBusSettings Settings { get; set; }
-        private SystemTaskQueue SystemTaskQueue { get; set; }
         private IOutgoingMessagesDataSource OutgoingMessagesDataSource { get; set; }
         private IMessageDistributor MessageDistributor { get; set; }
         private Common.Observer.IObservable<OutgoingMessageSuscription> OutgoingMessageSuscriptions { get; set; }
@@ -124,7 +120,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
             //every CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched removes expired items
             if (++_dispatchedItems % CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched == 0)
-                SystemTaskQueue.EnqueueItem(RemoveExpiredMessages);
+                SystemTaskQueue.Instance.EnqueueItem(RemoveExpiredMessages);
 
             Logger.Trace(x => x("MessageCollector: Dispatched message num: {0}", _dispatchedItems));
         }
