@@ -47,17 +47,15 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 
         [Inject]
         public ReceptionMessageDistributor(IIncomingMessageSuscriptionsDataSource subscriptionsDataSource,
-                                  IIncomingMessagesDataSource messagesDataSource, IQueueDispatcherManager dispatcher, SystemTaskQueue taskQueue)
+                                  IIncomingMessagesDataSource messagesDataSource, IQueueDispatcherManager dispatcher)
             : base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
         {
             if (subscriptionsDataSource == null) throw new ArgumentNullException("subscriptionsDataSource");
             if (messagesDataSource == null) throw new ArgumentNullException("messagesDataSource");
             if (dispatcher == null) throw new ArgumentNullException("dispatcher");
-            if (taskQueue == null) throw new ArgumentNullException("taskQueue");
             SubscriptionsDataSource = subscriptionsDataSource;
             MessagesDataSource = messagesDataSource;
             Dispatcher = dispatcher;
-            TaskQueue = taskQueue;
 
             EnqueueNonDeliveredMessages();
         }
@@ -67,7 +65,6 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
         private IIncomingMessageSuscriptionsDataSource SubscriptionsDataSource { get; set; }
         private IIncomingMessagesDataSource MessagesDataSource { get; set; }
         private IQueueDispatcherManager Dispatcher { get; set; }
-        private SystemTaskQueue TaskQueue { get; set; }
 
 
         protected override Func<MessageDistributorMessage, bool> RunActionOnDequeue

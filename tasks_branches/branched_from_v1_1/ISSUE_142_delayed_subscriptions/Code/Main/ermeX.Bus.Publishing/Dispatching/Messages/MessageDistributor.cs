@@ -54,23 +54,21 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         [Inject]
         public MessageDistributor(IOutgoingMessageSuscriptionsDataSource subscriptionsDataSource,
-            IOutgoingMessagesDataSource outgoingMessagesDataSource, IMessageSubscribersDispatcher dispatcher, SystemTaskQueue taskQueue)
+            IOutgoingMessagesDataSource outgoingMessagesDataSource, IMessageSubscribersDispatcher dispatcher)
             : base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
         {
             if (subscriptionsDataSource == null) throw new ArgumentNullException("subscriptionsDataSource");
             if (outgoingMessagesDataSource == null) throw new ArgumentNullException("outgoingMessagesDataSource");
             if (dispatcher == null) throw new ArgumentNullException("dispatcher");
-            if (taskQueue == null) throw new ArgumentNullException("taskQueue");
+            
             SubscriptionsDataSource = subscriptionsDataSource;
             OutgoingMessagesDataSource = outgoingMessagesDataSource;
             Dispatcher = dispatcher;
-            TaskQueue = taskQueue;
         }
 
         private IOutgoingMessageSuscriptionsDataSource SubscriptionsDataSource { get; set; }
         private IOutgoingMessagesDataSource OutgoingMessagesDataSource { get; set; }
         private IMessageSubscribersDispatcher Dispatcher { get; set; }
-        private SystemTaskQueue TaskQueue { get; set; }
 
 
         protected override Func<MessageDistributorMessage, bool> RunActionOnDequeue

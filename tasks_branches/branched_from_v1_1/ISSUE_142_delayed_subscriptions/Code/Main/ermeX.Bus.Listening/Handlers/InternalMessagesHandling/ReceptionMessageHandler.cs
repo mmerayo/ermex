@@ -76,20 +76,18 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
         [Inject]
         public ReceptionMessageHandler(
             IIncomingMessagesDataSource incomingMessagesDataSource, IReceptionMessageDistributor receptionMessageDistributor,
-                                      IBusSettings settings, SystemTaskQueue systemTaskQueue,IQueueDispatcherManager queueDispatcherManager)
+                                      IBusSettings settings, IQueueDispatcherManager queueDispatcherManager)
         {
             if (incomingMessagesDataSource == null) throw new ArgumentNullException("incomingMessagesDataSource");
             if (receptionMessageDistributor == null) throw new ArgumentNullException("receptionMessageDistributor");
             if (settings == null) throw new ArgumentNullException("settings");
-            if (systemTaskQueue == null) throw new ArgumentNullException("systemTaskQueue");
             if (queueDispatcherManager == null) throw new ArgumentNullException("queueDispatcherManager");
             IncomingMessagesDataSource = incomingMessagesDataSource;
             ReceptionMessageDistributor = receptionMessageDistributor;
             Settings = settings;
-            SystemTaskQueue = systemTaskQueue;
             QueueDispatcherManager = queueDispatcherManager;
 
-            SystemTaskQueue.EnqueueItem(EnqueueNonDistributedMessages);  //reenqueues non dispatched messages on startup
+            SystemTaskQueue.Instance.EnqueueItem(EnqueueNonDistributedMessages);  //reenqueues non dispatched messages on startup
         }
 
        
@@ -97,7 +95,6 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
         private IIncomingMessagesDataSource IncomingMessagesDataSource { get; set; }
         private IReceptionMessageDistributor ReceptionMessageDistributor { get; set; }
         private IBusSettings Settings { get; set; }
-        private SystemTaskQueue SystemTaskQueue { get; set; }
         private IQueueDispatcherManager QueueDispatcherManager { get; set; }
         private readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
 
