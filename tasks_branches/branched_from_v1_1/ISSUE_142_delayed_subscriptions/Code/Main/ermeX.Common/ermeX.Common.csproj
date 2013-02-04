@@ -101,11 +101,8 @@
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
     <Compile Include="ILGeneration\ILHelper.cs" />
-    <Compile Include="Observer\IObservable.cs" />
-    <Compile Include="Observer\IObserver.cs" />
     <Compile Include="JsonSerializer.cs" />
     <Compile Include="Memoization\Memoizer.cs" />
-    <Compile Include="Observer\NotifiableDalAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Caching\ICacheProvider.cs" />
     <Compile Include="Caching\MemoryCacheStore.cs" />

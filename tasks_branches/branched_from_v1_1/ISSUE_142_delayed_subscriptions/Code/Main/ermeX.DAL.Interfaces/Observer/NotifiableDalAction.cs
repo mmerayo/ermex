@@ -1,4 +1,4 @@
-namespace ermeX.Common.Observer
+namespace ermeX.DAL.Interfaces.Observer
 {
     internal enum NotifiableDalAction
     {

@@ -24,11 +24,11 @@ using NHibernate;
 using NHibernate.Criterion;
 using Ninject;
 using Remotion.Linq.Utilities;
-using ermeX.Common.Observer;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.Interfaces;
+using ermeX.DAL.Interfaces.Observer;
 using ermeX.Entities.Base;
 using ermeX.Entities.Entities;
 using ermeX.Threading.Queues;
@@ -39,12 +39,12 @@ namespace ermeX.DAL.DataAccess.DataSources
     ///   Base class for each data source
     /// </summary>
     /// <typeparam name="TEntity"> </typeparam>
-    internal abstract class DataSource<TEntity> :Common.Observer.IObservable<TEntity>, IDataSource<TEntity> where TEntity : ModelBase
+    internal abstract class DataSource<TEntity> : IDataSource<TEntity> where TEntity : ModelBase
     {
         #region Observable subject
 
-        private readonly List<Common.Observer.IObserver<TEntity>> _observers = new List<Common.Observer.IObserver<TEntity>>(); 
-        public void AddObserver(Common.Observer.IObserver<TEntity> observer )
+        private readonly List<IDalObserver<TEntity>> _observers = new List<IDalObserver<TEntity>>(); 
+        public void AddObserver(IDalObserver<TEntity> observer )
         {
             if (observer == null) throw new ArgumentNullException("observer");
             if(!_observers.Contains(observer))
@@ -53,7 +53,7 @@ namespace ermeX.DAL.DataAccess.DataSources
                         _observers.Add(observer);
         }
 
-        public void RemoveObserver(Common.Observer.IObserver<TEntity> observer)
+        public void RemoveObserver(IDalObserver<TEntity> observer)
         {
             if (observer == null) throw new ArgumentNullException("observer");
             if (_observers.Contains(observer))
@@ -68,7 +68,7 @@ namespace ermeX.DAL.DataAccess.DataSources
             lock (_observers)
                 foreach (var observer in _observers)
                 {
-                    Common.Observer.IObserver<TEntity> item = observer;
+                    IDalObserver<TEntity> item = observer;
                     SystemTaskQueue.Instance.EnqueueItem(() => item.Notify(action, entity));
                 }
         }
