@@ -25,10 +25,10 @@ using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Interfaces.Dispatching;
 using ermeX.Common;
-using ermeX.Common.Observer;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
+using ermeX.DAL.Interfaces.Observer;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Threading.Queues;
@@ -38,7 +38,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
     /// <summary>
     /// Collects messages and restore the previous messages and remove expired messages
     /// </summary>
-    internal sealed class MessageCollector : IMessagePublisherDispatcherStrategy,Common.Observer.IObserver<OutgoingMessageSuscription>
+    internal sealed class MessageCollector : IMessagePublisherDispatcherStrategy,IDalObserver<OutgoingMessageSuscription>
     {
         private const int CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched = 100;
         private DispatcherStatus _status = DispatcherStatus.Stopped;
@@ -54,7 +54,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             Settings = settings;
             OutgoingMessagesDataSource = outgoingMessagesDataSource;
             MessageDistributor = distributor;
-            OutgoingMessageSuscriptions = (Common.Observer.IObservable<OutgoingMessageSuscription>)outgoingMessageSuscriptions;
+            OutgoingMessageSuscriptionsDataSource = outgoingMessageSuscriptions;
         }
 
         #region IDisposable
@@ -93,7 +93,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         private IBusSettings Settings { get; set; }
         private IOutgoingMessagesDataSource OutgoingMessagesDataSource { get; set; }
         private IMessageDistributor MessageDistributor { get; set; }
-        private Common.Observer.IObservable<OutgoingMessageSuscription> OutgoingMessageSuscriptions { get; set; }
+        private IOutgoingMessageSuscriptionsDataSource OutgoingMessageSuscriptionsDataSource { get; set; }
         private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
         private int _dispatchedItems = 0;
 
@@ -169,7 +169,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
                 RemoveExpiredMessages();
 
                 //subscribe to new subscriptions
-                OutgoingMessageSuscriptions.AddObserver(this);
+                OutgoingMessageSuscriptionsDataSource.AddObserver(this);
 
                 SendAllMessagesInQueue();
 
@@ -213,7 +213,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
             lock (this)
             {
                 Status = DispatcherStatus.Stopping;
-                OutgoingMessageSuscriptions.RemoveObserver(this);
+                OutgoingMessageSuscriptionsDataSource.RemoveObserver(this);
                 Status = DispatcherStatus.Stopped;
             }
         }

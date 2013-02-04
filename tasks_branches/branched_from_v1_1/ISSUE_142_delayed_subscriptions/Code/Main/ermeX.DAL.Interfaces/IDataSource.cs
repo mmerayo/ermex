@@ -19,12 +19,14 @@
 using System;
 using System.Collections.Generic;
 using NHibernate;
+using ermeX.DAL.Interfaces.Observer;
 using ermeX.Entities.Base;
 using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Interfaces
 {
-    internal interface IDataSource<TEntity> where TEntity : ModelBase
+    internal interface IDataSource<TEntity>:IDalObservable<TEntity>
+        where TEntity : ModelBase
     {
         Guid LocalComponentId { get; }
 
