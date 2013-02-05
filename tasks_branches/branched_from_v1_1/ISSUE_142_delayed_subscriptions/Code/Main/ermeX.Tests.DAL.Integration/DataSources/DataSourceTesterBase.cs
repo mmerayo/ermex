@@ -64,8 +64,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             Assert.IsTrue(expected.Version == DateTime.MinValue.Ticks, "implementation of GetExpected must set version to 0");
 
             TDataSource target = GetDataSource<TDataSource>(engine);
-            var testDalObserver = new TestDalObserver();
-            target.AddObserver(testDalObserver);
+          
             target.Save(expected);
 
 
@@ -76,9 +75,6 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             var actual = dataAccessTestHelper.QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
             Assert.AreEqual(expected, actual);
 
-
-            Assert.IsTrue(testDalObserver.Notifications.Count==1);
-            Assert.AreEqual(NotifiableDalAction.Add, testDalObserver.Notifications[0].Item1);
 
         }
 
@@ -118,15 +114,11 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             Assert.IsTrue(item.Version != DateTime.MinValue.Ticks);
             TModel expected = GetExpectedWithChanges(item);
             expected.ComponentOwner = Guid.NewGuid();
-            var testDalObserver = new TestDalObserver();
-            target.AddObserver(testDalObserver);
+            
             target.Save(expected);
             DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
             var actual =dataAccessTestHelper.QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
             Assert.AreEqual(expected.Version, actual.Version);
-
-            Assert.IsTrue(testDalObserver.Notifications.Count == 1);
-            Assert.AreEqual(NotifiableDalAction.Add, testDalObserver.Notifications[0].Item1);
         }
 
 
@@ -148,6 +140,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             var actual = GetObjectFromRow(engine,expected) ;
             Assert.AreEqual(expected, actual);
 
+            Thread.Sleep(100);
             Assert.IsTrue(testDalObserver.Notifications.Count == 1);
             Assert.AreEqual(NotifiableDalAction.Add, testDalObserver.Notifications[0].Item1);
         }
@@ -171,9 +164,9 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             var actual =dataAccessTestHelper. QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
 
             Assert.AreEqual(expected, actual);
-
+            Thread.Sleep(100);
             Assert.IsTrue(testDalObserver.Notifications.Count == 1);
-            Assert.AreEqual(NotifiableDalAction.Add, testDalObserver.Notifications[0].Item1);
+            Assert.AreEqual(NotifiableDalAction.Update, testDalObserver.Notifications[0].Item1);
         }
 
         protected abstract TModel GetExpectedWithChanges(TModel source);
@@ -202,6 +195,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
                                                                                       TableName, IdFieldName, id, SchemaName));
             Assert.IsTrue(numRecords == 0);
 
+            Thread.Sleep(250);
             Assert.IsTrue(testDalObserver.Notifications.Count == 1);
             Assert.AreEqual(NotifiableDalAction.Remove, testDalObserver.Notifications[0].Item1);
         }
