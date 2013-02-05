@@ -197,6 +197,10 @@
       <Project>{E72B0ECE-557C-4002-9368-2273101F76F3}</Project>
       <Name>ermeX.NonMerged</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Threading\ermeX.Threading.csproj">
+      <Project>{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}</Project>
+      <Name>ermeX.Threading</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Transport.BuiltIn.SuperSocket\ermeX.Transport.BuiltIn.SuperSocket.csproj">
       <Project>{91BAFA98-AFBA-4CD0-BC04-AD1030C4E0F8}</Project>
       <Name>ermeX.Transport.BuiltIn.SuperSocket</Name>

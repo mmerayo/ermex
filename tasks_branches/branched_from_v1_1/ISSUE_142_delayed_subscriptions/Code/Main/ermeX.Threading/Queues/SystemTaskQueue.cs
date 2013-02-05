@@ -28,7 +28,9 @@ namespace ermeX.Threading.Queues
     /// </summary>
     internal sealed class SystemTaskQueue:ProducerParallelConsumerQueue<Action>
     {
-        public static readonly SystemTaskQueue Instance=new SystemTaskQueue();
+        private static  SystemTaskQueue _instance=null;
+        private static readonly object _locker=new object();
+        
 
         private SystemTaskQueue():base(1,64,3,TimeSpan.FromSeconds(60)){}
 
@@ -37,7 +39,26 @@ namespace ermeX.Threading.Queues
             get { return RunAction; }
         }
 
-        
+        public static SystemTaskQueue Instance
+        {
+            get
+            {
+                if(_instance==null)
+                    lock (_locker)
+                    _instance=new SystemTaskQueue();
+                return _instance;
+            }
+        }
+
+        public static void Reset()
+        {
+            lock (_locker)
+            {
+                if(_instance!=null)
+                    _instance.Dispose();
+                _instance = null;
+            }
+        }
 
         private bool RunAction(Action arg)
         {
