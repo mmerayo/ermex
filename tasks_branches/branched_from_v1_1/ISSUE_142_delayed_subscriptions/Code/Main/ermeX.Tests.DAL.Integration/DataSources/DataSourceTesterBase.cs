@@ -90,8 +90,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             expected = GetExpectedWithChanges(expected);
             long expVersion = expected.Version;
             Thread.Sleep(50);
-            var testDalObserver = new TestDalObserver();
-            target.AddObserver(testDalObserver);
+           
             target.Save(expected);
             DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
             var actual = dataAccessTestHelper.QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
@@ -99,9 +98,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
             Assert.AreNotEqual(expVersion, actual.Version);
             Assert.IsTrue(expVersion < actual.Version);
 
-            Assert.IsTrue(testDalObserver.Notifications.Count == 1);
-            Assert.AreEqual(NotifiableDalAction.Update, testDalObserver.Notifications[0].Item1);
-
+            
         }
 
 

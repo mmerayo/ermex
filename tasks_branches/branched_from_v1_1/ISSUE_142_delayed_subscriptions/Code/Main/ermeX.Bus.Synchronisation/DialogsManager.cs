@@ -496,7 +496,7 @@ namespace ermeX.Bus.Synchronisation
                                                                                  deterministicFilter);
                 }
 
-            //remote outgoing is local outgoing but local subscirpionts
+            //remote outgoing is local outgoing but local subscriptions
             if (remoteSuscriptions.MyOutgoingSuscriptions != null)
                 foreach (var suscription in remoteSuscriptions.MyOutgoingSuscriptions)
                 {
