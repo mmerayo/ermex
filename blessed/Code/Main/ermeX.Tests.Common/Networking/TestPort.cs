@@ -46,7 +46,7 @@ namespace ermeX.Tests.Common.Networking
             {
                 mutex.WaitOne(TimeSpan.FromSeconds(10));
 
-                SqliteDbEngine = new SqliteDbEngine(DbName, false, "d:\\");
+                SqliteDbEngine = new SqliteDbEngine(DbName, false, Environment.GetEnvironmentVariable("TEST_PORTS_DB_PATH") ?? "d:\\");
                     //TODO: get THE db FOLDER from A CONFIG FILE, it must be shared between al builds
                 SqliteDbEngine.CreateDatabase();
                 QueryHelper = QueryHelper.GetHelper(DbEngineType.SqliteInMemory,
