@@ -215,6 +215,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
                                                                     TableName, IdFieldName, id, SchemaName));
             Assert.IsTrue(numRecords == 0);
 
+            Thread.Sleep(250);
             Assert.IsTrue(testDalObserver.Notifications.Count == 1);
             Assert.AreEqual(NotifiableDalAction.Remove, testDalObserver.Notifications[0].Item1);
         }
