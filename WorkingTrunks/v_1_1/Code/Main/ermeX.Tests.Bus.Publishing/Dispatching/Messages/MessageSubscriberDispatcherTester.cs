@@ -41,7 +41,6 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
     class MessageSubscriberDispatcherTester : DataAccessTestBase
     {
         readonly IJobScheduler _taskScheduler=new JobScheduler();
-        readonly SystemTaskQueue _tasksQueue=new SystemTaskQueue();
         readonly List<TransportMessage> _sentMessages = new List<TransportMessage>();
         readonly ManualResetEvent _messageReceived=new ManualResetEvent(false);
 
@@ -52,7 +51,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
             var mock = new Mock<IServiceProxy>();
             mock.Setup(x => x.Send(It.IsAny<TransportMessage>())).Callback(messageReceived).Returns(new ServiceResult(valueToReturn));
             mockedService = mock.Object;
-            return new MessageSubscribersDispatcher(settings, outgoingDataSource, _taskScheduler,_tasksQueue, mockedService);
+            return new MessageSubscribersDispatcher(settings, outgoingDataSource, _taskScheduler, mockedService);
         }
 
         public override void OnStartUp()

@@ -26,13 +26,38 @@ namespace ermeX.Threading.Queues
     /// <summary>
     /// Queues a task to be executed
     /// </summary>
-    internal class SystemTaskQueue:ProducerParallelConsumerQueue<Action>
+    internal sealed class SystemTaskQueue:ProducerParallelConsumerQueue<Action>
     {
-        public SystemTaskQueue():base(1,64,3,TimeSpan.FromSeconds(60)){}
+        private static  SystemTaskQueue _instance=null;
+        private static readonly object _locker=new object();
+        
+
+        private SystemTaskQueue():base(1,64,3,TimeSpan.FromSeconds(60)){}
 
         protected override Func<Action,bool> RunActionOnDequeue
         {
             get { return RunAction; }
+        }
+
+        public static SystemTaskQueue Instance
+        {
+            get
+            {
+                if(_instance==null)
+                    lock (_locker)
+                    _instance=new SystemTaskQueue();
+                return _instance;
+            }
+        }
+
+        public static void Reset()
+        {
+            lock (_locker)
+            {
+                if(_instance!=null)
+                    _instance.Dispose();
+                _instance = null;
+            }
         }
 
         private bool RunAction(Action arg)

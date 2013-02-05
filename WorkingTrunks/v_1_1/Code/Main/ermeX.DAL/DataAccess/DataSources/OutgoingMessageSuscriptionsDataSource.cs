@@ -72,6 +72,7 @@ namespace ermeX.DAL.DataAccess.DataSources
                         //TODO: refactor TO outgoing message subscriptions controller
                         var subscriptionToSave = new OutgoingMessageSuscription(request, request.ComponentOwner,
                                                                                 LocalComponentId);
+
                         SaveFromOtherComponent(session,subscriptionToSave,
                                                new[]
                                                    {

@@ -53,18 +53,16 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         }
 
         [Inject]
-        public MessageSubscribersDispatcher(IBusSettings settings, IOutgoingMessagesDataSource dataSource, IJobScheduler taskScheduler, SystemTaskQueue taskQueue, IServiceProxy service)
+        public MessageSubscribersDispatcher(IBusSettings settings, IOutgoingMessagesDataSource dataSource, IJobScheduler taskScheduler, IServiceProxy service)
             : base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
         {
             if (settings == null) throw new ArgumentNullException("settings");
             if (dataSource == null) throw new ArgumentNullException("dataSource");
             if (taskScheduler == null) throw new ArgumentNullException("taskScheduler");
-            if (taskQueue == null) throw new ArgumentNullException("taskQueue");
             if (service == null) throw new ArgumentNullException("service");
             Settings = settings;
             DataSource = dataSource;
             JobScheduler = taskScheduler;
-            TaskQueue = taskQueue;
             Service = service;
 
             RestoreMessagesFromPreviousSessions();
@@ -73,7 +71,6 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         private IBusSettings Settings { get; set; }
         private IOutgoingMessagesDataSource DataSource { get; set; }
         private IJobScheduler JobScheduler { get; set; }
-        private SystemTaskQueue TaskQueue { get; set; }
         private IServiceProxy Service { get; set; }
 
         protected override Func<SubscribersDispatcherMessage, bool> RunActionOnDequeue
@@ -99,7 +96,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
                         x =>
                         x("FATAL! {0} not sent to {1} AND EXPIRED.It wont be retried", messageToSend.MessageId,
                           messageToSend.PublishedTo));
-                    TaskQueue.EnqueueItem(() => DataSource.Save(messageToSend));
+                    SystemTaskQueue.Instance.EnqueueItem(() => DataSource.Save(messageToSend));
                 }
                 else
                 {
@@ -107,7 +104,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
                     if (SendData(messageToSend))
                     {
                         messageToSend.Status = Message.MessageStatus.SenderSent;
-                        TaskQueue.EnqueueItem(() => DataSource.Save(messageToSend));
+                        SystemTaskQueue.Instance.EnqueueItem(() => DataSource.Save(messageToSend));
                         Logger.Info(
                             x => x("SUCCESS {0} Sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo));
                     }
@@ -115,8 +112,8 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
                     {
                         messageToSend.Tries += 1;
 
-                        TaskQueue.EnqueueItem(() => DataSource.Save(messageToSend));
-                        TaskQueue.EnqueueItem(() => ReEnqueueItem(messageToSend));
+                        SystemTaskQueue.Instance.EnqueueItem(() => DataSource.Save(messageToSend));
+                        SystemTaskQueue.Instance.EnqueueItem(() => ReEnqueueItem(messageToSend));
                         Logger.Warn(
                             x =>
                             x("FAILED! {0} not sent to {1}. It will be retried", messageToSend.MessageId,

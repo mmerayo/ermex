@@ -22,12 +22,16 @@ using System.Data;
 using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
+using Ninject;
 using Remotion.Linq.Utilities;
+using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.Interfaces;
+using ermeX.DAL.Interfaces.Observer;
 using ermeX.Entities.Base;
 using ermeX.Entities.Entities;
+using ermeX.Threading.Queues;
 
 namespace ermeX.DAL.DataAccess.DataSources
 {
@@ -37,14 +41,49 @@ namespace ermeX.DAL.DataAccess.DataSources
     /// <typeparam name="TEntity"> </typeparam>
     internal abstract class DataSource<TEntity> : IDataSource<TEntity> where TEntity : ModelBase
     {
+        #region Observable subject
+
+        private readonly List<IDalObserver<TEntity>> _observers = new List<IDalObserver<TEntity>>(); 
+        public void AddObserver(IDalObserver<TEntity> observer )
+        {
+            if (observer == null) throw new ArgumentNullException("observer");
+            if(!_observers.Contains(observer))
+                lock (_observers)
+                    if (!_observers.Contains(observer))
+                        _observers.Add(observer);
+        }
+
+        public void RemoveObserver(IDalObserver<TEntity> observer)
+        {
+            if (observer == null) throw new ArgumentNullException("observer");
+            if (_observers.Contains(observer))
+                lock (_observers)
+                    if (_observers.Contains(observer))
+                        _observers.Remove(observer);
+        }
+
+        public void Notify(NotifiableDalAction action, TEntity entity)
+        {
+            if (entity == null) throw new ArgumentNullException("entity");
+            lock (_observers)
+                foreach (var observer in _observers)
+                {
+                    IDalObserver<TEntity> item = observer;
+                    SystemTaskQueue.Instance.EnqueueItem(() => item.Notify(action, entity));
+                }
+        }
+
+        #endregion Observable subject
+
         /// <summary>
         /// </summary>
         /// <param name="settings"> </param>
         /// <param name="ownerComponentId"> prevents several components running on the same db </param>
-        protected DataSource(IDalSettings settings, Guid ownerComponentId,IDataAccessExecutor dataAccessExecutor)
+        protected DataSource(IDalSettings settings, Guid ownerComponentId, IDataAccessExecutor dataAccessExecutor)
         {
             if (settings == null) throw new ArgumentNullException("settings");
             if (dataAccessExecutor == null) throw new ArgumentNullException("dataAccessExecutor");
+
             DataAccessSettings = settings;
 
             LocalComponentId = ownerComponentId;
@@ -59,7 +98,6 @@ namespace ermeX.DAL.DataAccess.DataSources
 
         public Guid LocalComponentId { get; protected set; }
         public IDataAccessExecutor DataAccessExecutor { get; set; }
-
 
 
         /// <summary>
@@ -201,7 +239,12 @@ namespace ermeX.DAL.DataAccess.DataSources
 
             var resultValue = entities as List<TEntity> ?? entities.ToList();
             foreach (var entity in resultValue) //TODO: Transaction here
+            {
+                TEntity item = entity;
+
                 session.Delete(entity);
+                SystemTaskQueue.Instance.EnqueueItem(()=>Notify(NotifiableDalAction.Remove,item));
+            }
             result.ResultValue = resultValue;
             result.Success = true;
             return result;
@@ -214,16 +257,16 @@ namespace ermeX.DAL.DataAccess.DataSources
         /// </summary>
         /// <param name="propertyName"> </param>
         /// <param name="propertyValue"> </param>
-        public virtual void RemoveByProperty(string propertyName, string propertyValue)
+        public virtual void RemoveByProperty(string propertyName, object propertyValue)
         {
             if (string.IsNullOrEmpty(propertyName)) throw new ArgumentNullException("propertyName");
             if (propertyValue == null) throw new ArgumentNullException("propertyValue");
 
             if (!DataAccessExecutor.Perform(session =>
-                {
-                    session.Delete(string.Format("from {0} e where {1}='{2}' and ComponentOwner='{3}'",
-                                                 typeof(TEntity).Name, propertyName,
-                                                 propertyValue, LocalComponentId));
+                                                {
+                                                    IList<TEntity> items = GetItemsByField(session, propertyName, propertyValue);
+                                                    Remove(session, items);
+
                     return new DataAccessOperationResult<bool>() {Success = true};
                 }).Success)
                 throw new DataException("could not perform Remove");
@@ -233,7 +276,7 @@ namespace ermeX.DAL.DataAccess.DataSources
         {
             var result = DataAccessExecutor.Perform(session => RemoveById(session, id));
             if (!result.Success)
-                throw new DataException("Couldnt perform the operation RemoveById");
+                throw new DataException("Could not perform the operation RemoveById");
 
         }
 
@@ -513,7 +556,7 @@ namespace ermeX.DAL.DataAccess.DataSources
         {
             if (session == null) throw new ArgumentNullException("session");
 
-            var result=new DataAccessOperationResult<bool>();
+            var result = new DataAccessOperationResult<bool>();
 
             foreach (var entity in entities)
             {
@@ -522,14 +565,16 @@ namespace ermeX.DAL.DataAccess.DataSources
 
                 if (!BeforeUpdating(entity, session))
                     return result;
-                
+
                 if (entity.ComponentOwner == LocalComponentId)
                     entity.Version = DateTime.UtcNow.Ticks;
 
 
                 entity.ComponentOwner = LocalComponentId;
-
+                bool isNew = entity.Id == 0;
                 session.SaveOrUpdate(entity);
+
+                Notify(isNew ? NotifiableDalAction.Add : NotifiableDalAction.Update, entity);
             }
             result.Success = true;
             return result;
