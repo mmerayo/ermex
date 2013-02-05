@@ -27,6 +27,7 @@ using ermeX.Bus.Interfaces;
 using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.DataSources;
+using ermeX.DAL.Interfaces.Observer;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
@@ -40,7 +41,6 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
     {
         readonly List<MessageDistributor.MessageDistributorMessage> _sentMessages = new List<MessageDistributor.MessageDistributorMessage>();
         readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
-        private readonly SystemTaskQueue _systemQueue=new SystemTaskQueue();
 
         private MessageCollector GetInstance(DbEngineType dbEngine,Action<MessageDistributor.MessageDistributorMessage> messageReceived, out IMessageDistributor mockedDistributor)
         {
@@ -49,7 +49,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
             var mock = new Mock<IMessageDistributor>();
             mock.Setup(x=>x.EnqueueItem(It.IsAny<MessageDistributor.MessageDistributorMessage>())).Callback(messageReceived);
             mockedDistributor = mock.Object;
-            return new MessageCollector(settings,  _systemQueue, outgoingDataSource,mockedDistributor);
+            var outgoingMessageSuscriptionsDataSource = GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine);
+            return new MessageCollector(settings,   outgoingDataSource,mockedDistributor,outgoingMessageSuscriptionsDataSource);
         }
 
         public override void OnStartUp()
@@ -161,6 +162,51 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
             BusMessage message = actualOutgoingMessage.ToBusMessage();
             Assert.AreEqual(busMessage, message);
             
+        }
+
+
+        private class SomeData
+        {
+            public string TheData { get; set; }
+        }
+
+        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        public void SendsExistingItemsOnSubscriptionReceived(DbEngineType dbEngine)
+        {
+
+            var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage(new SomeData(){TheData="theData"}));
+            IMessageDistributor mockedDistributor;
+
+            using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
+            {
+                target.Start();
+                //the default test set them for one day
+                var outgoingMessage = new OutgoingMessage(busMessage) //creates this message as a pending one
+                                          {
+                                              CreatedTimeUtc = DateTime.UtcNow,
+                                              ComponentOwner = LocalComponentId,
+                                              PublishedBy = LocalComponentId,
+                                              Status = Message.MessageStatus.SenderCollected
+                                          };
+                var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+                outgoingMessagesDataSource.Save(outgoingMessage);
+                
+                target.Notify(NotifiableDalAction.Add, new OutgoingMessageSuscription()
+                                                           {
+                                                               BizMessageFullTypeName = typeof (SomeData).FullName,
+                                                               Component = LocalComponentId,
+                                                               ComponentOwner = LocalComponentId,
+                                                               DateLastUpdateUtc = DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
+                                                           });
+
+                _messageReceived.WaitOne(TimeSpan.FromSeconds(10));
+
+                Assert.IsTrue(_sentMessages.Count == 1); //asserts it was sent
+                OutgoingMessage actualOutgoingMessage = _sentMessages[0].OutGoingMessage;
+                Assert.AreEqual(outgoingMessage, actualOutgoingMessage);
+                BusMessage message = actualOutgoingMessage.ToBusMessage();
+                Assert.AreEqual(busMessage, message);
+            }
         }
 
     }

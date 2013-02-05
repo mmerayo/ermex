@@ -105,6 +105,9 @@
     <Compile Include="IOutgoingMessagesDataSource.cs" />
     <Compile Include="IOutgoingMessageSuscriptionsDataSource.cs" />
     <Compile Include="IServiceDetailsDataSource.cs" />
+    <Compile Include="Observer\IDalObservable.cs" />
+    <Compile Include="Observer\IDalObserver.cs" />
+    <Compile Include="Observer\NotifiableDalAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

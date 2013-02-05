@@ -56,7 +56,7 @@ namespace ermeX.ConfigurationManagement.IoC.InjectionModules
              
             Bind<ICacheProvider>().ToConstant(new MemoryCacheStore(_settings.CacheExpirationSeconds));
 
-            Bind<SystemTaskQueue>().ToSelf().InSingletonScope();
+            //Bind<SystemTaskQueue>().ToSelf().InSingletonScope();
             Bind<IJobScheduler>().To<JobScheduler>().InSingletonScope();
 
         }

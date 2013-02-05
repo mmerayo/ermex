@@ -19,12 +19,14 @@
 using System;
 using System.Collections.Generic;
 using NHibernate;
+using ermeX.DAL.Interfaces.Observer;
 using ermeX.Entities.Base;
 using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Interfaces
 {
-    internal interface IDataSource<TEntity> where TEntity : ModelBase
+    internal interface IDataSource<TEntity>:IDalObservable<TEntity>
+        where TEntity : ModelBase
     {
         Guid LocalComponentId { get; }
 
@@ -86,7 +88,7 @@ namespace ermeX.DAL.Interfaces
         /// </summary>
         /// <param name="propertyName"> </param>
         /// <param name="propertyValue"> </param>
-        void RemoveByProperty(string propertyName, string propertyValue);
+        void RemoveByProperty(string propertyName, object propertyValue);
 
         /// <summary>
         ///   Gets an item by a field value or null

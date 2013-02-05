@@ -1,5 +1,5 @@
 REM PARAMS taskid & revision number
-::TaskId:[Compile | UnitTests | Pack] 
+::TaskId:[Compile | UnitTests | Pack | AcceptanceTests] 
 REM BUILD PARAMS
 cd /d %~dp0
 set buildType=%CI_CPU%

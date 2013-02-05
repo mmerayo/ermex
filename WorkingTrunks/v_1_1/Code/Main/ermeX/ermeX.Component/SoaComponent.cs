@@ -27,6 +27,7 @@ using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.NonMerged;
+using ermeX.Threading.Queues;
 
 
 namespace ermeX.ermeX.Component
@@ -72,6 +73,7 @@ namespace ermeX.ermeX.Component
                     throw ex;
                 }
                 IoCManager.Reset();
+                SystemTaskQueue.Reset();
                 StatusManager.CurrentStatus=ComponentStatus.Stopped;
             }
             catch (Exception ex)
