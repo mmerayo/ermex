@@ -217,7 +217,8 @@
     <CreateProperty Value="$(BuildPrefix)$(BMinorNumber).$(BRevisionNumber)">
       <Output PropertyName="BuildVersion" TaskParameter="Value"/>
     </CreateProperty>
-	<CreateProperty Value="$(frameworkVersion)_$(Platform)_$(BuildVersion)">
+	
+	<CreateProperty Value="(BuildPrefix)$(BMinorNumber)_net$(frameworkVersion)_$(Platform)"> <!--When adding MONO builds the net prefix should change automatically-->
       <Output PropertyName="BuildTag" TaskParameter="Value"/>
     </CreateProperty>
 
