@@ -11,10 +11,11 @@
    </PropertyGroup>
 
 
-  <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />-->
+  <!--Imports-->
   <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks" />
   <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.VersionNumber.targets" />
-  <!--<UsingTask TaskName="MSBuild.ExtensionPack.Framework.AssemblyInfo" AssemblyFile="$(ProjectDir)..\..\..\Code\Build\Packages\msBuildTaskExtensions\MSBuild.ExtensionPack.dll" />-->
+  
+  <!--CustomTasks-->
   <UsingTask TaskName="ILMerge.MSBuild.Tasks.ILMerge" AssemblyFile="$(MSBuildProjectDirectory)\..\Packages\ILMerge\V4x86\ILMerge.MSBuild.Tasks.dll" />
 
   <Target Name="PrintVariablesBuild">
@@ -218,7 +219,7 @@
       <Output PropertyName="BuildVersion" TaskParameter="Value"/>
     </CreateProperty>
 	
-	<CreateProperty Value="(BuildPrefix)$(BMinorNumber)_net$(frameworkVersion)_$(Platform)"> <!--When adding MONO builds the net prefix should change automatically-->
+	<CreateProperty Value="$(BuildPrefix)$(BMinorNumber)_net$(frameworkVersion)_$(Platform)"> <!--When adding MONO builds the net prefix should change automatically-->
       <Output PropertyName="BuildTag" TaskParameter="Value"/>
     </CreateProperty>
 
