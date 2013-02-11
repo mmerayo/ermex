@@ -115,7 +115,9 @@
 	<ItemGroup>
       <FilesToZip Include="$(MergedBinFolder)\ermeX.dll"/>
 	  <FilesToZip Include="$(MergedBinFolder)\ermeX.Documentation.chm"/>
+	  <FilesToZip Include="$(MergedBinFolder)\ChangeLog.txt"/>
 	  <FilesToCopy Include="$(OutputPath)ermeX.Documentation.chm"/>
+	  <FilesToCopy Include="$(OutputPath)ChangeLog.txt"/>
     </ItemGroup>
 	<Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(MergedBinFolder)"/>
     <MSBuild.ExtensionPack.Compression.Zip 
@@ -144,7 +146,7 @@
 	
 	<Delete Files="$(BuildReportsFolder)\ermeX_$(Platform).nuspec"/>
 	<Delete Files="$(BuildReportsFolder)\ermeX.dll"/>
-	<Delete Files="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>
+	<!--<Delete Files="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>-->
 	
 	<Message Text="StoreTask:End" />
   </Target>

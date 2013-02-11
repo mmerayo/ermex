@@ -44,7 +44,7 @@ namespace PublicPackageGenerator
         /// The path where the result is stored
         /// </summary>
         [Required]
-        public virtual string OutputPath { get; set; }
+        public virtual string OutputPackagePath { get; set; }
 
         /// <summary>
         /// the current platform to save
@@ -97,13 +97,13 @@ namespace PublicPackageGenerator
             if (string.IsNullOrEmpty(CurrentVersion) || string.IsNullOrWhiteSpace(CurrentVersion)) throw new ArgumentException("Please provide CurrentVersion");
             if (string.IsNullOrEmpty(CurrentPlatform) || string.IsNullOrWhiteSpace(CurrentPlatform)) throw new ArgumentException("Please provide CurrentPlatform");
             if (string.IsNullOrEmpty(CurrentFramework) || string.IsNullOrWhiteSpace(CurrentFramework)) throw new ArgumentException("Please provide CurrentFramework");
-            if (string.IsNullOrEmpty(OutputPath)) throw new ArgumentException("Please provide OutputPath");
+            if (string.IsNullOrEmpty(OutputPackagePath)) throw new ArgumentException("Please provide OutputPath");
             if (CheckPlatforms == null || CheckPlatforms.Length == 0) throw new ArgumentException("Please provide CheckPlatforms");
             if (CheckFrameworks == null || CheckFrameworks.Length == 0) throw new ArgumentException("Please provide CheckFrameworks");
 
         }
 
-        private void GeneratePackage(IEnumerable<string> outputPaths)
+        private void GeneratePackage(IEnumerable<string> outputFiles)
         {
             Log.LogMessage(MessageImportance.Normal, "PublicPackageGenerator: Generating public package");
             throw new NotImplementedException();
@@ -127,7 +127,7 @@ namespace PublicPackageGenerator
                 using (var cmd = conn.CreateCommand())
                 {
                     var txt = string.Format("INSERT INTO Builds VALUES ('{0}', '{1}','{2}','{3}')",
-                                            CurrentVersion, CurrentPlatform, CurrentFramework, OutputPath);
+                                            CurrentVersion, CurrentPlatform, CurrentFramework, OutputPackagePath);
                     cmd.CommandText = txt;
                     cmd.ExecuteNonQuery();
                 }
