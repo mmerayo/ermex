@@ -11,10 +11,11 @@
    </PropertyGroup>
 
 
-  <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />-->
+  <!--Imports-->
   <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks" />
   <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\4.0\MSBuild.ExtensionPack.VersionNumber.targets" />
-  <!--<UsingTask TaskName="MSBuild.ExtensionPack.Framework.AssemblyInfo" AssemblyFile="$(ProjectDir)..\..\..\Code\Build\Packages\msBuildTaskExtensions\MSBuild.ExtensionPack.dll" />-->
+  
+  <!--CustomTasks-->
   <UsingTask TaskName="ILMerge.MSBuild.Tasks.ILMerge" AssemblyFile="$(MSBuildProjectDirectory)\..\Packages\ILMerge\V4x86\ILMerge.MSBuild.Tasks.dll" />
 
   <Target Name="PrintVariablesBuild">
@@ -114,7 +115,9 @@
 	<ItemGroup>
       <FilesToZip Include="$(MergedBinFolder)\ermeX.dll"/>
 	  <FilesToZip Include="$(MergedBinFolder)\ermeX.Documentation.chm"/>
+	  <FilesToZip Include="$(MergedBinFolder)\ChangeLog.txt"/>
 	  <FilesToCopy Include="$(OutputPath)ermeX.Documentation.chm"/>
+	  <FilesToCopy Include="$(OutputPath)ChangeLog.txt"/>
     </ItemGroup>
 	<Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(MergedBinFolder)"/>
     <MSBuild.ExtensionPack.Compression.Zip 
@@ -143,7 +146,7 @@
 	
 	<Delete Files="$(BuildReportsFolder)\ermeX_$(Platform).nuspec"/>
 	<Delete Files="$(BuildReportsFolder)\ermeX.dll"/>
-	<Delete Files="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>
+	<!--<Delete Files="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>-->
 	
 	<Message Text="StoreTask:End" />
   </Target>
@@ -217,7 +220,8 @@
     <CreateProperty Value="$(BuildPrefix)$(BMinorNumber).$(BRevisionNumber)">
       <Output PropertyName="BuildVersion" TaskParameter="Value"/>
     </CreateProperty>
-	<CreateProperty Value="$(frameworkVersion)_$(Platform)_$(BuildVersion)">
+	
+	<CreateProperty Value="$(BuildPrefix)$(BMinorNumber)_net$(frameworkVersion)_$(Platform)"> <!--When adding MONO builds the net prefix should change automatically-->
       <Output PropertyName="BuildTag" TaskParameter="Value"/>
     </CreateProperty>
 
