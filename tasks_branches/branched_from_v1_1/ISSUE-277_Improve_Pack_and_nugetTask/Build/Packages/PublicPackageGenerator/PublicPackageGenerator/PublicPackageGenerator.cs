@@ -78,6 +78,7 @@ namespace PublicPackageGenerator
                     IEnumerable<string> outputPaths = SaveCurrent();
                     if (outputPaths!=null)
                     {
+                        Log.LogMessage("PublicPackageGenerator:Generating package");
                         GeneratePackage(outputPaths);
                     }
                 }
