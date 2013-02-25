@@ -1,7 +1,6 @@
 using System;
-using System.Data;
 
-namespace NHibernateUnitOfWork
+namespace ermeX.DAL.Interfaces.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
