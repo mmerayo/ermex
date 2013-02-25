@@ -112,7 +112,6 @@ namespace ermeX.NonMerged
                 }
 
                 //load assembly
-
                 var resName = string.Format("{0}.{1}.dll", ns, dllName);
                 byte[] bytes = ReadResourceBytes(resName);
                 return Assembly.Load(bytes);
