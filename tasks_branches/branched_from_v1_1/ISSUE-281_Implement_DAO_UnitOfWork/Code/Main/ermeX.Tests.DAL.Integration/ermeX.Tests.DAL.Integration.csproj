@@ -78,6 +78,9 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.3.2.0.4000\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\Build\Packages\nUnit\NUnit-2.5.6.10205\nunitbin\nunit.framework.dll</HintPath>
     </Reference>
@@ -112,6 +115,11 @@
     <Compile Include="DataSources\ServiceDetailsSourceTester.cs" />
     <Compile Include="DataSources\UpdatableByExternalComponentsTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitOfWork\LocalData_Fixture.cs" />
+    <Compile Include="UnitOfWork\Test_usage_of_UnitOfWork.cs" />
+    <Compile Include="UnitOfWork\UnitOfWorkFactory_Fixture.cs" />
+    <Compile Include="UnitOfWork\UnitOfWorkImplementor_Fixture.cs" />
+    <Compile Include="UnitOfWork\UnitOfWork_Fixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ermeX.Common\ermeX.Common.csproj">
@@ -151,6 +159,10 @@
     <None Include="..\ermeX\KeyFile.snk">
       <Link>KeyFile.snk</Link>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="UnitOfWork\hibernate.cfg.xml" />
+    <Content Include="UnitOfWork\Person.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
