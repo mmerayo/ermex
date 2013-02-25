@@ -134,6 +134,12 @@
     <Compile Include="DataAccess\Mappings\SqlServer\OutgoingMessageSuscriptionsMap.cs" />
     <Compile Include="DataAccess\Mappings\SqlServer\ServiceDetailsMap.cs" />
     <Compile Include="DataAccess\Providers\ISessionProvider.cs" />
+    <Compile Include="DataAccess\UnitOfWork\GenericTransaction.cs" />
+    <Compile Include="DataAccess\UnitOfWork\Local.cs" />
+    <Compile Include="DataAccess\UnitOfWork\UnitOfWork.cs" />
+    <Compile Include="DataAccess\UnitOfWork\UnitOfWorkFactory.cs" />
+    <Compile Include="DataAccess\UnitOfWork\UnitOfWorkImplementor.cs" />
+    <Compile Include="DataAccess\UnitOfWork\With.Transaction.cs" />
     <Compile Include="IoC\DALInjections.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataAccess\DataSources\DataSource.cs" />

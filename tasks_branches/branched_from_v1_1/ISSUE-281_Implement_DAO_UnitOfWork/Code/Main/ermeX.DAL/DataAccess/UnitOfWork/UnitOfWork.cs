@@ -1,14 +1,14 @@
 ﻿using System;
 using NHibernate;
-using NHibernate.Cfg;
+using NHibernateUnitOfWork;
 
-namespace NHibernateUnitOfWork
+namespace ermeX.DAL.DataAccess.UnitOfWork
 {
     public static class UnitOfWork
     {
         private static readonly IUnitOfWorkFactory _unitOfWorkFactory = new UnitOfWorkFactory();
 
-        public static Configuration Configuration
+        public static NHibernate.Cfg.Configuration Configuration
         {
             get { return _unitOfWorkFactory.Configuration; }
         }

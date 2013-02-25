@@ -109,17 +109,11 @@
     <Compile Include="Observer\IDalObserver.cs" />
     <Compile Include="Observer\NotifiableDalAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnitOfWork\GenericTransaction.cs" />
     <Compile Include="UnitOfWork\IGenericTransaction.cs" />
     <Compile Include="UnitOfWork\ILocalData.cs" />
     <Compile Include="UnitOfWork\IUnitOfWork.cs" />
     <Compile Include="UnitOfWork\IUnitOfWorkFactory.cs" />
     <Compile Include="UnitOfWork\IUnitOfWorkImplementor.cs" />
-    <Compile Include="UnitOfWork\Local.cs" />
-    <Compile Include="UnitOfWork\UnitOfWork.cs" />
-    <Compile Include="UnitOfWork\UnitOfWorkFactory.cs" />
-    <Compile Include="UnitOfWork\UnitOfWorkImplementor.cs" />
-    <Compile Include="UnitOfWork\With.Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="KeyFile.snk" />

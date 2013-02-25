@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
-using System.Web;
+using NHibernateUnitOfWork;
 
-namespace NHibernateUnitOfWork
+namespace ermeX.DAL.DataAccess.UnitOfWork
 {
     public static class Local
     {
