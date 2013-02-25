@@ -18,4 +18,4 @@
 // /*---------------------------------------------------------------------------------------*/
 using System.Reflection;
 
-[assembly: AssemblyKeyFile(@"..\..\..\..\ermeX\KeyFile.snk")]
+[assembly: AssemblyKeyFile(@"..\..\..\ermeX\KeyFile.snk")]
