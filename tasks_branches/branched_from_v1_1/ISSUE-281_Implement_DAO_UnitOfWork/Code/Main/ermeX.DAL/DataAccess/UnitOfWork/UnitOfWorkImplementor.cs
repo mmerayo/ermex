@@ -5,7 +5,7 @@ using ermeX.DAL.Interfaces.UnitOfWork;
 
 namespace ermeX.DAL.DataAccess.UnitOfWork
 {
-    public class UnitOfWorkImplementor : IUnitOfWorkImplementor
+    internal class UnitOfWorkImplementor : IUnitOfWorkImplementor
     {
         private readonly IUnitOfWorkFactory _factory;
         private readonly ISession _session;

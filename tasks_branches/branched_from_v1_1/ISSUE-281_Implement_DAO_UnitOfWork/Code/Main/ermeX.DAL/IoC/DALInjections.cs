@@ -24,7 +24,9 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.DataAccess.Providers;
+using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.DAL.Interfaces;
+using ermeX.DAL.Interfaces.UnitOfWork;
 
 namespace ermeX.DAL.IoC
 {
@@ -60,6 +62,9 @@ namespace ermeX.DAL.IoC
             Bind<IAutoRegistration>().To<AutoRegistration>().InSingletonScope();
             Bind<IDataAccessExecutor>().To<DataAccessExecutor>().InSingletonScope();
 
+            //unit of work
+            Bind<IUnitOfWorkFactory>().To<UnitOfWorkFactory>();
+            Bind<IUnitOfWorkImplementor>().To<UnitOfWorkImplementor>();
 
         }
     }

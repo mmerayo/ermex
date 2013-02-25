@@ -4,7 +4,7 @@ using ermeX.DAL.Interfaces.UnitOfWork;
 
 namespace ermeX.DAL.DataAccess.UnitOfWork
 {
-    public static class UnitOfWork
+    internal static class UnitOfWork
     {
         private static readonly IUnitOfWorkFactory _unitOfWorkFactory = new UnitOfWorkFactory();
 

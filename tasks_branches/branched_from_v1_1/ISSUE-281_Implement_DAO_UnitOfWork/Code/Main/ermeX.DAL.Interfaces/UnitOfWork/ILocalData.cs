@@ -1,6 +1,6 @@
 namespace ermeX.DAL.Interfaces.UnitOfWork
 {
-    public interface ILocalData
+    internal interface ILocalData
     {
         object this[object key] { get; set; }
         int Count { get; }

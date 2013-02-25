@@ -1,8 +1,9 @@
 using System;
+using System.Data;
 
 namespace ermeX.DAL.Interfaces.UnitOfWork
 {
-    public interface IUnitOfWork : IDisposable
+    internal interface IUnitOfWork : IDisposable
     {
         void Flush();
         bool IsInActiveTransaction { get; }

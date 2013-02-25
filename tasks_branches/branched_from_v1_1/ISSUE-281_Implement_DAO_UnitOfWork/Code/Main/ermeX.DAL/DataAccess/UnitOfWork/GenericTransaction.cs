@@ -3,7 +3,7 @@ using ermeX.DAL.Interfaces.UnitOfWork;
 
 namespace ermeX.DAL.DataAccess.UnitOfWork
 {
-    public class GenericTransaction : IGenericTransaction
+    internal class GenericTransaction : IGenericTransaction
     {
         private readonly ITransaction _transaction;
 
