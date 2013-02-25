@@ -1,44 +1,40 @@
 ﻿using System;
 using System.Reflection;
+using Moq;
+using NHibernate;
 using NUnit.Framework;
 using ermeX.DAL.Interfaces.UnitOfWork;
-
+using UoW = ermeX.DAL.DataAccess.UnitOfWork.UnitOfWork;
 namespace ermeX.Tests.DAL.Integration.UnitOfWork
 {
     [TestFixture]
     public class UnitOfWork_Fixture
     {
-        private readonly MockRepository _mocks = new MockRepository();
 
         [Test]
         public void Can_Start_UnitOfWork()
         {
-            var factory = _mocks.DynamicMock<IUnitOfWorkFactory>();
-            var unitOfWork = _mocks.DynamicMock<IUnitOfWork>();
+            var factoryMock = new Mock<IUnitOfWorkFactory>();
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
 
             // brute force attack to set my own factory via reflection
-            var fieldInfo = typeof(UnitOfWork).GetField("_unitOfWorkFactory",
-                BindingFlags.Static | BindingFlags.SetField | BindingFlags.NonPublic);
-            fieldInfo.SetValue(null, factory);
+            var fieldInfo = typeof (UoW).GetField("_unitOfWorkFactory",
+                                                  BindingFlags.Static | BindingFlags.SetField | BindingFlags.NonPublic);
+            fieldInfo.SetValue(null, factoryMock);
 
-            using (_mocks.Record())
-            {
-                Expect.Call(factory.Create()).Return(unitOfWork);
-            }
-            using (_mocks.Playback())
-            {
-                var uow = UnitOfWork.Start();
-            }
+            factoryMock.Setup(x => x.Create()).Returns(unitOfWorkMock.Object);
+
+            Assert.DoesNotThrow(()=>UoW.Start());
+
         }
     }
 
     [TestFixture]
     public class UnitOfWork_With_Factory_Fixture
     {
-        private readonly MockRepository _mocks = new MockRepository();
-        private IUnitOfWorkFactory _factory;
-        private IUnitOfWork _unitOfWork;
-        private ISession _session;
+        private Mock<IUnitOfWorkFactory> _factoryMock;
+        private Mock<IUnitOfWork> _unitOfWorkMock;
+        private Mock<ISession> _sessionMock;
 
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
@@ -49,22 +45,22 @@ namespace ermeX.Tests.DAL.Integration.UnitOfWork
         [SetUp]
         public void SetupContext()
         {
-            _factory = _mocks.DynamicMock<IUnitOfWorkFactory>();
-            _unitOfWork = _mocks.DynamicMock<IUnitOfWork>();
-            _session = _mocks.DynamicMock<ISession>();
+            _factoryMock = new Mock<IUnitOfWorkFactory>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _sessionMock = new Mock<ISession>();
 
             InstrumentUnitOfWork();
-
-            _mocks.BackToRecordAll();
-            SetupResult.For(_factory.Create()).Return(_unitOfWork);
-            SetupResult.For(_factory.CurrentSession).Return(_session);
-            _mocks.ReplayAll();
+            _factoryMock.Setup(x => x.Create()).Returns(_unitOfWorkMock.Object).Verifiable();
+            _factoryMock.Setup(x => x.CurrentSession).Returns(_sessionMock.Object).Verifiable();
+            
         }
 
         [TearDown]
         public void TearDownContext()
         {
-            _mocks.VerifyAll();
+            _factoryMock.VerifyAll();
+            _unitOfWorkMock.VerifyAll();
+            _sessionMock.VerifyAll();
 
             ResetUnitOfWork();
         }
@@ -72,15 +68,15 @@ namespace ermeX.Tests.DAL.Integration.UnitOfWork
         private void InstrumentUnitOfWork()
         {
             // brute force attack to set my own factory via reflection
-            var fieldInfo = typeof(UnitOfWork).GetField("_unitOfWorkFactory",
+            var fieldInfo = typeof(UoW).GetField("_unitOfWorkFactory",
                                 BindingFlags.Static | BindingFlags.SetField | BindingFlags.NonPublic);
-            fieldInfo.SetValue(null, _factory);
+            fieldInfo.SetValue(null, _factoryMock);
         }
 
         private void ResetUnitOfWork()
         {
             // assert that the UnitOfWork is reset
-            var propertyInfo = typeof(UnitOfWork).GetProperty("CurrentUnitOfWork",
+            var propertyInfo = typeof(UoW).GetProperty("CurrentUnitOfWork",
                                 BindingFlags.Static | BindingFlags.SetProperty | BindingFlags.NonPublic);
             propertyInfo.SetValue(null, null, null);
             //var fieldInfo = typeof(UnitOfWork).GetField("_innerUnitOfWork",
@@ -91,15 +87,15 @@ namespace ermeX.Tests.DAL.Integration.UnitOfWork
         [Test]
         public void Can_Start_and_Dispose_UnitOfWork()
         {
-            IUnitOfWork uow = UnitOfWork.Start();
+            IUnitOfWork uow = UoW.Start();
             uow.Dispose();
         }
 
         [Test]
         public void Can_access_current_unit_of_work()
         {
-            IUnitOfWork uow = UnitOfWork.Start();
-            var current = UnitOfWork.Current;
+            IUnitOfWork uow = UoW.Start();
+            var current = UoW.Current;
             uow.Dispose();
         }
 
@@ -108,7 +104,7 @@ namespace ermeX.Tests.DAL.Integration.UnitOfWork
         {
             try
             {
-                var current = UnitOfWork.Current;
+                var current = UoW.Current;
             }
             catch (InvalidOperationException ex)
             { }
@@ -117,10 +113,10 @@ namespace ermeX.Tests.DAL.Integration.UnitOfWork
         [Test]
         public void Starting_UnitOfWork_if_already_started_throws()
         {
-            UnitOfWork.Start();
+            UoW.Start();
             try
             {
-                UnitOfWork.Start();
+                UoW.Start();
             }
             catch (InvalidOperationException ex)
             { }
@@ -129,18 +125,18 @@ namespace ermeX.Tests.DAL.Integration.UnitOfWork
         [Test]
         public void Can_test_if_UnitOfWork_Is_Started()
         {
-            Assert.IsFalse(UnitOfWork.IsStarted);
+            Assert.IsFalse(UoW.IsStarted);
 
-            IUnitOfWork uow = UnitOfWork.Start();
-            Assert.IsTrue(UnitOfWork.IsStarted);
+            IUnitOfWork uow = UoW.Start();
+            Assert.IsTrue(UoW.IsStarted);
         }
 
         [Test]
         public void Can_get_valid_current_session_if_UoW_is_started()
         {
-            using (UnitOfWork.Start())
+            using (UoW.Start())
             {
-                ISession session = UnitOfWork.CurrentSession;
+                ISession session = UoW.CurrentSession;
                 Assert.IsNotNull(session);
             }
         }
@@ -150,7 +146,7 @@ namespace ermeX.Tests.DAL.Integration.UnitOfWork
         {
             try
             {
-                ISession session = UnitOfWork.CurrentSession;
+                ISession session = UoW.CurrentSession;
             }
             catch (InvalidOperationException ex)
             { }

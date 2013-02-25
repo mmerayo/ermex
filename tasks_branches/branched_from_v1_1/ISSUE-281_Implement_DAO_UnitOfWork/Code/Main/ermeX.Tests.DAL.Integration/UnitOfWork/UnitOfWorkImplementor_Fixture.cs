@@ -1,4 +1,5 @@
 using System.Data;
+using Moq;
 using NHibernate;
 using NUnit.Framework;
 using ermeX.DAL.DataAccess.UnitOfWork;
@@ -9,122 +10,102 @@ namespace ermeX.Tests.DAL.Integration.UnitOfWork
     [TestFixture]
     public class UnitOfWorkImplementor_Fixture
     {
-        private readonly MockRepository _mocks = new MockRepository();
-        private IUnitOfWorkFactory _factory;
-        private ISession _session;
-        private IUnitOfWorkImplementor _uow;
+        private Mock<IUnitOfWorkFactory> _factoryMock;
+        private Mock<ISession> _sessionMock;
+        private IUnitOfWorkImplementor _uowImpl;
 
         [SetUp]
         public void SetupContext()
         {
-            _factory = _mocks.DynamicMock<IUnitOfWorkFactory>();
-            _session = _mocks.DynamicMock<ISession>();
+            _factoryMock = new Mock<IUnitOfWorkFactory>();
+            _sessionMock = new Mock<ISession>();
         }
 
         [Test]
         public void Can_create_UnitOfWorkImplementor()
         {
-            using(_mocks.Record())
-            {
-                
-            }
-            using (_mocks.Playback())
-            {
-                _uow = new UnitOfWorkImplementor(_factory, _session);
-                Assert.AreSame(_factory, ((UnitOfWorkImplementor)_uow).Factory);
-                Assert.AreSame(_session, ((UnitOfWorkImplementor)_uow).Session);
-            }
+
+            _uowImpl = new UnitOfWorkImplementor(_factoryMock.Object, _sessionMock.Object);
+            Assert.AreSame(_factoryMock.Object, ((UnitOfWorkImplementor) _uowImpl).Factory);
+            Assert.AreSame(_sessionMock.Object, ((UnitOfWorkImplementor) _uowImpl).Session);
         }
 
         [Test]
         public void Can_Dispose_UnitOfWorkImplementor()
         {
-            using(_mocks.Record())
-            {
-                Expect.Call(() => _factory.DisposeUnitOfWork(null)).IgnoreArguments();
-                Expect.Call(_session.Dispose);
-            }
-            using (_mocks.Playback())
-            {
-                _uow = new UnitOfWorkImplementor(_factory, _session);
-                _uow.Dispose();
-            }
+
+            _factoryMock.Setup(x => x.DisposeUnitOfWork(null)).Verifiable();
+            _sessionMock.Setup(x => x.Dispose()).Verifiable();
+
+            _uowImpl = new UnitOfWorkImplementor(_factoryMock.Object, _sessionMock.Object);
+            _uowImpl.Dispose();
+
+            _factoryMock.VerifyAll();
+            _sessionMock.VerifyAll();
         }
 
         [Test]
         public void Can_Flush_UnitOfWorkImplementor()
         {
-            using(_mocks.Record())
-            {
-                Expect.Call(_session.Flush);
-            }
-            using (_mocks.Playback())
-            {
-                _uow = new UnitOfWorkImplementor(_factory, _session);
-                _uow.Flush();
-            }
+            _sessionMock.Setup(x => x.Flush()).Verifiable();
+
+            _uowImpl = new UnitOfWorkImplementor(_factoryMock.Object, _sessionMock.Object);
+            _uowImpl.Flush();
         }
 
         [Test]
         public void Can_BeginTransaction()
         {
-            using(_mocks.Record())
-            {
-                Expect.Call(_session.BeginTransaction()).Return(null);
-            }
-            using (_mocks.Playback())
-            {
-                _uow = new UnitOfWorkImplementor(_factory, _session);
-                var transaction = _uow.BeginTransaction();
-                Assert.IsNotNull(transaction);
-            }
+            _sessionMock.Setup(x => x.BeginTransaction()).Returns((ITransaction)null);
+
+            _uowImpl = new UnitOfWorkImplementor(_factoryMock.Object, _sessionMock.Object);
+            var transaction = _uowImpl.BeginTransaction();
+            Assert.IsNotNull(transaction);
+
+            _sessionMock.VerifyAll();
         }
 
         [Test]
         public void Can_BeginTransaction_specifying_isolation_level()
         {
             var isolationLevel = IsolationLevel.Serializable;
-            using(_mocks.Record())
-            {   
-                Expect.Call(_session.BeginTransaction(isolationLevel)).Return(null);
-            }
-            using (_mocks.Playback())
-            {
-                _uow = new UnitOfWorkImplementor(_factory, _session);
-                var transaction = _uow.BeginTransaction(isolationLevel);
-                Assert.IsNotNull(transaction);
-            }
+
+            _sessionMock.Setup(x => x.BeginTransaction(isolationLevel)).Returns((ITransaction) null);
+
+            _uowImpl = new UnitOfWorkImplementor(_factoryMock.Object, _sessionMock.Object);
+            var transaction = _uowImpl.BeginTransaction(isolationLevel);
+            Assert.IsNotNull(transaction);
+
+            _sessionMock.VerifyAll();
         }
 
         [Test]
         public void Can_execute_TransactionalFlush()
         {
-            var tx = _mocks.CreateMock<ITransaction>();
-            var session = _mocks.DynamicMock<ISession>();
-            SetupResult.For(session.BeginTransaction(IsolationLevel.ReadCommitted)).Return(tx);
+            var tx = new Mock<ITransaction>();
+            var session = new Mock<ISession>();
+            session.Setup(x => x.BeginTransaction(IsolationLevel.ReadCommitted)).Returns(tx.Object);
 
-            _uow = _mocks.PartialMock<UnitOfWorkImplementor>(_factory, _session);
+            _uowImpl = new UnitOfWorkImplementor(_factoryMock.Object, _sessionMock.Object);
 
-            using (_mocks.Record())
-            {
-                Expect.Call(tx.Commit);
-                Expect.Call(tx.Dispose);
-            }
-            using (_mocks.Playback())
-            {
-                _uow = new UnitOfWorkImplementor(_factory, session);
-                _uow.TransactionalFlush();
-            }
+            tx.Setup(x => x.Commit()).Verifiable();
+            tx.Setup(x => x.Dispose()).Verifiable();
+
+            //_uowImpl = new UnitOfWorkImplementor(_factoryMock.Object, session.Object);
+            _uowImpl.TransactionalFlush();
+
+            tx.Verify(x=>x.Commit(),Times.Once());
+            tx.Verify(x => x.Dispose(), Times.Once());
         }
 
         [Test]
         public void Can_execute_TransactionalFlush_specifying_isolation_level()
         {
-            var tx = _mocks.CreateMock<ITransaction>();
-            var session = _mocks.DynamicMock<ISession>();
-            SetupResult.For(session.BeginTransaction(IsolationLevel.Serializable)).Return(tx);
+            var tx = new Mock<ITransaction>();
+            var session = new Mock<ISession>();
+            session.Setup(x => x.BeginTransaction(IsolationLevel.Serializable)).Returns(tx.Object);
 
-            _uow = _mocks.PartialMock<UnitOfWorkImplementor>(_factory, session);
+            _uowMock = _mocks.PartialMock<UnitOfWorkImplementor>(_factoryMock, session);
 
             using (_mocks.Record())
             {
@@ -133,7 +114,7 @@ namespace ermeX.Tests.DAL.Integration.UnitOfWork
             }
             using (_mocks.Playback())
             {
-                _uow.TransactionalFlush(IsolationLevel.Serializable);
+                _uowMock.TransactionalFlush(IsolationLevel.Serializable);
             }
         }
     }
