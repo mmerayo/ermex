@@ -1,6 +1,7 @@
 using NHibernate;
+using NHibernateUnitOfWork;
 
-namespace NHibernateUnitOfWork
+namespace ermeX.DAL.DataAccess.UnitOfWork
 {
     public class GenericTransaction : IGenericTransaction
     {

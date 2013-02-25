@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Xml;
 using NHibernate;
-using NHibernate.Cfg;
+using NHibernateUnitOfWork;
 
-namespace NHibernateUnitOfWork
+namespace ermeX.DAL.DataAccess.UnitOfWork
 {
     public class UnitOfWorkFactory : IUnitOfWorkFactory
     {
@@ -12,7 +12,7 @@ namespace NHibernateUnitOfWork
 
         private static ISession _currentSession;
         private ISessionFactory _sessionFactory;
-        private Configuration _configuration;
+        private NHibernate.Cfg.Configuration _configuration;
 
         internal UnitOfWorkFactory()
         { }
@@ -25,13 +25,13 @@ namespace NHibernateUnitOfWork
             return new UnitOfWorkImplementor(this, session);
         }
 
-        public Configuration Configuration
+        public NHibernate.Cfg.Configuration Configuration
         {
             get
             {
                 if (_configuration == null)
                 {
-                    _configuration = new Configuration();
+                    _configuration = new NHibernate.Cfg.Configuration();
                     string hibernateConfig = Default_HibernateConfig;
                     //if not rooted, assume path from base directory
                     if (Path.IsPathRooted(hibernateConfig) == false)

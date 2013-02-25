@@ -1,7 +1,8 @@
 using System;
 using System.Data;
+using NHibernateUnitOfWork;
 
-namespace NHibernateUnitOfWork
+namespace ermeX.DAL.DataAccess.UnitOfWork
 {
     public static partial class With
     {
