@@ -6,7 +6,7 @@ using ermeX.DAL.Interfaces.UnitOfWork;
 
 namespace ermeX.DAL.DataAccess.UnitOfWork
 {
-    public class UnitOfWorkFactory : IUnitOfWorkFactory
+    internal class UnitOfWorkFactory : IUnitOfWorkFactory
     {
         private const string Default_HibernateConfig = "hibernate.cfg.xml";
 
@@ -64,7 +64,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
             set { _currentSession = value; }
         }
 
-        public void DisposeUnitOfWork(UnitOfWorkImplementor adapter)
+        public void DisposeUnitOfWork(IUnitOfWorkImplementor adapter)
         {
             CurrentSession = null;
             UnitOfWork.DisposeUnitOfWork(adapter);

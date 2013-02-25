@@ -4,7 +4,7 @@ using ermeX.DAL.Interfaces.UnitOfWork;
 
 namespace ermeX.DAL.DataAccess.UnitOfWork
 {
-    public static partial class With
+    internal static partial class With
     {
         public static void Transaction(IsolationLevel level, Action transactional)
         {

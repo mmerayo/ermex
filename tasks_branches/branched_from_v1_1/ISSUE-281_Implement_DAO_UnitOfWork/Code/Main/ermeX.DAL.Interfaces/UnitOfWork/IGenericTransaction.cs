@@ -2,7 +2,7 @@ using System;
 
 namespace ermeX.DAL.Interfaces.UnitOfWork
 {
-    public interface IGenericTransaction : IDisposable
+    internal interface IGenericTransaction : IDisposable
     {
         void Commit();
         void Rollback();
