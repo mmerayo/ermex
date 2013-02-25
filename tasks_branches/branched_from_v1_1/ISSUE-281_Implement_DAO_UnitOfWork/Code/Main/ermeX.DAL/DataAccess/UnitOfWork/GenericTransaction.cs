@@ -1,5 +1,5 @@
 using NHibernate;
-using NHibernateUnitOfWork;
+using ermeX.DAL.Interfaces.UnitOfWork;
 
 namespace ermeX.DAL.DataAccess.UnitOfWork
 {

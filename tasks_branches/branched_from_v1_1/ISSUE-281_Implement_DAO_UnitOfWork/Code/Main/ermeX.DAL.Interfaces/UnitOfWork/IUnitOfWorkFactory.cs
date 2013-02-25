@@ -1,11 +1,10 @@
 using NHibernate;
-using NHibernate.Cfg;
 
-namespace NHibernateUnitOfWork
+namespace ermeX.DAL.Interfaces.UnitOfWork
 {
     public interface IUnitOfWorkFactory
     {
-        Configuration Configuration { get; }
+        NHibernate.Cfg.Configuration Configuration { get; }
         ISessionFactory SessionFactory { get; }
         ISession CurrentSession { get; set; }
 

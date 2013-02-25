@@ -1,6 +1,6 @@
 using System;
 
-namespace NHibernateUnitOfWork
+namespace ermeX.DAL.Interfaces.UnitOfWork
 {
     public interface IGenericTransaction : IDisposable
     {
