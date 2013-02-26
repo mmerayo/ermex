@@ -89,35 +89,32 @@ namespace ermeX.NonMerged
             string dllName = args.Name.Contains(',')
                                  ? args.Name.Substring(0, args.Name.IndexOf(','))
                                  : args.Name.Replace(".dll", "");
-            
-                if (!UnmergedAssemblies.ContainsKey(dllName)) return null;
 
-                string ns = "ermeX.NonMerged.Resources";
-                if (UnmergedAssemblies[dllName] == DataType.Specialized)
-                {
-                    ns += Is64Bit ? ".x64" : ".x86";
-                }
-                //copy files if needed
-                string applicationFolderPath;
-                if (ToCopy.ContainsKey(dllName))
-                {
-                    applicationFolderPath = PathUtils.GetApplicationFolderPath();
+            if (!UnmergedAssemblies.ContainsKey(dllName)) return null;
 
-                    string filename = Path.Combine(applicationFolderPath, ToCopy[dllName] + ".dll");
-                    var o = ReadResourceBytes(string.Format("{0}.{1}.dll", ns, ToCopy[dllName]));
-                    if (!File.Exists(filename))
-                        using (var fs = new FileStream(filename, FileMode.Create))
-                        {
-                            fs.Write(o, 0, o.Length);
-                        }
-                }
+            string ns = "ermeX.NonMerged.Resources";
+            if (UnmergedAssemblies[dllName] == DataType.Specialized)
+            {
+                ns += Is64Bit ? ".x64" : ".x86";
+            }
+            //copy files if needed
+            string applicationFolderPath;
+            if (ToCopy.ContainsKey(dllName))
+            {
+                applicationFolderPath = PathUtils.GetApplicationFolderPath();
 
-                //load assembly
+                string filename = Path.Combine(applicationFolderPath, ToCopy[dllName] + ".dll");
+                var o = ReadResourceBytes(string.Format("{0}.{1}.dll", ns, ToCopy[dllName]));
+                if (!File.Exists(filename))
+                    using (var fs = new FileStream(filename, FileMode.Create))
+                        fs.Write(o, 0, o.Length);
+            }
 
-                var resName = string.Format("{0}.{1}.dll", ns, dllName);
-                byte[] bytes = ReadResourceBytes(resName);
-                return Assembly.Load(bytes);
-           
+            //load assembly
+            var resName = string.Format("{0}.{1}.dll", ns, dllName);
+            byte[] bytes = ReadResourceBytes(resName);
+            return Assembly.Load(bytes);
+
         }
 
         private static byte[] ReadResourceBytes(string resName)
