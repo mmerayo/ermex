@@ -171,8 +171,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if $(PlatformName) == x64 xcopy /i /y "$(SolutionDir)packages\Sqlite.1.0.83\x64\SQLite.Interop.dll" "$(TargetDir)*.*"
-      if $(PlatformName) == x86 xcopy /i /y "$(SolutionDir)packages\Sqlite.1.0.83\x86\SQLite.Interop.dll" "$(TargetDir)*.*"
+    <PostBuildEvent>cd $(TargetDir)
+del *SQLite*
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
