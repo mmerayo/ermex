@@ -105,7 +105,17 @@ namespace ermeX.NonMerged
 
                 string filename = Path.Combine(applicationFolderPath, ToCopy[dllName] + ".dll");
                 var o = ReadResourceBytes(string.Format("{0}.{1}.dll", ns, ToCopy[dllName]));
-                if (!File.Exists(filename))
+                bool needCreate = true;
+                if (File.Exists(filename))
+                    try
+                    {
+                        File.Delete(filename);
+                    }
+                    catch
+                    {
+                        needCreate = false;
+                    }
+                if (needCreate)
                     using (var fs = new FileStream(filename, FileMode.Create))
                         fs.Write(o, 0, o.Length);
             }
@@ -114,7 +124,6 @@ namespace ermeX.NonMerged
             var resName = string.Format("{0}.{1}.dll", ns, dllName);
             byte[] bytes = ReadResourceBytes(resName);
             return Assembly.Load(bytes);
-
         }
 
         private static byte[] ReadResourceBytes(string resName)

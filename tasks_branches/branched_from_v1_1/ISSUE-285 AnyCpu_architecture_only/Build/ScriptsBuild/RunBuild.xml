@@ -246,6 +246,7 @@
     <ItemGroup>
       <Input Include="$(OutputPath)*dll" Exclude="$(OutputPath)*Test*;$(OutputPath)Moq.*;$(OutputPath)System.Data.SQLite.*;$(OutputPath)SQLite.Interop.*;$(OutputPath)nunit.*;$(OutputPath)log4net*;$(OutputPath)System*;$(OutputPath)mscorlib.*;$(OutputPath)Common.Logging*;"/>	  	     
 	  <NotMergeable Include="$(OutputPath)SQLite.Interop.*;$(OutputPath)Common.Logging.dll;$(OutputPath)System.Data.SQLite.dll;"/>
+	  <!--<NotMergeable Include="$(OutputPath)Common.Logging.dll;"/>-->
     </ItemGroup>
 	<Message Text="The build version is name is: $(BuildVersion)"/> 
     <ILMerge.MSBuild.Tasks.ILMerge
