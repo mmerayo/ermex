@@ -48,7 +48,7 @@ namespace ermeX.NonMerged
         }
         private static readonly Dictionary<string,DataType> UnmergedAssemblies=new Dictionary<string,DataType>();
         private static readonly Dictionary<string, string> ToCopy = new Dictionary<string, string>(); 
-
+        
         static ResolveUnmerged()
         {
             UnmergedAssemblies.Add("Common.Logging",DataType.Any);
@@ -56,12 +56,13 @@ namespace ermeX.NonMerged
 
             UnmergedAssemblies.Add("System.Data.SQLite", DataType.Specialized);
             ToCopy.Add("System.Data.SQLite","SQLite.Interop");
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
         }
 
         public static void Init()
         {
-            AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+            //forces the type cctor
         }
 
         static void CurrentDomain_ProcessExit(object sender, EventArgs e)
