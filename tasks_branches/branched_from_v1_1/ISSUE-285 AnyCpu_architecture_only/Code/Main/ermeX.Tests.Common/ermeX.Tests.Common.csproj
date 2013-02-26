@@ -86,9 +86,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath Condition="'$(Platform)' == 'x64'">..\packages\Sqlite.1.0.83\x64\System.Data.SQLite.dll</HintPath>
-      <HintPath Condition="'$(Platform)' == 'x86'">..\packages\Sqlite.1.0.83\x86\System.Data.SQLite.dll</HintPath>
+      <HintPath>..\packages\Sqlite.1.0.83\x86\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -189,8 +187,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>cd $(TargetDir)
+del *SQLite*</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

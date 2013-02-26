@@ -58,7 +58,7 @@ namespace ermeX.NonMerged
             ToCopy.Add("System.Data.SQLite","SQLite.Interop");
         }
 
-        public static void Prepare()
+        public static void Init()
         {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);

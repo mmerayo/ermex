@@ -34,7 +34,7 @@ namespace ermeX.Tests.NonMerged
         [TestFixtureSetUp]
         public void OnFixtureSetup()
         {
-            ResolveUnmerged.Prepare();
+            ResolveUnmerged.Init();
         }
 
         [Test]
