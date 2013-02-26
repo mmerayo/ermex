@@ -2,7 +2,7 @@ REM PARAMS taskid & revision number
 ::TaskId:[Compile | UnitTests | Pack | AcceptanceTests] 
 REM BUILD PARAMS
 cd /d %~dp0
-set buildType=%CI_CPU%
+set buildType=Any CPU
 
 set frameworkVersion=%CI_Framework%
 set nunitFramework=net-%frameworkVersion%
@@ -17,7 +17,7 @@ set outputReportsFolder=%artifactsfolder%\Reports\%frameworkVersion%\%buildType%
 set packagesFolder=%CD%\..\Packages
 set nunitExePath=%packagesFolder%\nUnit\NUnit-2.5.6.10205\nunitbin
 set taskId=%1
-set msBuildProperties=Configuration=%configuration%;OutputPath="%outputBinFolder%"\;Platform=%buildType%;Optimize=true;BuildReportsFolder="%outputReportsFolder%";TaskIdName=%taskId%;nUnitPath="%nunitExePath%";nUnitFramework=%nunitFramework%;MergedFolder="%mergedFolder%"
+set msBuildProperties=Configuration=%configuration%;OutputPath="%outputBinFolder%"\;Platform="%buildType%";Optimize=true;BuildReportsFolder="%outputReportsFolder%";TaskIdName=%taskId%;nUnitPath="%nunitExePath%";nUnitFramework=%nunitFramework%;MergedFolder="%mergedFolder%"
 
 IF NOT "%2"=="" GOTO cont
 	set msBuildProperties=%msBuildProperties%;BMinorNumber=0
