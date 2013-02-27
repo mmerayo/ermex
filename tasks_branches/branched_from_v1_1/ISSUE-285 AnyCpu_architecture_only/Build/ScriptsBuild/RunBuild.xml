@@ -77,12 +77,13 @@
   </Target>
   
    <Target Name="DocumentationTask" Condition=" $(TaskIdName) == 'DocumentationTask' ">
-    <ItemGroup>
+    <Message Text="DocumentationTask:Start" />
+	<ItemGroup>
       <HelpFiles Include="$(OutputPath)*.chm"/>
-	</ItemGroup>
-	<Message Text="DocumentationTask:Start" />
+	</ItemGroup>		
 	<Message Text="$(TaskIdName)" />    
-	<MSBuild Projects="$(DocumentationPrjFolder)\ermeX.help.shfbproj" />
+	<MSBuild Projects="$(DocumentationPrjFolder)\ermeX.help.shfbproj" />	
+	<Message Text="copying files from $(OutputPath)*.chm to $(MergedBinFolder)" />
 	<Copy SourceFiles="@(HelpFiles)" DestinationFolder="$(MergedBinFolder)"/>
 	<Message Text="DocumentationTask:End" />
   </Target>
@@ -109,8 +110,7 @@
 	<NUnit Assemblies="@(AssembliesToTest)" 
 		ToolPath="$(nUnitPath)" 
 		Framework="$(nUnitFramework)" 
-		OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml"
-		Use32Bit="$(Is32)" 
+		OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml"		
 		Labels="true"
 		/>	
 		

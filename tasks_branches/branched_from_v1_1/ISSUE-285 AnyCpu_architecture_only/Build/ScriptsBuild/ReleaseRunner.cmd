@@ -3,6 +3,7 @@ REM PARAMS taskid & revision number
 REM BUILD PARAMS
 cd /d %~dp0
 set buildType=Any CPU
+set buildTypeFolder=Any_CPU
 
 set frameworkVersion=%CI_Framework%
 set nunitFramework=net-%frameworkVersion%
@@ -11,9 +12,9 @@ set configuration=%CI_Configuration%
 
 REM COMMON TO ALL BUILDS
 set artifactsFolder=%CD%\..\BuildArtifacts
-set outputBinFolder=%artifactsfolder%\Binaries\%frameworkVersion%\%buildType%\%configuration%
-set mergedFolder=%artifactsfolder%\Merged\v%frameworkVersion%\%buildType%
-set outputReportsFolder=%artifactsfolder%\Reports\%frameworkVersion%\%buildType%
+set outputBinFolder=%artifactsfolder%\Binaries\%frameworkVersion%\%buildTypeFolder%\%configuration%
+set mergedFolder=%artifactsfolder%\Merged\v%frameworkVersion%\%buildTypeFolder%
+set outputReportsFolder=%artifactsfolder%\Reports\%frameworkVersion%\%buildTypeFolder%
 set packagesFolder=%CD%\..\Packages
 set nunitExePath=%packagesFolder%\nUnit\NUnit-2.5.6.10205\nunitbin
 set taskId=%1
