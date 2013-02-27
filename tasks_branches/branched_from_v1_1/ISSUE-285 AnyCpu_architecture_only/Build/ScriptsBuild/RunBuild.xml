@@ -42,10 +42,10 @@
 	
 	<CallTarget Targets="CompileTask" />
 	<CallTarget Targets="DocumentationTask"/>
-    <CallTarget Targets="CreatePackageTask" />
+    <CallTarget Targets="PackTask" />
 	<CallTarget Targets="StoreTask" />
 	<CallTarget Targets="RunTestsTask" />
-	<CallTarget Targets="RunAcceptanceTestsTask" />
+	<CallTarget Targets="AcceptanceTestsTask" />
     <Message Text="Build:End" />
   </Target>
 
@@ -56,7 +56,7 @@
   </Target>
 
   <!--***USER TASKS****-->
-  <Target Name="CompileTask" Condition=" $(TaskIdName) == 'Compile' ">
+  <Target Name="CompileTask" Condition=" $(TaskIdName) == 'CompileTask' ">
 	<Message Text="CompileTask:Start" />
 	<Message Text="$(TaskIdName)" />
  
@@ -65,7 +65,7 @@
     
 	<MSBuild Projects="$(MSBuildProjectDirectory)\..\..\Code\Main\ermeX.sln" />	
 	<CallTarget Targets="MergeOutput" />
-	<CallTarget Targets="CreateNuGetSpecs" />
+	
 	<MSBuild 
 		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\Regular\AcceptanceTests.sln" 
 		Properties="OutputPath=$(AcceptanceBinFolder)\Regular;"/>
@@ -90,13 +90,13 @@
   
   
   <!-- http://www.msbuildextensionpack.com/help/4.0.5.0/html/b9e622d0-2888-4ba5-a042-889adac0e220.htm -->
-  <Target Name="RunTestsTask" Condition=" '$(TaskIdName)' == 'UnitTests' ">
+  <Target Name="RunTestsTask" Condition=" '$(TaskIdName)' == 'UnitTestsTask' ">
 	<Message Text="RunTestsTask:Start" />	
 	<!--<PropertyGroup>		
 		<Is32 Condition="'$(Platform)' == 'x86'" >true</Is32>
 		<Is32 Condition="'$(Platform)' == 'x64'" >false</Is32>
 	</PropertyGroup>-->
-	
+	<Message Text="Assemblies to test: $(OutputPath)*Tests*.dll" />
 	<ItemGroup>
       <AssembliesToTest Include="$(OutputPath)*Tests*.dll"/>
     </ItemGroup>
@@ -116,8 +116,8 @@
 		
 	<Message Text="RunTestsTask:End" />
   </Target>
-  <Target Name="CreatePackageTask" Condition=" $(TaskIdName) == 'Pack' ">
-	<Message Text="CreatePackageTask:Start" />	
+  <Target Name="PackTask" Condition=" $(TaskIdName) == 'PackTask' ">
+	<Message Text="PackTask:Start" />	
 	<Message Text="Creating package $(BuildReportsFolder)\ermeX_$(BuildTag).zip from: $(MergedBinFolder)"/> 
 	
 	<ItemGroup>
@@ -134,7 +134,9 @@
 		RemoveRoot="$(MergedBinFolder)"
 		ZipFileName="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>
 	
-	<Message Text="CreatePackageTask:End" />
+	<CallTarget Targets="CreateNuGetSpecs" />
+	
+	<Message Text="PackTask:End" />
   </Target>
   
   <Target Name="StoreTask" Condition=" $(TaskIdName) == 'StoreTask' ">
@@ -159,15 +161,15 @@
 	<Message Text="StoreTask:End" />
   </Target>
   
-   <Target Name="RunAcceptanceTestsTask" Condition=" $(TaskIdName) == 'AcceptanceTests' ">
-	<Message Text="RunAcceptanceTestsTask:Start" />	
+   <Target Name="AcceptanceTestsTask" Condition=" $(TaskIdName) == 'AcceptanceTestsTask' ">
+	<Message Text="AcceptanceTestsTask:Start" />	
 	<Message Text="Running: $(AcceptanceBinFolder)\Basic\ermeX.BasicTest.exe"/>
 	<Exec Command="$(AcceptanceBinFolder)\Basic\ermeX.BasicTest.exe"/>
 	
 	<Message Text="Running: $(AcceptanceBinFolder)\Regular\ermeX.Tests.AcceptanceTester.exe"/>
-	<Exec Command="$(AcceptanceBinFolder)\Regular\ermeX.Tests.AcceptanceTester.exe AllJoinToSameFriendComponent true 60000 61000 5 100 false 0"/>
+	<Exec Command="%22$(AcceptanceBinFolder)\Regular\ermeX.Tests.AcceptanceTester.exe AllJoinToSameFriendComponent true 60000 61000 5 100 false 0%22"/>
 	
-	<Message Text="RunAcceptanceTestsTask:End" />
+	<Message Text="AcceptanceTestsTask:End" />
   </Target>
 
   <!-- HELPER METHODS-->
