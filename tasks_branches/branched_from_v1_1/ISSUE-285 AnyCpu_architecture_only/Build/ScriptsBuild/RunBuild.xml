@@ -164,7 +164,7 @@
    <Target Name="AcceptanceTestsTask" Condition=" $(TaskIdName) == 'AcceptanceTestsTask' ">
 	<Message Text="AcceptanceTestsTask:Start" />	
 	<Message Text="Running: $(AcceptanceBinFolder)\Basic\ermeX.BasicTest.exe"/>
-	<Exec Command="$(AcceptanceBinFolder)\Basic\ermeX.BasicTest.exe"/>
+	<Exec Command="%22$(AcceptanceBinFolder)\Basic\ermeX.BasicTest.exe%22"/>
 	
 	<Message Text="Running: $(AcceptanceBinFolder)\Regular\ermeX.Tests.AcceptanceTester.exe"/>
 	<Exec Command="%22$(AcceptanceBinFolder)\Regular\ermeX.Tests.AcceptanceTester.exe AllJoinToSameFriendComponent true 60000 61000 5 100 false 0%22"/>
