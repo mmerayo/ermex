@@ -65,14 +65,18 @@
     
 	<MSBuild Projects="$(MSBuildProjectDirectory)\..\..\Code\Main\ermeX.sln" />	
 	<CallTarget Targets="MergeOutput" />
-	
+		
 	<MSBuild 
 		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\Regular\AcceptanceTests.sln" 
 		Properties="OutputPath=$(AcceptanceBinFolder)\Regular;"/>
+	<ItemGroup>
+      <dllSource Include="$(MergedBinFolder)\ermeX.dll"/>
+	</ItemGroup>		
+    <Copy SourceFiles="@(dllSource)" DestinationFolder="$(AcceptanceBinFolder)\Regular"/>
 	<MSBuild 
 		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\Basic\BasicTest.sln" 
 		Properties="OutputPath=$(AcceptanceBinFolder)\Basic;"/>	
-		
+	<Copy SourceFiles="@(dllSource)" DestinationFolder="$(AcceptanceBinFolder)\Basic"/>
 	<Message Text="CompileTask:End" />
   </Target>
   
@@ -164,10 +168,10 @@
    <Target Name="AcceptanceTestsTask" Condition=" $(TaskIdName) == 'AcceptanceTestsTask' ">
 	<Message Text="AcceptanceTestsTask:Start" />	
 	<Message Text="Running: $(AcceptanceBinFolder)\Basic\ermeX.BasicTest.exe"/>
-	<Exec Command="%22$(AcceptanceBinFolder)\Basic\ermeX.BasicTest.exe%22"/>
+	<Exec Command="$(AcceptanceBinFolder)\Basic\ermeX.BasicTest.exe"/>
 	
 	<Message Text="Running: $(AcceptanceBinFolder)\Regular\ermeX.Tests.AcceptanceTester.exe"/>
-	<Exec Command="%22$(AcceptanceBinFolder)\Regular\ermeX.Tests.AcceptanceTester.exe AllJoinToSameFriendComponent true 60000 61000 5 100 false 0%22"/>
+	<Exec Command="$(AcceptanceBinFolder)\Regular\ermeX.Tests.AcceptanceTester.exe AllJoinToSameFriendComponent true 60000 61000 5 100 false 0"/>
 	
 	<Message Text="AcceptanceTestsTask:End" />
   </Target>
