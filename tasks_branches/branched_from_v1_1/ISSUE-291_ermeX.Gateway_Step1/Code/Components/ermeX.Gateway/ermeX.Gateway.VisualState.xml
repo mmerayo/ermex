@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
+  <TopNode>[0-1000]E:\projects\ermeX.Gateway\Code\Components\ermeX.Gateway\ermeX.Gateway.nunit</TopNode>
+  <SelectedNode>[0-1002]ermeX.Gateway.Test.ModelGeneratorTester.ModelGeneratorTester.Generate_Model_From_Wsdl</SelectedNode>
+  <ExcludeCategories>false</ExcludeCategories>
+  <Nodes>
+    <Node UniqueName="[0-1000]E:\projects\ermeX.Gateway\Code\Components\ermeX.Gateway\ermeX.Gateway.nunit" Expanded="true" />
+    <Node UniqueName="[0-1003]E:\projects\ermeX.Gateway\Code\Components\ermeX.Gateway\ermeX.Gateway.Test.CodeGenTests\bin\x64\Debug\ermeX.Gateway.Test.CodeGenTests.dll" Expanded="true" />
+    <Node UniqueName="[0-1004]ermeX" Expanded="true" />
+    <Node UniqueName="[0-1005]ermeX.Gateway" Expanded="true" />
+    <Node UniqueName="[0-1006]ermeX.Gateway.Test" Expanded="true" />
+    <Node UniqueName="[0-1007]ermeX.Gateway.Test.ModelGeneratorTester" Expanded="true" />
+    <Node UniqueName="[0-1001]ermeX.Gateway.Test.ModelGeneratorTester.ModelGeneratorTester" Expanded="true" />
+  </Nodes>
+</VisualState>

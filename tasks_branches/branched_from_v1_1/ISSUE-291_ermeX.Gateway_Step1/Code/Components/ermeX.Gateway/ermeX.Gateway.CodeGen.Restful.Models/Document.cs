@@ -9,8 +9,8 @@ namespace ermeX.Gateway.CodeGen.Restful.Models
     {
         public Dictionary<string, string> Namespace { get; set; }
         public List<Schema> Schema { get; set; }
-        public Interface Interface { get; set; }
-        public Binding Binding { get; set; }
-        public Service Service { get; set; }
+        public List<Interface> Interfaces { get; set; }
+        public List<Binding> Bindings { get; set; }
+        public List<Service> Services { get; set; }
     }
 }

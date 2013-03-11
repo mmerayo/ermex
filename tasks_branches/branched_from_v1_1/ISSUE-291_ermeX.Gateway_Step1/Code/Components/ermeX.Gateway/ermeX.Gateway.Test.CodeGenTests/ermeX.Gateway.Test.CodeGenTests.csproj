@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{641DB49D-0AB7-4C67-8371-42F6FBFEB048}</ProjectGuid>
+    <ProjectGuid>{DF2633DE-2A6A-4EF0-BBAD-0C5E00AD1677}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ermeX.Gateway.CodeGen.Restful.Models</RootNamespace>
-    <AssemblyName>ermeX.Gateway.CodeGen.Restful.Models</AssemblyName>
+    <RootNamespace>ermeX.Gateway.Test.CodeGenTests</RootNamespace>
+    <AssemblyName>ermeX.Gateway.Test.CodeGenTests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -71,7 +71,11 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -80,16 +84,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Binding.cs" />
-    <Compile Include="BindingOperation.cs" />
-    <Compile Include="Document.cs" />
-    <Compile Include="Endpoint.cs" />
-    <Compile Include="Interface.cs" />
-    <Compile Include="InterfaceOperation.cs" />
+    <Compile Include="ModelGeneratorTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service.cs" />
-    <Compile Include="Schema.cs" />
-    <Compile Include="SchemaElement.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ermeX.Gateway.CodeGen.Restful.Models\ermeX.Gateway.CodeGen.Restful.Models.csproj">
+      <Project>{641DB49D-0AB7-4C67-8371-42F6FBFEB048}</Project>
+      <Name>ermeX.Gateway.CodeGen.Restful.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Gateway.CodeGen.Restful\ermeX.Gateway.CodeGen.Restful.csproj">
+      <Project>{3FF1A0E1-0BAB-4DF5-A222-3A65BBEB1F1C}</Project>
+      <Name>ermeX.Gateway.CodeGen.Restful</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Gateway.Common\ermeX.Gateway.Common.csproj">
+      <Project>{82328DE3-5010-42FA-B109-52B358805374}</Project>
+      <Name>ermeX.Gateway.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Gateway.ConfigurationManagement.Config\ermeX.Gateway.ConfigurationManagement.Config.csproj">
+      <Project>{21AED2DD-9D6C-475A-9CFA-C86053A7E7F7}</Project>
+      <Name>ermeX.Gateway.ConfigurationManagement.Config</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Gateway.ConfigurationManagement\ermeX.Gateway.ConfigurationManagement.csproj">
+      <Project>{59A680D6-B92D-4AB8-A5F9-CB156891132A}</Project>
+      <Name>ermeX.Gateway.ConfigurationManagement</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

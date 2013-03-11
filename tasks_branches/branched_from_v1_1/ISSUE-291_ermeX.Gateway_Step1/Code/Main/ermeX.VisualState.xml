@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
+  <TopNode>[0-1603]ermeX.Tests.Bus.Publishing.Dispatching.Messages.MessageSubscriberDispatcherTester.SendsEnqueued_Items</TopNode>
+  <SelectedNode>[0-1704]ermeX.Tests.ConfigurationManagement.Config.ConfigurationSectionTests</SelectedNode>
+  <ExcludeCategories>false</ExcludeCategories>
+  <Nodes>
+    <Node UniqueName="[0-1000]E:\projects\ermeX.Gateway\Code\Main\ermeX.nunit" Expanded="true" />
+    <Node UniqueName="[0-1275]E:\projects\ermeX.Gateway\Code\Main\ermeX.Tests\bin\x64\Debug\ermeX.Tests.dll" Expanded="true" />
+    <Node UniqueName="[0-1276]ermeX" Expanded="true" />
+    <Node UniqueName="[0-1277]ermeX.Tests" Expanded="true" />
+    <Node UniqueName="[0-1280]ermeX.Tests.Acceptance" Expanded="true" />
+    <Node UniqueName="[0-1005]ermeX.Tests.Acceptance.HandshakeTester" Expanded="true" />
+    <Node UniqueName="[0-1242]ermeX.Tests.Acceptance.MessagingAcceptanceTester" Expanded="true" />
+    <Node UniqueName="[0-1175]ermeX.Tests.Acceptance.ServicesAcceptanceTester" Expanded="true" />
+    <Node UniqueName="[0-1278]ermeX.Tests.Common" Expanded="true" />
+    <Node UniqueName="[0-1279]ermeX.Tests.Common.Serialization" Expanded="true" />
+    <Node UniqueName="[0-1008]ermeX.Tests.Common.Serialization.TestApplicationSerializableMessages" Expanded="true" />
+    <Node UniqueName="[0-1281]ermeX.Tests.Dialogs" Expanded="true" />
+    <Node UniqueName="[0-1043]ermeX.Tests.Dialogs.HandshakingTester" Expanded="true" />
+    <Node UniqueName="[0-1282]ermeX.Tests.Services" Expanded="true" />
+    <Node UniqueName="[0-1286]ermeX.Tests.Services.Builtin" Expanded="true" />
+    <Node UniqueName="[0-1287]ermeX.Tests.Services.Builtin.SuperSockets" Expanded="true" />
+    <Node UniqueName="[0-1220]ermeX.Tests.Services.Builtin.SuperSockets.SuperSocketClientTester" Expanded="true" />
+    <Node UniqueName="[0-1093]ermeX.Tests.Services.Builtin.SuperSockets.SuperSocketServerTester" Expanded="true" />
+    <Node UniqueName="[0-1283]ermeX.Tests.Services.Sending" Expanded="true" />
+    <Node UniqueName="[0-1284]ermeX.Tests.Services.Sending.Client" Expanded="true" />
+    <Node UniqueName="[0-1058]ermeX.Tests.Services.Sending.Client.ServiceProxyTester" Expanded="true" />
+    <Node UniqueName="[0-1288]ermeX.Tests.VersionUpgrade" Expanded="true" />
+    <Node UniqueName="[0-1142]ermeX.Tests.VersionUpgrade.VersionUpgradeHelperTests" Expanded="true" />
+    <Node UniqueName="[0-1285]ermeX.Tests.WorldGateTests" Expanded="true" />
+    <Node UniqueName="[0-1128]ermeX.Tests.WorldGateTests.DiscoveringMessagesTests" Expanded="true" />
+    <Node UniqueName="[0-1119]ermeX.Tests.WorldGateTests.DiscoveringServicesTests" Expanded="true" />
+    <Node UniqueName="[0-1151]ermeX.Tests.WorldGateTests.RegisteringMessagesTests" Expanded="true" />
+    <Node UniqueName="[0-1108]ermeX.Tests.WorldGateTests.RegisteringServicesTests" Expanded="true" />
+    <Node UniqueName="[0-1090]ermeX.Tests.WorldGateTests.SystemDialogInfrastructureTests" Expanded="true" />
+    <Node UniqueName="[0-1164]ermeX.Tests.WorldGateTests.UsingMessagesClientTests" Expanded="true" />
+    <Node UniqueName="[0-1071]ermeX.Tests.WorldGateTests.UsingServicesClientTests" Expanded="true" />
+    <Node UniqueName="[0-1585]E:\projects\ermeX.Gateway\Code\Main\ermeX.Tests.DAL.Integration\bin\x64\Debug\ermeX.Tests.DAL.Integration.dll" Expanded="true" />
+    <Node UniqueName="[0-1586]ermeX" Expanded="true" />
+    <Node UniqueName="[0-1587]ermeX.Tests" Expanded="true" />
+    <Node UniqueName="[0-1588]ermeX.Tests.DAL" Expanded="true" />
+    <Node UniqueName="[0-1589]ermeX.Tests.DAL.Integration" Expanded="true" />
+    <Node UniqueName="[0-1590]ermeX.Tests.DAL.Integration.DataSources" Expanded="true" />
+    <Node UniqueName="[0-1359]ermeX.Tests.DAL.Integration.DataSources.AppComponentDataSourceTester" Expanded="true" />
+    <Node UniqueName="[0-1552]ermeX.Tests.DAL.Integration.DataSources.ChunkedServiceRequestMessageDataSourceTester" Expanded="true" />
+    <Node UniqueName="[0-1289]ermeX.Tests.DAL.Integration.DataSources.ConnectivityDetailsDataSourceTester" Expanded="true" />
+    <Node UniqueName="[0-1486]ermeX.Tests.DAL.Integration.DataSources.IncomingMessageDataSourceTester" Expanded="true" />
+    <Node UniqueName="[0-1326]ermeX.Tests.DAL.Integration.DataSources.IncomingMessageSuscriptionsSourceTester" Expanded="true" />
+    <Node UniqueName="[0-1519]ermeX.Tests.DAL.Integration.DataSources.OutgoingMessageDataSourceTester" Expanded="true" />
+    <Node UniqueName="[0-1449]ermeX.Tests.DAL.Integration.DataSources.OutgoingMessageSuscriptionsSourceTester" Expanded="true" />
+    <Node UniqueName="[0-1404]ermeX.Tests.DAL.Integration.DataSources.ServiceDetailsSourceTester" Expanded="true" />
+    <Node UniqueName="[0-1618]E:\projects\ermeX.Gateway\Code\Main\ermeX.Tests.Bus.Publishing\bin\x64\Debug\ermeX.Tests.Bus.Publishing.dll" Expanded="true" />
+    <Node UniqueName="[0-1619]ermeX" Expanded="true" />
+    <Node UniqueName="[0-1620]ermeX.Tests" Expanded="true" />
+    <Node UniqueName="[0-1621]ermeX.Tests.Bus" Expanded="true" />
+    <Node UniqueName="[0-1622]ermeX.Tests.Bus.Publishing" Expanded="true" />
+    <Node UniqueName="[0-1623]ermeX.Tests.Bus.Publishing.Dispatching" Expanded="true" />
+    <Node UniqueName="[0-1624]ermeX.Tests.Bus.Publishing.Dispatching.Messages" Expanded="true" />
+    <Node UniqueName="[0-1591]ermeX.Tests.Bus.Publishing.Dispatching.Messages.MessageCollectorTester" Expanded="true" />
+    <Node UniqueName="[0-1613]ermeX.Tests.Bus.Publishing.Dispatching.Messages.MessageDistributorTester" Expanded="true" />
+    <Node UniqueName="[0-1602]ermeX.Tests.Bus.Publishing.Dispatching.Messages.MessageSubscriberDispatcherTester" Expanded="true" />
+    <Node UniqueName="[0-1654]E:\projects\ermeX.Gateway\Code\Main\ermeX.Tests.Bus.Listening\bin\x64\Debug\ermeX.Tests.Bus.Listening.dll" Expanded="true" />
+    <Node UniqueName="[0-1655]ermeX" Expanded="true" />
+    <Node UniqueName="[0-1656]ermeX.Tests" Expanded="true" />
+    <Node UniqueName="[0-1657]ermeX.Tests.Bus" Expanded="true" />
+    <Node UniqueName="[0-1658]ermeX.Tests.Bus.Listening" Expanded="true" />
+    <Node UniqueName="[0-1659]ermeX.Tests.Bus.Listening.Handlers" Expanded="true" />
+    <Node UniqueName="[0-1660]ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling" Expanded="true" />
+    <Node UniqueName="[0-1649]ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.ReceptionMessageHandlerTester" Expanded="true" />
+    <Node UniqueName="[0-1661]ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHandlers" Expanded="true" />
+    <Node UniqueName="[0-1636]ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHandlers.QueueDispatcherManagerTester" Expanded="true" />
+    <Node UniqueName="[0-1625]ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHandlers.ReceptionMessageDistributorTester" Expanded="true" />
+    <Node UniqueName="[0-1689]E:\projects\ermeX.Gateway\Code\Main\ermeX.Tests.Threading\bin\x64\Debug\ermeX.Tests.Threading.dll" Expanded="true" />
+    <Node UniqueName="[0-1690]ermeX" Expanded="true" />
+    <Node UniqueName="[0-1691]ermeX.Tests" Expanded="true" />
+    <Node UniqueName="[0-1692]ermeX.Tests.Threading" Expanded="true" />
+    <Node UniqueName="[0-1694]ermeX.Tests.Threading.Queues" Expanded="true" />
+    <Node UniqueName="[0-1693]ermeX.Tests.Threading.Scheduler" Expanded="true" />
+    <Node UniqueName="[0-1662]ermeX.Tests.Threading.Scheduler.JobSchedulerTests" Expanded="true" />
+    <Node UniqueName="[0-1700]E:\projects\ermeX.Gateway\Code\Main\ermeX.Tests.NonMerged\bin\x64\Debug\ermeX.Tests.NonMerged.dll" Expanded="true" />
+    <Node UniqueName="[0-1701]ermeX" Expanded="true" />
+    <Node UniqueName="[0-1702]ermeX.Tests" Expanded="true" />
+    <Node UniqueName="[0-1703]ermeX.Tests.NonMerged" Expanded="true" />
+    <Node UniqueName="[0-1695]ermeX.Tests.NonMerged.ResolveUnmergedTests" Expanded="true" />
+    <Node UniqueName="[0-1710]E:\projects\ermeX.Gateway\Code\Main\ermeX.Tests.ConfigurationManagement.Config\bin\x64\Debug\ermeX.Tests.ConfigurationManagement.Config.dll" Expanded="true" />
+    <Node UniqueName="[0-1711]ermeX" Expanded="true" />
+    <Node UniqueName="[0-1712]ermeX.Tests" Expanded="true" />
+    <Node UniqueName="[0-1713]ermeX.Tests.ConfigurationManagement" Expanded="true" />
+    <Node UniqueName="[0-1714]ermeX.Tests.ConfigurationManagement.Config" Expanded="true" />
+    <Node UniqueName="[0-1704]ermeX.Tests.ConfigurationManagement.Config.ConfigurationSectionTests" Expanded="true" />
+  </Nodes>
+</VisualState>

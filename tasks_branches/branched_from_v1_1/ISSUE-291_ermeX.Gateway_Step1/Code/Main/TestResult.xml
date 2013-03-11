@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="E:\projects\ermeX.Gateway\Code\Main\ermeX.nunit" total="4" errors="1" failures="0" not-run="1" inconclusive="0" ignored="1" skipped="0" invalid="0" date="2013-03-06" time="22:18:20">
+  <environment nunit-version="2.5.6.10205" clr-version="2.0.50727.6400" os-version="Microsoft Windows NT 6.2.9200.0" platform="Win32NT" cwd="E:\projects\ermeX.Gateway\Utilities" machine-name="THINK-PC" user="Patrick Dinh" user-domain="Think-PC" />
+  <culture-info current-culture="en-GB" current-uiculture="en-GB" />
+  <test-suite type="Project" name="E:\projects\ermeX.Gateway\Code\Main\ermeX.nunit" executed="True" result="Failure" success="False" time="0.814" asserts="0">
+    <results>
+      <test-suite type="Assembly" name="E:\projects\ermeX.Gateway\Code\Main\ermeX.Tests.ConfigurationManagement.Config\bin\x64\Debug\ermeX.Tests.ConfigurationManagement.Config.dll" executed="True" result="Failure" success="False" time="0.802" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="ermeX" executed="True" result="Failure" success="False" time="0.802" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Tests" executed="True" result="Failure" success="False" time="0.802" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="ConfigurationManagement" executed="True" result="Failure" success="False" time="0.802" asserts="0">
+                    <results>
+                      <test-suite type="Namespace" name="Config" executed="True" result="Failure" success="False" time="0.798" asserts="0">
+                        <results>
+                          <test-suite type="TestFixture" name="ConfigurationSectionTests" executed="True" result="Failure" success="False" time="0.797" asserts="0">
+                            <results>
+                              <test-case name="ermeX.Tests.ConfigurationManagement.Config.ConfigurationSectionTests.Can_Start_Joined_To_Friend_Component" executed="False" result="Ignored">
+                                <reason>
+                                  <message><![CDATA[TODO]]></message>
+                                </reason>
+                              </test-case>
+                              <test-case name="ermeX.Tests.ConfigurationManagement.Config.ConfigurationSectionTests.Can_Start_Lonely_Component" executed="True" result="Error" success="False" time="0.368" asserts="0">
+                                <failure>
+                                  <message><![CDATA[System.TypeInitializationException : The type initializer for 'ermeX.Tests.Common.Networking.TestPort' threw an exception.
+  ----> System.Data.SQLite.SQLiteException : unable to open database file]]></message>
+                                  <stack-trace><![CDATA[at ermeX.Tests.Common.Networking.TestPort..ctor(UInt16 bottomRange)
+at ermeX.Tests.ConfigurationManagement.Config.ConfigurationSectionTests.Can_Start_Lonely_Component() in E:\projects\ermeX.Gateway\Code\Main\ermeX.Tests.ConfigurationManagement.Config\ConfigurationSectionTests.cs:line 161
+--SQLiteException
+at System.Data.SQLite.SQLite3.Open(String strFilename, SQLiteConnectionFlags connectionFlags, SQLiteOpenFlagsEnum openFlags, Int32 maxPoolSize, Boolean usePool)
+at System.Data.SQLite.SQLiteConnection.Open()
+at ermeX.DAL.DataAccess.Helpers.QueryHelper.ExecuteNonQuery(String sqlQuery) in E:\projects\ermeX.Gateway\Code\Main\ermeX.DAL\DataAccess\Helpers\QueryHelper.cs:line 267
+at ermeX.Tests.Common.Networking.TestPort..cctor() in E:\projects\ermeX.Gateway\Code\Main\ermeX.Tests.Common\Networking\TestPort.cs:line 54
+]]></stack-trace>
+                                </failure>
+                              </test-case>
+                              <test-case name="ermeX.Tests.ConfigurationManagement.Config.ConfigurationSectionTests.Validates_NormalSettings" executed="True" result="Success" success="True" time="0.255" asserts="1" />
+                              <test-case name="ermeX.Tests.ConfigurationManagement.Config.ConfigurationSectionTests.ValidatesDatabase" executed="True" result="Success" success="True" time="0.016" asserts="4" />
+                              <test-case name="ermeX.Tests.ConfigurationManagement.Config.ConfigurationSectionTests.ValidatesLocalComponent_HasDb" executed="True" result="Success" success="True" time="0.006" asserts="2" />
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

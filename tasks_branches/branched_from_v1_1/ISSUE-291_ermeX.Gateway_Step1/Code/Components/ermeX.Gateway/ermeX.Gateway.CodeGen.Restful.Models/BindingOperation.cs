@@ -7,7 +7,7 @@ namespace ermeX.Gateway.CodeGen.Restful.Models
 {
     public class BindingOperation
     {
-        InterfaceOperation RefOperation;
-        string HttpMethod;
+        public InterfaceOperation RefOperation;
+        public string HttpMethod;
     }
 }
