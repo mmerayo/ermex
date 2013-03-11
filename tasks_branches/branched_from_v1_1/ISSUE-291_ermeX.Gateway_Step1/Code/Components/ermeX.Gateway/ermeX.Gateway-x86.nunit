@@ -1,0 +1,9 @@
+﻿<NUnitProject>
+  <Settings activeconfig="Release x86" />
+  <Config name="Release x86" binpathtype="Auto">
+    <assembly path="ermeX.Gateway.Test.CodeGenTests\bin\x86\Release\ermeX.Gateway.Test.CodeGenTests.dll" />
+  </Config>
+  <Config name="Debug x86" binpathtype="Auto">
+    <assembly path="ermeX.Gateway.Test.CodeGenTests\bin\x86\Debug\ermeX.Gateway.Test.CodeGenTests.dll" />
+  </Config>
+</NUnitProject>
