@@ -71,6 +71,9 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging">
+      <HintPath>..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -106,6 +109,10 @@
     <ProjectReference Include="..\ermeX.Gateway.ConfigurationManagement.Config\ermeX.Gateway.ConfigurationManagement.Config.csproj">
       <Project>{21AED2DD-9D6C-475A-9CFA-C86053A7E7F7}</Project>
       <Name>ermeX.Gateway.ConfigurationManagement.Config</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Gateway.ConfigurationManagement.Settings\ermeX.Gateway.ConfigurationManagement.Settings.csproj">
+      <Project>{053B378E-F893-4135-B497-5BC54DD298F7}</Project>
+      <Name>ermeX.Gateway.ConfigurationManagement.Settings</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Gateway.ConfigurationManagement\ermeX.Gateway.ConfigurationManagement.csproj">
       <Project>{59A680D6-B92D-4AB8-A5F9-CB156891132A}</Project>
