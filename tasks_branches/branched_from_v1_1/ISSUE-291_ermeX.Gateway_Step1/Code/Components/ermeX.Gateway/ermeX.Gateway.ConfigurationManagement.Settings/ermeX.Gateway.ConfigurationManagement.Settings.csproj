@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3FF1A0E1-0BAB-4DF5-A222-3A65BBEB1F1C}</ProjectGuid>
+    <ProjectGuid>{053B378E-F893-4135-B497-5BC54DD298F7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ermeX.Gateway.CodeGen.Restful</RootNamespace>
-    <AssemblyName>ermeX.Gateway.CodeGen.Restful</AssemblyName>
+    <RootNamespace>ermeX.Gateway.ConfigurationManagement.Settings</RootNamespace>
+    <AssemblyName>ermeX.Gateway.ConfigurationManagement.Settings</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -50,32 +50,8 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.Logging">
-      <HintPath>..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -84,30 +60,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ModelGenerator.cs" />
-    <Compile Include="ServiceGenerator.cs" />
+    <Compile Include="StaticSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ermeX.Gateway.CodeGen.Restful.Models\ermeX.Gateway.CodeGen.Restful.Models.csproj">
-      <Project>{641DB49D-0AB7-4C67-8371-42F6FBFEB048}</Project>
-      <Name>ermeX.Gateway.CodeGen.Restful.Models</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ermeX.Gateway.ConfigurationManagement.Config\ermeX.Gateway.ConfigurationManagement.Config.csproj">
-      <Project>{21AED2DD-9D6C-475A-9CFA-C86053A7E7F7}</Project>
-      <Name>ermeX.Gateway.ConfigurationManagement.Config</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ermeX.Gateway.ConfigurationManagement.Settings\ermeX.Gateway.ConfigurationManagement.Settings.csproj">
-      <Project>{053B378E-F893-4135-B497-5BC54DD298F7}</Project>
-      <Name>ermeX.Gateway.ConfigurationManagement.Settings</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ermeX.Gateway.ConfigurationManagement\ermeX.Gateway.ConfigurationManagement.csproj">
-      <Project>{59A680D6-B92D-4AB8-A5F9-CB156891132A}</Project>
-      <Name>ermeX.Gateway.ConfigurationManagement</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

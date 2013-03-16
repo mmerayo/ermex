@@ -3,17 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ermeX.Gateway.Configuration;
+using ermeX.Gateway.ConfigurationManagement.Settings;
 using ermeX.Gateway.CodeGen.Restful.Models;
 using System.Xml.Linq;
 using System.Net;
+using Common.Logging;
 
 namespace ermeX.Gateway.CodeGen.Restful
 {
+    /// <remark>
+    /// The generator was onlt tested with WSDL at http://www.ibm.com/developerworks/webservices/library/ws-restwsdl/
+    /// Some assumption was made:
+    /// - Interface, binding, operation references are only searched within one document
+    /// </remark>
     public class ModelGenerator
     {
         private RestfulServiceDefinition ServiceDefinition;
         private XElement WsdlRoot;
         private Document Document;
+        private Dictionary<string, XNamespace> Namespaces;
+        private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
 
         public ModelGenerator(RestfulServiceDefinition serviceDefinition)
         {
@@ -27,6 +36,31 @@ namespace ermeX.Gateway.CodeGen.Restful
             var wsdlContent = webClient.DownloadString(ServiceDefinition.host);
 
             WsdlRoot = XDocument.Parse(wsdlContent).Root;
+
+            Namespaces = WsdlRoot.Attributes()
+                            .Where(x => x.IsNamespaceDeclaration)
+                            .GroupBy(x => x.Name.Namespace == XNamespace.None ? String.Empty : x.Name.LocalName, x => XNamespace.Get(x.Value))
+                            .ToDictionary(g => g.Key, g => g.First());
+        }
+
+        private List<XElement> LoadImportedSchema()
+        {
+            var typeElement = WsdlRoot.Elements()
+                                .Where(x => x.Name.LocalName == "types"
+                                        && x.Name.Namespace == "http://www.w3.org/ns/wsdl");
+
+            var importElements = typeElement.Elements()
+                                .Where(x => x.Name.LocalName == "import"
+                                        && x.Name.Namespace == "http://www.w3.org/2001/XMLSchema");
+
+            if (importElements.Count() > 0)
+            {
+                foreach (var element in importElements)
+                {
+
+                }
+            }
+            return null;
         }
 
         public Document GenerateModel()
@@ -63,12 +97,15 @@ namespace ermeX.Gateway.CodeGen.Restful
 
                 if (Document.Interfaces != null && Document.Interfaces.Count != 0)
                 {
-                    service.Interface = Document.Interfaces.First(x => x.Name == serviceElement.Attribute("interface").Value);
+                    var interfaceName = serviceElement.Attribute("interface").Value.Split(':')[1];
+                    service.Interface = Document.Interfaces.First(x => x.Name == interfaceName);
                 }
                 else
                 {
                     throw new Exception("The document has no interface.");
                 }
+
+                service.Endpoints = new List<Endpoint>();
 
                 var endpointElements = serviceElement.Elements().Where(x => x.Name.LocalName == "endpoint" && x.Name.Namespace == "http://www.w3.org/ns/wsdl");
 
@@ -80,9 +117,10 @@ namespace ermeX.Gateway.CodeGen.Restful
 
                     endpoint.Address = endpointElement.Attribute("address") != null ? endpointElement.Attribute("address").Value : "";
 
-                    if (Document.Bindings != null && Document.Bindings.Count == 0)
+                    if (Document.Bindings != null && Document.Bindings.Count != 0)
                     {
-                        endpoint.Binding = Document.Bindings.First(x => x.Name == endpointElement.Attribute("binding").Value);
+                        var bindingName = endpointElement.Attribute("binding").Value.Split(':')[1];
+                        endpoint.Binding = Document.Bindings.First(x => x.Name == bindingName);
                     }
                     else
                     {
@@ -108,8 +146,11 @@ namespace ermeX.Gateway.CodeGen.Restful
 
                 if (Document.Interfaces != null && Document.Interfaces.Count != 0)
                 {
-                    binding.Interface = Document.Interfaces.First(x => x.Name == bindingElement.Attribute("interface").Value);
+                    var interfaceName = bindingElement.Attribute("interface").Value.Split(':')[1];
+                    binding.Interface = Document.Interfaces.First(x => x.Name == interfaceName);
                 }
+
+                binding.Operations = new List<BindingOperation>();
 
                 var operationElements = bindingElement.Elements()
                                             .Where(x => x.Name.LocalName == "operation"
@@ -120,10 +161,13 @@ namespace ermeX.Gateway.CodeGen.Restful
                     foreach (var operationElement in operationElements)
                     {
                         var operation = new BindingOperation();
-                        operation.RefOperation = binding.Interface.Operations.First(x => x.Name == operationElement.Attribute("ref").Value);
+
+                        var refOperationName = operationElement.Attribute("ref").Value.Split(':')[1];
+                        operation.RefOperation = binding.Interface.Operations.First(x => x.Name == refOperationName);
+
                         operation.HttpMethod = operationElement.Attributes()
                                                         .First(attr => attr.Name.LocalName == "method"
-                                                                        && attr.Name.NamespaceName == "http://www.w3.org/ns/wsdl/http")
+                                                                && attr.Name.NamespaceName == "http://www.w3.org/ns/wsdl/http")
                                                         .Value;
                         binding.Operations.Add(operation);
                     }
@@ -141,6 +185,8 @@ namespace ermeX.Gateway.CodeGen.Restful
                 // Avoid naming conflit with reserve key words
                 var _interface = new Interface();
                 _interface.Name = interfaceElement.Attribute("name").Value;
+                _interface.NamespaceUri = interfaceElement.Name.NamespaceName;
+                Logger.Trace(x => x("{0} - {1}", _interface.Name, _interface.NamespaceUri));
 
                 var operationElements = interfaceElement.Elements()
                                                 .Where(x => x.Name.LocalName == "operation"
@@ -160,9 +206,10 @@ namespace ermeX.Gateway.CodeGen.Restful
             }
         }
 
-        private void GenerateSchema()
+        private void GenerateSchema(IEnumerable<XElement> typeElements)
         {
-            throw new NotImplementedException();
+
         }
+
     }
 }

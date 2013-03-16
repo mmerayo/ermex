@@ -7,7 +7,7 @@ namespace ermeX.Gateway.CodeGen.Restful.Models
 {
     public class Document
     {
-        public Dictionary<string, string> Namespace { get; set; }
+        public Dictionary<string, string> Namespaces { get; set; }
         public List<Schema> Schema { get; set; }
         public List<Interface> Interfaces { get; set; }
         public List<Binding> Bindings { get; set; }

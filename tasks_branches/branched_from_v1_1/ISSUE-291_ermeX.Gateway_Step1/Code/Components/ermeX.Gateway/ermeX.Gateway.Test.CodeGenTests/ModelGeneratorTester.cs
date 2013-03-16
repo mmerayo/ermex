@@ -7,6 +7,8 @@ using ermeX.Gateway.CodeGen.Restful;
 using System.Diagnostics;
 using System.Net;
 using System.Xml.Linq;
+using System.Collections.Specialized;
+using Common.Logging;
 
 namespace ermeX.Gateway.Test.ModelGeneratorTester
 {
@@ -18,6 +20,10 @@ namespace ermeX.Gateway.Test.ModelGeneratorTester
         [SetUp]
         public void Setup()
         {
+            var properties = new NameValueCollection();
+            properties["level"] = "ALL";
+            Common.Logging.LogManager.Adapter = new Common.Logging.Simple.ConsoleOutLoggerFactoryAdapter(properties);
+
             var config = ConfigurationManagement.ConfigurationManager.GetConfiguration();
             ModelGenerator = new ModelGenerator(config);
         }
@@ -28,7 +34,6 @@ namespace ermeX.Gateway.Test.ModelGeneratorTester
             var document = ModelGenerator.GenerateModel();
 
             Assert.IsNotNull(document);
-
             Assert.IsTrue(document.Services.Count == 1);
             Assert.IsTrue(document.Services[0].Name == "BookList");
             Assert.IsTrue(document.Services[0].Endpoints.Count == 1);
