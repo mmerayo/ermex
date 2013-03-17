@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
-using ermeX.Gateway.CodeGen.Restful;
-using System.Diagnostics;
-using System.Net;
-using System.Xml.Linq;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Xml.Linq;
 using Common.Logging;
+using ermeX.Gateway.CodeGen.Restful;
+using NUnit.Framework;
 
 namespace ermeX.Gateway.Test.ModelGeneratorTester
 {
     [TestFixture]
     public class ModelGeneratorTester
     {
-        ModelGenerator ModelGenerator;
+        private ModelGenerator _modelGenerator;
 
         [SetUp]
         public void Setup()
@@ -25,13 +25,13 @@ namespace ermeX.Gateway.Test.ModelGeneratorTester
             Common.Logging.LogManager.Adapter = new Common.Logging.Simple.ConsoleOutLoggerFactoryAdapter(properties);
 
             var config = ConfigurationManagement.ConfigurationManager.GetConfiguration();
-            ModelGenerator = new ModelGenerator(config);
+            _modelGenerator = new ModelGenerator(config);
         }
 
         [Test]
         public void Generate_Model_From_Wsdl()
         {
-            var document = ModelGenerator.GenerateModel();
+            var document = _modelGenerator.GenerateModel();
 
             Assert.IsNotNull(document);
             Assert.IsTrue(document.Services.Count == 1);

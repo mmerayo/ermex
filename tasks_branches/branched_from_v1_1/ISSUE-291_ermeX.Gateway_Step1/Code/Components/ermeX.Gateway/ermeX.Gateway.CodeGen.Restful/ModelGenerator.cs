@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Net;
+using System.Xml.Linq;
+using Common.Logging;
+using ermeX.Gateway.CodeGen.Restful.Models;
 using ermeX.Gateway.Configuration;
 using ermeX.Gateway.ConfigurationManagement.Settings;
-using ermeX.Gateway.CodeGen.Restful.Models;
-using System.Xml.Linq;
-using System.Net;
-using Common.Logging;
 
 namespace ermeX.Gateway.CodeGen.Restful
 {
@@ -18,26 +17,26 @@ namespace ermeX.Gateway.CodeGen.Restful
     /// </remark>
     public class ModelGenerator
     {
-        private RestfulServiceDefinition ServiceDefinition;
-        private XElement WsdlRoot;
-        private Document Document;
-        private Dictionary<string, XNamespace> Namespaces;
-        private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+        private RestfulServiceDefinition _serviceDefinition;
+        private XElement _wsdlRoot;
+        private Document _document;
+        private Dictionary<string, XNamespace> _namespaces;
+        private readonly ILog _logger = LogManager.GetLogger(StaticSettings.LoggerName);
 
         public ModelGenerator(RestfulServiceDefinition serviceDefinition)
         {
-            ServiceDefinition = serviceDefinition;
+            _serviceDefinition = serviceDefinition;
             LoadDocument();
         }
 
         private void LoadDocument()
         {
             var webClient = new WebClient();
-            var wsdlContent = webClient.DownloadString(ServiceDefinition.host);
+            var wsdlContent = webClient.DownloadString(_serviceDefinition.host);
 
-            WsdlRoot = XDocument.Parse(wsdlContent).Root;
+            _wsdlRoot = XDocument.Parse(wsdlContent).Root;
 
-            Namespaces = WsdlRoot.Attributes()
+            _namespaces = _wsdlRoot.Attributes()
                             .Where(x => x.IsNamespaceDeclaration)
                             .GroupBy(x => x.Name.Namespace == XNamespace.None ? String.Empty : x.Name.LocalName, x => XNamespace.Get(x.Value))
                             .ToDictionary(g => g.Key, g => g.First());
@@ -45,7 +44,7 @@ namespace ermeX.Gateway.CodeGen.Restful
 
         private List<XElement> LoadImportedSchema()
         {
-            var typeElement = WsdlRoot.Elements()
+            var typeElement = _wsdlRoot.Elements()
                                 .Where(x => x.Name.LocalName == "types"
                                         && x.Name.Namespace == "http://www.w3.org/ns/wsdl");
 
@@ -57,7 +56,6 @@ namespace ermeX.Gateway.CodeGen.Restful
             {
                 foreach (var element in importElements)
                 {
-
                 }
             }
             return null;
@@ -65,29 +63,29 @@ namespace ermeX.Gateway.CodeGen.Restful
 
         public Document GenerateModel()
         {
-            Document = new Document();
-            
-            var interfaceElement = WsdlRoot.Elements()
-                                    .Where(x => x.Name.LocalName == "interface" 
+            _document = new Document();
+
+            var interfaceElement = _wsdlRoot.Elements()
+                                    .Where(x => x.Name.LocalName == "interface"
                                         && x.Name.Namespace == "http://www.w3.org/ns/wsdl");
             GenerateInterface(interfaceElement);
-            
-            var bindingElement = WsdlRoot.Elements()
-                                    .Where(x => x.Name.LocalName == "binding" 
+
+            var bindingElement = _wsdlRoot.Elements()
+                                    .Where(x => x.Name.LocalName == "binding"
                                         && x.Name.Namespace == "http://www.w3.org/ns/wsdl");
             GenerateBinding(bindingElement);
 
-            var serviceElement = WsdlRoot.Elements()
+            var serviceElement = _wsdlRoot.Elements()
                                     .Where(x => x.Name.LocalName == "service"
                                         && x.Name.Namespace == "http://www.w3.org/ns/wsdl");
             GenerateServices(serviceElement);
 
-            return Document;
+            return _document;
         }
 
         private void GenerateServices(IEnumerable<XElement> serviceElements)
         {
-            Document.Services = new List<Service>();
+            _document.Services = new List<Service>();
 
             foreach (var serviceElement in serviceElements)
             {
@@ -95,10 +93,10 @@ namespace ermeX.Gateway.CodeGen.Restful
 
                 service.Name = serviceElement.Attribute("name").Value;
 
-                if (Document.Interfaces != null && Document.Interfaces.Count != 0)
+                if (_document.Interfaces != null && _document.Interfaces.Count != 0)
                 {
                     var interfaceName = serviceElement.Attribute("interface").Value.Split(':')[1];
-                    service.Interface = Document.Interfaces.First(x => x.Name == interfaceName);
+                    service.Interface = _document.Interfaces.First(x => x.Name == interfaceName);
                 }
                 else
                 {
@@ -117,10 +115,10 @@ namespace ermeX.Gateway.CodeGen.Restful
 
                     endpoint.Address = endpointElement.Attribute("address") != null ? endpointElement.Attribute("address").Value : "";
 
-                    if (Document.Bindings != null && Document.Bindings.Count != 0)
+                    if (_document.Bindings != null && _document.Bindings.Count != 0)
                     {
                         var bindingName = endpointElement.Attribute("binding").Value.Split(':')[1];
-                        endpoint.Binding = Document.Bindings.First(x => x.Name == bindingName);
+                        endpoint.Binding = _document.Bindings.First(x => x.Name == bindingName);
                     }
                     else
                     {
@@ -130,13 +128,13 @@ namespace ermeX.Gateway.CodeGen.Restful
                     service.Endpoints.Add(endpoint);
                 }
 
-                Document.Services.Add(service);
+                _document.Services.Add(service);
             }
         }
 
         private void GenerateBinding(IEnumerable<XElement> bindingElements)
         {
-            Document.Bindings = new List<Binding>();
+            _document.Bindings = new List<Binding>();
 
             foreach (var bindingElement in bindingElements)
             {
@@ -144,10 +142,10 @@ namespace ermeX.Gateway.CodeGen.Restful
 
                 binding.Name = bindingElement.Attribute("name").Value;
 
-                if (Document.Interfaces != null && Document.Interfaces.Count != 0)
+                if (_document.Interfaces != null && _document.Interfaces.Count != 0)
                 {
                     var interfaceName = bindingElement.Attribute("interface").Value.Split(':')[1];
-                    binding.Interface = Document.Interfaces.First(x => x.Name == interfaceName);
+                    binding.Interface = _document.Interfaces.First(x => x.Name == interfaceName);
                 }
 
                 binding.Operations = new List<BindingOperation>();
@@ -172,13 +170,13 @@ namespace ermeX.Gateway.CodeGen.Restful
                         binding.Operations.Add(operation);
                     }
                 }
-                Document.Bindings.Add(binding);
+                _document.Bindings.Add(binding);
             }
         }
 
         private void GenerateInterface(IEnumerable<XElement> interfaceElements)
         {
-            Document.Interfaces = new List<Interface>();
+            _document.Interfaces = new List<Interface>();
 
             foreach (var interfaceElement in interfaceElements)
             {
@@ -186,7 +184,7 @@ namespace ermeX.Gateway.CodeGen.Restful
                 var _interface = new Interface();
                 _interface.Name = interfaceElement.Attribute("name").Value;
                 _interface.NamespaceUri = interfaceElement.Name.NamespaceName;
-                Logger.Trace(x => x("{0} - {1}", _interface.Name, _interface.NamespaceUri));
+                _logger.Trace(x => x("{0} - {1}", _interface.Name, _interface.NamespaceUri));
 
                 var operationElements = interfaceElement.Elements()
                                                 .Where(x => x.Name.LocalName == "operation"
@@ -202,14 +200,12 @@ namespace ermeX.Gateway.CodeGen.Restful
                                                 }).ToList();
                 }
 
-                Document.Interfaces.Add(_interface);
+                _document.Interfaces.Add(_interface);
             }
         }
 
         private void GenerateSchema(IEnumerable<XElement> typeElements)
         {
-
         }
-
     }
 }
