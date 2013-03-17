@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.NonMerged;
 using ermeX.Tests.Common.DataAccess;
 using Network = ermeX.Common.Networking;
 namespace ermeX.Tests.Common.Networking
@@ -42,11 +43,12 @@ namespace ermeX.Tests.Common.Networking
 
         static TestPort()
         {
+            ResolveUnmerged.Init();
             using (var mutex = new Mutex(false, LockDbCreationMutexName))
             {
                 mutex.WaitOne(TimeSpan.FromSeconds(10));
 
-                SqliteDbEngine = new SqliteDbEngine(DbName, false, Environment.GetEnvironmentVariable("TEST_PORTS_DB_PATH") ?? "d:\\");
+                SqliteDbEngine = new SqliteDbEngine(DbName, false, Environment.GetEnvironmentVariable("TEST_PORTS_DB_PATH") ?? "c:\\");
                     //TODO: get THE db FOLDER from A CONFIG FILE, it must be shared between al builds
                 SqliteDbEngine.CreateDatabase();
                 QueryHelper = QueryHelper.GetHelper(DbEngineType.SqliteInMemory,
