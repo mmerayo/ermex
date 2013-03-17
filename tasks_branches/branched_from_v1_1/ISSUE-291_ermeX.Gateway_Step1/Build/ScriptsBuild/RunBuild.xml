@@ -42,10 +42,10 @@
 	
 	<CallTarget Targets="CompileTask" />
 	<CallTarget Targets="DocumentationTask"/>
-    <CallTarget Targets="CreatePackageTask" />
+    <CallTarget Targets="PackTask" />
 	<CallTarget Targets="StoreTask" />
 	<CallTarget Targets="RunTestsTask" />
-	<CallTarget Targets="RunAcceptanceTestsTask" />
+	<CallTarget Targets="AcceptanceTestsTask" />
     <Message Text="Build:End" />
   </Target>
 
@@ -56,7 +56,7 @@
   </Target>
 
   <!--***USER TASKS****-->
-  <Target Name="CompileTask" Condition=" $(TaskIdName) == 'Compile' ">
+  <Target Name="CompileTask" Condition=" $(TaskIdName) == 'CompileTask' ">
 	<Message Text="CompileTask:Start" />
 	<Message Text="$(TaskIdName)" />
  
@@ -65,51 +65,63 @@
     
 	<MSBuild Projects="$(MSBuildProjectDirectory)\..\..\Code\Main\ermeX.sln" />	
 	<CallTarget Targets="MergeOutput" />
-	<CallTarget Targets="CreateNuGetSpecs" />
+		
 	<MSBuild 
 		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\Regular\AcceptanceTests.sln" 
 		Properties="OutputPath=$(AcceptanceBinFolder)\Regular;"/>
+	<ItemGroup>
+      <dllSource Include="$(MergedBinFolder)\ermeX.dll"/>
+	</ItemGroup>		
+    <Copy SourceFiles="@(dllSource)" DestinationFolder="$(AcceptanceBinFolder)\Regular"/>
 	<MSBuild 
 		Projects="$(MSBuildProjectDirectory)\..\..\Code\AcceptanceTests\Basic\BasicTest.sln" 
 		Properties="OutputPath=$(AcceptanceBinFolder)\Basic;"/>	
-		
+	<Copy SourceFiles="@(dllSource)" DestinationFolder="$(AcceptanceBinFolder)\Basic"/>
 	<Message Text="CompileTask:End" />
   </Target>
   
    <Target Name="DocumentationTask" Condition=" $(TaskIdName) == 'DocumentationTask' ">
-    <ItemGroup>
+    <Message Text="DocumentationTask:Start" />
+	<ItemGroup>
       <HelpFiles Include="$(OutputPath)*.chm"/>
-	</ItemGroup>
-	<Message Text="DocumentationTask:Start" />
+	</ItemGroup>		
 	<Message Text="$(TaskIdName)" />    
-	<MSBuild Projects="$(DocumentationPrjFolder)\ermeX.help.shfbproj" />
+	<MSBuild Projects="$(DocumentationPrjFolder)\ermeX.help.shfbproj" />	
+	<Message Text="copying files from $(OutputPath)*.chm to $(MergedBinFolder)" />
 	<Copy SourceFiles="@(HelpFiles)" DestinationFolder="$(MergedBinFolder)"/>
 	<Message Text="DocumentationTask:End" />
   </Target>
   
   
   <!-- http://www.msbuildextensionpack.com/help/4.0.5.0/html/b9e622d0-2888-4ba5-a042-889adac0e220.htm -->
-  <Target Name="RunTestsTask" Condition=" '$(TaskIdName)' == 'UnitTests' ">
+  <Target Name="RunTestsTask" Condition=" '$(TaskIdName)' == 'RunTestsTask' ">
 	<Message Text="RunTestsTask:Start" />	
-	<PropertyGroup>		
+	<!--<PropertyGroup>		
 		<Is32 Condition="'$(Platform)' == 'x86'" >true</Is32>
 		<Is32 Condition="'$(Platform)' == 'x64'" >false</Is32>
-	</PropertyGroup>
-	
+	</PropertyGroup>-->
+	<Message Text="Assemblies to test: $(OutputPath)*Tests*.dll" />
 	<ItemGroup>
       <AssembliesToTest Include="$(OutputPath)*Tests*.dll"/>
     </ItemGroup>
-    <NUnit Assemblies="@(AssembliesToTest)" 
+    <!--<NUnit Assemblies="@(AssembliesToTest)" 
 		ToolPath="$(nUnitPath)" 
 		Framework="$(nUnitFramework)" 
 		OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml"
 		Use32Bit="$(Is32)" 
 		Labels="true"
-		/>
+		/>-->
+	<NUnit Assemblies="@(AssembliesToTest)" 
+		ToolPath="$(nUnitPath)" 
+		Framework="$(nUnitFramework)" 
+		OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml"		
+		Labels="true"
+		/>	
+		
 	<Message Text="RunTestsTask:End" />
   </Target>
-  <Target Name="CreatePackageTask" Condition=" $(TaskIdName) == 'Pack' ">
-	<Message Text="CreatePackageTask:Start" />	
+  <Target Name="PackTask" Condition=" $(TaskIdName) == 'PackTask' ">
+	<Message Text="PackTask:Start" />	
 	<Message Text="Creating package $(BuildReportsFolder)\ermeX_$(BuildTag).zip from: $(MergedBinFolder)"/> 
 	
 	<ItemGroup>
@@ -126,7 +138,9 @@
 		RemoveRoot="$(MergedBinFolder)"
 		ZipFileName="$(BuildReportsFolder)\ermeX_$(BuildTag).zip"/>
 	
-	<Message Text="CreatePackageTask:End" />
+	<CallTarget Targets="CreateNuGetSpecs" />
+	
+	<Message Text="PackTask:End" />
   </Target>
   
   <Target Name="StoreTask" Condition=" $(TaskIdName) == 'StoreTask' ">
@@ -151,15 +165,15 @@
 	<Message Text="StoreTask:End" />
   </Target>
   
-   <Target Name="RunAcceptanceTestsTask" Condition=" $(TaskIdName) == 'AcceptanceTests' ">
-	<Message Text="RunAcceptanceTestsTask:Start" />	
+   <Target Name="AcceptanceTestsTask" Condition=" $(TaskIdName) == 'AcceptanceTestsTask' ">
+	<Message Text="AcceptanceTestsTask:Start" />	
 	<Message Text="Running: $(AcceptanceBinFolder)\Basic\ermeX.BasicTest.exe"/>
 	<Exec Command="$(AcceptanceBinFolder)\Basic\ermeX.BasicTest.exe"/>
 	
 	<Message Text="Running: $(AcceptanceBinFolder)\Regular\ermeX.Tests.AcceptanceTester.exe"/>
 	<Exec Command="$(AcceptanceBinFolder)\Regular\ermeX.Tests.AcceptanceTester.exe AllJoinToSameFriendComponent true 60000 61000 5 100 false 0"/>
 	
-	<Message Text="RunAcceptanceTestsTask:End" />
+	<Message Text="AcceptanceTestsTask:End" />
   </Target>
 
   <!-- HELPER METHODS-->
@@ -238,6 +252,7 @@
     <ItemGroup>
       <Input Include="$(OutputPath)*dll" Exclude="$(OutputPath)*Test*;$(OutputPath)Moq.*;$(OutputPath)System.Data.SQLite.*;$(OutputPath)SQLite.Interop.*;$(OutputPath)nunit.*;$(OutputPath)log4net*;$(OutputPath)System*;$(OutputPath)mscorlib.*;$(OutputPath)Common.Logging*;"/>	  	     
 	  <NotMergeable Include="$(OutputPath)SQLite.Interop.*;$(OutputPath)Common.Logging.dll;$(OutputPath)System.Data.SQLite.dll;"/>
+	  <!--<NotMergeable Include="$(OutputPath)Common.Logging.dll;"/>-->
     </ItemGroup>
 	<Message Text="The build version is name is: $(BuildVersion)"/> 
     <ILMerge.MSBuild.Tasks.ILMerge
