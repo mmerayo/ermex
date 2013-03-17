@@ -28,6 +28,7 @@ using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.Entities.Base;
 using ermeX.Entities.Entities;
+using ermeX.NonMerged;
 using ermeX.Tests.Common.SettingsProviders;
 using ermeX.Versioning;
 
@@ -53,6 +54,7 @@ namespace ermeX.Tests.Common.DataAccess
 
         public DataAccessTestHelper(DbEngineType engineType, bool createDb, string schemaName, Guid? localComponentId, Guid? remoteComponentId, Action<DbEngineType> setConfigurationMethod)
         {
+            ResolveUnmerged.Init();
             EngineType = engineType;
             SchemaName = schemaName;
             if(localComponentId.HasValue)
