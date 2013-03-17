@@ -94,7 +94,7 @@
   
   
   <!-- http://www.msbuildextensionpack.com/help/4.0.5.0/html/b9e622d0-2888-4ba5-a042-889adac0e220.htm -->
-  <Target Name="RunTestsTask" Condition=" '$(TaskIdName)' == 'UnitTestsTask' ">
+  <Target Name="RunTestsTask" Condition=" '$(TaskIdName)' == 'RunTestsTask' ">
 	<Message Text="RunTestsTask:Start" />	
 	<!--<PropertyGroup>		
 		<Is32 Condition="'$(Platform)' == 'x86'" >true</Is32>
