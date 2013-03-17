@@ -44,7 +44,7 @@ namespace ermeX.Configuration //on purpose as is public
     {
         static Configurer()
         {
-            ResolveUnmerged.Prepare();
+            ResolveUnmerged.Init();
         }
 
         private readonly RealConfigure _configuration;

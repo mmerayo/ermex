@@ -39,7 +39,7 @@ namespace ermeX.ermeX.Component
     {
         static SoaComponent()
         {
-            ResolveUnmerged.Prepare();
+            ResolveUnmerged.Init();
 #if DEBUG //TODO: MOVE TO THE TESTFIXTURESETUPS
             if(LogManager.Adapter is NoOpLoggerFactoryAdapter)
                 LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");

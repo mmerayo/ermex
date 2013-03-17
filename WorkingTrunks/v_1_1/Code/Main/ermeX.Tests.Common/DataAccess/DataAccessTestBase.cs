@@ -27,6 +27,7 @@ using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.NonMerged;
 
 namespace ermeX.Tests.Common.DataAccess
 {
@@ -109,6 +110,7 @@ namespace ermeX.Tests.Common.DataAccess
         [TestFixtureSetUp]
         public virtual void OnFixtureSetup()
         {
+            ResolveUnmerged.Init();
             _dataSourcesFactory=new DataSourcesFactory();
         }
 
