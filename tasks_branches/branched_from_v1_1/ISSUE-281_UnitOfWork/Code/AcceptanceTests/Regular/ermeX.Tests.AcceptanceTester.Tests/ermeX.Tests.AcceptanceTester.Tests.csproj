@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9D086779-32D5-461E-AB87-43F1EA0DDA16}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ermeX.Tests.AcceptanceTester.Tests</RootNamespace>
+    <AssemblyName>ermeX.Tests.AcceptanceTester.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ermeX">
+      <HintPath>..\..\..\..\Build\BuildArtifacts\Merged\v4.0\Any_CPU\ermeX.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ermeX.Tests.AcceptanceTester\Properties\AcceptanceAssemblyInfo.cs">
+      <Link>Properties\AcceptanceAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AllJoinToSameFriendComponent\TestActor.cs" />
+    <Compile Include="AllJoinToSameFriendComponent\TestDirector.cs" />
+    <Compile Include="AllJoinToSameFriendComponent\TestLoader.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ermeX.Tests.AcceptanceTester.Base\ermeX.Tests.AcceptanceTester.Base.csproj">
+      <Project>{B3F13005-3568-411D-9AB5-0F95C532BAEE}</Project>
+      <Name>ermeX.Tests.AcceptanceTester.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Tests.AcceptanceTester.Helpers\ermeX.Tests.AcceptanceTester.Helpers.csproj">
+      <Project>{7E4E843C-9419-46F1-BBA6-18B38131BDDA}</Project>
+      <Name>ermeX.Tests.AcceptanceTester.Helpers</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
