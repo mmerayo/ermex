@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <!-- The configuration and platform will be used to determine which
+         assemblies to include from solution and project documentation
+         sources -->
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{eea2196c-e9bd-4015-9f59-9385d7b1ab1f}</ProjectGuid>
+    <SHFBSchemaVersion>1.9.5.0</SHFBSchemaVersion>
+    <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual
+         Studio adds them anyway -->
+    <AssemblyName>Documentation</AssemblyName>
+    <RootNamespace>Documentation</RootNamespace>
+    <Name>Documentation</Name>
+    <!-- SHFB properties -->
+    <OutputPath>..\..\BuildArtifacts\Merged\v4.0\x64\</OutputPath>
+    <HtmlHelpName>ermeX.Documentation</HtmlHelpName>
+    <Language>en-US</Language>
+    <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
+    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
+    <IndentHtml>False</IndentHtml>
+    <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
+    <KeepLogFile>False</KeepLogFile>
+    <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
+    <CppCommentsFixup>False</CppCommentsFixup>
+    <CleanIntermediates>True</CleanIntermediates>
+    <DocumentationSources>
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.Bus.Interfaces.dll" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.Bus.Interfaces.xml" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.ConfigurationManagement.dll" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.ConfigurationManagement.xml" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.dll" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.Interfaces.dll" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.Interfaces.xml" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.xml" />
+    </DocumentationSources>
+    <ApiFilter>
+      <Filter entryType="Namespace" fullName="ermeX" isExposed="True">
+        <Filter entryType="Class" fullName="ermeX.Configuration" filterName="Configuration" isExposed="True">
+          <Filter entryType="Method" fullName="ermeX.Configuration.WithDevelopmentLoggingOn" filterName="WithDevelopmentLoggingOn" isExposed="False" />
+        </Filter>
+      </Filter>
+      <Filter entryType="Namespace" fullName="ermeX.ermeX.Component" isExposed="False" />
+    </ApiFilter>
+    <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</VisibleItems>
+    <SyntaxFilters>CSharp</SyntaxFilters>
+    <SdkLinkTarget>Blank</SdkLinkTarget>
+    <RootNamespaceContainer>False</RootNamespaceContainer>
+    <PresentationStyle>VS2010</PresentationStyle>
+    <Preliminary>False</Preliminary>
+    <NamingMethod>Guid</NamingMethod>
+    <HelpTitle>A Sandcastle Documented Class Library</HelpTitle>
+    <ContentPlacement>AboveNamespaces</ContentPlacement>
+    <FeedbackEMailAddress>mmerayo30%40gmail.com</FeedbackEMailAddress>
+    <CopyrightHref>http://www.apache.org/licenses/LICENSE-2.0.html</CopyrightHref>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|ANY CPU' ">
+    <!-- The configuration and platform will be used to determine which
+         assemblies to include from solution and project documentation
+         sources -->
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">ANY CPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{eea2196c-e9bd-4015-9f59-9385d7b1ab1f}</ProjectGuid>
+    <SHFBSchemaVersion>1.9.5.0</SHFBSchemaVersion>
+    <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual
+         Studio adds them anyway -->
+    <AssemblyName>Documentation</AssemblyName>
+    <RootNamespace>Documentation</RootNamespace>
+    <Name>Documentation</Name>
+    <!-- SHFB properties -->
+    <OutputPath>..\..\BuildArtifacts\Merged\v4.0\ANY_CPU\</OutputPath>
+    <HtmlHelpName>ermeX.Documentation</HtmlHelpName>
+    <Language>en-US</Language>
+    <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
+    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
+    <IndentHtml>False</IndentHtml>
+    <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
+    <KeepLogFile>False</KeepLogFile>
+    <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
+    <CppCommentsFixup>False</CppCommentsFixup>
+    <CleanIntermediates>True</CleanIntermediates>
+    <DocumentationSources>
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.Bus.Interfaces.dll" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.Bus.Interfaces.xml" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.ConfigurationManagement.dll" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.ConfigurationManagement.xml" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.dll" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.Interfaces.dll" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.Interfaces.xml" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Debug\ermeX.xml" />
+    </DocumentationSources>
+    <ApiFilter>
+      <Filter entryType="Namespace" fullName="ermeX" isExposed="True">
+        <Filter entryType="Class" fullName="ermeX.Configuration" filterName="Configuration" isExposed="True">
+          <Filter entryType="Method" fullName="ermeX.Configuration.WithDevelopmentLoggingOn" filterName="WithDevelopmentLoggingOn" isExposed="False" />
+        </Filter>
+      </Filter>
+      <Filter entryType="Namespace" fullName="ermeX.ermeX.Component" isExposed="False" />
+    </ApiFilter>
+    <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</VisibleItems>
+    <SyntaxFilters>CSharp</SyntaxFilters>
+    <SdkLinkTarget>Blank</SdkLinkTarget>
+    <RootNamespaceContainer>False</RootNamespaceContainer>
+    <PresentationStyle>VS2010</PresentationStyle>
+    <Preliminary>False</Preliminary>
+    <NamingMethod>Guid</NamingMethod>
+    <HelpTitle>A Sandcastle Documented Class Library</HelpTitle>
+    <ContentPlacement>AboveNamespaces</ContentPlacement>
+    <FeedbackEMailAddress>mmerayo30%40gmail.com</FeedbackEMailAddress>
+    <CopyrightHref>http://www.apache.org/licenses/LICENSE-2.0.html</CopyrightHref>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|ANY CPU' ">
+    <!-- The configuration and platform will be used to determine which
+         assemblies to include from solution and project documentation
+         sources -->
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">ANY CPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{eea2196c-e9bd-4015-9f59-9385d7b1ab1f}</ProjectGuid>
+    <SHFBSchemaVersion>1.9.5.0</SHFBSchemaVersion>
+    <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual
+         Studio adds them anyway -->
+    <AssemblyName>Documentation</AssemblyName>
+    <RootNamespace>Documentation</RootNamespace>
+    <Name>Documentation</Name>
+    <!-- SHFB properties -->
+    <OutputPath>..\..\BuildArtifacts\Merged\v4.0\ANY_CPU\</OutputPath>
+    <HtmlHelpName>ermeX.Documentation</HtmlHelpName>
+    <Language>en-US</Language>
+    <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
+    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
+    <IndentHtml>False</IndentHtml>
+    <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
+    <KeepLogFile>False</KeepLogFile>
+    <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
+    <CppCommentsFixup>False</CppCommentsFixup>
+    <CleanIntermediates>True</CleanIntermediates>
+    <DocumentationSources>
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Release\ermeX.Bus.Interfaces.dll" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Release\ermeX.Bus.Interfaces.xml" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Release\ermeX.ConfigurationManagement.dll" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Release\ermeX.ConfigurationManagement.xml" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Release\ermeX.dll" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Release\ermeX.Interfaces.dll" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Release\ermeX.Interfaces.xml" />
+      <DocumentationSource sourceFile="..\..\BuildArtifacts\Binaries\4.0\ANY_CPU\Release\ermeX.xml" />
+    </DocumentationSources>
+    <ApiFilter>
+      <Filter entryType="Namespace" fullName="ermeX" isExposed="True">
+        <Filter entryType="Class" fullName="ermeX.Configuration" filterName="Configuration" isExposed="True">
+          <Filter entryType="Method" fullName="ermeX.Configuration.WithDevelopmentLoggingOn" filterName="WithDevelopmentLoggingOn" isExposed="False" />
+        </Filter>
+      </Filter>
+      <Filter entryType="Namespace" fullName="ermeX.ermeX.Component" isExposed="False" />
+    </ApiFilter>
+    <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</VisibleItems>
+    <SyntaxFilters>CSharp</SyntaxFilters>
+    <SdkLinkTarget>Blank</SdkLinkTarget>
+    <RootNamespaceContainer>False</RootNamespaceContainer>
+    <PresentationStyle>VS2010</PresentationStyle>
+    <Preliminary>False</Preliminary>
+    <NamingMethod>Guid</NamingMethod>
+    <HelpTitle>A Sandcastle Documented Class Library</HelpTitle>
+    <ContentPlacement>AboveNamespaces</ContentPlacement>
+    <FeedbackEMailAddress>mmerayo30%40gmail.com</FeedbackEMailAddress>
+    <CopyrightHref>http://www.apache.org/licenses/LICENSE-2.0.html</CopyrightHref>
+  </PropertyGroup>
+  <!-- Import the SHFB build targets -->
+  <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
+</Project>
