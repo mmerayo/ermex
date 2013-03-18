@@ -49,13 +49,30 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
+    <Compile Include="AppComponent\Impl\ComponentsRegistrator.cs" />
+    <Compile Include="AppComponent\Impl\ComponentsUpdater.cs" />
+    <Compile Include="AppComponent\Impl\LatencyReader.cs" />
+    <Compile Include="AppComponent\Impl\LatencyUpdater.cs" />
     <Compile Include="AppComponent\ICanUpdateComponents.cs" />
     <Compile Include="AppComponent\ICanUpdateLatency.cs" />
     <Compile Include="AppComponent\ICanReadLatency.cs" />
     <Compile Include="AppComponent\Impl\ComponentsReader.cs" />
     <Compile Include="AppComponent\ICanReadComponents.cs" />
+    <Compile Include="AppComponent\IRegisterComponents.cs" />
+    <Compile Include="ChunkedMessages\Impl\ChunkedMessagesReader.cs" />
+    <Compile Include="ChunkedMessages\ICanGetChunkedMessages.cs" />
+    <Compile Include="Connectivity\Impl\ConnectivityDetailsReader.cs" />
+    <Compile Include="Connectivity\ICanGetConnectivityDetails.cs" />
     <Compile Include="IoC\DomainInjections.cs" />
+    <Compile Include="Messages\Incomming\ICanReadIncommingMessages.cs" />
+    <Compile Include="Messages\Outgoing\ICanReadOutgoingMessages.cs" />
+    <Compile Include="Messages\Incomming\ICanUpdateIncommingMessages.cs" />
+    <Compile Include="Messages\Outgoing\ICanUpdateOutgoingMessages.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Subscriptions\Incomming\ICanReadIncommingMessagesSubscriptions.cs" />
+    <Compile Include="Subscriptions\Outgoing\ICanReadOutgoingMessagesSubscriptions.cs" />
+    <Compile Include="Subscriptions\Incomming\ICanUpdateIncommingMessagesSubscriptions.cs" />
+    <Compile Include="Subscriptions\Outgoing\ICanUpdateOutgoingMessagesSubscriptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ermeX\KeyFile.snk">
@@ -68,10 +85,23 @@
       <Project>{C4536E30-DC91-4AA4-8860-ECBDAF1AE4DE}</Project>
       <Name>ermeX.ConfigurationManagement</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.DAL.Interfaces\ermeX.DAL.Interfaces.csproj">
+      <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>
+      <Name>ermeX.DAL.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
       <Name>ermeX.Entities</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TODOS.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Messages\Incomming\Impl\" />
+    <Folder Include="Messages\Outgoing\Impl\" />
+    <Folder Include="Subscriptions\Incomming\Impl\" />
+    <Folder Include="Subscriptions\Outgoing\Impl\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

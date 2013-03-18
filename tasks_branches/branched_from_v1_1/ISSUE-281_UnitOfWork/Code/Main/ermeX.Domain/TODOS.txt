@@ -1,0 +1,8 @@
+﻿UNIT TEST ENTRE STEPS
+
+1-mover todo a estrategias de dominio, 
+    //2-simplificar contratos,
+	//2.1 Create entities de dominio y mapper 
+    //3-remover EXISTENTES dependencias,
+    //4-Repository contract
+    //5-unit of work

@@ -22,21 +22,27 @@ using System.Collections.Generic;
 using System.Configuration;
 using Ninject.Modules;
 using ermeX.Domain.AppComponent;
-using ermeX.Domain.Implementations;
+using ermeX.Domain.AppComponent.Impl;
+using ermeX.Domain.ChunkedMessages;
+using ermeX.Domain.ChunkedMessages.Impl;
+using ermeX.Domain.Connectivity;
+using ermeX.Domain.Connectivity.Impl;
 
 namespace ermeX.Domain.IoC
 {
-    TODO: 1-mover todo a estrategias de dominio, 
-    2-simplificar contratos, 
-    3-remover dependencias,
-    4-Repository contract
-    5-unit of work
+    
     internal class DomainInjections : NinjectModule
     {
         public override void Load()
         {
             //TODO: remove SINGLETON SCOPES
             Bind<ICanReadComponents>().To<ComponentsReader>().InSingletonScope();
+            Bind<ICanUpdateComponents>().To<ComponentsUpdater>().InSingletonScope();
+            Bind<ICanReadLatency>().To<LatencyReader>().InSingletonScope();
+            Bind<ICanUpdateLatency>().To<LatencyUpdater>().InSingletonScope();
+            Bind<IRegisterComponents>().To<ComponentsRegistrator>().InSingletonScope();
+            Bind<ICanGetChunkedMessages>().To<ChunkedMessagesReader>().InSingletonScope();
+            Bind<ICanGetConnectivityDetails>().To<ConnectivityDetailsReader>().InSingletonScope();
         }
     }
 }
