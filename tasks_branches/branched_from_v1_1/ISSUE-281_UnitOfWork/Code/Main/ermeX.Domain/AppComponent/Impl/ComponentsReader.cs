@@ -1,14 +1,38 @@
 using System;
-using ermeX.Domain.AppComponent;
-using ermeX.Entities.Entities;
+using System.Collections.Generic;
+using System.Linq;
+using Ninject;
+using ermeX.DAL.Interfaces;
 
-namespace ermeX.Domain.Implementations
+namespace ermeX.Domain.AppComponent.Impl
 {
-    internal class ComponentsReader : ICanReadComponents
+    internal sealed class ComponentsReader : ICanReadComponents
     {
-        public AppComponent Fetch(Guid componentId)
+        private IAppComponentDataSource Repository { get; set; }
+
+        [Inject]
+        public ComponentsReader(IAppComponentDataSource repository)
         {
-            throw new NotImplementedException();
+            Repository = repository;
         }
+
+        #region ICanReadComponents Members
+
+        public IList<Entities.Entities.AppComponent> FetchOtherComponents()
+        {
+            return Repository.GetOthers();
+        }
+
+        public IList<Entities.Entities.AppComponent> FetchOtherComponentsNotExchangedDefinitions(bool running = false)
+        {
+            return Repository.GetOtherComponentsWhereDefinitionsNotExchanged(running).ToList(); //TODO: LOGIC OUT OF REPOSITORY GENERIC CONTRACT TO BE HERE
+        }
+
+        Entities.Entities.AppComponent ICanReadComponents.Fetch(Guid componentId)
+        {
+            return Repository.GetByComponentId(componentId);
+        }
+
+        #endregion
     }
 }
