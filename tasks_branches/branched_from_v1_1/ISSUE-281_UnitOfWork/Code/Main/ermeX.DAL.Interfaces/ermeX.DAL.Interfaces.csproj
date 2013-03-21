@@ -92,13 +92,12 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\ermeX\Properties\KeyFileInfo.cs">
       <Link>Properties\KeyFileInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
-      <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
     <Compile Include="DataAccessOperationResult.cs" />
     <Compile Include="IAppComponentDataSource.cs" />

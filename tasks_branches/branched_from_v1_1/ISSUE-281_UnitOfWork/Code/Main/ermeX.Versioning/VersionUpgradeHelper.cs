@@ -17,22 +17,33 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System.Collections.Generic;
+using Ninject;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
+using ermeX.Domain.QueryDatabase;
 using ermeX.Versioning.Schema.Scripts;
 
 namespace ermeX.Versioning
 {
-    internal class VersionUpgradeHelper : IVersionUpgradeHelper
+    internal sealed class VersionUpgradeHelper : IVersionUpgradeHelper
     {
-        #region IVersionUpgradeHelper Members
+	    private readonly IQueryHelperFactory _queryHelperFactory;
+
+	    [Inject]
+		public VersionUpgradeHelper(IQueryHelperFactory queryHelperFactory)
+		{
+			_queryHelperFactory = queryHelperFactory;
+		}
+
+	    #region IVersionUpgradeHelper Members
 
         public void RunDataSchemaUpgrades(IList<DataSchemaType> schemasApplied, string configurationConnectionString,
                                           DbEngineType configurationSourceType)
         {
+			//TODO: INJECT THIS RUNNER
             SchemaScriptRunner schemaScriptRunner = SchemaScriptRunner.GetRunner(schemasApplied,
                                                                                  configurationConnectionString,
-                                                                                 configurationSourceType);
+                                                                                 configurationSourceType,_queryHelperFactory.GetHelper(configurationSourceType,configurationConnectionString));
             schemaScriptRunner.RunUpgrades();
         }
 
