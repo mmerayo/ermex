@@ -175,19 +175,19 @@ namespace ermeX
                 var dataAccessSettings = settings.GetSettings<IDalSettings>();
                 if (dataAccessSettings == null)
                     throw new InvalidOperationException("The settings implementation is not valid");
+				//TODO: ISSUE-281 --> THE RUN UPGRADES TO BE PERFORMED AFTER INJECTIONS
+                ////needed to be available for the version
+				//if (dataAccessSettings.ConfigurationSourceType == DbEngineType.SqliteInMemory)
+				//{
+				//   SessionProvider.SetInMemoryDb(dataAccessSettings.ConfigurationConnectionString);
+				//}
 
-                //needed to be available for the version
-                if (dataAccessSettings.ConfigurationSourceType == DbEngineType.SqliteInMemory)
-                {
-                    SessionProvider.SetInMemoryDb(dataAccessSettings.ConfigurationConnectionString);
-                }
 
+				//var versionUpgradeHelper = new VersionUpgradeHelper(); //TODO: from the configuration startup
 
-                var versionUpgradeHelper = new VersionUpgradeHelper(); //TODO: from the configuration startup
-
-                versionUpgradeHelper.RunDataSchemaUpgrades(dataAccessSettings.SchemasApplied,
-                                                           dataAccessSettings.ConfigurationConnectionString,
-                                                           dataAccessSettings.ConfigurationSourceType);
+				//versionUpgradeHelper.RunDataSchemaUpgrades(dataAccessSettings.SchemasApplied,
+				//                                           dataAccessSettings.ConfigurationConnectionString,
+				//                                           dataAccessSettings.ConfigurationSourceType);
             }
             catch (Exception ex)
             {

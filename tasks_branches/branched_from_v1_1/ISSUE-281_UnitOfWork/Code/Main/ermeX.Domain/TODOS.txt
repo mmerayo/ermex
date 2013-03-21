@@ -1,9 +1,13 @@
 ﻿UNIT TEST ENTRE STEPS
 
 1-mover todo a estrategias de dominio, 
-        //2-simplificar contratos,
+    //1.1 visibilities
+	//1.2 remove ===> TODO: ISSUE-281 --> THE RUN UPGRADES TO BE PERFORMED AFTER INJECTIONS
 	//2.1 Create entities de dominio y mapper 
-	//2.2 visibilities
+	//2.2 visibilities again
+    //2.3-simplificar contratos,
+
     //3-remover EXISTENTES dependencias,
     //4-Repository contract
     //5-unit of work
+	//6-logica a los commands

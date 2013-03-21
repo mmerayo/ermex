@@ -26,6 +26,8 @@ using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.Domain.Implementations.QueryDatabase;
+using ermeX.Domain.QueryDatabase;
 using ermeX.Entities.Base;
 using ermeX.Entities.Entities;
 using ermeX.NonMerged;
@@ -70,6 +72,7 @@ namespace ermeX.Tests.Common.DataAccess
             if(createDb)
                 CreateDb();
 
+	        _queryHelperFactory = new QueryHelperFactory();
         }
 
         public void Dispose()
@@ -116,7 +119,7 @@ namespace ermeX.Tests.Common.DataAccess
 
                 QueryTestHelper.DeleteDbDefinitions();//TODO: THIS SMELLS HERE
 
-                var target = new VersionUpgradeHelper();
+                var target = new VersionUpgradeHelper(_queryHelperFactory);
                 IDalSettings settingsSource = TestSettingsProvider.GetDataAccessSettingsSource(EngineType,
                                                                                                SchemasToApply);
                 target.RunDataSchemaUpgrades(settingsSource.SchemasApplied,
@@ -127,16 +130,16 @@ namespace ermeX.Tests.Common.DataAccess
             }
         }
 
-        private volatile QueryHelper _queryTestHelper = null;
+        private volatile IQueryHelper _queryTestHelper = null;
 
-        public QueryHelper QueryTestHelper
+        public IQueryHelper QueryTestHelper
         {
             get
             {
                 if (_queryTestHelper == null)
                     lock (_syncLock)
                         if (_queryTestHelper == null)
-                            _queryTestHelper = QueryHelper.GetHelper(EngineType,
+                            _queryTestHelper = _queryHelperFactory.GetHelper(EngineType,
                                                                      DataAccessSettings.ConfigurationConnectionString);
                 return _queryTestHelper;
             }
@@ -147,8 +150,10 @@ namespace ermeX.Tests.Common.DataAccess
         /// </summary>
         public bool RemoveDatabase { get; set; }
 
-        private readonly Dictionary<Type,string> _tableNames=new Dictionary<Type, string>(); 
-        public List<TResult> GetList<TResult>() where TResult : ModelBase, new()
+        private readonly Dictionary<Type,string> _tableNames=new Dictionary<Type, string>();
+	    private QueryHelperFactory _queryHelperFactory;
+
+	    public List<TResult> GetList<TResult>() where TResult : ModelBase, new()
         {
             if (!_tableNames.ContainsKey(typeof (TResult)))
                 lock (_syncLock)
@@ -365,9 +370,8 @@ namespace ermeX.Tests.Common.DataAccess
                     ServiceDetails.TableName, componentOwner, publisher, methodName, typeName, operationId,
                     versionUtc.Ticks, interfaceName, isSystemService ? 1 : 0);
 
-            QueryHelper queryTestHelper = QueryTestHelper;
-            queryTestHelper.ExecuteScalar(query);
-            var id = queryTestHelper.ExecuteScalar<int>(LastIdSqlQuery(ServiceDetails.TableName));
+            QueryTestHelper.ExecuteScalar(query);
+            var id = QueryTestHelper.ExecuteScalar<int>(LastIdSqlQuery(ServiceDetails.TableName));
             return id;
         }
 

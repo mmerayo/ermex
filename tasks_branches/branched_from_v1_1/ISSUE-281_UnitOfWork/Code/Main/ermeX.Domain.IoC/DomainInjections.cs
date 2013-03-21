@@ -23,10 +23,12 @@ using ermeX.Domain.Connectivity;
 using ermeX.Domain.Implementations.Component;
 using ermeX.Domain.Implementations.Connectivity;
 using ermeX.Domain.Implementations.Messages;
+using ermeX.Domain.Implementations.QueryDatabase;
 using ermeX.Domain.Implementations.Queues;
 using ermeX.Domain.Implementations.Services;
 using ermeX.Domain.Implementations.Subscriptions;
 using ermeX.Domain.Messages;
+using ermeX.Domain.QueryDatabase;
 using ermeX.Domain.Queues;
 using ermeX.Domain.Services;
 using ermeX.Domain.Subscriptions;
@@ -48,7 +50,7 @@ namespace ermeX.Domain.IoC
 
 			//connectivity
 			Bind<ICanGetConnectivityDetails>().To<ConnectivityDetailsReader>().InSingletonScope();
-			
+
 			//Messages
 			Bind<ICanReadChunkedMessages>().To<ChunkedMessagesReader>().InSingletonScope();
 
@@ -66,8 +68,10 @@ namespace ermeX.Domain.IoC
 			Bind<ICanReadIncommingMessagesSubscriptions>().To<CanReadIncommingMessagesSubscriptions>().InSingletonScope();
 			Bind<ICanUpdateOutgoingMessagesSubscriptions>().To<CanUpdateOutgoingMessagesSubscriptions>().InSingletonScope();
 			Bind<ICanUpdateIncommingMessagesSubscriptions>().To<CanUpdateIncommingMessagesSubscriptions>().InSingletonScope();
-			
-			
+
+			//QueryDatabase
+
+			Bind<IQueryHelperFactory>().To<QueryHelperFactory>().InSingletonScope();
 		}
 	}
 }

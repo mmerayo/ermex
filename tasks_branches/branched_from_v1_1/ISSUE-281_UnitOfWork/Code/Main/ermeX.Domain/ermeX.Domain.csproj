@@ -57,6 +57,8 @@
     <Compile Include="Messages\ICanReadChunkedMessages.cs" />
     <Compile Include="Connectivity\ICanGetConnectivityDetails.cs" />
     <Compile Include="Properties\LayerInfo.cs" />
+    <Compile Include="QueryDatabase\IQueryHelper.cs" />
+    <Compile Include="QueryDatabase\IQueryHelperFactory.cs" />
     <Compile Include="Queues\ICanUpdateIncommingMessagesQueueInfo.cs" />
     <Compile Include="Queues\ICanUpdateOutgoingMessagesQueueInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -75,6 +77,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement.Settings\ermeX.ConfigurationManagement.Settings.csproj">
+      <Project>{A6C2D141-25F0-4BFF-93BC-F9EF0CBDB3B1}</Project>
+      <Name>ermeX.ConfigurationManagement.Settings</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.ConfigurationManagement\ermeX.ConfigurationManagement.csproj">
       <Project>{C4536E30-DC91-4AA4-8860-ECBDAF1AE4DE}</Project>
       <Name>ermeX.ConfigurationManagement</Name>
