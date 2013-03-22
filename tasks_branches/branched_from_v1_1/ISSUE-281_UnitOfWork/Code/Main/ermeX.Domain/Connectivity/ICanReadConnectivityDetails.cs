@@ -3,7 +3,7 @@ using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Connectivity
 {
-    interface ICanGetConnectivityDetails
+    interface ICanReadConnectivityDetails
     {
         ConnectivityDetails Fetch(Guid componentId);
     }

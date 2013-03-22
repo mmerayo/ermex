@@ -49,7 +49,8 @@ namespace ermeX.Domain.IoC
 			Bind<IRegisterComponents>().To<ComponentsRegistrator>().InSingletonScope();
 
 			//connectivity
-			Bind<ICanGetConnectivityDetails>().To<ConnectivityDetailsReader>().InSingletonScope();
+			Bind<ICanReadConnectivityDetails>().To<ConnectivityDetailsReader>().InSingletonScope();
+			Bind<ICanUpdateConnectivityDetails>().To<ConnectivityDetailsWritter>().InSingletonScope();
 
 			//Messages
 			Bind<ICanReadChunkedMessages>().To<ChunkedMessagesReader>().InSingletonScope();

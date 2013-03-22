@@ -4,6 +4,7 @@ using System.Linq;
 using Ninject;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Component;
+using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Implementations.Component
 {
@@ -19,7 +20,12 @@ namespace ermeX.Domain.Implementations.Component
 
         #region ICanReadComponents Members
 
-        public IList<Entities.Entities.AppComponent> FetchOtherComponents()
+	    public IList<AppComponent> FetchAll()
+	    {
+		    return Repository.GetAll();
+	    }
+
+	    public IList<Entities.Entities.AppComponent> FetchOtherComponents()
         {
             return Repository.GetOthers();
         }

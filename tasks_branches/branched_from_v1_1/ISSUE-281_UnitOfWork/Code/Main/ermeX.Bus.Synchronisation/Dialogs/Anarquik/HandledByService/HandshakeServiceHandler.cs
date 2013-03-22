@@ -30,7 +30,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-
+using ermeX.Domain.Component;
 using ermeX.Entities.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
@@ -40,7 +40,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
         [Inject]
         public HandshakeServiceHandler(IMessagePublisher publisher, IMessageListener listener,
                                        IComponentSettings settings,
-                                       IAppComponentDataSource componentsDataSource,
+			ICanReadComponents componentReader,
                                        IConnectivityDetailsDataSource connectivityDataSource,
                                        IStatusManager statusManager
             ,IAutoRegistration autoRegistration)
@@ -48,14 +48,13 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
             if (publisher == null) throw new ArgumentNullException("publisher");
             if (listener == null) throw new ArgumentNullException("listener");
             if (settings == null) throw new ArgumentNullException("settings");
-            if (componentsDataSource == null) throw new ArgumentNullException("componentsDataSource");
             if (connectivityDataSource == null) throw new ArgumentNullException("connectivityDataSource");
             if (statusManager == null) throw new ArgumentNullException("statusManager");
             if (autoRegistration == null) throw new ArgumentNullException("autoRegistration");
             Publisher = publisher;
             Listener = listener;
             Settings = settings;
-            ComponentsDataSource = componentsDataSource;
+	        ComponentReader = componentReader;
             ConnectivityDataSource = connectivityDataSource;
             StatusManager = statusManager;
             AutoRegistration = autoRegistration;
@@ -66,7 +65,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
         private IMessageListener Listener { get; set; }
         private IComponentSettings Settings { get; set; }
-        private IAppComponentDataSource ComponentsDataSource { get; set; }
+	    private ICanReadComponents ComponentReader { get; set; }
         private IConnectivityDetailsDataSource ConnectivityDataSource { get; set; }
         private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
         private IStatusManager StatusManager { get; set; }
@@ -90,7 +89,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
                 //prepare result
                 var componentsDatas = new List<Tuple<AppComponent, ConnectivityDetails>>();
 
-                var components = new List<AppComponent>(ComponentsDataSource.GetAll());
+                var components = new List<AppComponent>(ComponentReader.FetchAll());
 
                 foreach (var appComponent in components)
                 {
