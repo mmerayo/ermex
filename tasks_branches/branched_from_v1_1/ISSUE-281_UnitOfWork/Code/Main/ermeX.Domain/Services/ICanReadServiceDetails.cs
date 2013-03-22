@@ -28,4 +28,12 @@ namespace ermeX.Domain.Services
 		ServiceDetails GetByMethodName(string interfaceTypeName, string methodName, Guid publisherComponent);
 		IList<ServiceDetails> GetLocalCustomServices();
 	}
+
+
+	interface ICanWriteServiceDetails
+	{
+		//TODO: ISSUE-281: RENAME WRITE TO STORE
+
+		void ImportFromOtherComponent(ServiceDetails svc);
+	}
 }
