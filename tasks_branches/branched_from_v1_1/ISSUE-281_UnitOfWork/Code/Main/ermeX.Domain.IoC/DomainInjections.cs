@@ -50,16 +50,17 @@ namespace ermeX.Domain.IoC
 
 			//connectivity
 			Bind<ICanReadConnectivityDetails>().To<ConnectivityDetailsReader>().InSingletonScope();
-			Bind<ICanUpdateConnectivityDetails>().To<ConnectivityDetailsWritter>().InSingletonScope();
+			Bind<ICanWriteConnectivityDetails>().To<ConnectivityDetailsWritter>().InSingletonScope();
 
 			//Messages
 			Bind<ICanReadChunkedMessages>().To<ChunkedMessagesReader>().InSingletonScope();
+			Bind<ICanWriteChunkedMessages>().To<ChunkedMessagesWriter>().InSingletonScope();
 
 			//queues
 
-			Bind<ICanUpdateOutgoingMessagesQueueInfo>().To<ICanUpdateOutgoingMessagesQueueInfo>().InSingletonScope();
-			Bind<IReadIncommingMessagesQueueInfo>().To<ReaderIncommingMessagesQueueInfo>().InSingletonScope();
-			Bind<IReadOutgoingMessagesQueueInfo>().To<ReaderOutgoingMessagesQueueInfo>().InSingletonScope();
+			Bind<IWriteOutgoingQueue>().To<IWriteOutgoingQueue>().InSingletonScope();
+			Bind<IReadIncommingQueue>().To<ReaderIncommingQueue>().InSingletonScope();
+			Bind<IReadOutgoingQueue>().To<ReaderOutgoingQueue>().InSingletonScope();
 
 			//service details
 			Bind<ICanReadServiceDetails>().To<ServiceDetailsReader>().InSingletonScope();

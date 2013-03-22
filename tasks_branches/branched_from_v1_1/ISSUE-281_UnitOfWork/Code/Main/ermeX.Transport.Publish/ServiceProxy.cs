@@ -45,23 +45,18 @@ namespace ermeX.Transport.Publish
         private readonly object _cacheProviderLocker = new object();
 
         [Inject]
-        internal ServiceProxy(IConnectivityDetailsDataSource dataSource, ICacheProvider cacheProvider,
+        internal ServiceProxy(ICacheProvider cacheProvider,
                               IConnectivityManager connectivityManager, ITransportSettings settings)
         {
-            if (dataSource == null) throw new ArgumentNullException("dataSource");
             if (cacheProvider == null) throw new ArgumentNullException("cacheProvider");
             if (connectivityManager == null) throw new ArgumentNullException("connectivityManager");
             if (settings == null) throw new ArgumentNullException("settings");
             
-            DataSource = dataSource;
             CacheProvider = cacheProvider;
             ConnectivityManager = connectivityManager;
             Settings = settings;
             
         }
-
-        private IConnectivityDetailsDataSource DataSource { get; set; }
-
         private ICacheProvider CacheProvider { get; set; }
         private IConnectivityManager ConnectivityManager { get; set; }
         private ITransportSettings Settings { get; set; }

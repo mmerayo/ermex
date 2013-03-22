@@ -57,15 +57,17 @@
     <Compile Include="Connectivity\ICanWriteConnectivityDetails.cs" />
     <Compile Include="Messages\ICanReadChunkedMessages.cs" />
     <Compile Include="Connectivity\ICanReadConnectivityDetails.cs" />
+    <Compile Include="Messages\ICanWriteChunkedMessages.cs" />
     <Compile Include="Properties\LayerInfo.cs" />
     <Compile Include="QueryDatabase\IQueryHelper.cs" />
     <Compile Include="QueryDatabase\IQueryHelperFactory.cs" />
-    <Compile Include="Queues\ICanUpdateIncommingMessagesQueueInfo.cs" />
-    <Compile Include="Queues\ICanUpdateOutgoingMessagesQueueInfo.cs" />
+    <Compile Include="Queues\IWriteIncommingQueue.cs" />
+    <Compile Include="Queues\IWriteOutgoingQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Queues\IReadOutgoingMessagesQueueInfo.cs" />
-    <Compile Include="Queues\IReadIncommingMessagesQueueInfo.cs" />
+    <Compile Include="Queues\IReadOutgoingQueue.cs" />
+    <Compile Include="Queues\IReadIncommingQueue.cs" />
     <Compile Include="Services\ICanReadServiceDetails.cs" />
+    <Compile Include="Services\ICanWriteServiceDetails.cs" />
     <Compile Include="Subscriptions\ICanReadIncommingMessagesSubscriptions.cs" />
     <Compile Include="Subscriptions\ICanReadOutgoingMessagesSubscriptions.cs" />
     <Compile Include="Subscriptions\ICanUpdateIncommingMessagesSubscriptions.cs" />
@@ -93,6 +95,10 @@
     <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
       <Name>ermeX.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Interfaces\ermeX.Transport.Interfaces.csproj">
+      <Project>{991296BF-95D5-4462-A7EF-574E56C679F3}</Project>
+      <Name>ermeX.Transport.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

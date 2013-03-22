@@ -6,7 +6,7 @@ using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Queues
 {
-	interface IReadOutgoingMessagesQueueInfo
+	interface IReadOutgoingQueue
 	{
 		IEnumerable<OutgoingMessage> GetItemsPendingSorted();
 		OutgoingMessage GetNextDeliverable();

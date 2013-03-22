@@ -35,18 +35,20 @@ namespace ermeX.Biz
 	//TODO: THIS AND DIALOGSMANAGER SHOULD ENCAPSULATE THE CONNECTION FUNCTIONALLITY IN A PACKAGE AND BE EXTENSIBLE HIDING THE PROTOCOL
 	internal sealed class ComponentManager : IComponentManager
 	{
+		private readonly IRegisterComponents _componentsRegister;
+
 		[Inject]
 		public ComponentManager(IBizSettings settings, IMessagePublisher publisher, IMessageListener listener,
 		                        IDialogsManager dialogsManager, ICanReadComponents componentReader,
 		                        ICanUpdateComponents componentWriter,
-		                        IStatusManager statusManager, IAutoRegistration register)
+		                        IStatusManager statusManager, IRegisterComponents componentsRegister)
 		{
+			_componentsRegister = componentsRegister;
 			if (settings == null) throw new ArgumentNullException("settings");
 			if (publisher == null) throw new ArgumentNullException("publisher");
 			if (listener == null) throw new ArgumentNullException("listener");
 			if (dialogsManager == null) throw new ArgumentNullException("dialogsManager");
 			if (statusManager == null) throw new ArgumentNullException("statusManager");
-			if (register == null) throw new ArgumentNullException("register");
 			Settings = settings;
 			Publisher = publisher;
 			Listener = listener;
@@ -54,9 +56,8 @@ namespace ermeX.Biz
 			ComponentReader = componentReader;
 			ComponentWriter = componentWriter;
 			StatusManager = statusManager;
-			Register = register;
 
-			Register.CreateLocalSetOfData(Settings.TcpPort);
+			_componentsRegister.CreateLocalComponent(Settings.TcpPort);
 		}
 
 		private IBizSettings Settings { get; set; }
@@ -80,8 +81,6 @@ namespace ermeX.Biz
 				_statusManager.StatusChanged += _statusManager_StatusChanged;
 			}
 		}
-
-		private IAutoRegistration Register { get; set; }
 
 		private void _statusManager_StatusChanged(object sender, ComponentStatus newStatus)
 		{

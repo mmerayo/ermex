@@ -20,20 +20,12 @@ namespace ermeX.Domain.Services
 		/// </summary>
 		/// <param name="operationId"> </param>
 		/// <returns> </returns>
-		ServiceDetails GetByOperationId(Guid publisher, Guid operationId);
+		ServiceDetails GetByOperationId(Guid publisher, Guid operationId); //TODO: ISSUE-281: All this Guids to be concrete types
 
 		IList<ServiceDetails> GetByInterfaceType(Type interfaceType);
 		IList<ServiceDetails> GetByInterfaceType(string interfaceTypeFullName);
 		IList<ServiceDetails> GetByMethodName(string interfaceTypeName, string methodName);
 		ServiceDetails GetByMethodName(string interfaceTypeName, string methodName, Guid publisherComponent);
 		IList<ServiceDetails> GetLocalCustomServices();
-	}
-
-
-	interface ICanWriteServiceDetails
-	{
-		//TODO: ISSUE-281: RENAME WRITE TO STORE
-
-		void ImportFromOtherComponent(ServiceDetails svc);
 	}
 }

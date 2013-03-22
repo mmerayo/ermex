@@ -29,14 +29,14 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers
     internal class IncommingMessagesFifoScheduler : IScheduler
     {
         [Inject]
-		public IncommingMessagesFifoScheduler(IReadIncommingMessagesQueueInfo incomingMessagesQueue, 
+		public IncommingMessagesFifoScheduler(IReadIncommingQueue incomingQueue, 
                                               ICanReadLatency latencyReader)
         {
-	        IncomingMessagesQueue = incomingMessagesQueue;
+	        IncomingQueue = incomingQueue;
 	        LatencyReader = latencyReader;
         }
 
-	    public IReadIncommingMessagesQueueInfo IncomingMessagesQueue { get; set; }
+	    public IReadIncommingQueue IncomingQueue { get; set; }
 	    public ICanReadLatency LatencyReader { get; set; }
 
 	    #region IScheduler Members
@@ -44,7 +44,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers
         public IncomingMessage GetNext()
         {
             var maxLatency = LatencyReader.GetMaxLatency();
-			return IncomingMessagesQueue.GetNextDispatchableItem(maxLatency);
+			return IncomingQueue.GetNextDispatchableItem(maxLatency);
         }
 
         

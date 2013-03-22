@@ -2,7 +2,7 @@ using System;
 
 namespace ermeX.Domain.Queues
 {
-	interface ICanUpdateOutgoingMessagesQueueInfo
+	interface IWriteOutgoingQueue
     {
 		void RemoveExpiredMessages(TimeSpan expirationTime);
     }

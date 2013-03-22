@@ -127,6 +127,10 @@
       <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>
       <Name>ermeX.DAL.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Domain\ermeX.Domain.csproj">
+      <Project>{7D2E8DB9-101A-4A70-B122-799212FBB860}</Project>
+      <Name>ermeX.Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
       <Name>ermeX.Entities</Name>

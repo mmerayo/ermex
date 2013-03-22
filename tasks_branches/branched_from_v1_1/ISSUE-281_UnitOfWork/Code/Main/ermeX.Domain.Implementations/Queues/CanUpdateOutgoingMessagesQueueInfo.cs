@@ -5,12 +5,12 @@ using ermeX.Domain.Queues;
 
 namespace ermeX.Domain.Implementations.Queues
 {
-	internal class CanUpdateOutgoingMessagesQueueInfo : ICanUpdateOutgoingMessagesQueueInfo
+	internal class WriteOutgoingQueue : IWriteOutgoingQueue
 	{
 		private IOutgoingMessagesDataSource Repository { get; set; }
 
 		[Inject]
-		public CanUpdateOutgoingMessagesQueueInfo(IOutgoingMessagesDataSource repository)
+		public WriteOutgoingQueue(IOutgoingMessagesDataSource repository)
 		{
 			Repository = repository;
 		}

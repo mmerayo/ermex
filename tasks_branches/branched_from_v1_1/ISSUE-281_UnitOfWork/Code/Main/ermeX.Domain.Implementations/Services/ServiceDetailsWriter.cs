@@ -1,9 +1,10 @@
 ﻿using System;
 using Ninject;
 using ermeX.DAL.Interfaces;
+using ermeX.Domain.Services;
 using ermeX.Entities.Entities;
 
-namespace ermeX.Domain.Services
+namespace ermeX.Domain.Implementations.Services
 {
 	class ServiceDetailsWriter : ICanWriteServiceDetails
 	{

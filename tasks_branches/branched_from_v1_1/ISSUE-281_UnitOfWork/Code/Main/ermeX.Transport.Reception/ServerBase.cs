@@ -27,6 +27,8 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
+using ermeX.Domain.Messages;
+using ermeX.Domain.Services;
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
 
@@ -42,25 +44,27 @@ namespace ermeX.Transport.Reception
 
     internal abstract class ServerBase : IServer
     {
-        public static Guid ChunkedMessageOperation = new Guid("5A429BD6-ED3A-426F-9352-D3CB9585A447");
+	    private readonly ICanReadServiceDetails _serviceDetailsReader;
+	    private readonly ICanReadChunkedMessages _chunkedMessagesReader;
+	    private readonly ICanWriteChunkedMessages _chunkedMessagesWritter;
+	    public static Guid ChunkedMessageOperation = new Guid("5A429BD6-ED3A-426F-9352-D3CB9585A447");
         private readonly IDictionary<Guid, IServiceHandler> _handlers = new ConcurrentDictionary<Guid, IServiceHandler>();
         protected readonly object SyncLock=new object();
 
-        protected ServerBase(ServerInfo serverInfo, IServiceDetailsDataSource dataSourceServices,IChunkedServiceRequestMessageDataSource chunkedServiceRequestMessageDataSource)
+		protected ServerBase(ServerInfo serverInfo, 
+			ICanReadServiceDetails serviceDetailsReader,
+			ICanReadChunkedMessages chunkedMessagesReader,
+			ICanWriteChunkedMessages chunkedMessagesWritter)
         {
-            if (serverInfo == null) throw new ArgumentNullException("serverInfo");
-            if (dataSourceServices == null) throw new ArgumentNullException("dataSourceServices");
-
+			_serviceDetailsReader = serviceDetailsReader;
+			_chunkedMessagesReader = chunkedMessagesReader;
+			_chunkedMessagesWritter = chunkedMessagesWritter;
             ServerInfo = serverInfo;
-            DataSourceServices = dataSourceServices;
-            ChunkedServiceRequestMessageDataSource = chunkedServiceRequestMessageDataSource;
             if (Networking.PortIsBusy((ushort) serverInfo.Port))
                 throw new ermeXTcpException(String.Format("The given port #{0} is busy ", serverInfo.Port));
         }
 
         public ServerInfo ServerInfo { get; set; }
-        internal IServiceDetailsDataSource DataSourceServices { get; set; }
-        private IChunkedServiceRequestMessageDataSource ChunkedServiceRequestMessageDataSource { get; set; }
         protected readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
 
         #region IDisposable
@@ -146,7 +150,7 @@ namespace ermeX.Transport.Reception
 
             if (!message.Eof)
             {
-                ChunkedServiceRequestMessageDataSource.Save(message);
+                _chunkedMessagesWritter.Save(message);
             }
             else
             {
@@ -157,12 +161,12 @@ namespace ermeX.Transport.Reception
                     {
 
                         ChunkedServiceRequestMessage chunk =ChunkedServiceRequestMessage.FromData(
-                            ChunkedServiceRequestMessageDataSource.GetByCorrelationIdAndOrder(message.CorrelationId, i));
+                            _chunkedMessagesReader.Fetch(message.CorrelationId, i));
 
                         var realBytes = chunk.Data;
 
                         byteList.AddRange(realBytes);
-                        ChunkedServiceRequestMessageDataSource.Remove(chunk);
+                        _chunkedMessagesWritter.Remove(chunk);
                     }
                     byteList.AddRange(message.Data);
 
@@ -217,7 +221,7 @@ namespace ermeX.Transport.Reception
             if (_handlers.ContainsKey(operationId))
                 return true;
 
-            var current = DataSourceServices.GetByOperationId(serverId, operationId);
+            var current = _serviceDetailsReader.GetByOperationId(serverId, operationId);
             if (current == null)
                 return false;
 
@@ -237,9 +241,10 @@ namespace ermeX.Transport.Reception
                     IoCManager.Kernel.Bind(serviceType).ToConstant(instance);
                 }
 
+				//TODO: this must be injected, create task
                 var realHandlerInstance = (IService) IoCManager.Kernel.Get(serviceType);
 
-                obj = new ServiceRequestDispacher(realHandlerInstance, DataSourceServices);//TODO: INJECTable and injected
+                obj = new ServiceRequestDispacher(realHandlerInstance, _serviceDetailsReader);//TODO: INJECTable and injected
             }
 
             RegisterHandler(operationId, obj);

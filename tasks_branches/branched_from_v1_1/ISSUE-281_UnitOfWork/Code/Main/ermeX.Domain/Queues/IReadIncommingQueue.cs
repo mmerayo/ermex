@@ -6,7 +6,7 @@ using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Queues
 {
-	interface IReadIncommingMessagesQueueInfo
+	interface IReadIncommingQueue
 	{
 		IncomingMessage GetNextDispatchableItem(int maxLatency);
 		IEnumerable<IncomingMessage> GetMessagesToDispatch();

@@ -23,6 +23,8 @@ using System.Linq;
 using Ninject;
 using ermeX.Common;
 using ermeX.DAL.Interfaces;
+using ermeX.Domain.Queues;
+using ermeX.Domain.Subscriptions;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Threading.Queues;
@@ -31,7 +33,10 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 {
     internal class ReceptionMessageDistributor: ProducerParallelConsumerQueue<ReceptionMessageDistributor.MessageDistributorMessage>, IReceptionMessageDistributor
     {
-        private const int _maxThreadsNum = 128;
+	    private readonly ICanReadIncommingMessagesSubscriptions _incommingSubscriptionsReader;
+	    private readonly IReadIncommingQueue _queueReader;
+	    private readonly IWriteIncommingQueue _queueWritter;
+	    private const int _maxThreadsNum = 128;
         private const int _queueSizeToCreateNewThread = 4;
         private const int _initialWorkerCount = 1;
         public class MessageDistributorMessage
@@ -46,15 +51,16 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
         }
 
         [Inject]
-        public ReceptionMessageDistributor(IIncomingMessageSuscriptionsDataSource subscriptionsDataSource,
-                                  IIncomingMessagesDataSource messagesDataSource, IQueueDispatcherManager dispatcher)
+        public ReceptionMessageDistributor(ICanReadIncommingMessagesSubscriptions incommingSubscriptionsReader,
+			IReadIncommingQueue queueReader,
+			IWriteIncommingQueue queueWritter,
+                                   IQueueDispatcherManager dispatcher)
             : base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
         {
-            if (subscriptionsDataSource == null) throw new ArgumentNullException("subscriptionsDataSource");
-            if (messagesDataSource == null) throw new ArgumentNullException("messagesDataSource");
-            if (dispatcher == null) throw new ArgumentNullException("dispatcher");
-            SubscriptionsDataSource = subscriptionsDataSource;
-            MessagesDataSource = messagesDataSource;
+	        _incommingSubscriptionsReader = incommingSubscriptionsReader;
+	        _queueReader = queueReader;
+	        _queueWritter = queueWritter;
+	        if (dispatcher == null) throw new ArgumentNullException("dispatcher");
             Dispatcher = dispatcher;
 
             EnqueueNonDeliveredMessages();
@@ -62,8 +68,6 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 
        
 
-        private IIncomingMessageSuscriptionsDataSource SubscriptionsDataSource { get; set; }
-        private IIncomingMessagesDataSource MessagesDataSource { get; set; }
         private IQueueDispatcherManager Dispatcher { get; set; }
 
 
@@ -106,19 +110,19 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                     lock (subscriptorLocker) // its sequential by component
                     {
                         //ensures it was not sent before this is not atomical because it will only happen when restarting or another component reconnecting
-                        if (MessagesDataSource.ContainsMessageFor(incomingMessage.MessageId, destination))
+                        if (_queueReader.ContainsMessageFor(incomingMessage.MessageId, destination))
                             continue;
 
                         var messageToDeliver = incomingMessage.GetClone(); //creates a copy for the subscriber
                         messageToDeliver.Status = Message.MessageStatus.ReceiverDispatchable; //ready to be dispatched
                         messageToDeliver.SuscriptionHandlerId = destination;
 
-                        MessagesDataSource.Save(messageToDeliver); //update the db ? could this be done async?
+                        _queueWritter.Save(messageToDeliver); //update the db ? could this be done async?
                         Dispatcher.EnqueueItem(new QueueDispatcherManager.QueueDispatcherManagerMessage(messageToDeliver, true));//pushes it
                     }
                 }
 
-                MessagesDataSource.Remove(message.IncomingMessage); //removes the original message
+                _queueWritter.Remove(message.IncomingMessage); //removes the original message
                 result = true;
 
             }catch(Exception exception)
@@ -137,7 +141,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 
             foreach (var type in types)
             {
-                result.AddRange(SubscriptionsDataSource.GetByMessageType(type.FullName));
+                result.AddRange(_incommingSubscriptionsReader.GetByMessageType(type.FullName));
             }
 
             return result;
@@ -148,7 +152,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
             try
             {
                 //gets all that have been distributed non dispatched from previous sessions
-                var incomingMessages = MessagesDataSource.GetByStatus(Message.MessageStatus.ReceiverDispatchable,
+                var incomingMessages = _queueReader.GetByStatus(Message.MessageStatus.ReceiverDispatchable,
                                                                       Message.MessageStatus.ReceiverDispatching);
 
                 foreach (var incomingMessage in incomingMessages)
@@ -156,7 +160,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                     incomingMessage.Status = Message.MessageStatus.ReceiverDispatchable;
                 }
 
-                MessagesDataSource.Save(incomingMessages);
+                _queueWritter.Save(incomingMessages);
                 foreach (var incomingMessage in incomingMessages) //TODO:CREATE OVERLOAD on EnqueueItem TO ACCEPT THIS BATCH
                 {
                     Dispatcher.EnqueueItem(new QueueDispatcherManager.QueueDispatcherManagerMessage(incomingMessage,
