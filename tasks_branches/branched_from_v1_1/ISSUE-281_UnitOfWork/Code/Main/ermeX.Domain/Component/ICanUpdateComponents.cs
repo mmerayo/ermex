@@ -9,5 +9,6 @@ namespace ermeX.Domain.Component
     {
         bool ImportFromOtherComponent(Entities.Entities.AppComponent entity, Tuple<string, object>[] deterministicFilter, ConnectivityDetails connectivityDetails);
         void SetComponentRunningStatus(Guid componentId, ComponentStatus newStatus, bool exchangedDefinitions = false);
+	    void Save(AppComponent component);
     }
 }

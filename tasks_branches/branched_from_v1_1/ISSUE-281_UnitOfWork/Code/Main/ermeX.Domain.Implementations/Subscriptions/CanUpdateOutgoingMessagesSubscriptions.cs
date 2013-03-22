@@ -1,3 +1,4 @@
+using System;
 using Ninject;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Subscriptions;
@@ -16,9 +17,22 @@ namespace ermeX.Domain.Implementations.Subscriptions
 		}
 
 
-		public void SaveFromOtherComponent(IncomingMessageSuscription request)
+		public void SaveFromOtherComponent(IncomingMessageSuscription susbcription)
 		{
-			_repository.SaveFromOtherComponent(request);//TODO: move logic here
+			_repository.SaveFromOtherComponent(susbcription);//TODO: move logic here
+		}
+
+		public void SaveFromOtherComponent(OutgoingMessageSuscription susbcription)
+		{
+			//ISSUE-281: FIX
+			var deterministicFilter = new[]
+                        {
+                            new Tuple<string, object>("BizMessageFullTypeName",
+                                                      susbcription.BizMessageFullTypeName),
+                            new Tuple<string, object>("Component", susbcription.Component)
+                        };
+
+			_repository.SaveFromOtherComponent(susbcription, deterministicFilter);
 		}
 	}
 }

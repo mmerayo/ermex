@@ -7,7 +7,8 @@ namespace ermeX.Domain.Subscriptions
 		/// <summary>
 		/// Saves an outgoing subscription from an incomming suscription in other component
 		/// </summary>
-		/// <param name="request"></param>
-		void SaveFromOtherComponent(IncomingMessageSuscription request);
+		void SaveFromOtherComponent(IncomingMessageSuscription susbcription);
+
+		void SaveFromOtherComponent(OutgoingMessageSuscription susbcription);
 	}
 }

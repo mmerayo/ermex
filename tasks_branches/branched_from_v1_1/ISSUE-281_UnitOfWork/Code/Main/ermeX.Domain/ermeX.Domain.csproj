@@ -54,7 +54,7 @@
     <Compile Include="Component\ICanReadLatency.cs" />
     <Compile Include="Component\ICanReadComponents.cs" />
     <Compile Include="Component\IRegisterComponents.cs" />
-    <Compile Include="Connectivity\ICanUpdateConnectivityDetails.cs" />
+    <Compile Include="Connectivity\ICanWriteConnectivityDetails.cs" />
     <Compile Include="Messages\ICanReadChunkedMessages.cs" />
     <Compile Include="Connectivity\ICanReadConnectivityDetails.cs" />
     <Compile Include="Properties\LayerInfo.cs" />

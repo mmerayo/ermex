@@ -3,7 +3,7 @@ using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Connectivity
 {
-	interface ICanUpdateConnectivityDetails
+	interface ICanWriteConnectivityDetails
 	{
 		void RemoveLocalComponentDetails();
 		ConnectivityDetails CreateLocalComponentConnectivityDetails(ushort port, bool asLocal=true);

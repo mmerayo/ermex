@@ -7,11 +7,12 @@ using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Implementations.Services
 {
-	class CanReadServiceDetails : ICanReadServiceDetails
+	class ServiceDetailsReader : ICanReadServiceDetails
 	{
 		private readonly IServiceDetailsDataSource _repository;
+		
 		[Inject]
-		public CanReadServiceDetails(IServiceDetailsDataSource repository)
+		public ServiceDetailsReader(IServiceDetailsDataSource repository)
 		{
 			_repository = repository;
 		}

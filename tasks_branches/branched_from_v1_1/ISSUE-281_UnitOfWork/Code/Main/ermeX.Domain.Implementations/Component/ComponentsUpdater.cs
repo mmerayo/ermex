@@ -28,5 +28,10 @@ namespace ermeX.Domain.Implementations.Component
             //TODO: MOVE TO ANOTHER DECORATOR
             Repository.SetComponentRunningStatus(componentId,newStatus,exchangedDefinitions);
         }
+
+	    public void Save(AppComponent component)
+	    {
+		    Repository.Save(component); //TODO: Issue-281: sEE USAGE AND REFACTOR
+	    }
     }
 }

@@ -8,7 +8,7 @@ using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Implementations.Connectivity
 {
-	internal sealed class ConnectivityDetailsWritter : ICanUpdateConnectivityDetails
+	internal sealed class ConnectivityDetailsWritter : ICanWriteConnectivityDetails
 	{
 		private IConnectivityDetailsDataSource Repository { get; set; }
 

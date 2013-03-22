@@ -65,7 +65,8 @@
     <Compile Include="Queues\CanUpdateOutgoingMessagesQueueInfo.cs" />
     <Compile Include="Queues\ReaderIncommingMessagesQueueInfo.cs" />
     <Compile Include="Queues\ReaderOutgoingMessagesQueueInfo.cs" />
-    <Compile Include="Services\CanReadServiceDetails.cs" />
+    <Compile Include="Services\ServiceDetailsReader.cs" />
+    <Compile Include="Services\ServiceDetailsWriter.cs" />
     <Compile Include="Subscriptions\CanReadIncommingMessagesSubscriptions.cs" />
     <Compile Include="Subscriptions\CanReadOutgoingMessagesSubscriptions.cs" />
     <Compile Include="Subscriptions\CanUpdateIncommingMessagesSubscriptions.cs" />

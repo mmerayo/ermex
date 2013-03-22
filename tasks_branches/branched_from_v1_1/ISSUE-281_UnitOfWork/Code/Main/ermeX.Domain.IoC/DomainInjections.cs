@@ -62,7 +62,8 @@ namespace ermeX.Domain.IoC
 			Bind<IReadOutgoingMessagesQueueInfo>().To<ReaderOutgoingMessagesQueueInfo>().InSingletonScope();
 
 			//service details
-			Bind<ICanReadServiceDetails>().To<CanReadServiceDetails>().InSingletonScope();
+			Bind<ICanReadServiceDetails>().To<ServiceDetailsReader>().InSingletonScope();
+			Bind<ICanWriteServiceDetails>().To<ServiceDetailsWriter>().InSingletonScope();
 
 			//Subscriptions
 			Bind<ICanReadOutgoingMessagesSubscriptions>().To<CanReadOutgoingMessagesSubscriptions>().InSingletonScope();

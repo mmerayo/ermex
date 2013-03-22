@@ -39,7 +39,7 @@ namespace ermeX.Transport
 		private static volatile object _locker = new object();
 
 		protected LoaderBase(ITransportSettings settings, ICanReadConnectivityDetails connectivityReader,
-		                     ICanUpdateConnectivityDetails connectivityWritter,
+		                     ICanWriteConnectivityDetails connectivityWritter,
 		                     ICacheProvider cacheProvider)
 		{
 			if (settings == null) throw new ArgumentNullException("settings");
@@ -52,7 +52,7 @@ namespace ermeX.Transport
 
 		protected ITransportSettings Settings { get; set; }
 		protected ICanReadConnectivityDetails ConnectivityDetailsReader { get; set; }
-		private ICanUpdateConnectivityDetails ConnectivityDetailsWritter { get; set; }
+		private ICanWriteConnectivityDetails ConnectivityDetailsWritter { get; set; }
 		protected ICacheProvider CacheProvider { get; set; }
 		protected readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
 
