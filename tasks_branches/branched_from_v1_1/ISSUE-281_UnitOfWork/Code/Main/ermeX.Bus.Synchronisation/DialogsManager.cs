@@ -480,7 +480,7 @@ namespace ermeX.Bus.Synchronisation
                 foreach (var suscription in remoteSuscriptions.MyIncomingSuscriptions)
                 {
                     //TODO: THE FOLLOWING USE CASE SHOULD BE DETECTED AUTOMATICALLY WHEN SAVING 1
-					OutgoingMessagesSubscriptionsWritter.SaveFromOtherComponent(suscription);
+					OutgoingMessagesSubscriptionsWritter.ImportFromOtherComponent(suscription);
                 }
 
             //remote outgoing is local outgoing but local subscriptions
@@ -489,14 +489,14 @@ namespace ermeX.Bus.Synchronisation
                 {
                     if (suscription.Component == Settings.ComponentId)
                         continue;
-	                OutgoingMessagesSubscriptionsWritter.SaveFromOtherComponent(suscription);
+	                OutgoingMessagesSubscriptionsWritter.ImportFromOtherComponent(suscription);
                    
                 }
         }
 
         private void NotifyMySubscriptions(Guid componentId)
         {
-            var myIncomingSubscriptions = IncomingMessageSuscriptionsDataSource.GetAll();
+            var myIncomingSubscriptions = IncommingSubscriptionsReader.FetchAll();
                 //get my subscriptions that are not from componentId
 
             var proxy = Publisher.GetServiceProxy<IMessageSuscriptionsService>(componentId);

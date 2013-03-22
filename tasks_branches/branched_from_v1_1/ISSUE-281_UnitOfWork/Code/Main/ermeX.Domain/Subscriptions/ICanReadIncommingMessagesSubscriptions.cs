@@ -9,5 +9,6 @@ namespace ermeX.Domain.Subscriptions
 		IList<IncomingMessageSuscription> GetByMessageType(string bizMessageType);
 		IncomingMessageSuscription GetByHandlerId(Guid suscriptionHandlerId);
 		IncomingMessageSuscription GetByHandlerAndMessageType(Type handlerType, Type messageType);
+		IList<IncomingMessageSuscription> FetchAll();
 	}
 }

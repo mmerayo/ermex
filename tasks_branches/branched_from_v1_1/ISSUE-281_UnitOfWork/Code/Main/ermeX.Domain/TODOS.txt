@@ -4,10 +4,15 @@
     //1.1 visibilities
 	//1.2 remove ===> TODO: ISSUE-281 --> THE RUN UPGRADES TO BE PERFORMED AFTER INJECTIONS
 	//2.1 Create entities de dominio y mapper 
+	//Sacar de los datasources a los commands los metodos de no repositorio
 	//2.2 visibilities again
-    //2.3-simplificar contratos,
+    //2.2.1- return enumerations
+	//2.3-simplificar contratos,
+	//2.4 classes and methods naming siguiendo patron
+	//2.5-properties to variables when ninjected y borrar non used
 
     //3-remover EXISTENTES dependencias,
     //4-Repository contract
     //5-unit of work
 	//6-logica a los commands
+	//7 -the visibility of ththe DAL layer to be in an explicit file not projectinfo.cs

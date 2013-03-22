@@ -26,6 +26,8 @@ using Ninject;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
+using ermeX.Domain.Component;
+using ermeX.Domain.Queues;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Threading.Queues;
@@ -77,22 +79,24 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
         }
 
         [Inject]
-        public QueueDispatcherManager(IBusSettings settings, 
-            IAppComponentDataSource componentDataSource,
-            IIncomingMessagesDataSource messagesDataSource):base(new QueueComparer())
+        public QueueDispatcherManager(IBusSettings settings,
+			IWriteIncommingQueue incommingQueueWriter,
+			ICanReadLatency latenciesReader,
+			ICanUpdateLatency latenciesUpdater)
+			:base(new QueueComparer())
         {
             if (settings == null) throw new ArgumentNullException("settings");
-            if (componentDataSource == null) throw new ArgumentNullException("componentDataSource");
-            if (messagesDataSource == null) throw new ArgumentNullException("messagesDataSource");
-            ComponentsDataSource = componentDataSource;
-            MessagesDataSource = messagesDataSource;
             Settings = settings;
+	        IncommingQueueWriter = incommingQueueWriter;
+	        LatenciesReader = latenciesReader;
+	        LatenciesUpdater = latenciesUpdater;
         }
         private IBusSettings Settings { get; set; }
-        private IAppComponentDataSource ComponentsDataSource { get; set; }
-        private IIncomingMessagesDataSource MessagesDataSource { get; set; }
+	    private IWriteIncommingQueue IncommingQueueWriter { get; set; }
+	    private ICanReadLatency LatenciesReader { get; set; }
+	    private ICanUpdateLatency LatenciesUpdater { get; set; }
 
-        protected override Func<QueueDispatcherManagerMessage,bool> RunActionOnDequeue
+	    protected override Func<QueueDispatcherManagerMessage,bool> RunActionOnDequeue
         {
             get { return DoDeliver; }
         }
@@ -117,12 +121,12 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
             else
             {
                 incomingMessage.Status = Message.MessageStatus.ReceiverDispatching;
-                MessagesDataSource.Save(incomingMessage);
+                IncommingQueueWriter.Save(incomingMessage);
 
                 Logger.Trace(x => x("{0} Start Handling", incomingMessage.MessageId));
                 OnDispatchMessage(incomingMessage.SuscriptionHandlerId, incomingMessage.ToBusMessage());
 
-                MessagesDataSource.Remove(incomingMessage);
+				IncommingQueueWriter.Remove(incomingMessage);
                 Logger.Trace(x => x("{0} Handled finally", incomingMessage.MessageId));
                 result= true;
             }
@@ -139,7 +143,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
         private bool MustWaitDueToQueueLatency(DateTime receivedHere, IncomingMessage incomingMessage)
         {
             bool result;
-            int maxLatency = ComponentsDataSource.GetMaxLatency();
+            int maxLatency = LatenciesReader.GetMaxLatency();
                 //get the latency of all the components involved in the queue
 
             //we equal the latency
@@ -163,7 +167,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
             var milliseconds = receivedTimeUtc.Subtract(receivedMessage.CreatedTimeUtc).Milliseconds;
             if (milliseconds <= (Settings.MaxDelayDueToLatencySeconds * 1000))
             {
-                ComponentsDataSource.UpdateRemoteComponentLatency(receivedMessage.Publisher, milliseconds);
+                LatenciesUpdater.RegisterComponentRequestLatency(receivedMessage.Publisher, milliseconds);
             }
         }
 

@@ -7,12 +7,12 @@ using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Implementations.Queues
 {
-	class ReaderOutgoingMessagesQueueInfo : IReadOutgoingMessagesQueueInfo
+	class ReaderOutgoingQueue : IReadOutgoingQueue
 	{
 		private IOutgoingMessagesDataSource Repository { get; set; }
 
         [Inject]
-		public ReaderOutgoingMessagesQueueInfo(IOutgoingMessagesDataSource repository)
+		public ReaderOutgoingQueue(IOutgoingMessagesDataSource repository)
         {
             Repository = repository;
         }

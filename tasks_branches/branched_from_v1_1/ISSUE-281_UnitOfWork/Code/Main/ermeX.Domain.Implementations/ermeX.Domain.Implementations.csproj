@@ -59,10 +59,12 @@
     <Compile Include="Component\LatencyUpdater.cs" />
     <Compile Include="Connectivity\ConnectivityDetailsReader.cs" />
     <Compile Include="Connectivity\ConnectivityDetailsWritter.cs" />
+    <Compile Include="Messages\ChunkedMessagesWriter.cs" />
     <Compile Include="Messages\ChunkedMessagesReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryDatabase\QueryHelperFactory.cs" />
     <Compile Include="Queues\CanUpdateOutgoingMessagesQueueInfo.cs" />
+    <Compile Include="Queues\IncommingMessagesQueueWriter.cs" />
     <Compile Include="Queues\ReaderIncommingMessagesQueueInfo.cs" />
     <Compile Include="Queues\ReaderOutgoingMessagesQueueInfo.cs" />
     <Compile Include="Services\ServiceDetailsReader.cs" />
@@ -107,6 +109,10 @@
     <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
       <Name>ermeX.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Interfaces\ermeX.Transport.Interfaces.csproj">
+      <Project>{991296BF-95D5-4462-A7EF-574E56C679F3}</Project>
+      <Name>ermeX.Transport.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

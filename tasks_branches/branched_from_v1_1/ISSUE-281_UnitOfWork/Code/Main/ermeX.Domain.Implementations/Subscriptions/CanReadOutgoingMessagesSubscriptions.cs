@@ -20,5 +20,10 @@ namespace ermeX.Domain.Implementations.Subscriptions
 		{
 			return _repository.GetByMessageType(bizMessageType);//TODO: move logic here
 		}
+
+		public IList<OutgoingMessageSuscription> FetchAll()
+		{
+			return _repository.GetAll();
+		}
 	}
 }

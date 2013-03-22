@@ -31,5 +31,11 @@ namespace ermeX.Domain.Implementations.Subscriptions
 		{
 			return _repository.GetByHandlerAndMessageType(handlerType,messageType);//TODO: move logic here
 		}
+
+		//TODO: ISSUE-281: RETURN VALUES TO BE enumerable
+		public IList<IncomingMessageSuscription> FetchAll()
+		{
+			return _repository.GetAll();
+		}
 	}
 }

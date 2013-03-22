@@ -17,14 +17,14 @@ namespace ermeX.Domain.Implementations.Subscriptions
 		}
 
 
-		public void SaveFromOtherComponent(IncomingMessageSuscription susbcription)
+		public void ImportFromOtherComponent(IncomingMessageSuscription susbcription)
 		{
 			_repository.SaveFromOtherComponent(susbcription);//TODO: move logic here
 		}
 
-		public void SaveFromOtherComponent(OutgoingMessageSuscription susbcription)
+		public void ImportFromOtherComponent(OutgoingMessageSuscription susbcription)
 		{
-			//ISSUE-281: FIX
+			//ISSUE-281: cleanup this code
 			var deterministicFilter = new[]
                         {
                             new Tuple<string, object>("BizMessageFullTypeName",
