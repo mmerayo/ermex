@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Component
 {
-    internal interface ICanReadComponents
-    {
-        Entities.Entities.AppComponent Fetch(Guid componentId);
-        IList<Entities.Entities.AppComponent> FetchOtherComponents();
-        IList<Entities.Entities.AppComponent> FetchOtherComponentsNotExchangedDefinitions(bool running = false);
-
-    }
+	internal interface ICanReadComponents
+	{
+		AppComponent Fetch(Guid componentId);
+		IList<AppComponent> FetchAll();
+		IList<AppComponent> FetchOtherComponents();
+		IList<AppComponent> FetchOtherComponentsNotExchangedDefinitions(bool running = false);
+	}
 }

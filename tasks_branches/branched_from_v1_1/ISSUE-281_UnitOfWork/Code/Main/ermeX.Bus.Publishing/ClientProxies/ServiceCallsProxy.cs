@@ -30,8 +30,8 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-
-
+using ermeX.Domain.Component;
+using ermeX.Domain.Services;
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
 using ermeX.Transport.Interfaces;
@@ -42,31 +42,30 @@ namespace ermeX.Bus.Publishing.ClientProxies
     internal sealed class ServiceCallsProxy : IInterceptor, IServiceCallsProxy
     {
         [Inject]
-        public ServiceCallsProxy(IServiceRequestManager serviceRequestsManager, IServiceDetailsDataSource dataSource, 
-            IAppComponentDataSource componentDataSource, IDialogsManager dialogsManager,IBusSettings settings,
+        public ServiceCallsProxy(IServiceRequestManager serviceRequestsManager, 
+			IDialogsManager dialogsManager,IBusSettings settings,ICanReadComponents componentReader,
+			ICanReadServiceDetails serviceDetailsReader,
             IStatusManager statusManager)
         {
-            if (dataSource == null) throw new ArgumentNullException("dataSource");
-            if (componentDataSource == null) throw new ArgumentNullException("componentDataSource");
             if (dialogsManager == null) throw new ArgumentNullException("dialogsManager");
             if (settings == null) throw new ArgumentNullException("settings");
             if (statusManager == null) throw new ArgumentNullException("statusManager");
 
             if (serviceRequestsManager == null) throw new ArgumentNullException("serviceRequestsManager");
             ServiceRequestsManager = serviceRequestsManager;
-            DataSource = dataSource;
-            ComponentDataSource = componentDataSource;
             DialogsManager = dialogsManager;
             Settings = settings;
-            StatusManager = statusManager;
+	        ComponentReader = componentReader;
+	        ServiceDetailsReader = serviceDetailsReader;
+	        StatusManager = statusManager;
         }
 
         private IServiceRequestManager ServiceRequestsManager { get; set; }
-        private IServiceDetailsDataSource DataSource { get; set; }
-        private IAppComponentDataSource ComponentDataSource { get; set; }
         private IDialogsManager DialogsManager { get; set; }
         private IBusSettings Settings { get; set; }
-        private readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
+	    private ICanReadComponents ComponentReader { get; set; }
+	    private ICanReadServiceDetails ServiceDetailsReader { get; set; }
+	    private readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
         private IStatusManager StatusManager { get; set; }
 
         private Guid DestinationComponent { get; set; }
@@ -104,7 +103,7 @@ namespace ermeX.Bus.Publishing.ClientProxies
                 }
                 else
                 {
-                    var appComponent = ComponentDataSource.GetByComponentId(DestinationComponent);
+                    var appComponent = ComponentReader.Fetch(DestinationComponent);
                     if (appComponent == null)
                         throw new InvalidOperationException(string.Format("The component {0} could not be found",
                                                                           DestinationComponent));
@@ -140,7 +139,7 @@ namespace ermeX.Bus.Publishing.ClientProxies
             IServiceOperationResult<object> result=null;
             if (DestinationComponent.IsEmpty()) //TODO: REFACTOR BOTH
             {
-                var methods = DataSource.GetByMethodName(interfaceTypeName, methodName);
+                var methods = ServiceDetailsReader.GetByMethodName(interfaceTypeName, methodName);
                 if (methods.Count == 0)
                     throw new ermeXUndefinedServiceException(interfaceTypeName, methodName);
                 if(methods.Count>1 && invocation.Method.ReturnType !=typeof(void))
@@ -172,7 +171,7 @@ namespace ermeX.Bus.Publishing.ClientProxies
             }
             else
             {
-                svc = DataSource.GetByMethodName(interfaceTypeName, methodName, DestinationComponent);
+                svc = ServiceDetailsReader.GetByMethodName(interfaceTypeName, methodName, DestinationComponent);
                 if (svc == null)
                     throw new ermeXUndefinedServiceException(interfaceTypeName, methodName, DestinationComponent);
 

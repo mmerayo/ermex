@@ -21,11 +21,11 @@ using System.Data.SQLite;
 using NHibernate;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.ConfigurationManagement.Settings.Data;
 
 namespace ermeX.DAL.DataAccess.Providers
 {
-    internal sealed class SessionProvider : ISessionProvider
+	//TODO: ISSUE-281 --> MAKE THIS internal
+    public sealed class SessionProvider : ISessionProvider
     {
         private readonly IDalSettings _settings;
 
@@ -33,10 +33,8 @@ namespace ermeX.DAL.DataAccess.Providers
         private static SQLiteConnection _inMemoryDb;
         //private volatile Dictionary<DbEngineType, ISessionFactory> _sessionFactories = new Dictionary<DbEngineType, ISessionFactory>(Enum.GetValues(typeof(DbEngineType)).Length); 
 
-        
-
         [Inject]
-        public SessionProvider(IDalSettings settings)
+        internal SessionProvider(IDalSettings settings)
         {
             if (settings == null) throw new ArgumentNullException("settings");
             _settings = settings;

@@ -24,8 +24,7 @@ using ermeX.Common;
 using ermeX.Common.Caching;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-
-
+using ermeX.Domain.Connectivity;
 using ermeX.Entities.Entities;
 using ermeX.Transport.Interfaces.Entities;
 using ermeX.Transport.Interfaces.Receiving.Server;
@@ -34,133 +33,117 @@ using ermeX.Transport.LayerInterfaces;
 
 namespace ermeX.Transport
 {
-    internal abstract class LoaderBase : IConcreteServiceLoader
-    {
-        private static volatile List<IServer> _servers;
-        private static volatile object _locker = new object();
-        protected readonly IConnectivityDetailsDataSource ConnectionsDs;
+	internal abstract class LoaderBase : IConcreteServiceLoader
+	{
+		private static volatile List<IServer> _servers;
+		private static volatile object _locker = new object();
 
-        protected LoaderBase(ITransportSettings settings, IConnectivityDetailsDataSource connectionsDs,
-            IServiceDetailsDataSource servicesDs, ICacheProvider cacheProvider)
-        {
-            if (settings == null) throw new ArgumentNullException("settings");
-            if (connectionsDs == null) throw new ArgumentNullException("connectionsDs");
-            if (servicesDs == null) throw new ArgumentNullException("servicesDs");
-            if (cacheProvider == null) throw new ArgumentNullException("cacheProvider");
-            ConnectionsDs = connectionsDs;
-            Settings = settings;
-            ServicesDs = servicesDs;
-            CacheProvider = cacheProvider;
-        }
+		protected LoaderBase(ITransportSettings settings, ICanReadConnectivityDetails connectivityReader,
+		                     ICanUpdateConnectivityDetails connectivityWritter,
+		                     ICacheProvider cacheProvider)
+		{
+			if (settings == null) throw new ArgumentNullException("settings");
+			if (cacheProvider == null) throw new ArgumentNullException("cacheProvider");
+			Settings = settings;
+			ConnectivityDetailsReader = connectivityReader;
+			ConnectivityDetailsWritter = connectivityWritter;
+			CacheProvider = cacheProvider;
+		}
 
-        protected ITransportSettings Settings { get; set; }
-        protected IServiceDetailsDataSource ServicesDs { get; set; }
-        protected ICacheProvider CacheProvider { get; set; }
-        protected readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
+		protected ITransportSettings Settings { get; set; }
+		protected ICanReadConnectivityDetails ConnectivityDetailsReader { get; set; }
+		private ICanUpdateConnectivityDetails ConnectivityDetailsWritter { get; set; }
+		protected ICacheProvider CacheProvider { get; set; }
+		protected readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
 
-        #region IConcreteServiceLoader Members
+		#region IConcreteServiceLoader Members
 
-        /// <summary>
-        ///   It generates a new set of IP:port when loaded first time
-        /// </summary>
-        /// <returns> </returns>
-        public IEnumerable<IServer> LoadServers()
-        {
-            lock (_locker)
-            {
-                if (_servers == null)
-                    _servers = new List<IServer>();
+		/// <summary>
+		///   It generates a new set of IP:port when loaded first time
+		/// </summary>
+		/// <returns> </returns>
+		public IEnumerable<IServer> LoadServers()
+		{
+			lock (_locker)
+			{
+				if (_servers == null)
+					_servers = new List<IServer>();
 
-                var endPoint = ConnectionsDs.GetByComponentId(Settings.ComponentId);
-                if (endPoint == null)
-                {
-                    CreateConnectivitySet();
-                    endPoint = ConnectionsDs.GetByComponentId(Settings.ComponentId);
-                }
-                _servers.Add(GetServer(endPoint));
-            }
+				var endPoint = ConnectivityDetailsReader.Fetch(Settings.ComponentId);
+				if (endPoint == null)
+				{
+					CreateConnectivitySet();
+					endPoint = ConnectivityDetailsReader.Fetch(Settings.ComponentId);
+				}
+				_servers.Add(GetServer(endPoint));
+			}
 
-            return _servers;
-        }
+			return _servers;
+		}
 
-        public IEndPoint GetClientProxy(Guid destinationComponent)
-        {
-            var connectivityDetails = ConnectionsDs.GetByComponentId(destinationComponent);
-            var serverInfos = new List<ServerInfo>();
-
-
-            serverInfos.Add(new ServerInfo
-                                {
-                                    Ip = connectivityDetails.Ip,
-                                    Port = connectivityDetails.Port,
-                                    ServerId = connectivityDetails.ServerId
-                                });
-            return GetClientConcreteProxy(destinationComponent, serverInfos);
-        }
-
-        #endregion
-
-        private void CreateConnectivitySet()
-        {
-            ConnectionsDs.RemoveByProperty("ServerId", Settings.ComponentId.ToString());
-
-            //local
-            // CreateConnectivityDetails(IPAddress.Loopback.ToString(),true);
-
-            //IP4
-            var localhostIp = Networking.GetLocalhostIp(AddressFamily.InterNetwork);
-            CreateConnectivityDetails(localhostIp, false);
-        }
-
-        private void CreateConnectivityDetails(string ip, bool isLocal)
-        {
-            var connectivityDetails = new ConnectivityDetails
-                                          {
-                                              ServerId = Settings.ComponentId,
-                                              ComponentOwner = Settings.ComponentId,
-                                              Ip = ip,
-                                              IsLocal = isLocal,
-                                              Port = Settings.TcpPort
-                                          };
-            ConnectionsDs.Save(connectivityDetails);
-        }
+		public IEndPoint GetClientProxy(Guid destinationComponent)
+		{
+			var connectivityDetails = ConnectivityDetailsReader.Fetch(destinationComponent);
+			var serverInfos = new List<ServerInfo>();
 
 
-        protected abstract IServer GetServer(ConnectivityDetails item);
+			serverInfos.Add(new ServerInfo
+				{
+					Ip = connectivityDetails.Ip,
+					Port = connectivityDetails.Port,
+					ServerId = connectivityDetails.ServerId
+				});
+			return GetClientConcreteProxy(destinationComponent, serverInfos);
+		}
 
-        protected abstract int GetPort(ConnectivityDetails item);
-        protected abstract IEndPoint GetClientConcreteProxy(Guid serverId, List<ServerInfo> serverInfos);
+		#endregion
 
-        #region IDisposable
+		private void CreateConnectivitySet()
+		{
+			ConnectivityDetailsWritter.RemoveComponentDetails(Settings.ComponentId);
 
-        private bool _disposed;
+			//local
+			// CreateConnectivityDetails(IPAddress.Loopback.ToString(),true);
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+			//IP4
+			ConnectivityDetailsWritter.CreateLocalComponentConnectivityDetails(Settings.TcpPort, false);
+		}
 
-        protected void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-            }
-            if (_servers != null)
-                while (_servers.Count > 0)
-                {
-                    var server = _servers[0];
-                    _servers.RemoveAt(0);
-                    server.Dispose();
-                }
-            _disposed = true;
-        }
+		protected abstract IServer GetServer(ConnectivityDetails item);
 
-        ~LoaderBase()
-        {
-            Dispose(false);
-        }
+		protected abstract int GetPort(ConnectivityDetails item);
+		protected abstract IEndPoint GetClientConcreteProxy(Guid serverId, List<ServerInfo> serverInfos);
 
-        #endregion
-    }
+		#region IDisposable
+
+		private bool _disposed;
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+			}
+			if (_servers != null)
+				while (_servers.Count > 0)
+				{
+					var server = _servers[0];
+					_servers.RemoveAt(0);
+					server.Dispose();
+				}
+			_disposed = true;
+		}
+
+		~LoaderBase()
+		{
+			Dispose(false);
+		}
+
+		#endregion
+	}
 }

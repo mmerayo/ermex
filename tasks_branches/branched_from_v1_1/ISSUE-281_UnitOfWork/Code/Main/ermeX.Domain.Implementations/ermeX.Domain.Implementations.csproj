@@ -58,6 +58,7 @@
     <Compile Include="Component\LatencyReader.cs" />
     <Compile Include="Component\LatencyUpdater.cs" />
     <Compile Include="Connectivity\ConnectivityDetailsReader.cs" />
+    <Compile Include="Connectivity\ConnectivityDetailsWritter.cs" />
     <Compile Include="Messages\ChunkedMessagesReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryDatabase\QueryHelperFactory.cs" />
@@ -78,6 +79,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\ermeX.Common\ermeX.Common.csproj">
+      <Project>{49D6179A-5489-4CB0-A4AE-F40DB88B78B7}</Project>
+      <Name>ermeX.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.ConfigurationManagement.Settings\ermeX.ConfigurationManagement.Settings.csproj">
       <Project>{A6C2D141-25F0-4BFF-93BC-F9EF0CBDB3B1}</Project>
       <Name>ermeX.ConfigurationManagement.Settings</Name>

@@ -6,7 +6,7 @@ using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Implementations.Connectivity
 {
-    internal class ConnectivityDetailsReader : ICanGetConnectivityDetails
+    internal class ConnectivityDetailsReader : ICanReadConnectivityDetails
     {
         private IConnectivityDetailsDataSource Repository { get; set; }
 
