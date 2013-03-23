@@ -20,6 +20,7 @@ using System;
 using System.Threading;
 
 using NUnit.Framework;
+using ermeX.NonMerged;
 using ermeX.Tests.Common.RandomValues;
 
 namespace ermeX.Tests.Threading.Queues
@@ -30,13 +31,11 @@ namespace ermeX.Tests.Threading.Queues
         [TestFixtureSetUp]
         protected virtual void OnFixtureStart()
         {
+            ResolveUnmerged.Init();
             //LogManager.Adapter=new ConsoleOutLoggerFactoryAdapter();
         }
 
-
         protected abstract ITestQueue GetTarget(bool failWhenHandling = false);
-
-
 
         [Test]
         public void CanEnqueueDequeue()
