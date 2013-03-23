@@ -62,23 +62,38 @@ namespace ermeX.NonMerged
 
         public static void Init()
         {
-            //forces the type cctor
+            //forces the type cctor and the following
+            RemoveResolvableAssemblies(); //this forces to update exiting to use the embedded version
         }
 
         static void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
+            RemoveResolvableAssemblies();
+        }
+
+        private static void RemoveResolvableAssemblies()
+        {
             Dictionary<string, string>.ValueCollection valueCollection = ToCopy.Values;
             var applicationFolderPath = PathUtils.GetApplicationFolderPath();
             foreach (var value in valueCollection)
+                RemoveAssembly(value, applicationFolderPath);
+
+            IEnumerable<string> assemblies = UnmergedAssemblies.Select(x=>x.Key);
+            foreach (var assembly in assemblies)
+                RemoveAssembly(assembly, applicationFolderPath);
+        }
+
+        private static void RemoveAssembly(string value, string applicationFolderPath)
+        {
+            string filename = Path.Combine(applicationFolderPath, string.Format("{0}.dll", value));
+            if (File.Exists(filename))
             {
-                string filename = Path.Combine(applicationFolderPath, string.Format("{0}.dll", value));
-                if(File.Exists(filename))
+                try
                 {
-                    try
-                    {
-                        File.Delete(filename);
-                    }catch(Exception) 
-                    {}
+                    File.Delete(filename);
+                }
+                catch (Exception)
+                {
                 }
             }
         }
