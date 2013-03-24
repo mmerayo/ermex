@@ -31,7 +31,7 @@ namespace ermeX.NonMerged
 {
     internal static class ResolveUnmerged
     {
-        //TODO: REFACTOR THIS
+        //TODO: rEWRITE OR REFACTOR THIS WITH PROPER UNIT TESTS
 
         private enum DataType
         {
@@ -100,7 +100,7 @@ namespace ermeX.NonMerged
             if (assembly == null || value.Type==DataType.Unmanaged)
             {
                 string filename = Path.Combine(applicationFolderPath, string.Format("{0}.dll", value));
-                if (File.Exists(filename))
+                if (File.Exists(filename) && value.Type!=DataType.Unmanaged) //TODO: TEST THIS CRAP AS WE NEVER REMOVE THE UNMANAGED
                 {
                     try
                     {
