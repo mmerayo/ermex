@@ -80,11 +80,7 @@ namespace ermeX.Tests.Threading.Scheduler
             }
             Assert.IsFalse(_called);
         }
-
-
-
-       
-
+        
         [Test]
         public void Can_Dispose_When_ScheduledJobs_Pending()
         {
