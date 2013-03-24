@@ -61,13 +61,13 @@ namespace ermeX.Tests.NonMerged
             var actual = Assembly.Load(assemblyRef);
             Assert.IsNotNull(actual);
             //TODO: INVOKE TYPE FROM aSSEMBLY TO FORCE RESOLUTION AND UNCOMMENT THE FOLLOWING LINES
-            //if (assemblyName == "System.Data.SQLite") //we do both tests as more than one test would have it for the next already loaded
-            //{
-            //    string targetName = "SQLite.Interop.dll";
-            //    string path = PathUtils.GetApplicationFolderPathFile(targetName);
-            //    bool exists = File.Exists(path);
-            //    Assert.IsTrue(exists);
-            //}
+            if (assemblyName == "System.Data.SQLite") //we do both tests as more than one test would have it for the next already loaded
+            {
+                string targetName = "SQLite.Interop.dll";
+                string path = PathUtils.GetApplicationFolderPathFile(targetName);
+                bool exists = File.Exists(path);
+                Assert.IsTrue(exists);
+            }
         }
     }
     

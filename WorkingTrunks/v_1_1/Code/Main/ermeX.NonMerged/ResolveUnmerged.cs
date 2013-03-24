@@ -100,14 +100,16 @@ namespace ermeX.NonMerged
             if (assembly == null || value.Type==DataType.Unmanaged)
             {
                 string filename = Path.Combine(applicationFolderPath, string.Format("{0}.dll", value));
-                if (File.Exists(filename) && value.Type!=DataType.Unmanaged) //TODO: TEST THIS CRAP AS WE NEVER REMOVE THE UNMANAGED
+                if (File.Exists(filename)) 
                 {
                     try
                     {
                         File.Delete(filename);
+                        Console.WriteLine("Deleted " + filename); //TODO: REMOVE THIS
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        Console.WriteLine("Exception deleting {0} {1}", filename, ex); //TODO: REMOVE THIS
                     }
                 }
             }
@@ -145,8 +147,16 @@ namespace ermeX.NonMerged
                 string filename = Path.Combine(applicationFolderPath, curr.Name + ".dll");
                 var o = ReadResourceBytes(string.Format("{0}.{1}.dll", ns, curr.Name));
                 if (!File.Exists(filename))
+                {
                     using (var fs = new FileStream(filename, FileMode.Create))
                         fs.Write(o, 0, o.Length);
+
+                    Console.WriteLine("Copied " +filename); //TODO: REMOVE THIS
+                }
+                else
+                {
+                    Console.WriteLine("Not copied " + filename); //TODO: REMOVE THIS
+                }
             }
             //load assembly
             var resName = string.Format("{0}.{1}.dll", ns, dllName);
