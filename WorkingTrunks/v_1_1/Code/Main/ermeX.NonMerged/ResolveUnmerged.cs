@@ -144,17 +144,7 @@ namespace ermeX.NonMerged
 
                 string filename = Path.Combine(applicationFolderPath, curr.Name + ".dll");
                 var o = ReadResourceBytes(string.Format("{0}.{1}.dll", ns, curr.Name));
-                bool needCreate = true;
-                if (File.Exists(filename))
-                    try
-                    {
-                        File.Delete(filename);
-                    }
-                    catch
-                    {
-                        needCreate = false;
-                    }
-                if (needCreate)
+                if (!File.Exists(filename))
                     using (var fs = new FileStream(filename, FileMode.Create))
                         fs.Write(o, 0, o.Length);
             }
