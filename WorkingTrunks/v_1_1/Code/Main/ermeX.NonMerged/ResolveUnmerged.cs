@@ -68,7 +68,7 @@ namespace ermeX.NonMerged
 
         static void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
-            RemoveResolvableAssemblies();
+            //RemoveResolvableAssemblies();
         }
 
         private static void RemoveResolvableAssemblies()
