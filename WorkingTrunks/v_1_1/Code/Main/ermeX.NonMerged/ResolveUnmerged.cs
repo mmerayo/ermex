@@ -31,7 +31,7 @@ namespace ermeX.NonMerged
 {
     internal static class ResolveUnmerged
     {
-
+        //TODO: REFACTOR THIS
 
         private enum DataType
         {
@@ -41,21 +41,28 @@ namespace ermeX.NonMerged
             Any = 1,
 
             /// <summary>
-            /// The assembly is different for each build x86,x64
+            /// The assembly is different for each build x86,x64 TODO: 3.5,4.0..
             /// </summary>
             Specialized = 2,
 
         }
-        private static readonly Dictionary<string,DataType> UnmergedAssemblies=new Dictionary<string,DataType>();
-        private static readonly Dictionary<string, string> ToCopy = new Dictionary<string, string>(); 
+
+        private class UnmergedAssemblyInfo
+        {
+            public string Name { get; set; }
+            public DataType Type { get; set; }
+            public Version Version { get; set; }
+            public readonly List<UnmergedAssemblyInfo> NonManagedToCopy=new List<UnmergedAssemblyInfo>(); 
+        }
+        private static readonly List<UnmergedAssemblyInfo> UnmergedAssemblies=new List<UnmergedAssemblyInfo>();
         
         static ResolveUnmerged()
         {
-            UnmergedAssemblies.Add("Common.Logging",DataType.Any);
-            UnmergedAssemblies.Add("log4net", DataType.Any);
-
-            UnmergedAssemblies.Add("System.Data.SQLite", DataType.Specialized);
-            ToCopy.Add("System.Data.SQLite","SQLite.Interop");
+            UnmergedAssemblies.Add(new UnmergedAssemblyInfo{Name="Common.Logging",Type=DataType.Any,Version=new Version(2,1,2,0)});
+            UnmergedAssemblies.Add(new UnmergedAssemblyInfo { Name = "log4net", Type = DataType.Any, Version = new Version(1, 2, 11, 0) });
+            var sqlIte = new UnmergedAssemblyInfo { Name = "System.Data.SQLite", Type = DataType.Specialized, Version = new Version(1, 0,83,0) };
+            UnmergedAssemblies.Add(sqlIte);
+            sqlIte.NonManagedToCopy.Add(new UnmergedAssemblyInfo { Name = "SQLite.Interop", Type = DataType.Specialized, Version = new Version(1, 0, 83,0) });
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
         }
@@ -73,28 +80,41 @@ namespace ermeX.NonMerged
 
         private static void RemoveResolvableAssemblies()
         {
-            Dictionary<string, string>.ValueCollection valueCollection = ToCopy.Values;
             var applicationFolderPath = PathUtils.GetApplicationFolderPath();
-            foreach (var value in valueCollection)
-                RemoveAssembly(value, applicationFolderPath);
 
-            IEnumerable<string> assemblies = UnmergedAssemblies.Select(x=>x.Key);
-            foreach (var assembly in assemblies)
+            foreach (var assembly in UnmergedAssemblies)
+            {
+                foreach(var cpy in assembly.NonManagedToCopy)
+                    RemoveAssembly(cpy,applicationFolderPath);
+                
                 RemoveAssembly(assembly, applicationFolderPath);
+                
+            }
         }
 
-        private static void RemoveAssembly(string value, string applicationFolderPath)
+        private static void RemoveAssembly(UnmergedAssemblyInfo value, string applicationFolderPath)
         {
-            string filename = Path.Combine(applicationFolderPath, string.Format("{0}.dll", value));
-            if (File.Exists(filename))
+            var assembly = TypesHelper.GetAssemblyFromDomain(value.Name,false);
+            if (assembly == null)
             {
-                try
+                string filename = Path.Combine(applicationFolderPath, string.Format("{0}.dll", value));
+                if (File.Exists(filename))
                 {
-                    File.Delete(filename);
+                    try
+                    {
+                        File.Delete(filename);
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
-                catch (Exception)
-                {
-                }
+            }
+            else
+            {
+                string s = assembly.FullName.Split(',')[1].Split('=')[1];
+                var version = Version.Parse(s);
+                if(version.CompareTo(value.Version)!=0)
+                    throw new BadImageFormatException(string.Format("Version supported for assembly {0} is {1}. Current is {2}",value,value.Version,version));
             }
         }
 
@@ -105,21 +125,23 @@ namespace ermeX.NonMerged
                                  ? args.Name.Substring(0, args.Name.IndexOf(','))
                                  : args.Name.Replace(".dll", "");
 
-            if (!UnmergedAssemblies.ContainsKey(dllName)) return null;
+            UnmergedAssemblyInfo info = UnmergedAssemblies.SingleOrDefault(x=>x.Name==dllName);
+            if (info==null) return null;
 
             string ns = "ermeX.NonMerged.Resources";
-            if (UnmergedAssemblies[dllName] == DataType.Specialized)
+            if (info.Type == DataType.Specialized)
             {
                 ns += Is64Bit ? ".x64" : ".x86";
             }
             //copy files if needed
             string applicationFolderPath;
-            if (ToCopy.ContainsKey(dllName))
+            foreach (var curr in info.NonManagedToCopy)
             {
+
                 applicationFolderPath = PathUtils.GetApplicationFolderPath();
 
-                string filename = Path.Combine(applicationFolderPath, ToCopy[dllName] + ".dll");
-                var o = ReadResourceBytes(string.Format("{0}.{1}.dll", ns, ToCopy[dllName]));
+                string filename = Path.Combine(applicationFolderPath, curr.Name + ".dll");
+                var o = ReadResourceBytes(string.Format("{0}.{1}.dll", ns, curr.Name));
                 bool needCreate = true;
                 if (File.Exists(filename))
                     try
@@ -134,7 +156,6 @@ namespace ermeX.NonMerged
                     using (var fs = new FileStream(filename, FileMode.Create))
                         fs.Write(o, 0, o.Length);
             }
-
             //load assembly
             var resName = string.Format("{0}.{1}.dll", ns, dllName);
             byte[] bytes = ReadResourceBytes(resName);

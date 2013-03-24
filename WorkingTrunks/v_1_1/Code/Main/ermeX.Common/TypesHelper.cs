@@ -164,12 +164,12 @@ namespace ermeX.Common
             return GetTypesFromDomainImplementingImpl(typeof(TBase), onlySearchInternalAssemblies);
         }
 
-        public static Assembly GetAssemblyFromDomain(string assemblyName)
+        public static Assembly GetAssemblyFromDomain(string assemblyName,bool loadIfNotLoaded=true)
         {
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             Assembly result = assemblies.SingleOrDefault(x => x.FullName.Split(',')[0] == assemblyName);
 
-            if (result == null)
+            if (result == null && loadIfNotLoaded)
             {
                 result = Assembly.Load(assemblyName);
             }
