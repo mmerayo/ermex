@@ -45,6 +45,8 @@ namespace ermeX.NonMerged
             /// </summary>
             Specialized = 2,
 
+            Unmanaged = 3,
+
         }
 
         private class UnmergedAssemblyInfo
@@ -62,7 +64,7 @@ namespace ermeX.NonMerged
             UnmergedAssemblies.Add(new UnmergedAssemblyInfo { Name = "log4net", Type = DataType.Any, Version = new Version(1, 2, 11, 0) });
             var sqlIte = new UnmergedAssemblyInfo { Name = "System.Data.SQLite", Type = DataType.Specialized, Version = new Version(1, 0,83,0) };
             UnmergedAssemblies.Add(sqlIte);
-            sqlIte.NonManagedToCopy.Add(new UnmergedAssemblyInfo { Name = "SQLite.Interop", Type = DataType.Specialized, Version = new Version(1, 0, 83,0) });
+            sqlIte.NonManagedToCopy.Add(new UnmergedAssemblyInfo { Name = "SQLite.Interop", Type = DataType.Unmanaged, Version = new Version(1, 0, 83,0) });
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
         }
@@ -95,7 +97,7 @@ namespace ermeX.NonMerged
         private static void RemoveAssembly(UnmergedAssemblyInfo value, string applicationFolderPath)
         {
             var assembly = TypesHelper.GetAssemblyFromDomain(value.Name,false);
-            if (assembly == null || value.Type==DataType.Specialized)
+            if (assembly == null || value.Type==DataType.Unmanaged)
             {
                 string filename = Path.Combine(applicationFolderPath, string.Format("{0}.dll", value));
                 if (File.Exists(filename))
