@@ -97,7 +97,7 @@ namespace ermeX.NonMerged
         private static void RemoveAssembly(UnmergedAssemblyInfo value, string applicationFolderPath)
         {
             var assembly = TypesHelper.GetAssemblyFromDomain(value.Name,false);
-            if (assembly == null || value.Type==DataType.Unmanaged || value.Type==DataType.Specialized)
+            if (assembly == null || value.Type==DataType.Unmanaged)
             {
                 string filename = Path.Combine(applicationFolderPath, string.Format("{0}.dll", value.Name));
                 if (File.Exists(filename)) 
@@ -119,6 +119,7 @@ namespace ermeX.NonMerged
                 var version = Version.Parse(s);
                 if(version.CompareTo(value.Version)!=0)
                     throw new BadImageFormatException(string.Format("Version supported for assembly {0} is {1}. Current is {2}",value,value.Version,version));
+                
             }
         }
 
