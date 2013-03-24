@@ -97,9 +97,9 @@ namespace ermeX.NonMerged
         private static void RemoveAssembly(UnmergedAssemblyInfo value, string applicationFolderPath)
         {
             var assembly = TypesHelper.GetAssemblyFromDomain(value.Name,false);
-            if (assembly == null || value.Type==DataType.Unmanaged)
+            if (assembly == null || value.Type==DataType.Unmanaged || value.Type==DataType.Specialized)
             {
-                string filename = Path.Combine(applicationFolderPath, string.Format("{0}.dll", value));
+                string filename = Path.Combine(applicationFolderPath, string.Format("{0}.dll", value.Name));
                 if (File.Exists(filename)) 
                 {
                     try

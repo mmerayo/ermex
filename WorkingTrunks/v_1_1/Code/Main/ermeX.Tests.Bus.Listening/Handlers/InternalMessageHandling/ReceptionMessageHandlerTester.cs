@@ -66,6 +66,11 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling
 
         }
 
+        public override void OnFixtureSetup()
+        {
+            base.OnFixtureSetup();
+        }
+
         private void DealWithMessage(ReceptionMessageDistributor.MessageDistributorMessage message)
         {
             _sentMessages.Add(message);
