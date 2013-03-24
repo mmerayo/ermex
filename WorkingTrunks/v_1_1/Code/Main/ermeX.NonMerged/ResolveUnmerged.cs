@@ -65,6 +65,9 @@ namespace ermeX.NonMerged
             var sqlIte = new UnmergedAssemblyInfo { Name = "System.Data.SQLite", Type = DataType.Specialized, Version = new Version(1, 0,83,0) };
             UnmergedAssemblies.Add(sqlIte);
             sqlIte.NonManagedToCopy.Add(new UnmergedAssemblyInfo { Name = "SQLite.Interop", Type = DataType.Unmanaged, Version = new Version(1, 0, 83,0) });
+
+            RemoveResolvableAssemblies(); //this forces to update exiting to use the embedded version
+
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
         }
@@ -72,7 +75,6 @@ namespace ermeX.NonMerged
         public static void Init()
         {
             //forces the type cctor and the following
-            RemoveResolvableAssemblies(); //this forces to update exiting to use the embedded version
         }
 
         static void CurrentDomain_ProcessExit(object sender, EventArgs e)
