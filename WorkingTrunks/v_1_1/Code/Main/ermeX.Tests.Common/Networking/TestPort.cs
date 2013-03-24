@@ -45,7 +45,6 @@ namespace ermeX.Tests.Common.Networking
 
         static TestPort()
         {
-            Debugger.Launch();
             ResolveUnmerged.Init();
             using (var mutex = new Mutex(false, LockDbCreationMutexName))
             {
