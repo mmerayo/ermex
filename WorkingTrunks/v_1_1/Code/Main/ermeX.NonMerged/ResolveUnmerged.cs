@@ -33,7 +33,7 @@ namespace ermeX.NonMerged
     {
         //TODO: rEWRITE OR REFACTOR THIS WITH PROPER UNIT TESTS
 
-        private enum DataType
+        public enum DataType
         {
             /// <summary>
             /// The assembly is not specialised depending on the build
@@ -49,14 +49,14 @@ namespace ermeX.NonMerged
 
         }
 
-        private class UnmergedAssemblyInfo
+        public class UnmergedAssemblyInfo
         {
             public string Name { get; set; }
             public DataType Type { get; set; }
             public Version Version { get; set; }
             public readonly List<UnmergedAssemblyInfo> NonManagedToCopy=new List<UnmergedAssemblyInfo>(); 
         }
-        private static readonly List<UnmergedAssemblyInfo> UnmergedAssemblies=new List<UnmergedAssemblyInfo>();
+        public static readonly List<UnmergedAssemblyInfo> UnmergedAssemblies=new List<UnmergedAssemblyInfo>();
         
         static ResolveUnmerged()
         {
