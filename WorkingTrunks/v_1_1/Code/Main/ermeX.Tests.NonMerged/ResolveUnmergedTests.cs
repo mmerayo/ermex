@@ -28,7 +28,7 @@ using ermeX.NonMerged;
 
 namespace ermeX.Tests.NonMerged
 {
-	//[Explicit("TODO: invoke nunit alone for this one or change the process model")]
+	[Explicit("TODO: invoke nunit alone for this one or change the process model")]
 	[TestFixture]
 	public sealed class ResolveUnmergedTests
 	{
