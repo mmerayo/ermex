@@ -22,38 +22,63 @@ using System.Reflection;
 
 namespace ermeX.Common
 {
-    public static class PathUtils
-    {
-        private static string _applicationFolderPath;
+	public static class PathUtils
+	{
+		private static string _applicationFolderPath;
 
-        public static string GetApplicationFolderPath(string folderName)
-        {
-            return string.Format("{0}\\{1}", GetApplicationFolderPath(), folderName);
-        }
+		public static string GetApplicationFolderPath(string folderName)
+		{
+			return string.Format("{0}\\{1}", GetApplicationFolderPath(), folderName);
+		}
 
-        public static string GetApplicationFolderPath()
-        {
-            if (_applicationFolderPath == null)
-            {
-                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-                var uri = new UriBuilder(codeBase);
-                string path = Uri.UnescapeDataString(uri.Path);
-                _applicationFolderPath = Path.GetDirectoryName(path);
-            }
-            return _applicationFolderPath;
-        }
+		public static string GetApplicationFolderPath()
+		{
+			if (_applicationFolderPath == null)
+			{
+				string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+				var uri = new UriBuilder(codeBase);
+				string path = Uri.UnescapeDataString(uri.Path);
+				_applicationFolderPath = Path.GetDirectoryName(path);
+			}
+			return _applicationFolderPath;
+		}
 
-        public static string GetPath(string uri)
-        {
-            var uriBuilder = new UriBuilder(uri);
-            string path = Uri.UnescapeDataString(uriBuilder.Path);
-            _applicationFolderPath = Path.GetDirectoryName(path);
-            return _applicationFolderPath;
-        }
+		public static string GetPath(string uri)
+		{
+			var uriBuilder = new UriBuilder(uri);
+			string path = Uri.UnescapeDataString(uriBuilder.Path);
+			_applicationFolderPath = Path.GetDirectoryName(path);
+			return _applicationFolderPath;
+		}
 
-        public static string GetApplicationFolderPathFile(string fileName)
-        {
-            return Path.Combine(GetApplicationFolderPath(), fileName);
-        }
-    }
+		public static string GetApplicationFolderPathFile(string fileName)
+		{
+			return Path.Combine(GetApplicationFolderPath(), fileName);
+		}
+
+
+		public static void CopyFolder(string sourceFolder, string destFolder)
+		{
+			string[] files = Directory.GetFiles(sourceFolder);
+			string[] folders = Directory.GetDirectories(sourceFolder);
+
+			if (!Directory.Exists(destFolder))
+				Directory.CreateDirectory(destFolder);
+			
+			foreach (string file in files)
+			{
+				string name = Path.GetFileName(file);
+				string dest = Path.Combine(destFolder, name);
+				File.Copy(file, dest);
+			}
+			
+			foreach (string folder in folders)
+			{
+				string name = Path.GetFileName(folder);
+				string dest = Path.Combine(destFolder, name);
+				CopyFolder(folder, dest);
+			}
+		}
+
+	}
 }
