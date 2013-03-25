@@ -23,6 +23,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using NUnit.Framework;
+using ermeX.NonMerged;
 using ermeX.Threading.Scheduling;
 
 namespace ermeX.Tests.Threading.Scheduler
@@ -36,6 +37,7 @@ namespace ermeX.Tests.Threading.Scheduler
         [SetUp]
         public void OnSetup()
         {
+            ResolveUnmerged.Init();
             _called = false;
             _jobCalledEvent.Reset();
         }
@@ -78,11 +80,7 @@ namespace ermeX.Tests.Threading.Scheduler
             }
             Assert.IsFalse(_called);
         }
-
-
-
-       
-
+        
         [Test]
         public void Can_Dispose_When_ScheduledJobs_Pending()
         {

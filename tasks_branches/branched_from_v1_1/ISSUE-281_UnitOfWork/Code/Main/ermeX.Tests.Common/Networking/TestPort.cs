@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -32,6 +33,7 @@ using ermeX.Tests.Common.DataAccess;
 using Network = ermeX.Common.Networking;
 namespace ermeX.Tests.Common.Networking
 {
+    //todo: REWRITE THIS CLASS ISOLATING IT FROM THE QUERYHELPER
     public sealed class TestPort : IDisposable
     {
         private const string DbName = "PortBooking";
