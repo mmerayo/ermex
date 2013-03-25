@@ -37,8 +37,8 @@ namespace ermeX.Tests.ConfigurationManagement.Config
         [TestFixtureSetUp]
         public void OnStartUp()
         {
-            if (LogManager.Adapter is NoOpLoggerFactoryAdapter)
-                LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
+            //if (LogManager.Adapter is NoOpLoggerFactoryAdapter)
+            //    LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
         }
 
         [SetUp]

@@ -116,6 +116,7 @@
 		Framework="$(nUnitFramework)" 
 		OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml"		
 		Labels="true"
+		Domain="Multiple"
 		/>	
 		
 	<Message Text="RunTestsTask:End" />
@@ -250,8 +251,8 @@
  
  <Target Name="MergeOutput" >
     <ItemGroup>
-      <Input Include="$(OutputPath)*dll" Exclude="$(OutputPath)*Test*;$(OutputPath)Moq.*;$(OutputPath)System.Data.SQLite.*;$(OutputPath)SQLite.Interop.*;$(OutputPath)nunit.*;$(OutputPath)log4net*;$(OutputPath)System*;$(OutputPath)mscorlib.*;$(OutputPath)Common.Logging*;"/>	  	     
-	  <NotMergeable Include="$(OutputPath)SQLite.Interop.*;$(OutputPath)Common.Logging.dll;$(OutputPath)System.Data.SQLite.dll;"/>
+      <Input Include="$(OutputPath)*dll" Exclude="$(OutputPath)*Test*;$(OutputPath)Moq.*;$(OutputPath)*SQLite*;$(OutputPath)nunit.*;$(OutputPath)log4net*;$(OutputPath)System*;$(OutputPath)mscorlib.*;$(OutputPath)Common.Logging*;"/>	  	     
+	  <NotMergeable Include="$(OutputPath)*SQLite*;$(OutputPath)Common.Logging.dll;"/>
 	  <!--<NotMergeable Include="$(OutputPath)Common.Logging.dll;"/>-->
     </ItemGroup>
 	<Message Text="The build version is name is: $(BuildVersion)"/> 
