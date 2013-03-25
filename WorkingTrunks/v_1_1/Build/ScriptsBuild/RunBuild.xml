@@ -116,6 +116,7 @@
 		Framework="$(nUnitFramework)" 
 		OutputXmlFile="$(BuildReportsFolder)\$(BuildTag)_TestResults.xml"		
 		Labels="true"
+		Domain="Multiple"
 		/>	
 		
 	<Message Text="RunTestsTask:End" />
