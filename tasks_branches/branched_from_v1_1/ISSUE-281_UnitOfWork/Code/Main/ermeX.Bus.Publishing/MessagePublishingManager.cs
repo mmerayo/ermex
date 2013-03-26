@@ -24,52 +24,54 @@ using ermeX.Bus.Interfaces;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.DAL.Interfaces;
+using ermeX.Domain.Services;
 using ermeX.Entities.Entities;
 
 using ermeX.LayerMessages;
 
 namespace ermeX.Bus.Publishing
 {
-    internal class MessagePublishingManager : BusInteropBase, IMessagePublisher
-    {
-        [Inject]
-        public MessagePublishingManager(IEsbManager bus, IServiceDetailsDataSource serviceDetailsDataSource) : base(bus)
-        {
-            ServiceDetailsDataSource = serviceDetailsDataSource;
-            if (serviceDetailsDataSource == null) throw new ArgumentNullException("serviceDetailsDataSource");
-        }
+	internal class MessagePublishingManager : BusInteropBase, IMessagePublisher
+	{
+		private readonly ICanReadServiceDetails _serviceDetailsReader;
 
-        private IServiceDetailsDataSource ServiceDetailsDataSource { get; set; }
+		[Inject]
+		public MessagePublishingManager(IEsbManager bus,
+		                                ICanReadServiceDetails serviceDetailsReader)
+			: base(bus)
+		{
+			_serviceDetailsReader = serviceDetailsReader;
+		}
 
-        #region IMessagePublisher Members
+		#region IMessagePublisher Members
 
-        public void PublishMessage(BusMessage message)
-        {
-            Bus.Publish(message);
-        }
+		public void PublishMessage(BusMessage message)
+		{
+			Bus.Publish(message);
+		}
 
-        public TServiceInterface GetServiceProxy<TServiceInterface>() where TServiceInterface : IService
-        {
-            return GetServiceProxy<TServiceInterface>(Guid.Empty);
-        }
+		public TServiceInterface GetServiceProxy<TServiceInterface>() where TServiceInterface : IService
+		{
+			return GetServiceProxy<TServiceInterface>(Guid.Empty);
+		}
 
-        //when the service is exposed by several components it specifies the concrete one
-        public TServiceInterface GetServiceProxy<TServiceInterface>(Guid componentId) where TServiceInterface : IService
-        {
-            IList<ServiceDetails> operations = ServiceDetailsDataSource.GetByInterfaceType(typeof (TServiceInterface));
-            if (operations.Count == 0)
-                return default(TServiceInterface);
+		//when the service is exposed by several components it specifies the concrete one
+		public TServiceInterface GetServiceProxy<TServiceInterface>(Guid componentId) where TServiceInterface : IService
+		{
+			IList<ServiceDetails> operations = _serviceDetailsReader.GetByInterfaceType(typeof (TServiceInterface));
+			if (operations.Count == 0)
+				return default(TServiceInterface);
 
-            //TODO: REPLACE in the cases THERE ARE REAL local implementations instead of the PROXIES
-            var proxy = IoCManager.Kernel.Get<IServiceCallsProxy>();
+			//TODO: REPLACE in the cases THERE ARE REAL local implementations instead of the PROXIES
+			var proxy = IoCManager.Kernel.Get<IServiceCallsProxy>();
 
-            if (!componentId.IsEmpty())
-                proxy.SetDestinationComponent(componentId);
+			if (!componentId.IsEmpty())
+				proxy.SetDestinationComponent(componentId);
 
-            var obj = ObjectBuilder.CreateProxy<TServiceInterface>((IInterceptor) proxy);
-            return obj;
-        }
+			var obj = ObjectBuilder.CreateProxy<TServiceInterface>((IInterceptor) proxy);
+			return obj;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

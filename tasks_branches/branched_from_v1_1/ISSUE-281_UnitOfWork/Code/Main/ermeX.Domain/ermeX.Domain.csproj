@@ -58,6 +58,7 @@
     <Compile Include="Messages\ICanReadChunkedMessages.cs" />
     <Compile Include="Connectivity\ICanReadConnectivityDetails.cs" />
     <Compile Include="Messages\ICanWriteChunkedMessages.cs" />
+    <Compile Include="Observers\IDomainObserver.cs" />
     <Compile Include="Properties\LayerInfo.cs" />
     <Compile Include="QueryDatabase\IQueryHelper.cs" />
     <Compile Include="QueryDatabase\IQueryHelperFactory.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Queues\IReadIncommingQueue.cs" />
     <Compile Include="Services\ICanReadServiceDetails.cs" />
     <Compile Include="Services\ICanWriteServiceDetails.cs" />
+    <Compile Include="Observers\ICanNotifyChangesInModelInfos.cs" />
     <Compile Include="Subscriptions\ICanReadIncommingMessagesSubscriptions.cs" />
     <Compile Include="Subscriptions\ICanReadOutgoingMessagesSubscriptions.cs" />
     <Compile Include="Subscriptions\ICanUpdateIncommingMessagesSubscriptions.cs" />

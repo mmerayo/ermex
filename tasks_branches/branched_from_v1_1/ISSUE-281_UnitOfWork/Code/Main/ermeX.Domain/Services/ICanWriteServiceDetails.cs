@@ -6,5 +6,6 @@ namespace ermeX.Domain.Services
 	{
 		//TODO: ISSUE-281: RENAME WRITE TO STORE
 		void ImportFromOtherComponent(ServiceDetails svc);
+		void Save(ServiceDetails serviceDetails);
 	}
 }

@@ -25,5 +25,10 @@ namespace ermeX.Domain.Implementations.Services
                         };
 			_repository.SaveFromOtherComponent(svc, deterministicFilter);
 		}
+
+		public void Save(ServiceDetails serviceDetails)
+		{
+			_repository.Save(serviceDetails);
+		}
 	}
 }
