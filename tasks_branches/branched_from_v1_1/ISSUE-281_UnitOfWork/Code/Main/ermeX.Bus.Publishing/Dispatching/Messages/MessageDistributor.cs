@@ -26,123 +26,124 @@ using ermeX.Bus.Interfaces;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
+using ermeX.Domain.Queues;
+using ermeX.Domain.Subscriptions;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Threading.Queues;
 
 namespace ermeX.Bus.Publishing.Dispatching.Messages
 {
-    /// <summary>
-    /// Distributes the messages creating an entry per subscriber where the message havent been sent
-    /// </summary>
-    sealed class MessageDistributor:ProducerParallelConsumerQueue<MessageDistributor.MessageDistributorMessage>, IMessageDistributor
-    {
-        private const int _maxThreadsNum = 128;
-        private const int _queueSizeToCreateNewThread = 4;
-        private const int _initialWorkerCount = 1;
+	/// <summary>
+	/// Distributes the messages creating an entry per subscriber where the message havent been sent
+	/// </summary>
+	internal sealed class MessageDistributor : ProducerParallelConsumerQueue<MessageDistributor.MessageDistributorMessage>,
+	                                           IMessageDistributor
+	{
+		private readonly ICanReadOutgoingMessagesSubscriptions _outgoingMessagesSubscriptionsReader;
+		private readonly IReadOutgoingQueue _outgoingQueueReader;
+		private readonly IWriteOutgoingQueue _outgoingQueueWritter;
+		private const int _maxThreadsNum = 128;
+		private const int _queueSizeToCreateNewThread = 4;
+		private const int _initialWorkerCount = 1;
 
-        public class MessageDistributorMessage{
-            public OutgoingMessage OutGoingMessage { get; private set; }
+		public class MessageDistributorMessage
+		{
+			public OutgoingMessage OutGoingMessage { get; private set; }
 
-            public MessageDistributorMessage(OutgoingMessage outGoingMessage)
-            {
+			public MessageDistributorMessage(OutgoingMessage outGoingMessage)
+			{
 
-                if (outGoingMessage == null) throw new ArgumentNullException("outGoingMessage");
-                OutGoingMessage = outGoingMessage;
-            }
-        }
+				if (outGoingMessage == null) throw new ArgumentNullException("outGoingMessage");
+				OutGoingMessage = outGoingMessage;
+			}
+		}
 
-        [Inject]
-        public MessageDistributor(IOutgoingMessageSuscriptionsDataSource subscriptionsDataSource,
-            IOutgoingMessagesDataSource outgoingMessagesDataSource, IMessageSubscribersDispatcher dispatcher)
-            : base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
-        {
-            if (subscriptionsDataSource == null) throw new ArgumentNullException("subscriptionsDataSource");
-            if (outgoingMessagesDataSource == null) throw new ArgumentNullException("outgoingMessagesDataSource");
-            if (dispatcher == null) throw new ArgumentNullException("dispatcher");
-            
-            SubscriptionsDataSource = subscriptionsDataSource;
-            OutgoingMessagesDataSource = outgoingMessagesDataSource;
-            Dispatcher = dispatcher;
-        }
+		[Inject]
+		public MessageDistributor(ICanReadOutgoingMessagesSubscriptions outgoingMessagesSubscriptionsReader,
+		                          IReadOutgoingQueue outgoingQueueReader,
+		                          IWriteOutgoingQueue outgoingQueueWritter,
+		                          IMessageSubscribersDispatcher dispatcher)
+			: base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
+		{
+			_outgoingMessagesSubscriptionsReader = outgoingMessagesSubscriptionsReader;
+			_outgoingQueueReader = outgoingQueueReader;
+			_outgoingQueueWritter = outgoingQueueWritter;
+			if (dispatcher == null) throw new ArgumentNullException("dispatcher");
 
-        private IOutgoingMessageSuscriptionsDataSource SubscriptionsDataSource { get; set; }
-        private IOutgoingMessagesDataSource OutgoingMessagesDataSource { get; set; }
-        private IMessageSubscribersDispatcher Dispatcher { get; set; }
+			Dispatcher = dispatcher;
+		}
+
+		private IMessageSubscribersDispatcher Dispatcher { get; set; }
 
 
-        protected override Func<MessageDistributorMessage, bool> RunActionOnDequeue
-        {
-            get
-            {
-                return OnDequeue;
-                
-            }
-        }
+		protected override Func<MessageDistributorMessage, bool> RunActionOnDequeue
+		{
+			get { return OnDequeue; }
+		}
 
-        private readonly Dictionary<Guid,object> _subscriptorLockers=new Dictionary<Guid, object>(); 
+		private readonly Dictionary<Guid, object> _subscriptorLockers = new Dictionary<Guid, object>();
 
-        private bool OnDequeue(MessageDistributorMessage message)
-        {
-            if (message == null) throw new ArgumentNullException("message");
-            bool result;
-            try
-            {
-                //TODO: HIGHLY OPTIMIZABLE and THERe COULD BE CASES WHEN THE MESSAGE IS SENT TWICE
-                OutgoingMessage outGoingMessage = message.OutGoingMessage;
-                BusMessage busMessage = outGoingMessage.ToBusMessage();
+		private bool OnDequeue(MessageDistributorMessage message)
+		{
+			if (message == null) throw new ArgumentNullException("message");
+			bool result;
+			try
+			{
+				//TODO: HIGHLY OPTIMIZABLE and THERe COULD BE CASES WHEN THE MESSAGE IS SENT TWICE
+				OutgoingMessage outGoingMessage = message.OutGoingMessage;
+				BusMessage busMessage = outGoingMessage.ToBusMessage();
 
-                var subscriptions = GetSubscriptions(busMessage.Data.MessageType.FullName);
+				var subscriptions = GetSubscriptions(busMessage.Data.MessageType.FullName);
 
-                foreach (var messageSuscription in subscriptions)
-                {
-                    Guid destinationComponent = messageSuscription.Component;
-                    if (!_subscriptorLockers.ContainsKey(destinationComponent))
-                        lock (_subscriptorLockers)
-                            if (!_subscriptorLockers.ContainsKey(destinationComponent))
-                                _subscriptorLockers.Add(destinationComponent, new object());
+				foreach (var messageSuscription in subscriptions)
+				{
+					Guid destinationComponent = messageSuscription.Component;
+					if (!_subscriptorLockers.ContainsKey(destinationComponent))
+						lock (_subscriptorLockers)
+							if (!_subscriptorLockers.ContainsKey(destinationComponent))
+								_subscriptorLockers.Add(destinationComponent, new object());
 
-                    object subscriptorLocker = _subscriptorLockers[destinationComponent];
-                    lock (subscriptorLocker) // its sequential by component
-                    {
-                        //ensures it was not sent before this is not atomical because it will only happen when restarting or another component reconnecting
-                        if (OutgoingMessagesDataSource.ContainsMessageFor(outGoingMessage.MessageId,
-                                                                          destinationComponent))
-                            continue;
+					object subscriptorLocker = _subscriptorLockers[destinationComponent];
+					lock (subscriptorLocker) // its sequential by component
+					{
+						//ensures it was not sent before this is not atomical because it will only happen when restarting or another component reconnecting
+						if (_outgoingQueueReader.ContainsMessageFor(outGoingMessage.MessageId,
+						                                            destinationComponent))
+							continue;
 
-                        var messageToSend = outGoingMessage.GetClone(); //creates a copy for the subscriber
-                        messageToSend.Status = Message.MessageStatus.SenderDispatchPending; //ready to be dispatched
-                        messageToSend.PublishedTo = destinationComponent; //assigns the receiver
-                        Dispatcher.EnqueueItem(
-                            new MessageSubscribersDispatcher.SubscribersDispatcherMessage(messageToSend)); //pushes it
+						var messageToSend = outGoingMessage.GetClone(); //creates a copy for the subscriber
+						messageToSend.Status = Message.MessageStatus.SenderDispatchPending; //ready to be dispatched
+						messageToSend.PublishedTo = destinationComponent; //assigns the receiver
+						Dispatcher.EnqueueItem(
+							new MessageSubscribersDispatcher.SubscribersDispatcherMessage(messageToSend)); //pushes it
 
-                        OutgoingMessagesDataSource.Save(messageToSend); //update the db
+						_outgoingQueueWritter.Save(messageToSend); //update the db
 
-                    }
-                }
-                result = true;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(x => x("There was an error while distributing an otugoing message. {0}", ex));
-                result = false;
-            }
-            return result;
-        }
+					}
+				}
+				result = true;
+			}
+			catch (Exception ex)
+			{
+				Logger.Error(x => x("There was an error while distributing an otugoing message. {0}", ex));
+				result = false;
+			}
+			return result;
+		}
 
-        private IEnumerable<OutgoingMessageSuscription> GetSubscriptions(string typeFullName)
-        {
-            var result = new List<OutgoingMessageSuscription>();
-            var types = TypesHelper.GetInheritanceChain(typeFullName, true);
+		private IEnumerable<OutgoingMessageSuscription> GetSubscriptions(string typeFullName)
+		{
+			var result = new List<OutgoingMessageSuscription>();
+			var types = TypesHelper.GetInheritanceChain(typeFullName, true);
 
-            foreach (var type in types)
-            {
-                var outgoingMessageSuscriptions = SubscriptionsDataSource.GetByMessageType(type.FullName);
-                result.AddRange(outgoingMessageSuscriptions);
-            }
+			foreach (var type in types)
+			{
+				var outgoingMessageSuscriptions = _outgoingMessagesSubscriptionsReader.GetByMessageType(type.FullName);
+				result.AddRange(outgoingMessageSuscriptions);
+			}
 
-            return result;
-        }
-
-    }
+			return result;
+		}
+	}
 }

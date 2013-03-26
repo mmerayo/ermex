@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using Ninject;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Subscriptions;
+using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Implementations.Subscriptions
 {
@@ -23,6 +25,11 @@ namespace ermeX.Domain.Implementations.Subscriptions
 		public void SaveIncommingSubscription(Guid suscriptionHandlerId, Type handlerType, Type messageType)
 		{
 			_repository.SaveIncommingSubscription(suscriptionHandlerId,handlerType,messageType);//TODO: move logic here
+		}
+
+		public void Remove(List<IncomingMessageSuscription> toRemove)
+		{
+			_repository.Remove(toRemove);//TODO: move logic here
 		}
 	}
 }

@@ -2,6 +2,7 @@ using System;
 using Ninject;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Queues;
+using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Implementations.Queues
 {
@@ -18,6 +19,11 @@ namespace ermeX.Domain.Implementations.Queues
 		public void RemoveExpiredMessages(TimeSpan expirationTime)
 		{
 			Repository.RemoveExpiredMessages(expirationTime); //TODO: MOVE LOGIC HERE
+		}
+
+		public void Save(OutgoingMessage message)
+		{
+			Repository.Save(message);
 		}
 	}
 }

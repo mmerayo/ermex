@@ -22,6 +22,7 @@ using System.Linq;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
+using ermeX.Domain.Queues;
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
 using ermeX.LayerMessages;
@@ -37,8 +38,10 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
     /// </summary>
     sealed class MessageSubscribersDispatcher : ProducerParallelConsumerQueue<MessageSubscribersDispatcher.SubscribersDispatcherMessage>, IMessageSubscribersDispatcher
     {
-       
-        private const int _maxThreadsNum = 64;
+	    private readonly IReadOutgoingQueue _outgoingQueueReader;
+	    private readonly IWriteOutgoingQueue _outgoingQueueWritter;
+
+	    private const int _maxThreadsNum = 64;
         private const int _queueSizeToCreateNewThread = 4;
         private const int _initialWorkerCount = 4;
 
@@ -53,15 +56,19 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         }
 
         [Inject]
-        public MessageSubscribersDispatcher(IBusSettings settings, IOutgoingMessagesDataSource dataSource, IJobScheduler taskScheduler, IServiceProxy service)
+        public MessageSubscribersDispatcher(IBusSettings settings,
+			IReadOutgoingQueue outgoingQueueReader,
+			IWriteOutgoingQueue outgoingQueueWritter,
+			IJobScheduler taskScheduler, 
+			IServiceProxy service)
             : base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
         {
-            if (settings == null) throw new ArgumentNullException("settings");
-            if (dataSource == null) throw new ArgumentNullException("dataSource");
+	        _outgoingQueueReader = outgoingQueueReader;
+	        _outgoingQueueWritter = outgoingQueueWritter;
+	        if (settings == null) throw new ArgumentNullException("settings");
             if (taskScheduler == null) throw new ArgumentNullException("taskScheduler");
             if (service == null) throw new ArgumentNullException("service");
             Settings = settings;
-            DataSource = dataSource;
             JobScheduler = taskScheduler;
             Service = service;
 
@@ -69,7 +76,6 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
         }
 
         private IBusSettings Settings { get; set; }
-        private IOutgoingMessagesDataSource DataSource { get; set; }
         private IJobScheduler JobScheduler { get; set; }
         private IServiceProxy Service { get; set; }
 
@@ -96,7 +102,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
                         x =>
                         x("FATAL! {0} not sent to {1} AND EXPIRED.It wont be retried", messageToSend.MessageId,
                           messageToSend.PublishedTo));
-                    SystemTaskQueue.Instance.EnqueueItem(() => DataSource.Save(messageToSend));
+                    SystemTaskQueue.Instance.EnqueueItem(() => _outgoingQueueWritter.Save(messageToSend));
                 }
                 else
                 {
@@ -104,7 +110,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
                     if (SendData(messageToSend))
                     {
                         messageToSend.Status = Message.MessageStatus.SenderSent;
-                        SystemTaskQueue.Instance.EnqueueItem(() => DataSource.Save(messageToSend));
+                        SystemTaskQueue.Instance.EnqueueItem(() => _outgoingQueueWritter.Save(messageToSend));
                         Logger.Info(
                             x => x("SUCCESS {0} Sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo));
                     }
@@ -112,7 +118,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
                     {
                         messageToSend.Tries += 1;
 
-                        SystemTaskQueue.Instance.EnqueueItem(() => DataSource.Save(messageToSend));
+                        SystemTaskQueue.Instance.EnqueueItem(() => _outgoingQueueWritter.Save(messageToSend));
                         SystemTaskQueue.Instance.EnqueueItem(() => ReEnqueueItem(messageToSend));
                         Logger.Warn(
                             x =>
@@ -180,7 +186,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         private void RestoreMessagesFromPreviousSessions()
         {
-            var outgoingMessages = DataSource.GetByStatus(Message.MessageStatus.SenderDispatchPending);
+            var outgoingMessages = _outgoingQueueReader.GetByStatus(Message.MessageStatus.SenderDispatchPending);
 
             foreach (var outgoingMessage in outgoingMessages)
             {

@@ -30,7 +30,8 @@ using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.DAL.Interfaces;
-
+using ermeX.Domain.Services;
+using ermeX.Domain.Subscriptions;
 using ermeX.Entities.Entities;
 
 
@@ -39,37 +40,43 @@ namespace ermeX.Bus.Listening
     //TODO: prevalece siempre governance settings MESSAGE PRIORITY. Manejar en la recepcion de suscribers fijarse tb en version
     internal sealed class MessageListeningManager : IMessageListener, IDisposable
     {
-        private readonly IDictionary<Guid, object> _suscriptions = new ConcurrentDictionary<Guid, object>();
+	    private readonly ICanReadIncommingMessagesSubscriptions _incommingMessagesSubscriptionsReader;
+	    private readonly ICanUpdateIncommingMessagesSubscriptions _incommingMessagesSubscriptionsWritter;
+	    private readonly ICanReadOutgoingMessagesSubscriptions _outgoingMessagesSubscriptionsReader;
+	    private readonly ICanUpdateOutgoingMessagesSubscriptions _outgoingMessagesSubscriptionsWritter;
+	    private readonly ICanReadServiceDetails _serviceDetailsReader;
+	    private readonly ICanWriteServiceDetails _serviceDetailsWritter;
+	    private readonly IDictionary<Guid, object> _suscriptions = new ConcurrentDictionary<Guid, object>();
         private bool _started;
 
         [Inject]
-        public MessageListeningManager(IIncomingMessageSuscriptionsDataSource suscriptionsDatasource,
-                                       IOutgoingMessageSuscriptionsDataSource outgoingSubscriptionsDatasource,
-                                       IComponentSettings componentSettings, IListeningManager listeningManager,
-                                       IServiceDetailsDataSource serviceDetailsDataSource
+        public MessageListeningManager(
+			ICanReadIncommingMessagesSubscriptions incommingMessagesSubscriptionsReader,
+			ICanUpdateIncommingMessagesSubscriptions incommingMessagesSubscriptionsWritter,
+			ICanReadOutgoingMessagesSubscriptions outgoingMessagesSubscriptionsReader,
+			ICanUpdateOutgoingMessagesSubscriptions outgoingMessagesSubscriptionsWritter,
+			ICanReadServiceDetails serviceDetailsReader,
+			ICanWriteServiceDetails serviceDetailsWritter,
+                                       IComponentSettings componentSettings, IListeningManager listeningManager
             
             )
         {
-            if (suscriptionsDatasource == null) throw new ArgumentNullException("suscriptionsDatasource");
-            if (outgoingSubscriptionsDatasource == null)
-                throw new ArgumentNullException("outgoingSubscriptionsDatasource");
-            if (componentSettings == null) throw new ArgumentNullException("componentSettings");
+	        _incommingMessagesSubscriptionsReader = incommingMessagesSubscriptionsReader;
+	        _incommingMessagesSubscriptionsWritter = incommingMessagesSubscriptionsWritter;
+	        _outgoingMessagesSubscriptionsReader = outgoingMessagesSubscriptionsReader;
+	        _outgoingMessagesSubscriptionsWritter = outgoingMessagesSubscriptionsWritter;
+	        _serviceDetailsReader = serviceDetailsReader;
+	        _serviceDetailsWritter = serviceDetailsWritter;
+	        if (componentSettings == null) throw new ArgumentNullException("componentSettings");
             if (listeningManager == null) throw new ArgumentNullException("listeningManager");
-            if (serviceDetailsDataSource == null) throw new ArgumentNullException("serviceDetailsDataSource");
-            SuscriptionsDatasource = suscriptionsDatasource;
-            OutgoingSubscriptionsDatasource = outgoingSubscriptionsDatasource;
             ComponentSettings = componentSettings;
             ListeningManager = listeningManager;
-            ServiceDetailsDataSource = serviceDetailsDataSource;
             RemoveSystemSubscriptions();
         }
 
-        private IIncomingMessageSuscriptionsDataSource SuscriptionsDatasource { get; set; }
-        private IOutgoingMessageSuscriptionsDataSource OutgoingSubscriptionsDatasource { get; set; }
 
         private IComponentSettings ComponentSettings { get; set; }
         private IListeningManager ListeningManager { get; set; }
-        private IServiceDetailsDataSource ServiceDetailsDataSource { get; set; }
         private readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
 
         #region IMessageListener Members
@@ -83,7 +90,7 @@ namespace ermeX.Bus.Listening
         public Guid Suscribe(Type handlerInterfaceType, object inhandler, out object outHandler)
         {
             if (handlerInterfaceType == null) throw new ArgumentNullException("handlerInterfaceType");
-            IncomingMessageSuscription subscription = SuscriptionsDatasource.GetByHandlerAndMessageType(inhandler.GetType(),handlerInterfaceType.GetGenericArguments()[0]);
+            IncomingMessageSuscription subscription = _incommingMessagesSubscriptionsReader.GetByHandlerAndMessageType(inhandler.GetType(),handlerInterfaceType.GetGenericArguments()[0]);
             Guid suscriptionHandlerId = subscription == null ? Guid.NewGuid() : subscription.SuscriptionHandlerId;
 
             if (subscription == null)
@@ -141,7 +148,7 @@ namespace ermeX.Bus.Listening
         {
             //TODO: IMPROVE THIS MECHNISM TO DETECT INTERNAL HANDLERS
             var internalHandlerNames = new[] {"UpdatePublishedServiceMessageHandler", "UpdateSuscriptionMessageHandler"};
-            var incomingMessageSuscriptions = SuscriptionsDatasource.GetAll();
+            var incomingMessageSuscriptions = _incommingMessagesSubscriptionsReader.FetchAll();
             var toRemove = new List<IncomingMessageSuscription>();
             foreach (var incomingMessageSuscription in incomingMessageSuscriptions)
             {
@@ -150,7 +157,7 @@ namespace ermeX.Bus.Listening
                     toRemove.Add(incomingMessageSuscription);
             }
 
-            SuscriptionsDatasource.Remove(toRemove);
+            _incommingMessagesSubscriptionsWritter.Remove(toRemove);
         }
 
         private void RestoreMessageHandlers()
@@ -159,7 +166,7 @@ namespace ermeX.Bus.Listening
             var internalHandlerNames = new[] {"UpdatePublishedServiceMessageHandler", "UpdateSuscriptionMessageHandler"};
 
             //TODO: this code need a big refactor(Whole app)
-            var incomingMessageSuscriptions = SuscriptionsDatasource.GetAll();
+	        var incomingMessageSuscriptions = _incommingMessagesSubscriptionsReader.FetchAll();
             foreach (var incomingMessageSuscription in incomingMessageSuscriptions)
             {
                 string typeName = incomingMessageSuscription.HandlerType.Split('.').Last();
@@ -188,7 +195,7 @@ namespace ermeX.Bus.Listening
                     //invoke dispatch
                     var dispatchMethodInfos = TypesHelper.GetPublicInstanceMethods(type, "HandleMessage",
                                                                                    message.GetType());
-                    var incomingMessageSuscription = SuscriptionsDatasource.GetByHandlerId(suscriptionId);
+                    var incomingMessageSuscription = _incommingMessagesSubscriptionsReader.GetByHandlerId(suscriptionId);
 
                     //get the target of the subscription, preventing duplicates due to inheritance
                     var dispatchMethodInfo =
@@ -218,7 +225,7 @@ namespace ermeX.Bus.Listening
                 else
                 {
                     //if it doesnt exist, means its from previous sessions and then removes it
-                    SuscriptionsDatasource.RemoveByHandlerId(suscriptionId);
+                    _incommingMessagesSubscriptionsWritter.RemoveByHandlerId(suscriptionId);
                     Logger.Trace(x => x("MessageListeningManager: Removed subscriptionId {0}", suscriptionId));
 
                 }
@@ -247,7 +254,7 @@ namespace ermeX.Bus.Listening
 
             #region todo in single transaction
 
-            IList<ServiceDetails> svcList = ServiceDetailsDataSource.GetByInterfaceType(interfaceType);
+            IList<ServiceDetails> svcList = _serviceDetailsReader.GetByInterfaceType(interfaceType);
             //SYSTEM SERVICES CAN BE DUPLICATED, BUSINESS SERVICES NO while there are return values, THE NEXT LINES ARE FINE WITH SMALL CHANGES
             if (svcList.Count > 0 && !svcList[0].IsSystemService &&
                 svcList[0].Publisher != ComponentSettings.ComponentId &&
@@ -285,7 +292,7 @@ namespace ermeX.Bus.Listening
                                                  ServiceImplementationTypeName = serviceImplementationType.FullName,
                                                  IsSystemService = isSystemService
                                              };
-                    ServiceDetailsDataSource.Save(serviceDetails);
+                    _serviceDetailsWritter.Save(serviceDetails);
                 }
             }
 
@@ -302,14 +309,14 @@ namespace ermeX.Bus.Listening
         {
 
             IncomingMessageSuscription incomingMessageSuscription =
-                SuscriptionsDatasource.GetByHandlerId(suscriptionHandlerId);
+                _incommingMessagesSubscriptionsReader.GetByHandlerId(suscriptionHandlerId);
             if (incomingMessageSuscription == null) //as it could exist from previous executions
             {
                 if (!handlerInterfaceType.IsInterface ||
                     handlerInterfaceType.GetGenericTypeDefinition() != typeof (IHandleMessages<>))
                     throw new ArgumentException("handlerType must implement IHandleMessages");
                 Type messageType = handlerInterfaceType.GetGenericArguments()[0];
-                SuscriptionsDatasource.SaveIncommingSubscription(suscriptionHandlerId, handlerType, messageType);
+                _incommingMessagesSubscriptionsWritter.SaveIncommingSubscription(suscriptionHandlerId, handlerType, messageType);
             }
         }
 
