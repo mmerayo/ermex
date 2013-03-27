@@ -111,6 +111,10 @@
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
       <Name>ermeX.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Threading\ermeX.Threading.csproj">
+      <Project>{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}</Project>
+      <Name>ermeX.Threading</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Transport.Interfaces\ermeX.Transport.Interfaces.csproj">
       <Project>{991296BF-95D5-4462-A7EF-574E56C679F3}</Project>
       <Name>ermeX.Transport.Interfaces</Name>

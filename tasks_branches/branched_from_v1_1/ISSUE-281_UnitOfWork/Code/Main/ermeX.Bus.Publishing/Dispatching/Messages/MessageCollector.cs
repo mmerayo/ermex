@@ -46,9 +46,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 	{
 		private readonly IReadOutgoingQueue _outgoingReader;
 		private readonly IWriteOutgoingQueue _outgoingWritter;
-		private readonly ICanReadOutgoingMessagesSubscriptions _outgoingMessagesSubscriptionsReader;
-		private readonly ICanUpdateOutgoingMessagesSubscriptions _outgoingMessagesSubscriptionsWritter;
-		private readonly ICanNotifyChangesInOutgoingSubscriptions _changesInOutgoingSubscriptionsNotifier;
+		private readonly IDomainObservable _domainNotifier;
 		private const int CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched = 100;
 		private DispatcherStatus _status = DispatcherStatus.Stopped;
 
@@ -56,17 +54,12 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 		public MessageCollector(IBusSettings settings, IMessageDistributor distributor,
 		                        IReadOutgoingQueue outgoingReader,
 		                        IWriteOutgoingQueue outgoingWritter,
-		                        ICanReadOutgoingMessagesSubscriptions outgoingMessagesSubscriptionsReader,
-		                        ICanUpdateOutgoingMessagesSubscriptions outgoingMessagesSubscriptionsWritter,
-		                        ICanNotifyChangesInOutgoingSubscriptions changesInOutgoingSubscriptionsNotifier)
+								IDomainObservable domainNotifier)
 		{
 			_outgoingReader = outgoingReader;
 			_outgoingWritter = outgoingWritter;
-			_outgoingMessagesSubscriptionsReader = outgoingMessagesSubscriptionsReader;
-			_outgoingMessagesSubscriptionsWritter = outgoingMessagesSubscriptionsWritter;
-			_changesInOutgoingSubscriptionsNotifier = changesInOutgoingSubscriptionsNotifier;
-			if (settings == null) throw new ArgumentNullException("settings");
-			if (distributor == null) throw new ArgumentNullException("distributor");
+			_domainNotifier = domainNotifier;
+			
 			Settings = settings;
 			MessageDistributor = distributor;
 		}
@@ -181,7 +174,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 				RemoveExpiredMessages();
 
 				//subscribe to new subscriptions
-				_changesInOutgoingSubscriptionsNotifier.AddObserver(this);
+				_domainNotifier.AddObserver(this);
 
 				SendAllMessagesInQueue();
 
@@ -227,7 +220,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 			lock (this)
 			{
 				Status = DispatcherStatus.Stopping;
-				_changesInOutgoingSubscriptionsNotifier.RemoveObserver(this);
+				_domainNotifier.RemoveObserver(this);
 				Status = DispatcherStatus.Stopped;
 			}
 		}

@@ -69,7 +69,7 @@
     <Compile Include="Queues\IReadIncommingQueue.cs" />
     <Compile Include="Services\ICanReadServiceDetails.cs" />
     <Compile Include="Services\ICanWriteServiceDetails.cs" />
-    <Compile Include="Observers\ICanNotifyChangesInModelInfos.cs" />
+    <Compile Include="Observers\IDomainObservable.cs" />
     <Compile Include="Subscriptions\ICanReadIncommingMessagesSubscriptions.cs" />
     <Compile Include="Subscriptions\ICanReadOutgoingMessagesSubscriptions.cs" />
     <Compile Include="Subscriptions\ICanUpdateIncommingMessagesSubscriptions.cs" />
