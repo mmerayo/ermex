@@ -27,8 +27,14 @@ using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.Domain.Component;
+using ermeX.Domain.Implementations.Component;
 using ermeX.Domain.Implementations.QueryDatabase;
+using ermeX.Domain.Implementations.Queues;
+using ermeX.Domain.Implementations.Subscriptions;
 using ermeX.Domain.QueryDatabase;
+using ermeX.Domain.Queues;
+using ermeX.Domain.Subscriptions;
 using ermeX.NonMerged;
 
 namespace ermeX.Tests.Common.DataAccess
@@ -164,6 +170,33 @@ namespace ermeX.Tests.Common.DataAccess
 				}
 				return (TResult) dictionary[typeof (TResult)];
 			}
+		}
+
+		protected IWriteIncommingQueue GetIncommingQueueWritter(DbEngineType dbEngine)
+		{
+			var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngine);
+			return new IncommingQueueWriter(dataSource);
+		}
+
+		protected IReadIncommingQueue GetIncommingQueueReader(DbEngineType dbEngine)
+		{
+			var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngine);
+			return new ReaderIncommingQueue(dataSource);
+		}
+
+		protected ICanUpdateLatency GetLatenciesWritter(DbEngineType dbEngine)
+		{
+			return new LatencyUpdater(GetDataSource<AppComponentDataSource>(dbEngine));
+		}
+
+		protected ICanReadLatency GetLatenciesReader(DbEngineType dbEngine)
+		{
+			return new LatencyReader(GetDataSource<AppComponentDataSource>(dbEngine));
+		}
+
+		protected ICanReadIncommingMessagesSubscriptions GetIncommingMessageSubscriptionsReader(DbEngineType dbEngine)
+		{
+			return new CanReadIncommingMessagesSubscriptions(GetDataSource<IncomingMessageSuscriptionsDataSource>(dbEngine));
 		}
 	}
 }

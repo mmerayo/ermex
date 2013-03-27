@@ -52,11 +52,8 @@ namespace ermeX.Tests.Services.Sending.Client
             provider = GetDummyConnectivityProvider(withEndPoints);
             IDalSettings dataAccessSettingsSource = GetDataAccessSettingsSource(engineType);
             var dataAccessExecutor = new DataAccessExecutor(dataAccessSettingsSource);
-            var connectivityDetailsDataSource = new ConnectivityDetailsDataSource(dataAccessSettingsSource, LocalComponentId,dataAccessExecutor);
             return
-                new ServiceProxy(
-                    connectivityDetailsDataSource,
-                    GetCacheProvider(), provider, TestSettingsProvider.GetClientConfigurationSettingsSource());
+                new ServiceProxy(GetCacheProvider(), provider, TestSettingsProvider.GetClientConfigurationSettingsSource());
         }
 
         private ServiceProxy GetTarget(DbEngineType engineType, bool withEndPoints = true)

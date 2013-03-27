@@ -78,7 +78,7 @@ namespace ermeX.Domain.IoC
 			Bind<IQueryHelperFactory>().To<QueryHelperFactory>().InSingletonScope();
 
 			//Notifiers
-			Bind<ICanNotifyChangesInOutgoingSubscriptions>().To<ChangesInOutgoingSubscriptionsNotifier>().InSingletonScope();
+			Bind<IDomainObservable>().To<DomainNotifier>().InSingletonScope();
 			
 		}
 	}

@@ -27,6 +27,7 @@ using ermeX.Bus.Listening.Handlers.InternalMessagesHandling;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.DataSources;
+using ermeX.Domain.Queues;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
@@ -44,7 +45,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling
         private ReceptionMessageHandler GetInstance(DbEngineType dbEngine, Action<ReceptionMessageDistributor.MessageDistributorMessage> messageReceived, out IReceptionMessageDistributor mockedDistributor)
         {
             var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
-            var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngine);
+            
             
             var mock = new Mock<IReceptionMessageDistributor>();
             mock.Setup(x => x.EnqueueItem(It.IsAny<ReceptionMessageDistributor.MessageDistributorMessage>())).Callback(messageReceived);
@@ -55,10 +56,10 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling
 
             var queueMock = mock2.Object;
 
-            return new ReceptionMessageHandler(dataSource,mockedDistributor,settings,queueMock);
+            return new ReceptionMessageHandler(GetIncommingQueueReader(dbEngine),GetIncommingQueueWritter(dbEngine),mockedDistributor,settings,queueMock);
         }
 
-        public override void OnStartUp()
+	    public override void OnStartUp()
         {
             base.OnStartUp();
             _sentMessages.Clear();
