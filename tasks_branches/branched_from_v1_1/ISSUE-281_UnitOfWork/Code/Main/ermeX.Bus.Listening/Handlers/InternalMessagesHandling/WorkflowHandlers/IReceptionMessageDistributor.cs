@@ -20,14 +20,16 @@ using System;
 
 namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 {
-    internal interface IReceptionMessageDistributor:IDisposable
-    {
-        /// <summary>
-        /// Number of threads active currently
-        /// </summary>
-        int CurrentThreadNumber { get; }
+	internal interface IReceptionMessageDistributor : IDisposable
+	{
+		void Start(); //TODO: CREATE INTERFACE ISTARTABLE common for all this kind of components and inject
 
-        int Count { get; }
-        void EnqueueItem(ReceptionMessageDistributor.MessageDistributorMessage item);
-    }
+		/// <summary>
+		/// Number of threads active currently
+		/// </summary>
+		int CurrentThreadNumber { get; }
+
+		int Count { get; }
+		void EnqueueItem(ReceptionMessageDistributor.MessageDistributorMessage item);
+	}
 }

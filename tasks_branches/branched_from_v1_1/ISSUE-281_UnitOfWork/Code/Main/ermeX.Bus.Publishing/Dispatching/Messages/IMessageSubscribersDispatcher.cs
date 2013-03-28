@@ -26,18 +26,20 @@ using ermeX.DAL.Interfaces;
 
 namespace ermeX.Bus.Publishing.Dispatching.Messages
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    internal interface IMessageSubscribersDispatcher
-    {
-        /// <summary>
-        /// Number of threads active currently
-        /// </summary>
-        int CurrentThreadNumber { get; }
+	/// <summary>
+	/// 
+	/// </summary>
+	internal interface IMessageSubscribersDispatcher
+	{
+		void Start();
 
-        int Count { get; }
-        void EnqueueItem(MessageSubscribersDispatcher.SubscribersDispatcherMessage item);
-        void Dispose();
-    }
+		/// <summary>
+		/// Number of threads active currently
+		/// </summary>
+		int CurrentThreadNumber { get; }
+
+		int Count { get; }
+		void EnqueueItem(MessageSubscribersDispatcher.SubscribersDispatcherMessage item);
+		void Dispose();
+	}
 }

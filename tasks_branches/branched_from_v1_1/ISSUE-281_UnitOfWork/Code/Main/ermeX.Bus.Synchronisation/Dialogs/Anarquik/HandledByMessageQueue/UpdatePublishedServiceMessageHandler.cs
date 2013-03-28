@@ -34,15 +34,21 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByMessageQueue
             if (listener == null) throw new ArgumentNullException("listener");
             Publisher = publisher;
             Listener = listener;
-            Type handlerInterfaceType = GetType().GetInterface(typeof(IHandleMessages<>).FullName);
-            Listener.Suscribe(handlerInterfaceType, this);
         }
+
 
         private IMessagePublisher Publisher { get; set; }
 
         private IMessageListener Listener { get; set; }
 
         #region IUpdatePublishedServiceMessageHandler Members
+
+		public void Start()
+		{
+			//TODO: ENSURE IT ONLY WORKS WHEN STARTED
+			Type handlerInterfaceType = GetType().GetInterface(typeof(IHandleMessages<>).FullName);
+			Listener.Suscribe(handlerInterfaceType, this);			
+		}
 
         public void HandleMessage(UpdatePublishedServiceMessage message)
         {

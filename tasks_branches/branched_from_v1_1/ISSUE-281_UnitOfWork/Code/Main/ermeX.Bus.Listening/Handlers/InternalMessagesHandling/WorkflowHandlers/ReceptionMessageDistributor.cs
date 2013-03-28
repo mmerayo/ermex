@@ -63,7 +63,6 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 	        if (dispatcher == null) throw new ArgumentNullException("dispatcher");
             Dispatcher = dispatcher;
 
-            EnqueueNonDeliveredMessages();
         }
 
        
@@ -172,5 +171,11 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                 throw;
             }
         }
+
+		//TODO: ENSURE THE COMPONENT IS NOT WORKING WHILE NOT STARTED IN OTHER METHODS
+	    public void Start()
+	    {
+			EnqueueNonDeliveredMessages();
+	    }
     }
 }

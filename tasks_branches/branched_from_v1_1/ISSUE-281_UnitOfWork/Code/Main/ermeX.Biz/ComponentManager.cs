@@ -23,6 +23,9 @@ using Common.Logging;
 using Ninject;
 using ermeX.Biz.Interfaces;
 using ermeX.Bus.Interfaces;
+using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
+using ermeX.Bus.Publishing.Dispatching.Messages;
+using ermeX.Bus.Synchronisation.Dialogs.HandledByMessageQueue;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Status;
@@ -36,14 +39,25 @@ namespace ermeX.Biz
 	internal sealed class ComponentManager : IComponentManager
 	{
 		private readonly IRegisterComponents _componentsRegister;
+		private readonly IMessageSubscribersDispatcher _subscribersDispatcher;
+		private readonly IReceptionMessageDistributor _receptionMessageDistributor;
+		private readonly IUpdatePublishedServiceMessageHandler _updatePublishedServiceMessageHandler;
 
 		[Inject]
 		public ComponentManager(IBizSettings settings, IMessagePublisher publisher, IMessageListener listener,
-		                        IDialogsManager dialogsManager, ICanReadComponents componentReader,
+		                        IDialogsManager dialogsManager,
+		                        ICanReadComponents componentReader,
 		                        ICanUpdateComponents componentWriter,
-		                        IStatusManager statusManager, IRegisterComponents componentsRegister)
+		                        IStatusManager statusManager,
+		                        IRegisterComponents componentsRegister,
+		                        IMessageSubscribersDispatcher subscribersDispatcher,
+			IReceptionMessageDistributor receptionMessageDistributor,
+			IUpdatePublishedServiceMessageHandler updatePublishedServiceMessageHandler )
 		{
 			_componentsRegister = componentsRegister;
+			_subscribersDispatcher = subscribersDispatcher;
+			_receptionMessageDistributor = receptionMessageDistributor;
+			_updatePublishedServiceMessageHandler = updatePublishedServiceMessageHandler;
 			if (settings == null) throw new ArgumentNullException("settings");
 			if (publisher == null) throw new ArgumentNullException("publisher");
 			if (listener == null) throw new ArgumentNullException("listener");
@@ -85,7 +99,7 @@ namespace ermeX.Biz
 		private void _statusManager_StatusChanged(object sender, ComponentStatus newStatus)
 		{
 			ComponentWriter.SetComponentRunningStatus(Settings.ComponentId, newStatus, true);
-				//TODO: remove second param when fixed, the exchanged definitions are set to false for all components at some point
+			//TODO: remove second param when fixed, the exchanged definitions are set to false for all components at some point
 
 			switch (newStatus)
 			{
@@ -128,14 +142,17 @@ namespace ermeX.Biz
 				StatusManager.CurrentStatus = ComponentStatus.Starting;
 				Logger.Trace(x => x("Component: {0} is STARTING", Settings.ComponentId));
 
+				//TODO:THIS TO BE IN A WELL KNOW CHAIN
+				_receptionMessageDistributor.Start();
+				_subscribersDispatcher.Start();
 				Listener.Start();
 				Publisher.Start();
+				_updatePublishedServiceMessageHandler.Start();
 
 				DialogsManager.JoinNetwork();
 				StatusManager.CurrentStatus = ComponentStatus.Running;
-					//here so it accepts requests, see status changed handler above
+				//here so it accepts requests, see status changed handler above
 				Logger.Trace(x => x("Component: {0} is RUNNING", Settings.ComponentId));
-
 
 				IEnumerable<AppComponent> appComponents =
 					ComponentReader.FetchOtherComponentsNotExchangedDefinitions();
@@ -145,7 +162,6 @@ namespace ermeX.Biz
 			}
 			catch (Exception ex)
 			{
-
 				Logger.Error(x => x("Component Exception on Start", ex));
 				throw;
 			}
