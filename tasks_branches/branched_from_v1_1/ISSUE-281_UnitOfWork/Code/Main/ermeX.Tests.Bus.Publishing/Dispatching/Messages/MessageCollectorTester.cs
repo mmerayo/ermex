@@ -28,6 +28,7 @@ using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.Interfaces.Observer;
+using ermeX.Domain.Observers;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
@@ -36,178 +37,183 @@ using ermeX.Threading.Queues;
 
 namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 {
+	internal sealed class MessageCollectorTester : DataAccessTestBase
+	{
+		private readonly List<MessageDistributor.MessageDistributorMessage> _sentMessages =
+			new List<MessageDistributor.MessageDistributorMessage>();
 
-    sealed class MessageCollectorTester : DataAccessTestBase
-    {
-        readonly List<MessageDistributor.MessageDistributorMessage> _sentMessages = new List<MessageDistributor.MessageDistributorMessage>();
-        readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
+		private readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
 
-        private MessageCollector GetInstance(DbEngineType dbEngine,Action<MessageDistributor.MessageDistributorMessage> messageReceived, out IMessageDistributor mockedDistributor)
-        {
-            var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
-            var outgoingDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
-            var mock = new Mock<IMessageDistributor>();
-            mock.Setup(x=>x.EnqueueItem(It.IsAny<MessageDistributor.MessageDistributorMessage>())).Callback(messageReceived);
-            mockedDistributor = mock.Object;
-            var outgoingMessageSuscriptionsDataSource = GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine);
-            return new MessageCollector(settings,   outgoingDataSource,mockedDistributor,outgoingMessageSuscriptionsDataSource);
-        }
+		private MessageCollector GetInstance(DbEngineType dbEngine,
+		                                     Action<MessageDistributor.MessageDistributorMessage> messageReceived,
+		                                     out IMessageDistributor mockedDistributor)
+		{
+			var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
+			var mock = new Mock<IMessageDistributor>();
+			mock.Setup(x => x.EnqueueItem(It.IsAny<MessageDistributor.MessageDistributorMessage>())).Callback(messageReceived);
+			mockedDistributor = mock.Object;
+			return new MessageCollector(settings, mockedDistributor,
+			                            base.GetOutgoingQueueReader(dbEngine),
+			                            base.GetOutgoingMessageSubscriptionsWritter(dbEngine),
+			                            base.GetDomainNotifier(dbEngine));
 
-        public override void OnStartUp()
-        {
-            base.OnStartUp();
-            _sentMessages.Clear();
-            _messageReceived.Reset();
+		}
 
-        }
+		public override void OnStartUp()
+		{
+			base.OnStartUp();
+			_sentMessages.Clear();
+			_messageReceived.Reset();
 
-        private void DealWithMessage(MessageDistributor.MessageDistributorMessage message)
-        {
-            _sentMessages.Add(message);
-            _messageReceived.Set();
-        }
+		}
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void ComponentStopsOnDisposal(DbEngineType dbEngine)
-        {
-            IMessageDistributor mockedDistributor;
-            var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor);
-            target.Start();
-            target.Dispose();
-            Assert.AreEqual(DispatcherStatus.Stopped,  target.Status);
-        }
+		private void DealWithMessage(MessageDistributor.MessageDistributorMessage message)
+		{
+			_sentMessages.Add(message);
+			_messageReceived.Set();
+		}
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void CanDispatchMessage(DbEngineType dbEngine )
-        {
-            IMessageDistributor mockedDistributor;
-            var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId,
-                                         new BizMessage("theData"));
-            using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
-            {
-                target.Start();
-                target.Dispatch(expected);
-                _messageReceived.WaitOne(TimeSpan.FromSeconds(10));
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void ComponentStopsOnDisposal(DbEngineType dbEngine)
+		{
+			IMessageDistributor mockedDistributor;
+			var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor);
+			target.Start();
+			target.Dispose();
+			Assert.AreEqual(DispatcherStatus.Stopped, target.Status);
+		}
 
-            }
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void CanDispatchMessage(DbEngineType dbEngine)
+		{
+			IMessageDistributor mockedDistributor;
+			var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId,
+			                              new BizMessage("theData"));
+			using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
+			{
+				target.Start();
+				target.Dispatch(expected);
+				_messageReceived.WaitOne(TimeSpan.FromSeconds(10));
 
-            Assert.IsTrue(_sentMessages.Count==1);
-            BusMessage busMessage = _sentMessages[0].OutGoingMessage.ToBusMessage();
-            Assert.AreEqual(expected, busMessage); //asserts is the same that was pushed
-            var messagesInDb= GetDataSource<OutgoingMessagesDataSource>(dbEngine).GetAll();
-            Assert.IsTrue(messagesInDb.Count==1);  //asserts the message was created
+			}
 
-            OutgoingMessage outgoingMessage = messagesInDb[0];
-            Assert.IsTrue(outgoingMessage.Status==Message.MessageStatus.SenderCollected);
-            Assert.AreEqual(expected,outgoingMessage.ToBusMessage()); //asserts is the same pushed one
-        }
+			Assert.IsTrue(_sentMessages.Count == 1);
+			BusMessage busMessage = _sentMessages[0].OutGoingMessage.ToBusMessage();
+			Assert.AreEqual(expected, busMessage); //asserts is the same that was pushed
+			var messagesInDb = GetDataSource<OutgoingMessagesDataSource>(dbEngine).GetAll();
+			Assert.IsTrue(messagesInDb.Count == 1); //asserts the message was created
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void RemovesExpiredItems(DbEngineType dbEngine)
-        {
-            
-            var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage("theData"));
+			OutgoingMessage outgoingMessage = messagesInDb[0];
+			Assert.IsTrue(outgoingMessage.Status == Message.MessageStatus.SenderCollected);
+			Assert.AreEqual(expected, outgoingMessage.ToBusMessage()); //asserts is the same pushed one
+		}
 
-            //the default test set them for one day
-            var outgoingMessage = new OutgoingMessage(busMessage)
-                {
-                    CreatedTimeUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
-                    ComponentOwner = LocalComponentId,
-                    PublishedBy=LocalComponentId,
-                    Status=Message.MessageStatus.SenderCollected
-                };
-            var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
-            outgoingMessagesDataSource.Save(outgoingMessage);
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void RemovesExpiredItems(DbEngineType dbEngine)
+		{
 
-            Assert.IsTrue(outgoingMessagesDataSource.GetAll().Count==1); //assert it was saved
+			var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage("theData"));
 
-            IMessageDistributor mockedDistributor;
-            using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
-            {
-                target.Start();
-                Thread.Sleep(250);
-            }
+			//the default test set them for one day
+			var outgoingMessage = new OutgoingMessage(busMessage)
+				{
+					CreatedTimeUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
+					ComponentOwner = LocalComponentId,
+					PublishedBy = LocalComponentId,
+					Status = Message.MessageStatus.SenderCollected
+				};
+			var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+			outgoingMessagesDataSource.Save(outgoingMessage);
 
-            Assert.IsTrue(outgoingMessagesDataSource.GetAll().Count == 0);//asserts it was removed
-        }
+			Assert.IsTrue(outgoingMessagesDataSource.GetAll().Count == 1); //assert it was saved
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void SendsExistingItemsOnStart(DbEngineType dbEngine)
-        {
+			IMessageDistributor mockedDistributor;
+			using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
+			{
+				target.Start();
+				Thread.Sleep(250);
+			}
 
-            var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage("theData"));
+			Assert.IsTrue(outgoingMessagesDataSource.GetAll().Count == 0); //asserts it was removed
+		}
 
-            //the default test set them for one day
-            var outgoingMessage = new OutgoingMessage(busMessage)//creates this message as a pending one
-            {
-                CreatedTimeUtc = DateTime.UtcNow,
-                ComponentOwner = LocalComponentId,
-                PublishedBy = LocalComponentId,
-                Status = Message.MessageStatus.SenderCollected
-            };
-            var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
-            outgoingMessagesDataSource.Save(outgoingMessage);  
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void SendsExistingItemsOnStart(DbEngineType dbEngine)
+		{
 
-            IMessageDistributor mockedDistributor;
-            using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
-            {
-                target.Start();
-                _messageReceived.WaitOne(TimeSpan.FromSeconds(10));
+			var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage("theData"));
 
-            }
+			//the default test set them for one day
+			var outgoingMessage = new OutgoingMessage(busMessage) //creates this message as a pending one
+				{
+					CreatedTimeUtc = DateTime.UtcNow,
+					ComponentOwner = LocalComponentId,
+					PublishedBy = LocalComponentId,
+					Status = Message.MessageStatus.SenderCollected
+				};
+			var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+			outgoingMessagesDataSource.Save(outgoingMessage);
 
-            Assert.IsTrue(_sentMessages.Count == 1);  //asserts it was sent
-            OutgoingMessage actualOutgoingMessage = _sentMessages[0].OutGoingMessage;
-            Assert.AreEqual(outgoingMessage, actualOutgoingMessage);
-            BusMessage message = actualOutgoingMessage.ToBusMessage();
-            Assert.AreEqual(busMessage, message);
-            
-        }
+			IMessageDistributor mockedDistributor;
+			using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
+			{
+				target.Start();
+				_messageReceived.WaitOne(TimeSpan.FromSeconds(10));
+
+			}
+
+			Assert.IsTrue(_sentMessages.Count == 1); //asserts it was sent
+			OutgoingMessage actualOutgoingMessage = _sentMessages[0].OutGoingMessage;
+			Assert.AreEqual(outgoingMessage, actualOutgoingMessage);
+			BusMessage message = actualOutgoingMessage.ToBusMessage();
+			Assert.AreEqual(busMessage, message);
+
+		}
 
 
-        private class SomeData
-        {
-            public string TheData { get; set; }
-        }
+		private class SomeData
+		{
+			public string TheData { get; set; }
+		}
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void SendsExistingItemsOnSubscriptionReceived(DbEngineType dbEngine)
-        {
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void SendsExistingItemsOnSubscriptionReceived(DbEngineType dbEngine)
+		{
 
-            var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage(new SomeData(){TheData="theData"}));
-            IMessageDistributor mockedDistributor;
+			var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId,
+			                                new BizMessage(new SomeData() {TheData = "theData"}));
+			IMessageDistributor mockedDistributor;
 
-            using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
-            {
-                target.Start();
-                //the default test set them for one day
-                var outgoingMessage = new OutgoingMessage(busMessage) //creates this message as a pending one
-                                          {
-                                              CreatedTimeUtc = DateTime.UtcNow,
-                                              ComponentOwner = LocalComponentId,
-                                              PublishedBy = LocalComponentId,
-                                              Status = Message.MessageStatus.SenderCollected
-                                          };
-                var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
-                outgoingMessagesDataSource.Save(outgoingMessage);
-                
-                target.Notify(NotifiableDalAction.Add, new OutgoingMessageSuscription()
-                                                           {
-                                                               BizMessageFullTypeName = typeof (SomeData).FullName,
-                                                               Component = LocalComponentId,
-                                                               ComponentOwner = LocalComponentId,
-                                                               DateLastUpdateUtc = DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
-                                                           });
+			using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
+			{
+				target.Start();
+				//the default test set them for one day
+				var outgoingMessage = new OutgoingMessage(busMessage) //creates this message as a pending one
+					{
+						CreatedTimeUtc = DateTime.UtcNow,
+						ComponentOwner = LocalComponentId,
+						PublishedBy = LocalComponentId,
+						Status = Message.MessageStatus.SenderCollected
+					};
+				var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+				outgoingMessagesDataSource.Save(outgoingMessage);
 
-                _messageReceived.WaitOne(TimeSpan.FromSeconds(10));
+				target.Notify(ObservableAction.Add, new OutgoingMessageSuscription()
+					{
+						BizMessageFullTypeName = typeof (SomeData).FullName,
+						Component = LocalComponentId,
+						ComponentOwner = LocalComponentId,
+						DateLastUpdateUtc = DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
+					});
 
-                Assert.IsTrue(_sentMessages.Count == 1); //asserts it was sent
-                OutgoingMessage actualOutgoingMessage = _sentMessages[0].OutGoingMessage;
-                Assert.AreEqual(outgoingMessage, actualOutgoingMessage);
-                BusMessage message = actualOutgoingMessage.ToBusMessage();
-                Assert.AreEqual(busMessage, message);
-            }
-        }
+				_messageReceived.WaitOne(TimeSpan.FromSeconds(10));
 
-    }
+				Assert.IsTrue(_sentMessages.Count == 1); //asserts it was sent
+				OutgoingMessage actualOutgoingMessage = _sentMessages[0].OutGoingMessage;
+				Assert.AreEqual(outgoingMessage, actualOutgoingMessage);
+				BusMessage message = actualOutgoingMessage.ToBusMessage();
+				Assert.AreEqual(busMessage, message);
+			}
+		}
+	}
 }

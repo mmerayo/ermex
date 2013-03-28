@@ -27,6 +27,11 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.DAL.Interfaces;
+using ermeX.Domain.Implementations.Messages;
+using ermeX.Domain.Implementations.Services;
+using ermeX.Domain.Messages;
+using ermeX.Domain.Services;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.Dummies;
@@ -42,285 +47,302 @@ using ermeX.Transport.Reception;
 
 namespace ermeX.Tests.Services
 {
-    [Category(TestCategories.CoreUnitTest)]
-    //[TestFixture]
-    internal abstract class ServerTesterBase :DataAccessTestBase
-    {
-        #region Setup/Teardown
+	[Category(TestCategories.CoreUnitTest)]
+	//[TestFixture]
+	internal abstract class ServerTesterBase : DataAccessTestBase
+	{
+		#region Setup/Teardown
 
-        public override void OnStartUp()
-        {
-            
-            base.OnStartUp();
-        }
+		public override void OnStartUp()
+		{
 
-        #endregion
+			base.OnStartUp();
+		}
 
-        private readonly DummyClientConfigurationSettings _settings = new DummyClientConfigurationSettings();
-        private readonly Guid ComponentId = Guid.NewGuid();
+		#endregion
 
-        protected ServiceDetailsDataSource ServiceDetailsDs { get; private set; }
+		private readonly DummyClientConfigurationSettings _settings = new DummyClientConfigurationSettings();
+		private readonly Guid ComponentId = Guid.NewGuid();
 
-       
+		private ServiceDetailsDataSource ServiceDetailsDs { get; set; }
+		private IChunkedServiceRequestMessageDataSource ChunkedServiceRequestMessageDS { get; set; }
 
-        private void DoCanReceiveMessageTest(bool chunked, int numOfMsgToSend = 1)
-        {
-            var serverInfo = new ServerInfo
-                                 {
-                                     Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
-                                     IsLocal = false,
-                                     Port = new TestPort(9000),
-                                     ServerId = Guid.NewGuid()
-                                 };
+		private void DoCanReceiveMessageTest(bool chunked, int numOfMsgToSend = 1)
+		{
+			var serverInfo = new ServerInfo
+				{
+					Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
+					IsLocal = false,
+					Port = new TestPort(9000),
+					ServerId = Guid.NewGuid()
+				};
 
-            using (
-                IServer server = GetServerInstance(serverInfo))
-            {
-                var dummyServiceHandler = new DummyMessageHandler();
+			using (
+				IServer server = GetServerInstance(serverInfo))
+			{
+				var dummyServiceHandler = new DummyMessageHandler();
 
-                server.RegisterHandler(DummyMessageHandler.OperationId, dummyServiceHandler);
-                server.StartListening();
+				server.RegisterHandler(DummyMessageHandler.OperationId, dummyServiceHandler);
+				server.StartListening();
 
-                var threads = new List<Thread>(numOfMsgToSend);
-                for (int i = 0; i < numOfMsgToSend; i++)
-                {
-                    var t = new Thread(() =>
-                                           {
-                                               var eventHandled = new AutoResetEvent(false);
+				var threads = new List<Thread>(numOfMsgToSend);
+				for (int i = 0; i < numOfMsgToSend; i++)
+				{
+					var t = new Thread(() =>
+						{
+							var eventHandled = new AutoResetEvent(false);
 
-                                               var expected = new DummyDomainEntity {Id = Guid.NewGuid()};
+							var expected = new DummyDomainEntity {Id = Guid.NewGuid()};
 
-                                               dummyServiceHandler.AddEvent(expected.Id, eventHandled);
-                                               var layerMessage = LayerMessagesHelper.GetLayerMessage<DummyDomainEntity, TransportMessage>(LayerMessagesHelper.LayerMessageType.Transport, expected);
-                                               ServiceRequestMessage toSend =
-                                                   ServiceRequestMessage.GetForMessagePublishing(layerMessage);
+							dummyServiceHandler.AddEvent(expected.Id, eventHandled);
+							var layerMessage =
+								LayerMessagesHelper.GetLayerMessage<DummyDomainEntity, TransportMessage>(
+									LayerMessagesHelper.LayerMessageType.Transport, expected);
+							ServiceRequestMessage toSend =
+								ServiceRequestMessage.GetForMessagePublishing(layerMessage);
 
-                                               ServiceResult res = DoSendMessage(toSend, serverInfo, chunked);
-                                               Assert.IsNotNull(res);
-                                               Assert.IsTrue(res.Ok);
-                                               eventHandled.WaitOne(new TimeSpan(0, 0, 10));
-                                               Assert.IsNotNull(dummyServiceHandler.ReceivedMessages[expected.Id]);
-                                           });
+							ServiceResult res = DoSendMessage(toSend, serverInfo, chunked);
+							Assert.IsNotNull(res);
+							Assert.IsTrue(res.Ok);
+							eventHandled.WaitOne(new TimeSpan(0, 0, 10));
+							Assert.IsNotNull(dummyServiceHandler.ReceivedMessages[expected.Id]);
+						});
 
-                    threads.Add(t);
-                }
+					threads.Add(t);
+				}
 
-                foreach (Thread thread in threads)
-                {
-                    thread.Start();
-                }
-            }
-        }
+				foreach (Thread thread in threads)
+				{
+					thread.Start();
+				}
+			}
+		}
 
-        private void DoCanReceiveCollectionMessageTest(bool chunked, int numOfMsgToSend = 1)
-        {
-            var serverInfo = new ServerInfo
-                                 {
-                                     Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
-                                     IsLocal = false,
-                                     Port = new TestPort(9000),
-                                     ServerId = Guid.NewGuid()
-                                 };
+		private void DoCanReceiveCollectionMessageTest(bool chunked, int numOfMsgToSend = 1)
+		{
+			var serverInfo = new ServerInfo
+				{
+					Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
+					IsLocal = false,
+					Port = new TestPort(9000),
+					ServerId = Guid.NewGuid()
+				};
 
-            using (
-                IServer server = GetServerInstance(serverInfo))
-            {
-                var dummyServiceHandler = new DummyMessageHandler();
+			using (
+				IServer server = GetServerInstance(serverInfo))
+			{
+				var dummyServiceHandler = new DummyMessageHandler();
 
-                server.RegisterHandler(DummyMessageHandler.OperationId, dummyServiceHandler);
-                server.StartListening();
-
-
-                var t = new Thread(() =>
-                                       {
-                                           var eventHandled = new AutoResetEvent(false);
-
-                                           var expected = new DummyDomainEntity {Id = Guid.NewGuid()};
-                                           expected.Dummies = new List<DummyDomainEntity>();
-                                           for (int i = 0; i < numOfMsgToSend; i++)
-                                               expected.Dummies.Add(new DummyDomainEntity {Id = Guid.NewGuid()});
-
-                                           dummyServiceHandler.AddEvent(expected.Id, eventHandled);
-                                           var layerMessage = LayerMessagesHelper.GetLayerMessage<DummyDomainEntity, TransportMessage>(LayerMessagesHelper.LayerMessageType.Transport, expected);
-                                           ServiceRequestMessage toSend =
-                                               ServiceRequestMessage.GetForMessagePublishing(layerMessage);
-
-                                           ServiceResult res = DoSendMessage(toSend, serverInfo, chunked);
-                                           Assert.IsNotNull(res);
-                                           Assert.IsTrue(res.Ok);
-                                           eventHandled.WaitOne(new TimeSpan(0, 0, 10));
-                                           Assert.IsNotNull(dummyServiceHandler.ReceivedMessages[expected.Id]);
-                                       });
+				server.RegisterHandler(DummyMessageHandler.OperationId, dummyServiceHandler);
+				server.StartListening();
 
 
-                t.Start();
-            }
-        }
+				var t = new Thread(() =>
+					{
+						var eventHandled = new AutoResetEvent(false);
+
+						var expected = new DummyDomainEntity {Id = Guid.NewGuid()};
+						expected.Dummies = new List<DummyDomainEntity>();
+						for (int i = 0; i < numOfMsgToSend; i++)
+							expected.Dummies.Add(new DummyDomainEntity {Id = Guid.NewGuid()});
+
+						dummyServiceHandler.AddEvent(expected.Id, eventHandled);
+						var layerMessage =
+							LayerMessagesHelper.GetLayerMessage<DummyDomainEntity, TransportMessage>(
+								LayerMessagesHelper.LayerMessageType.Transport, expected);
+						ServiceRequestMessage toSend =
+							ServiceRequestMessage.GetForMessagePublishing(layerMessage);
+
+						ServiceResult res = DoSendMessage(toSend, serverInfo, chunked);
+						Assert.IsNotNull(res);
+						Assert.IsTrue(res.Ok);
+						eventHandled.WaitOne(new TimeSpan(0, 0, 10));
+						Assert.IsNotNull(dummyServiceHandler.ReceivedMessages[expected.Id]);
+					});
 
 
-        protected List<ChunkedServiceRequestMessage> GetChunks(byte[] source, int chunksNumber)
-        {
-            var result = new List<ChunkedServiceRequestMessage>(chunksNumber);
+				t.Start();
+			}
+		}
 
-            Guid correlationId = Guid.NewGuid();
 
-            int len = source.Length/chunksNumber;
+		protected List<ChunkedServiceRequestMessage> GetChunks(byte[] source, int chunksNumber)
+		{
+			var result = new List<ChunkedServiceRequestMessage>(chunksNumber);
 
-            for (int i = 0; i < chunksNumber; i++)
-            {
-                bool lastChunk = i == chunksNumber - 1;
-                byte[] subArray = lastChunk ? source.SubArray(i*len) : source.SubArray(i*len, len);
-                result.Add(new ChunkedServiceRequestMessage(correlationId, i, lastChunk,
-                                                            ServerBase.ChunkedMessageOperation,
-                                                            subArray));
-            }
-            return result;
-        }
+			Guid correlationId = Guid.NewGuid();
 
-        protected ServiceResult DoSendMessage(ServiceRequestMessage toSend, ServerInfo serverInfo, bool chunked)
-        {
-            ServiceResult result = null;
-            using (IMockTestClient client = GetTestClientInstance(serverInfo))
-            {
-                byte[] arr = ObjectSerializer.SerializeObjectToByteArray(toSend);
-                if (!chunked)
-                    result = client.Execute(arr);
-                else
-                {
-                    List<ChunkedServiceRequestMessage> chunkedServiceRequestMessages = GetChunks(arr, 3);
+			int len = source.Length/chunksNumber;
 
-                    foreach (ChunkedServiceRequestMessage msg in chunkedServiceRequestMessages)
-                    {
-                        byte[] tmp = ObjectSerializer.SerializeObjectToByteArray(msg);
-                        result = client.Execute(tmp);
-                    }
-                }
-            }
-            return result;
-        }
+			for (int i = 0; i < chunksNumber; i++)
+			{
+				bool lastChunk = i == chunksNumber - 1;
+				byte[] subArray = lastChunk ? source.SubArray(i*len) : source.SubArray(i*len, len);
+				result.Add(new ChunkedServiceRequestMessage(correlationId, i, lastChunk,
+				                                            ServerBase.ChunkedMessageOperation,
+				                                            subArray));
+			}
+			return result;
+		}
 
-        private void RefreshServiceDetailsDataSource(DbEngineType dbEngine)
-        {
-            DataAccessTestHelper dataAccessTestHelper = GetDataHelper(dbEngine);
-            IDalSettings dataAccessSettingsSource = dataAccessTestHelper.DataAccessSettings;
-            var dataAccessExecutor = new DataAccessExecutor(dataAccessSettingsSource);
-            ServiceDetailsDs =
-                new ServiceDetailsDataSource(dataAccessSettingsSource,
-                                             ComponentId,dataAccessExecutor);
-        }
+		protected ServiceResult DoSendMessage(ServiceRequestMessage toSend, ServerInfo serverInfo, bool chunked)
+		{
+			ServiceResult result = null;
+			using (IMockTestClient client = GetTestClientInstance(serverInfo))
+			{
+				byte[] arr = ObjectSerializer.SerializeObjectToByteArray(toSend);
+				if (!chunked)
+					result = client.Execute(arr);
+				else
+				{
+					List<ChunkedServiceRequestMessage> chunkedServiceRequestMessages = GetChunks(arr, 3);
 
-        protected abstract IServer GetServerInstance(ServerInfo serverInfo);
-        protected abstract IMockTestClient GetTestClientInstance(ServerInfo serverInfo);
+					foreach (ChunkedServiceRequestMessage msg in chunkedServiceRequestMessages)
+					{
+						byte[] tmp = ObjectSerializer.SerializeObjectToByteArray(msg);
+						result = client.Execute(tmp);
+					}
+				}
+			}
+			return result;
+		}
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void CanReceiveChunkedMessage( DbEngineType dbEngine)
-            //TODO: CHECK THIS DBENGINES
-        {
-            RefreshServiceDetailsDataSource(dbEngine);
-            DoCanReceiveMessageTest(true);
-        }
+		private void RefreshServiceDetailsDataSource(DbEngineType dbEngine)
+		{
+			DataAccessTestHelper dataAccessTestHelper = GetDataHelper(dbEngine);
+			IDalSettings dataAccessSettingsSource = dataAccessTestHelper.DataAccessSettings;
+			ServiceDetailsDs = GetDataSource<ServiceDetailsDataSource>(dataAccessSettingsSource.ConfigurationSourceType);
+			ChunkedServiceRequestMessageDS =
+				GetDataSource<ChunkedServiceRequestMessageDataSource>(dataAccessSettingsSource.ConfigurationSourceType);
+		}
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void CanReceiveMessage( DbEngineType dbEngine)
-            //TODO: CHECK THIS DBENGINES
-        {
-            RefreshServiceDetailsDataSource(dbEngine);
-            DoCanReceiveMessageTest(false);
-        }
+		protected abstract IServer GetServerInstance(ServerInfo serverInfo);
+		protected abstract IMockTestClient GetTestClientInstance(ServerInfo serverInfo);
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void CanReceiveMessageCollection(DbEngineType dbEngine)
-        {
-            const int messagesNum = 5000;
-            RefreshServiceDetailsDataSource(dbEngine);
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void CanReceiveChunkedMessage(DbEngineType dbEngine)
+			//TODO: CHECK THIS DBENGINES
+		{
+			RefreshServiceDetailsDataSource(dbEngine);
+			DoCanReceiveMessageTest(true);
+		}
 
-            DoCanReceiveCollectionMessageTest(false, messagesNum);
-        }
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void CanReceiveMessage(DbEngineType dbEngine)
+			//TODO: CHECK THIS DBENGINES
+		{
+			RefreshServiceDetailsDataSource(dbEngine);
+			DoCanReceiveMessageTest(false);
+		}
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void CanReceiveSeveralMessages(DbEngineType dbEngine)
-        {
-            const int messagesNum = 600;
-            RefreshServiceDetailsDataSource(dbEngine);
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void CanReceiveMessageCollection(DbEngineType dbEngine)
+		{
+			const int messagesNum = 5000;
+			RefreshServiceDetailsDataSource(dbEngine);
 
-            DoCanReceiveMessageTest(false, messagesNum);
-        }
+			DoCanReceiveCollectionMessageTest(false, messagesNum);
+		}
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDbWithBool")]
-        public void WhenService_DoesntExistsInDb_ReturnsError(DbEngineType dbEngine, bool localServer)
-        {
-            RefreshServiceDetailsDataSource(dbEngine);
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void CanReceiveSeveralMessages(DbEngineType dbEngine)
+		{
+			const int messagesNum = 600;
+			RefreshServiceDetailsDataSource(dbEngine);
 
-            var serverInfo = new ServerInfo
-                                 {
-                                     Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
-                                     IsLocal = localServer,
-                                     Port = new TestPort(9000),
-                                     ServerId = Guid.NewGuid()
-                                 };
-            Guid callingContextId = Guid.NewGuid();
-            Guid operationIdentifier = Guid.NewGuid();
-            ServiceRequestMessage toSend =
-                ServiceRequestMessage.GetForServiceRequest<DummyDomainEntity>(serverInfo.ServerId, operationIdentifier,
-                                                                              callingContextId);
+			DoCanReceiveMessageTest(false, messagesNum);
+		}
 
-            var eventHandled = new AutoResetEvent(false);
-            //var dummyServiceHandler = new DummyServiceHandler(eventHandled);
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDbWithBool")]
+		public void WhenService_DoesntExistsInDb_ReturnsError(DbEngineType dbEngine, bool localServer)
+		{
+			RefreshServiceDetailsDataSource(dbEngine);
 
-            using (IServer server = GetServerInstance(serverInfo))
-            {
-                //server.RegisterHandler(DummyServiceHandler.OperationId, dummyServiceHandler);
-                server.StartListening();
-                ServiceResult res = DoSendMessage(toSend, serverInfo, false);
-                Assert.IsNotNull(res);
-                Assert.IsFalse(res.Ok);
+			var serverInfo = new ServerInfo
+				{
+					Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
+					IsLocal = localServer,
+					Port = new TestPort(9000),
+					ServerId = Guid.NewGuid()
+				};
+			Guid callingContextId = Guid.NewGuid();
+			Guid operationIdentifier = Guid.NewGuid();
+			ServiceRequestMessage toSend =
+				ServiceRequestMessage.GetForServiceRequest<DummyDomainEntity>(serverInfo.ServerId, operationIdentifier,
+				                                                              callingContextId);
 
-                eventHandled.WaitOne(new TimeSpan(0, 0, 10));
-            }
-        }
+			var eventHandled = new AutoResetEvent(false);
+			//var dummyServiceHandler = new DummyServiceHandler(eventHandled);
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDbWithBool")]
-        public void WhenService_Is_RegisteredCallsHandler_Obj(
-                                                               DbEngineType dbEngine, bool localServer)
-            //TODO: CHECK THIS DBENGINES
-        {
-            RefreshServiceDetailsDataSource(dbEngine);
+			using (IServer server = GetServerInstance(serverInfo))
+			{
+				//server.RegisterHandler(DummyServiceHandler.OperationId, dummyServiceHandler);
+				server.StartListening();
+				ServiceResult res = DoSendMessage(toSend, serverInfo, false);
+				Assert.IsNotNull(res);
+				Assert.IsFalse(res.Ok);
 
-            var expected = new Dictionary<string, object>();
-            const string testParam = "testParamName";
-            expected.Add(testParam, new DummyDomainEntity {Id = Guid.NewGuid()});
-            ;
+				eventHandled.WaitOne(new TimeSpan(0, 0, 10));
+			}
+		}
 
-            var serverInfo = new ServerInfo
-                                 {
-                                     Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
-                                     IsLocal = localServer,
-                                     Port = new TestPort(9000),
-                                     ServerId = Guid.NewGuid()
-                                 };
-            Guid callingContextId = Guid.NewGuid();
-            Guid operationIdentifier = Guid.NewGuid();
-            ServiceRequestMessage toSend =
-                ServiceRequestMessage.GetForServiceRequest<DummyDomainEntity>(serverInfo.ServerId, operationIdentifier,
-                                                                              callingContextId, expected);
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDbWithBool")]
+		public void WhenService_Is_RegisteredCallsHandler_Obj(
+			DbEngineType dbEngine, bool localServer)
+			//TODO: CHECK THIS DBENGINES
+		{
+			RefreshServiceDetailsDataSource(dbEngine);
 
-            var eventHandled = new AutoResetEvent(false);
-            var dummyServiceHandler = new DummyServiceHandler(eventHandled);
+			var expected = new Dictionary<string, object>();
+			const string testParam = "testParamName";
+			expected.Add(testParam, new DummyDomainEntity {Id = Guid.NewGuid()});
+			;
 
-            using (IServer server = GetServerInstance(serverInfo))
-            {
-                server.RegisterHandler(operationIdentifier, dummyServiceHandler);
-                server.StartListening();
-                ServiceResult res = DoSendMessage(toSend, serverInfo, false);
-                Assert.IsNotNull(res);
-                Assert.IsTrue(res.Ok);
-                Assert.AreEqual(callingContextId, res.AsyncResponseId);
-                eventHandled.WaitOne(new TimeSpan(0, 0, 10));
-            }
+			var serverInfo = new ServerInfo
+				{
+					Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
+					IsLocal = localServer,
+					Port = new TestPort(9000),
+					ServerId = Guid.NewGuid()
+				};
+			Guid callingContextId = Guid.NewGuid();
+			Guid operationIdentifier = Guid.NewGuid();
+			ServiceRequestMessage toSend =
+				ServiceRequestMessage.GetForServiceRequest<DummyDomainEntity>(serverInfo.ServerId, operationIdentifier,
+				                                                              callingContextId, expected);
 
-            Assert.IsNotNull(dummyServiceHandler.ReceivedMessage);
-            Assert.IsTrue(((DummyDomainEntity) expected[testParam]).Id ==
-                          ((DummyDomainEntity) dummyServiceHandler.ReceivedMessage[testParam].ParameterValue).Id);
-        }
-    }
+			var eventHandled = new AutoResetEvent(false);
+			var dummyServiceHandler = new DummyServiceHandler(eventHandled);
+
+			using (IServer server = GetServerInstance(serverInfo))
+			{
+				server.RegisterHandler(operationIdentifier, dummyServiceHandler);
+				server.StartListening();
+				ServiceResult res = DoSendMessage(toSend, serverInfo, false);
+				Assert.IsNotNull(res);
+				Assert.IsTrue(res.Ok);
+				Assert.AreEqual(callingContextId, res.AsyncResponseId);
+				eventHandled.WaitOne(new TimeSpan(0, 0, 10));
+			}
+
+			Assert.IsNotNull(dummyServiceHandler.ReceivedMessage);
+			Assert.IsTrue(((DummyDomainEntity) expected[testParam]).Id ==
+			              ((DummyDomainEntity) dummyServiceHandler.ReceivedMessage[testParam].ParameterValue).Id);
+		}
+
+		protected ICanWriteChunkedMessages GetChunkedMessagesWritter()
+		{
+			return new ChunkedMessagesWriter(ChunkedServiceRequestMessageDS);
+		}
+
+		protected ICanReadChunkedMessages GetChunkedMessagesReader()
+		{
+			return new ChunkedMessagesReader(ChunkedServiceRequestMessageDS);
+		}
+
+		protected ICanReadServiceDetails GetServiceDetailsReader()
+		{
+			return new ServiceDetailsReader(ServiceDetailsDs);
+		}
+	}
 }

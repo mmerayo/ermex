@@ -29,9 +29,11 @@ using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.Domain.Component;
 using ermeX.Domain.Implementations.Component;
+using ermeX.Domain.Implementations.Observers;
 using ermeX.Domain.Implementations.QueryDatabase;
 using ermeX.Domain.Implementations.Queues;
 using ermeX.Domain.Implementations.Subscriptions;
+using ermeX.Domain.Observers;
 using ermeX.Domain.QueryDatabase;
 using ermeX.Domain.Queues;
 using ermeX.Domain.Subscriptions;
@@ -197,6 +199,31 @@ namespace ermeX.Tests.Common.DataAccess
 		protected ICanReadIncommingMessagesSubscriptions GetIncommingMessageSubscriptionsReader(DbEngineType dbEngine)
 		{
 			return new CanReadIncommingMessagesSubscriptions(GetDataSource<IncomingMessageSuscriptionsDataSource>(dbEngine));
+		}
+
+		protected ICanReadOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsReader(DbEngineType dbEngine)
+		{
+			return new CanReadOutgoingMessagesSubscriptions(GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine));
+		}
+
+		protected IWriteOutgoingQueue GetOutgoingMessageSubscriptionsWritter(DbEngineType dbEngine)
+		{
+			return new WriteOutgoingQueue(GetDataSource<OutgoingMessagesDataSource>(dbEngine));
+		}
+
+		protected IDomainObservable GetDomainNotifier(DbEngineType dbEngine)
+		{
+			return new DomainNotifier(GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine));
+		}
+
+		protected IWriteOutgoingQueue GetOutgoingQueueWritter(DbEngineType dbEngine)
+		{
+			return new WriteOutgoingQueue(GetDataSource<OutgoingMessagesDataSource>(dbEngine));
+		}
+
+		protected IReadOutgoingQueue GetOutgoingQueueReader(DbEngineType dbEngine)
+		{
+			return new ReaderOutgoingQueue(GetDataSource<OutgoingMessagesDataSource>(dbEngine));
 		}
 	}
 }
