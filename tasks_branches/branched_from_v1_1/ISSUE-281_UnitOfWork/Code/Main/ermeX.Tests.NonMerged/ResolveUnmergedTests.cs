@@ -28,14 +28,32 @@ using ermeX.NonMerged;
 
 namespace ermeX.Tests.NonMerged
 {
-	[Explicit("TODO: invoke nunit alone for this one or change the process model")]
+	//[Explicit("TODO: invoke nunit alone for this one or change the process model")]
 	[TestFixture]
 	public sealed class ResolveUnmergedTests
 	{
+		[TestFixtureSetUp]
+		public void OnFixtureSetUp()
+		{
+			PathUtils.CopyFolder(PathUtils.GetApplicationFolderPath(),UnmergedAssembliesTestHelper.TestFilesFolder);
+		}
+
+		[TestFixtureTearDown]
+		public void OnFixtureTearDown()
+		{
+			Directory.Delete(UnmergedAssembliesTestHelper.TestFilesFolder,true);
+		}
+
 		[SetUp]
 		public void OnSetup()
 		{
 			RemoveAssemblies();
+		}
+		
+		[TearDown]
+		public void OnTearDown()
+		{
+			UnmergedAssembliesTestHelper.DisposeDomains();
 		}
 
 		private void RemoveAssemblies()
@@ -43,16 +61,10 @@ namespace ermeX.Tests.NonMerged
 			var lst = new List<String> {"Common.Logging.dll", "log4net.dll", "System.Data.SQLite.dll", "SQLite.Interop.dll"};
 			foreach (var targetName in lst)
 			{
-				string path = PathUtils.GetApplicationFolderPathFile(targetName);
+				string path = Path.Combine(UnmergedAssembliesTestHelper.TestFilesFolder, targetName);
 				if (File.Exists(path))
 					File.Delete(path);
 			}
-		}
-
-		[TearDown]
-		public void OnTearDown()
-		{
-			UnmergedAssembliesTestHelper.DisposeDomains();
 		}
 
 		[Test]
@@ -71,8 +83,8 @@ namespace ermeX.Tests.NonMerged
 
 				if (assemblyName == "System.Data.SQLite")
 				{
-					string targetName = "SQLite.Interop.dll";
-					string path = PathUtils.GetApplicationFolderPathFile(targetName);
+					const string targetName = "SQLite.Interop.dll";
+					string path = Path.Combine(UnmergedAssembliesTestHelper.TestFilesFolder, targetName);
 					bool exists = File.Exists(path);
 					Assert.IsTrue(exists);
 				}
@@ -81,12 +93,20 @@ namespace ermeX.Tests.NonMerged
 
 		private class UnmergedAssembliesTestHelper : MarshalByRefObject
 		{
+			public static string TestFilesFolder
+			{
+				get
+				{
+					return PathUtils.GetApplicationFolderPath("ResolveUnmergedTest");
+				}
+			}
+
 			private static readonly List<AppDomain> LoadedDomains = new List<AppDomain>();
 
 			public static UnmergedAssembliesTestHelper GetHelper()
 			{
 				Assembly executingAssembly = Assembly.GetExecutingAssembly();
-				string pathToTheDll = Path.Combine(PathUtils.GetPath(executingAssembly.CodeBase),executingAssembly.GetName().Name+".dll");
+				string pathToTheDll = Path.Combine(TestFilesFolder,executingAssembly.GetName().Name+".dll");
 				AppDomain myDomain = AppDomain.CreateDomain(Guid.NewGuid().ToString().Replace('-', '_'), null,
 				                                            new AppDomainSetup()
 					                                            {
