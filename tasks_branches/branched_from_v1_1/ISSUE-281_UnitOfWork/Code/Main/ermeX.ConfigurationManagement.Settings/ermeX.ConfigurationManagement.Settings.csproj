@@ -101,6 +101,7 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
+    <Compile Include="IDomainSettings.cs" />
     <Compile Include="StaticSettings.cs" />
     <Compile Include="DalSettingsValidator.cs" />
     <Compile Include="TransportSettingsValidator.cs" />
