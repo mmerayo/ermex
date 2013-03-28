@@ -40,6 +40,11 @@ namespace ermeX.Domain.IoC
 
 	internal class DomainInjections : NinjectModule
 	{
+		public DomainInjections(IDomainSettings settings)
+		{
+			
+		}
+
 		public override void Load()
 		{
 			//TODO: remove SINGLETON SCOPES
@@ -60,9 +65,11 @@ namespace ermeX.Domain.IoC
 
 			//queues
 
-			Bind<IWriteOutgoingQueue>().To<IWriteOutgoingQueue>().InSingletonScope();
-			Bind<IReadIncommingQueue>().To<ReaderIncommingQueue>().InSingletonScope();
 			Bind<IReadOutgoingQueue>().To<ReaderOutgoingQueue>().InSingletonScope();
+			Bind<IWriteOutgoingQueue>().To<WriteOutgoingQueue>().InSingletonScope();
+			
+			Bind<IReadIncommingQueue>().To<ReaderIncommingQueue>().InSingletonScope();
+			Bind<IWriteIncommingQueue>().To<IncommingQueueWriter>().InSingletonScope();
 
 			//service details
 			Bind<ICanReadServiceDetails>().To<ServiceDetailsReader>().InSingletonScope();
