@@ -183,9 +183,7 @@ namespace ermeX
 				{
 					SessionProvider.SetInMemoryDb(dataAccessSettings.ConfigurationConnectionString);
 				}
-
-
-
+				
 				Instance.VersionUpgradeHelper.RunDataSchemaUpgrades(dataAccessSettings.SchemasApplied,
 				                                           dataAccessSettings.ConfigurationConnectionString,
 				                                           dataAccessSettings.ConfigurationSourceType);
