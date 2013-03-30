@@ -33,8 +33,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByMessageQueue
             if (listener == null) throw new ArgumentNullException("listener");
             Publisher = publisher;
             Listener = listener;
-            Type handlerInterfaceType = GetType().GetInterface(typeof(IHandleMessages<>).FullName);
-            Listener.Suscribe(handlerInterfaceType, this);
+           
         }
 
         private IMessagePublisher Publisher { get; set; }
@@ -46,6 +45,12 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByMessageQueue
         public void HandleMessage(UpdateSuscriptionMessage message)
         {
             throw new NotImplementedException();
+        }
+
+        public void Start()
+        {
+            Type handlerInterfaceType = GetType().GetInterface(typeof (IHandleMessages<>).FullName);
+            Listener.Suscribe(handlerInterfaceType, this);
         }
 
         //public bool Evaluate(UpdateSuscriptionMessage message)

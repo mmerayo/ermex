@@ -23,5 +23,6 @@ namespace ermeX.Bus.Synchronisation.Dialogs.HandledByMessageQueue
 {
     internal interface IUpdateSuscriptionMessageHandler : IHandleMessages<UpdateSuscriptionMessage>
     {
+        void Start(); //TODO: create interface startable
     }
 }

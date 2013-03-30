@@ -54,10 +54,12 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			    .Callback(messageReceived)
 			    .Returns(new ServiceResult(valueToReturn));
 			mockedService = mock.Object;
-			return new MessageSubscribersDispatcher(settings, GetOutgoingQueueReader(dbEngine),
-			                                        GetOutgoingQueueWritter(dbEngine),
-			                                        _taskScheduler,
-			                                        mockedService);
+		    var result = new MessageSubscribersDispatcher(settings, GetOutgoingQueueReader(dbEngine),
+		                                                                        GetOutgoingQueueWritter(dbEngine),
+		                                                                        _taskScheduler,
+		                                                                        mockedService);
+            result.Start();
+		    return result;
 		}
 
 		public override void OnStartUp()

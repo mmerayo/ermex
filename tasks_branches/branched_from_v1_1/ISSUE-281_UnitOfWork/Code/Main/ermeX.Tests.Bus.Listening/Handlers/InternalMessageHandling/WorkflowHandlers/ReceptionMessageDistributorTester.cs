@@ -52,9 +52,11 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 
 			mockedDispatcher = mock.Object;
 
-			return new ReceptionMessageDistributor(GetIncommingMessageSubscriptionsReader(dbEngine),
-			                                       GetIncommingQueueReader(dbEngine), GetIncommingQueueWritter(dbEngine),
-			                                       mockedDispatcher);
+		    var result = new ReceptionMessageDistributor(GetIncommingMessageSubscriptionsReader(dbEngine),
+		                                                                      GetIncommingQueueReader(dbEngine), GetIncommingQueueWritter(dbEngine),
+		                                                                      mockedDispatcher);
+            result.Start();
+		    return result;
 		}
 
 		public override void OnStartUp()
