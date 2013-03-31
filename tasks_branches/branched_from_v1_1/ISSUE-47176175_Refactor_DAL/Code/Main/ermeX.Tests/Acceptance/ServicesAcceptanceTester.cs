@@ -662,7 +662,7 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "SqliteDb")]
+        [Test, TestCaseSource(typeof(TestCaseSources), "SqliteDb")]//TODO:TO INMEMORY DB
         public void SeveralComponents_Can_Serve_Same_Service_NoReturnValues(DbEngineType engineType)
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
