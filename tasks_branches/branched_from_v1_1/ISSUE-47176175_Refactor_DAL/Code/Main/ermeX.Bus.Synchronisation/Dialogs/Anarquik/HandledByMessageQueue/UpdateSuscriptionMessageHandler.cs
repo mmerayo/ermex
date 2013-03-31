@@ -17,15 +17,19 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using Common.Logging;
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByMessageQueue;
 using ermeX.Bus.Synchronisation.Messages;
+using ermeX.ConfigurationManagement.Settings;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByMessageQueue
 {
-    internal class UpdateSuscriptionMessageHandler : IUpdateSuscriptionMessageHandler
+    internal sealed class UpdateSuscriptionMessageHandler : IUpdateSuscriptionMessageHandler
     {
+        private readonly ILog Logger = LogManager.GetLogger(typeof(UpdateSuscriptionMessageHandler).FullName);
+        
         [Inject]
         public UpdateSuscriptionMessageHandler(IMessagePublisher publisher, IMessageListener listener)
         {
@@ -44,11 +48,13 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByMessageQueue
 
         public void HandleMessage(UpdateSuscriptionMessage message)
         {
+            Logger.Debug(x => x("HandleMessage"));
             throw new NotImplementedException();
         }
 
         public void Start()
         {
+            Logger.Debug(x=>x("Start"));
             Type handlerInterfaceType = GetType().GetInterface(typeof (IHandleMessages<>).FullName);
             Listener.Suscribe(handlerInterfaceType, this);
         }

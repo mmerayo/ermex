@@ -32,12 +32,14 @@ using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Component;
 using ermeX.Entities.Entities;
+using ermeX.Threading.Queues;
 
 namespace ermeX.Biz
 {
 	//TODO: THIS AND DIALOGSMANAGER SHOULD ENCAPSULATE THE CONNECTION FUNCTIONALLITY IN A PACKAGE AND BE EXTENSIBLE HIDING THE PROTOCOL
     internal sealed class ComponentManager : IComponentManager
     {
+        private readonly IMessageDistributor _messageDistributor;
         private readonly IRegisterComponents _componentsRegister;
         private readonly IMessageSubscribersDispatcher _subscribersDispatcher;
         private readonly IReceptionMessageDistributor _receptionMessageDistributor;
@@ -45,7 +47,11 @@ namespace ermeX.Biz
         private readonly IUpdateSuscriptionMessageHandler _subscriptionsUpdater;
 
         [Inject]
-        public ComponentManager(IBizSettings settings, IMessagePublisher publisher, IMessageListener listener,
+        public ComponentManager(IBizSettings settings, 
+            IMessagePublisher publisher,
+            IMessageListener listener,
+	                                           IMessageDistributor messageDistributor,
+
                                 IDialogsManager dialogsManager,
                                 ICanReadComponents componentReader,
                                 ICanUpdateComponents componentWriter,
@@ -56,6 +62,7 @@ namespace ermeX.Biz
                                 IUpdatePublishedServiceMessageHandler updatePublishedServiceMessageHandler,
                                 IUpdateSuscriptionMessageHandler subscriptionsUpdater)
         {
+            _messageDistributor = messageDistributor;
             _componentsRegister = componentsRegister;
             _subscribersDispatcher = subscribersDispatcher;
             _receptionMessageDistributor = receptionMessageDistributor;
@@ -148,14 +155,14 @@ namespace ermeX.Biz
                 StatusManager.CurrentStatus = ComponentStatus.Starting;
                 Logger.Trace(x => x("Component: {0} is STARTING", Settings.ComponentId));
 
-                //TODO:THIS TO BE all injected from IStartable
+                //TODO:THIS TO BE all injected from IStartable, the start to not to depend on the order as it does now
+                Listener.Start();
+                Publisher.Start();
                 _receptionMessageDistributor.Start();
                 _subscribersDispatcher.Start();
                 _subscriptionsUpdater.Start();
-                Listener.Start();
-                Publisher.Start();
                 _updatePublishedServiceMessageHandler.Start();
-
+                _messageDistributor.Start();
 
                 DialogsManager.JoinNetwork();
                 StatusManager.CurrentStatus = ComponentStatus.Running;

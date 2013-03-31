@@ -46,14 +46,14 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
         private MessageDistributor GetInstance(DbEngineType dbEngine, Action<MessageSubscribersDispatcher.SubscribersDispatcherMessage> messageReceived, out IMessageSubscribersDispatcher mockedSubscriber)
         {
-            var outgoingDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
-            var outgoingSubscriptionsDataSource = GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine);
             var mock = new Mock<IMessageSubscribersDispatcher>();
             mock.Setup(x=>x.EnqueueItem(It.IsAny<MessageSubscribersDispatcher.SubscribersDispatcherMessage>())).Callback(messageReceived);
             mockedSubscriber = mock.Object;
-            return new MessageDistributor(GetOutgoingMessageSubscriptionsReader(dbEngine),
-				GetOutgoingQueueReader(dbEngine),GetOutgoingQueueWritter(dbEngine),
-				mockedSubscriber);
+            var messageDistributor = new MessageDistributor(GetOutgoingMessageSubscriptionsReader(dbEngine),
+                                                            GetOutgoingQueueReader(dbEngine),GetOutgoingQueueWritter(dbEngine),
+                                                            mockedSubscriber);
+            messageDistributor.Start();
+            return messageDistributor;
         }
 
 	    private class Dummy
