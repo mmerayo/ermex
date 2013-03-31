@@ -20,12 +20,12 @@
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-	<ErrorReport>prompt</ErrorReport>
+	<ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\Release\</OutputPath>
-	<ErrorReport>prompt</ErrorReport>
+	<ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel>
 	<Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
