@@ -177,6 +177,7 @@ namespace ermeX.Bus.Synchronisation
             try
             {
                 friendComponents = joinNetworkServiceProxy.RequestJoinNetwork(message);
+                Debug.Assert(friendComponents!=null);
             }
             catch (Exception ex)
             {

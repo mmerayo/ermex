@@ -56,7 +56,8 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling
 
             var queueMock = mock2.Object;
 
-            return new ReceptionMessageHandler(GetIncommingQueueReader(dbEngine),GetIncommingQueueWritter(dbEngine),mockedDistributor,settings,queueMock);
+            var receptionMessageHandler = new ReceptionMessageHandler(GetIncommingQueueReader(dbEngine),GetIncommingQueueWritter(dbEngine),mockedDistributor,settings,queueMock);
+            return receptionMessageHandler;
         }
 
 	    public override void OnStartUp()

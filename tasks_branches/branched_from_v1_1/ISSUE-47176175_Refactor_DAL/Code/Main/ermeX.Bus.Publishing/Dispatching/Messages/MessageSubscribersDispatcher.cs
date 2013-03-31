@@ -201,10 +201,12 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 			base.Dispose(disposing);
 		}
 
-		public void Start()
+		public override void Start()
 		{
-			//TODO: CHECK IS STARTED IN THE OTHER OPERATIONS
-			RestoreMessagesFromPreviousSessions();
+			//TODO: CHECK IS STARTED IN THE OTHER OPERATIONS			
+            RestoreMessagesFromPreviousSessions();
+            base.Start();
+
 		}
 	}
 }

@@ -48,7 +48,6 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 		                                                 bool valueToReturn, out IServiceProxy mockedService)
 		{
 			var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
-			var outgoingDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
 			var mock = new Mock<IServiceProxy>();
 			mock.Setup(x => x.Send(It.IsAny<TransportMessage>()))
 			    .Callback(messageReceived)

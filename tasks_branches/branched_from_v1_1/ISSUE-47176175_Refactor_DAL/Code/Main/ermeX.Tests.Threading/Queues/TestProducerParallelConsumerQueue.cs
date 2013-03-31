@@ -73,7 +73,9 @@ namespace ermeX.Tests.Threading.Queues
 
         protected override ITestQueue GetTarget(bool failWhenHandling=false)
         {
-            return new DummyQueue(InitialWorkerCount, 64, 5, TimeSpan.FromSeconds(5),failWhenHandling);
+            var dummyQueue = new DummyQueue(InitialWorkerCount, 64, 5, TimeSpan.FromSeconds(5),failWhenHandling);
+            dummyQueue.Start();
+            return dummyQueue;
         }
 
         [Test]

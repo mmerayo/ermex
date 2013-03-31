@@ -173,8 +173,9 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
         }
 
 		//TODO: ENSURE THE COMPONENT IS NOT WORKING WHILE NOT STARTED IN OTHER METHODS
-	    public void Start()
+	    public override void Start()
 	    {
+            base.Start();
 			EnqueueNonDeliveredMessages();
 	    }
     }
