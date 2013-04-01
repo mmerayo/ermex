@@ -6,4 +6,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartArguments>AllJoinToSameFriendComponent true 60000 61000 5 50 false 0</StartArguments>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <StartArguments>AllJoinToSameFriendComponent true 60000 61000 5 150 false 0</StartArguments>
+  </PropertyGroup>
 </Project>
