@@ -163,7 +163,7 @@ namespace ermeX.Biz
                 _subscriptionsUpdater.Start();
                 _updatePublishedServiceMessageHandler.Start();
                 _messageDistributor.Start();
-
+                DialogsManager.Start();
                 DialogsManager.JoinNetwork();
                 StatusManager.CurrentStatus = ComponentStatus.Running;
                 //here so it accepts requests, see status changed handler above
