@@ -22,8 +22,8 @@ using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketEngine;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-
-
+using ermeX.Domain.Messages;
+using ermeX.Domain.Services;
 using ermeX.Transport.Interfaces.Entities;
 using ermeX.Transport.Interfaces.Messages;
 using ermeX.Transport.Reception;
@@ -34,8 +34,12 @@ namespace ermeX.Transport.BuiltIn.SuperSocket.Server
     {
         private MainServerHandler _serverHandler;
 
-        public SuperSocketServer(ServerInfo serverInfo, IServiceDetailsDataSource dataSourceServices, IChunkedServiceRequestMessageDataSource chunksDataSource, ITransportSettings settings)
-            : base(serverInfo, dataSourceServices,chunksDataSource)
+        public SuperSocketServer(ServerInfo serverInfo,
+			ICanReadServiceDetails serviceDetailsReader,
+			ICanReadChunkedMessages chunkedMessagesReader,
+			ICanWriteChunkedMessages chunkedMessagesWritter,
+			ITransportSettings settings)
+            : base(serverInfo,serviceDetailsReader,chunkedMessagesReader,chunkedMessagesWritter)
         {
             try
             {
@@ -51,8 +55,12 @@ namespace ermeX.Transport.BuiltIn.SuperSocket.Server
             }
         }
 
-        public SuperSocketServer(ServerInfo serverInfo, IServiceDetailsDataSource dataSourceServices, IChunkedServiceRequestMessageDataSource chunksDataSource)
-            : this(serverInfo, dataSourceServices, chunksDataSource,null)
+        public SuperSocketServer(ServerInfo serverInfo, 
+			ICanReadServiceDetails serviceDetailsReader,
+			ICanReadChunkedMessages chunkedMessagesReader,
+			ICanWriteChunkedMessages chunkedMessagesWritter
+			)
+			: this(serverInfo, serviceDetailsReader, chunkedMessagesReader, chunkedMessagesWritter, null)
         {
         }
 

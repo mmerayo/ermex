@@ -22,8 +22,9 @@ using Ninject;
 using ermeX.Common.Caching;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-
-
+using ermeX.Domain.Connectivity;
+using ermeX.Domain.Messages;
+using ermeX.Domain.Services;
 using ermeX.Entities.Entities;
 using ermeX.Transport.BuiltIn.SuperSocket.Client;
 using ermeX.Transport.BuiltIn.SuperSocket.Server;
@@ -33,33 +34,40 @@ using ermeX.Transport.Interfaces.Sending.Client;
 
 namespace ermeX.Transport.BuiltIn.SuperSocket
 {
-    internal class SocketsConcreteLoader : LoaderBase
-    {
-        private IChunkedServiceRequestMessageDataSource ChunkedServiceRequestMessageDataSource { get; set; }
+	internal class SocketsConcreteLoader : LoaderBase
+	{
+		private readonly ICanReadServiceDetails _servicesReader;
+		private readonly ICanReadChunkedMessages _chunkedMessagesReader;
+		private readonly ICanWriteChunkedMessages _chunkedMessagesWritter;
 
-        [Inject]
-        public SocketsConcreteLoader(ITransportSettings settings, IConnectivityDetailsDataSource connectionsDs,
-                                     IServiceDetailsDataSource servicesDs,
-                                     ICacheProvider cacheProvider, IChunkedServiceRequestMessageDataSource chunkedServiceRequestMessageDataSource)
-            : base(settings, connectionsDs, servicesDs, cacheProvider)
-        {
-            ChunkedServiceRequestMessageDataSource = chunkedServiceRequestMessageDataSource;
-        }
+		[Inject]
+		public SocketsConcreteLoader(ITransportSettings settings,
+		                             ICanReadConnectivityDetails connectivityReader,
+		                             ICanWriteConnectivityDetails connectivityWriter,
+		                             ICanReadServiceDetails servicesReader,
+		                             ICacheProvider cacheProvider, ICanReadChunkedMessages chunkedMessagesReader,
+		                             ICanWriteChunkedMessages chunkedMessagesWritter)
+			: base(settings, connectivityReader, connectivityWriter, cacheProvider)
+		{
+			_servicesReader = servicesReader;
+			_chunkedMessagesReader = chunkedMessagesReader;
+			_chunkedMessagesWritter = chunkedMessagesWritter;
+		}
 
-        protected override IServer GetServer(ConnectivityDetails item)
-        {
-            return new SuperSocketServer(new ServerInfo(item), ServicesDs,ChunkedServiceRequestMessageDataSource,  Settings);
-        }
+		protected override IServer GetServer(ConnectivityDetails item)
+		{
+			return new SuperSocketServer(new ServerInfo(item), _servicesReader, _chunkedMessagesReader,
+			                             _chunkedMessagesWritter, Settings);
+		}
 
+		protected override int GetPort(ConnectivityDetails item)
+		{
+			return item.Port;
+		}
 
-        protected override int GetPort(ConnectivityDetails item)
-        {
-            return item.Port;
-        }
-
-        protected override IEndPoint GetClientConcreteProxy(Guid serverId, List<ServerInfo> serverInfos)
-        {
-            return new SuperSocketClient(CacheProvider, Settings, serverInfos);
-        }
-    }
+		protected override IEndPoint GetClientConcreteProxy(Guid serverId, List<ServerInfo> serverInfos)
+		{
+			return new SuperSocketClient(CacheProvider, Settings, serverInfos);
+		}
+	}
 }

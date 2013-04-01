@@ -36,29 +36,36 @@ namespace ermeX.Tests.Acceptance.Dummy
     {
         private static readonly List<AppDomain> LoadedDomains = new List<AppDomain>();
 
-        public static TestComponent GetComponent(bool useCurrentAppDomain = false)
+        public static TestComponent GetComponent(Guid componentId,bool useCurrentAppDomain = false)
         {
+            TestComponent result;
             if (!useCurrentAppDomain)
             {
                 string pathToTheDll = String.Format("{0}\\ermeX.Tests.dll",
                                                     PathUtils.GetPath(Assembly.GetExecutingAssembly().CodeBase));
                 AppDomain myDomain = AppDomain.CreateDomain(Guid.NewGuid().ToString().Replace('-', '_'), null,
-                                                            new AppDomainSetup()
-                                                                {ApplicationBase = Path.GetDirectoryName(pathToTheDll)});
+                                                            new AppDomainSetup() { ApplicationBase = Path.GetDirectoryName(pathToTheDll) });
                 LoadedDomains.Add(myDomain);
 
-                var wrappedResult = myDomain.CreateInstanceFrom(pathToTheDll, typeof (TestComponent).FullName);
+                var wrappedResult = myDomain.CreateInstanceFrom(pathToTheDll, typeof(TestComponent).FullName);
 
-                var result = (TestComponent) wrappedResult.Unwrap();
+                result = (TestComponent)wrappedResult.Unwrap();
                 result.SetConsoleOut(Console.Out);
 
-                return result;
             }
             else
-                return new TestComponent();
+            {
+                result= new TestComponent();
+            }
+            result.ComponentId = componentId;
+            return result;
+
         }
 
-
+        public static TestComponent GetComponent(bool useCurrentAppDomain = false)
+        {
+            return GetComponent(Guid.NewGuid(), useCurrentAppDomain);
+        }
 
         public static void DisposeDomains()
         {
@@ -145,27 +152,17 @@ namespace ermeX.Tests.Acceptance.Dummy
         public void Start(DbEngineType engineType, Guid componentId, string dbConnString, ushort listeningPort, Guid joinToComponentId,
                           ushort jointToPort)
         {
-            _componentId = componentId;
+            ComponentId = componentId;
             Start(engineType, dbConnString, listeningPort, joinToComponentId, jointToPort);
         }
 
         public void Start(DbEngineType engineType, Guid componentId, string dbConnString, ushort listeningPort)
         {
-            _componentId = componentId;
+            ComponentId = componentId;
             Start(engineType,dbConnString, listeningPort);
         }
 
-        private Guid _componentId = Guid.Empty;
-
-        public Guid ComponentId
-        {
-            get
-            {
-                if (_componentId == Guid.Empty)
-                    _componentId = Guid.NewGuid();
-                return _componentId;
-            }
-        }
+        public Guid ComponentId { get; set; }
 
         internal TestService.TrackerData Tracker
         {

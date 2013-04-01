@@ -23,67 +23,93 @@ using Common.Logging;
 using Ninject;
 using ermeX.Biz.Interfaces;
 using ermeX.Bus.Interfaces;
+using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
+using ermeX.Bus.Publishing.Dispatching.Messages;
+using ermeX.Bus.Synchronisation.Dialogs.HandledByMessageQueue;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-
-
+using ermeX.Domain.Component;
 using ermeX.Entities.Entities;
+using ermeX.Threading.Queues;
 
 namespace ermeX.Biz
 {
-    //TODO: THIS AND DIALOGSMANAGER SHOULD ENCAPSULATE THE CONNECTION FUNCTIONALLITY IN A PACKAGE AND BE EXTENSIBLE HIDING THE PROTOCOL
+	//TODO: THIS AND DIALOGSMANAGER SHOULD ENCAPSULATE THE CONNECTION FUNCTIONALLITY IN A PACKAGE AND BE EXTENSIBLE HIDING THE PROTOCOL
     internal sealed class ComponentManager : IComponentManager
     {
+        private readonly IMessageDistributor _messageDistributor;
+        private readonly IRegisterComponents _componentsRegister;
+        private readonly IMessageSubscribersDispatcher _subscribersDispatcher;
+        private readonly IReceptionMessageDistributor _receptionMessageDistributor;
+        private readonly IUpdatePublishedServiceMessageHandler _updatePublishedServiceMessageHandler;
+        private readonly IUpdateSuscriptionMessageHandler _subscriptionsUpdater;
+
         [Inject]
-        public ComponentManager(IBizSettings settings, IMessagePublisher publisher, IMessageListener listener,
-                                IDialogsManager dialogsManager, IAppComponentDataSource appComponentDataSource,
-            IStatusManager statusManager, IAutoRegistration register)
+        public ComponentManager(IBizSettings settings, 
+            IMessagePublisher publisher,
+            IMessageListener listener,
+	                                           IMessageDistributor messageDistributor,
+
+                                IDialogsManager dialogsManager,
+                                ICanReadComponents componentReader,
+                                ICanUpdateComponents componentWriter,
+                                IStatusManager statusManager,
+                                IRegisterComponents componentsRegister,
+                                IMessageSubscribersDispatcher subscribersDispatcher,
+                                IReceptionMessageDistributor receptionMessageDistributor,
+                                IUpdatePublishedServiceMessageHandler updatePublishedServiceMessageHandler,
+                                IUpdateSuscriptionMessageHandler subscriptionsUpdater)
         {
+            _messageDistributor = messageDistributor;
+            _componentsRegister = componentsRegister;
+            _subscribersDispatcher = subscribersDispatcher;
+            _receptionMessageDistributor = receptionMessageDistributor;
+            _updatePublishedServiceMessageHandler = updatePublishedServiceMessageHandler;
+            _subscriptionsUpdater = subscriptionsUpdater;
             if (settings == null) throw new ArgumentNullException("settings");
             if (publisher == null) throw new ArgumentNullException("publisher");
             if (listener == null) throw new ArgumentNullException("listener");
             if (dialogsManager == null) throw new ArgumentNullException("dialogsManager");
-            if (appComponentDataSource == null) throw new ArgumentNullException("appComponentDataSource");
             if (statusManager == null) throw new ArgumentNullException("statusManager");
-            if (register == null) throw new ArgumentNullException("register");
             Settings = settings;
             Publisher = publisher;
             Listener = listener;
             DialogsManager = dialogsManager;
-            AppComponentDataSource = appComponentDataSource;
+            ComponentReader = componentReader;
+            ComponentWriter = componentWriter;
             StatusManager = statusManager;
-            Register = register;
 
-            Register.CreateLocalSetOfData(Settings.TcpPort);
+            
         }
 
         private IBizSettings Settings { get; set; }
         private IMessagePublisher Publisher { get; set; }
         private IMessageListener Listener { get; set; }
         private IDialogsManager DialogsManager { get; set; }
-        private IAppComponentDataSource AppComponentDataSource { get; set; }
+        private ICanReadComponents ComponentReader { get; set; }
+        private ICanUpdateComponents ComponentWriter { get; set; }
         private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
         private IStatusManager _statusManager;
+
         private IStatusManager StatusManager
         {
             get { return _statusManager; }
             set
             {
-                if(_statusManager!=null)
+                if (_statusManager != null)
                     _statusManager.StatusChanged -= _statusManager_StatusChanged;
-                
+
                 _statusManager = value;
                 _statusManager.StatusChanged += _statusManager_StatusChanged;
             }
         }
 
-        private IAutoRegistration Register { get; set; }
-
-        void _statusManager_StatusChanged(object sender, ComponentStatus newStatus)
+        private void _statusManager_StatusChanged(object sender, ComponentStatus newStatus)
         {
-            AppComponentDataSource.SetComponentRunningStatus(Settings.ComponentId, newStatus, true); //TODO: remove second param when fixed, the exchanged definitions are set to false for all components at some point
+            ComponentWriter.SetComponentRunningStatus(Settings.ComponentId, newStatus, true);
+            //TODO: remove second param when fixed, the exchanged definitions are set to false for all components at some point
 
             switch (newStatus)
             {
@@ -95,24 +121,28 @@ namespace ermeX.Biz
                     DialogsManager.NotifyCurrentStatus();
 
                     DialogsManager.ExchangeDefinitions();
-                    Logger.Trace(x=>x("Component: {0} exchanged definitions", Settings.ComponentId));
+                    Logger.Trace(x => x("Component: {0} exchanged definitions", Settings.ComponentId));
                     break;
                 case ComponentStatus.Stopping:
                     try
                     {
                         DialogsManager.NotifyCurrentStatus();
-                    }catch(Exception ex)
-                    {
-                        Logger.Warn(x=>x("Could not notify stopping status to all components. Component: {0} Exception: {1}" , Settings.ComponentId,ex));
                     }
-                    
+                    catch (Exception ex)
+                    {
+                        Logger.Warn(
+                            x =>
+                            x("Could not notify stopping status to all components. Component: {0} Exception: {1}",
+                              Settings.ComponentId, ex));
+                    }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("newStatus");
             }
         }
 
-        
+
 
         #region IComponentStarter Members
 
@@ -120,36 +150,38 @@ namespace ermeX.Biz
         {
             try
             {
-                StatusManager.CurrentStatus = ComponentStatus.Starting;
-                Logger.Trace(x=>x("Component: {0} is STARTING", Settings.ComponentId));                
+                _componentsRegister.CreateLocalComponent(Settings.TcpPort);
 
+                StatusManager.CurrentStatus = ComponentStatus.Starting;
+                Logger.Trace(x => x("Component: {0} is STARTING", Settings.ComponentId));
+
+                //TODO:THIS TO BE all injected from IStartable, the start to not to depend on the order as it does now
                 Listener.Start();
                 Publisher.Start();
-                
-                DialogsManager.JoinNetwork();                
-                StatusManager.CurrentStatus = ComponentStatus.Running; //here so it accepts requests, see status changed handler above
-                Logger.Trace(x=>x("Component: {0} is RUNNING",Settings.ComponentId));
+                _receptionMessageDistributor.Start();
+                _subscribersDispatcher.Start();
+                _subscriptionsUpdater.Start();
+                _updatePublishedServiceMessageHandler.Start();
+                _messageDistributor.Start();
 
+                DialogsManager.JoinNetwork();
+                StatusManager.CurrentStatus = ComponentStatus.Running;
+                //here so it accepts requests, see status changed handler above
+                Logger.Trace(x => x("Component: {0} is RUNNING", Settings.ComponentId));
 
                 IEnumerable<AppComponent> appComponents =
-                    AppComponentDataSource.GetOtherComponentsWhereDefinitionsNotExchanged();
-                
+                    ComponentReader.FetchOtherComponentsNotExchangedDefinitions();
+
                 DialogsManager.EnsureDefinitionsAreExchanged(appComponents);
 
             }
             catch (Exception ex)
             {
-
-                Logger.Error(x=>x( "Component Exception on Start", ex));
+                Logger.Error(x => x("Component Exception on Start", ex));
                 throw;
             }
         }
 
-       
-
-        
         #endregion
-
-       
     }
 }

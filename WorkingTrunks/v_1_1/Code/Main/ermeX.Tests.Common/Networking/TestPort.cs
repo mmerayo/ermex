@@ -26,6 +26,8 @@ using System.Text;
 using System.Threading;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.Domain.Implementations.QueryDatabase;
+using ermeX.Domain.QueryDatabase;
 using ermeX.NonMerged;
 using ermeX.Tests.Common.DataAccess;
 using Network = ermeX.Common.Networking;
@@ -41,7 +43,7 @@ namespace ermeX.Tests.Common.Networking
             "CREATE TABLE IF NOT EXISTS PortsBooked (PortNumber INT PRIMARY KEY ASC UNIQUE, CreatedDateUtc INTEGER NOT NULL );";
 
         private static readonly SqliteDbEngine SqliteDbEngine;
-        private static readonly QueryHelper QueryHelper;
+        private static readonly IQueryHelper QueryHelper;
 
         static TestPort()
         {
@@ -53,7 +55,7 @@ namespace ermeX.Tests.Common.Networking
                 SqliteDbEngine = new SqliteDbEngine(DbName, false, Environment.GetEnvironmentVariable("TEST_PORTS_DB_PATH") ?? "c:\\");
                     //TODO: get THE db FOLDER from A CONFIG FILE, it must be shared between al builds
                 SqliteDbEngine.CreateDatabase();
-                QueryHelper = QueryHelper.GetHelper(DbEngineType.SqliteInMemory,
+                QueryHelper = new QueryHelperFactory().GetHelper(DbEngineType.SqliteInMemory,
                                                     SqliteDbEngine.GetConnectionString());
                 QueryHelper.ExecuteNonQuery(
                     CreateTableQuery);

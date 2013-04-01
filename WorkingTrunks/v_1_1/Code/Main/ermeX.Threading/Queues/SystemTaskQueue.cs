@@ -45,7 +45,10 @@ namespace ermeX.Threading.Queues
             {
                 if(_instance==null)
                     lock (_locker)
-                    _instance=new SystemTaskQueue();
+                    {
+                        _instance=new SystemTaskQueue();
+                        _instance.Start();
+                    }
                 return _instance;
             }
         }

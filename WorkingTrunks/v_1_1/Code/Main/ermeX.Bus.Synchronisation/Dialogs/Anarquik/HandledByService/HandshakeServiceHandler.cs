@@ -30,35 +30,38 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-
+using ermeX.Domain.Component;
+using ermeX.Domain.Connectivity;
 using ermeX.Entities.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 {
     internal sealed class HandshakeServiceHandler : IHandshakeService
     {
-        [Inject]
+	    private readonly ICanUpdateComponents _componentsWritter;
+	    private readonly IRegisterComponents _componentsRegistrator;
+	    private readonly ICanReadConnectivityDetails _connectivityReader;
+
+	    [Inject]
         public HandshakeServiceHandler(IMessagePublisher publisher, IMessageListener listener,
                                        IComponentSettings settings,
-                                       IAppComponentDataSource componentsDataSource,
-                                       IConnectivityDetailsDataSource connectivityDataSource,
-                                       IStatusManager statusManager
-            ,IAutoRegistration autoRegistration)
+			ICanReadComponents componentReader,
+                                       ICanUpdateComponents componentsWritter,
+									   IStatusManager statusManager, IRegisterComponents componentsRegistrator,ICanReadConnectivityDetails connectivityReader)
         {
-            if (publisher == null) throw new ArgumentNullException("publisher");
+		    _componentsWritter = componentsWritter;
+		    _componentsRegistrator = componentsRegistrator;
+		    _connectivityReader = connectivityReader;
+		    if (publisher == null) throw new ArgumentNullException("publisher");
             if (listener == null) throw new ArgumentNullException("listener");
             if (settings == null) throw new ArgumentNullException("settings");
-            if (componentsDataSource == null) throw new ArgumentNullException("componentsDataSource");
-            if (connectivityDataSource == null) throw new ArgumentNullException("connectivityDataSource");
             if (statusManager == null) throw new ArgumentNullException("statusManager");
-            if (autoRegistration == null) throw new ArgumentNullException("autoRegistration");
             Publisher = publisher;
             Listener = listener;
             Settings = settings;
-            ComponentsDataSource = componentsDataSource;
-            ConnectivityDataSource = connectivityDataSource;
+	        ComponentReader = componentReader;
+            
             StatusManager = statusManager;
-            AutoRegistration = autoRegistration;
         }
 
 
@@ -66,11 +69,10 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
         private IMessageListener Listener { get; set; }
         private IComponentSettings Settings { get; set; }
-        private IAppComponentDataSource ComponentsDataSource { get; set; }
-        private IConnectivityDetailsDataSource ConnectivityDataSource { get; set; }
+	    private ICanReadComponents ComponentReader { get; set; }
+        
         private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
         private IStatusManager StatusManager { get; set; }
-        private IAutoRegistration AutoRegistration { get; set; }
 
         //this handler id is static
 
@@ -85,24 +87,20 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
                 Logger.Trace(x=>x("RequestJoinNetwork RECEIVED on {0} from {1}", Settings.ComponentId,
                                            message.SourceComponentId));
 
-                AutoRegistration.CreateRemoteComponentInitialSetOfData(message.SourceComponentId,message.SourceIp,message.SourcePort);
+                _componentsRegistrator.CreateRemoteComponent(message.SourceComponentId,message.SourceIp,message.SourcePort);
 
                 //prepare result
                 var componentsDatas = new List<Tuple<AppComponent, ConnectivityDetails>>();
 
-                var components = new List<AppComponent>(ComponentsDataSource.GetAll());
+                var components = new List<AppComponent>(ComponentReader.FetchAll());
 
                 foreach (var appComponent in components)
                 {
                     appComponent.ComponentExchanges = null; //To not to share the local configurations
-                    var tuple = new Tuple<AppComponent, ConnectivityDetails>(appComponent,
-                                                                             ConnectivityDataSource.GetByComponentId(
-                                                                                 appComponent.ComponentId));
+                    var tuple = new Tuple<AppComponent, ConnectivityDetails>(appComponent,_connectivityReader.Fetch(appComponent.ComponentId));
                     componentsDatas.Add(tuple);
                 }
                 var result = new MyComponentsResponseMessage(message.SourceComponentId, componentsDatas);
-
-
 
                 Logger.Trace(x=>x("RequestJoinNetwork HANDLED on {0} from {1}", Settings.ComponentId,
                                            message.SourceComponentId));
@@ -120,7 +118,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
             try
             {
                 Debug.Assert(sourceComponentId != Settings.ComponentId);
-                var item = ComponentsDataSource.GetItemByField("ComponentId", sourceComponentId);
+                var item = ComponentReader.Fetch(sourceComponentId);
                 if (item == null)
                     throw new InvalidOperationException(
                         string.Format("The component {0} didnt exist previously. Use RequestJoinNetwork before this.",
@@ -128,7 +126,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
                 item.IsRunning = status == ComponentStatus.Running;
 
-                ComponentsDataSource.Save(item);
+                _componentsWritter.Save(item);
                 Logger.Trace(
                     string.Format(
                         "ComponentStatus HANDLED on {0} from {1} Input.IsRunning: {2} Output.IsRunning: {3}",
@@ -150,7 +148,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
             {
                 //TODO: transactional
                 bool result=false;
-                AppComponent component = ComponentsDataSource.GetByComponentId(componentId);
+                AppComponent component = ComponentReader.Fetch(componentId);
 
                 if (componentId != component.ComponentOwner && componentId != component.ComponentId)
                     throw new InvalidOperationException(string.Format("the componentId: {0} is not valid as an exchanger for component:{1} owned by :{2}", componentId,component.ComponentId,component.ComponentOwner));
@@ -162,7 +160,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
                 {
                     component.ComponentExchanges = componentId;
                     component.ExchangedDefinitions = false;
-                    ComponentsDataSource.Save(component);
+                    _componentsWritter.Save(component);
                     result = true;
                 }
                 return result;
@@ -179,10 +177,10 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
             try
             {
                 //TODO: transactional
-                AppComponent component = ComponentsDataSource.GetByComponentId(componentId);
+                AppComponent component = ComponentReader.Fetch(componentId);
                 component.ExchangedDefinitions = true;
                 component.ComponentExchanges = null;
-                ComponentsDataSource.Save(component);
+                _componentsWritter.Save(component);
 
                 StatusManager.SyncEvents.SignalEvent(
                         ConfigurationManagement.Status.StatusManager.GlobalSync.GlobalEvents.DefinitionsExchanged,

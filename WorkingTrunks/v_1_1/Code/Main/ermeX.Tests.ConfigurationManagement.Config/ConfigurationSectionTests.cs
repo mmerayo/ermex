@@ -26,6 +26,7 @@ using Common.Logging.Simple;
 using NUnit.Framework;
 using ermeX.Configuration;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
+using ermeX.Domain.IoC;
 using ermeX.Tests.Common.Networking;
 
 namespace ermeX.Tests.ConfigurationManagement.Config
@@ -156,6 +157,7 @@ namespace ermeX.Tests.ConfigurationManagement.Config
         public void Can_Start_Lonely_Component()
         {
             ermeXConfiguration target;
+            
             var config = GetConfiguration(out target);
 
             target.ComponentDefinition = new LocalComponent()

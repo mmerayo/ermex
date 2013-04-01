@@ -39,11 +39,11 @@ namespace ermeX.Tests.VersionUpgrade
         {
             DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
             IDalSettings settingsSource = dataAccessTestHelper.DataAccessSettings;
-            QueryHelper queryTestHelper = QueryHelper.GetHelper(engine,
+            var queryTestHelper = QueryHelperFactory.GetHelper(engine,
                                                                 settingsSource.ConfigurationConnectionString);
             queryTestHelper.DeleteDbDefinitions();
 
-            var target = new VersionUpgradeHelper();
+            var target = new VersionUpgradeHelper(QueryHelperFactory);
             target.RunDataSchemaUpgrades(settingsSource.SchemasApplied,settingsSource.ConfigurationConnectionString,settingsSource.ConfigurationSourceType);
 
             Assert.IsTrue(queryTestHelper.MainDbDefinitionsExist(settingsSource),

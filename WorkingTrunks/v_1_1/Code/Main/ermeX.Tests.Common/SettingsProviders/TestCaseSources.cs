@@ -31,6 +31,11 @@ namespace ermeX.Tests.Common.SettingsProviders
             yield return DbEngineType.SqliteInMemory;
         }
 
+        public static IEnumerable<DbEngineType> SqliteDb()
+        {
+            yield return DbEngineType.Sqlite;
+        }
+
         public static IEnumerable<DbEngineType> SqlServerDb()
         {
             yield return DbEngineType.SqlServer2008;

@@ -24,6 +24,7 @@ using ermeX.Bus.Interfaces.Dispatching;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
+using ermeX.Domain.Services;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Transport.Interfaces.Messages;
@@ -31,133 +32,132 @@ using ermeX.Transport.Interfaces.ServiceOperations;
 
 namespace ermeX.Bus.Listening
 {
-    internal class EsbManager : IEsbManager, IDisposable
-    {
-        [Inject]
-        public EsbManager(IBusSettings settings, IMessagePublisherDispatcherStrategy messagesDispatcher,
-                          IServiceRequestDispatcher serviceRequestDispatcher, IServiceDetailsDataSource dataSource)
-        {
-            if (settings == null) throw new ArgumentNullException("settings");
-            if (messagesDispatcher == null) throw new ArgumentNullException("messagesDispatcher");
-            if (serviceRequestDispatcher == null) throw new ArgumentNullException("serviceRequestDispatcher");
-            if (dataSource == null) throw new ArgumentNullException("dataSource");
-            Settings = settings;
+	internal class EsbManager : IEsbManager, IDisposable
+	{
+		private readonly ICanReadServiceDetails _serviceDetailsReader;
 
-            MessagesDispatcher = messagesDispatcher;
-            ServiceRequestDispatcher = serviceRequestDispatcher;
-            DataSource = dataSource;
-        }
+		[Inject]
+		public EsbManager(IBusSettings settings, IMessagePublisherDispatcherStrategy messagesDispatcher,
+		                  IServiceRequestDispatcher serviceRequestDispatcher,
+		                  ICanReadServiceDetails serviceDetailsReader)
+		{
+			_serviceDetailsReader = serviceDetailsReader;
+			if (settings == null) throw new ArgumentNullException("settings");
+			if (messagesDispatcher == null) throw new ArgumentNullException("messagesDispatcher");
+			if (serviceRequestDispatcher == null) throw new ArgumentNullException("serviceRequestDispatcher");
+			Settings = settings;
 
-        private IMessagePublisherDispatcherStrategy MessagesDispatcher { get; set; }
+			MessagesDispatcher = messagesDispatcher;
+			ServiceRequestDispatcher = serviceRequestDispatcher;
+		}
 
-        private IBusSettings Settings { get; set; }
+		private IMessagePublisherDispatcherStrategy MessagesDispatcher { get; set; }
 
-        private IServiceRequestDispatcher ServiceRequestDispatcher { get; set; }
-        private IServiceDetailsDataSource DataSource { get; set; }
+		private IBusSettings Settings { get; set; }
 
-        #region IEsbManager Members
+		private IServiceRequestDispatcher ServiceRequestDispatcher { get; set; }
 
-        public void Publish(BusMessage message)
-        {
-            if (message == null) throw new ArgumentNullException("message");
+		#region IEsbManager Members
 
-            //var messageToPublish = GetPublisheableMessage(message);
-             
-            MessagesDispatcher.Dispatch(message);
-        }
+		public void Publish(BusMessage message)
+		{
+			if (message == null) throw new ArgumentNullException("message");
 
-        public void Start()
-        {
-            lock (this)
-            {
-                if (MessagesDispatcher.Status == DispatcherStatus.Stopped)
-                    MessagesDispatcher.Start();
-                else
-                {
-                    throw new InvalidOperationException();
-                }
-            }
-        }
+			//var messageToPublish = GetPublisheableMessage(message);
 
-        #endregion
+			MessagesDispatcher.Dispatch(message);
+		}
 
-       
+		public void Start()
+		{
+			lock (this)
+			{
+				if (MessagesDispatcher.Status == DispatcherStatus.Stopped)
+					MessagesDispatcher.Start();
+				else
+				{
+					throw new InvalidOperationException();
+				}
+			}
+		}
 
-        #region Services
+		#endregion
 
-        public IServiceOperationResult<TResult> RequestService<TResult>(Guid destinationComponent, Guid serviceOperation,
-                                                                        object[] requestParams)
-        {
-            if (destinationComponent.IsEmpty()) throw new ArgumentException();
-            ServiceRequestMessage request = GetServiceRequestMessage<TResult>(destinationComponent, serviceOperation,
-                                                                              requestParams);
-            return ServiceRequestDispatcher.RequestSync<TResult>(request);
-        }
+		#region Services
+
+		public IServiceOperationResult<TResult> RequestService<TResult>(Guid destinationComponent, Guid serviceOperation,
+		                                                                object[] requestParams)
+		{
+			if (destinationComponent.IsEmpty()) throw new ArgumentException();
+			ServiceRequestMessage request = GetServiceRequestMessage<TResult>(destinationComponent, serviceOperation,
+			                                                                  requestParams);
+			return ServiceRequestDispatcher.RequestSync<TResult>(request);
+		}
 
 
-        public void RequestService<TResult>(Guid destinationComponent, Guid serviceOperation,
-                                            Action<IServiceOperationResult<TResult>> responseHandler,
-                                            object[] requestParams)
-        {
-            if (destinationComponent.IsEmpty()) throw new ArgumentException();
-            //TODO: ASYNC FUNCTIONALLITY
-            ServiceRequestMessage request = GetServiceRequestMessage<TResult>(destinationComponent, serviceOperation,
-                                                                              requestParams);
-            ServiceRequestDispatcher.RequestAsync(request, responseHandler);
-        }
+		public void RequestService<TResult>(Guid destinationComponent, Guid serviceOperation,
+		                                    Action<IServiceOperationResult<TResult>> responseHandler,
+		                                    object[] requestParams)
+		{
+			if (destinationComponent.IsEmpty()) throw new ArgumentException();
+			//TODO: ASYNC FUNCTIONALLITY
+			ServiceRequestMessage request = GetServiceRequestMessage<TResult>(destinationComponent, serviceOperation,
+			                                                                  requestParams);
+			ServiceRequestDispatcher.RequestAsync(request, responseHandler);
+		}
 
-        private ServiceRequestMessage GetServiceRequestMessage<TResult>(Guid destinationComponent, Guid operationId,
-                                                                        object[] requestParams)
-        {
-            Guid serverId = destinationComponent != Guid.Empty
-                                ? destinationComponent
-                                : DataSource.GetByOperationId(operationId).Publisher;
+		private ServiceRequestMessage GetServiceRequestMessage<TResult>(Guid destinationComponent, Guid operationId,
+		                                                                object[] requestParams)
+		{
+			Guid serverId = destinationComponent != Guid.Empty
+				                ? destinationComponent
+				                : _serviceDetailsReader.GetByOperationId(operationId).Publisher;
 
-            var callingContextId = typeof (TResult) != typeof (void) ? Guid.NewGuid() : default(Guid);
+			var callingContextId = typeof (TResult) != typeof (void) ? Guid.NewGuid() : default(Guid);
 
-            //TODO: MUST CHANGE WHEN DEVELOPING CALLER, TO PROVIDE THE CORRECT PARAM NAMES FROM A PROXY COMPILED ON THE FLY, change this interface to provide the parameters and reorganize class etc..... THE NEXT LINEs ONLY COMPILES
+			//TODO: MUST CHANGE WHEN DEVELOPING CALLER, TO PROVIDE THE CORRECT PARAM NAMES FROM A PROXY COMPILED ON THE FLY, change this interface to provide the parameters and reorganize class etc..... THE NEXT LINEs ONLY COMPILES
 
-            var requestParameters = new Dictionary<string, object>();
-            int i = 0;
+			var requestParameters = new Dictionary<string, object>();
+			int i = 0;
 
-            foreach (var requestParam in requestParams)
-            {
-                requestParameters.Add("Param" + i++, requestParam);
-            }
+			foreach (var requestParam in requestParams)
+			{
+				requestParameters.Add("Param" + i++, requestParam);
+			}
 
-            //finished crap TODO
-            var result = ServiceRequestMessage.GetForServiceRequest<TResult>(serverId, operationId, callingContextId,
-                                                                             requestParameters);
+			//finished crap TODO
+			var result = ServiceRequestMessage.GetForServiceRequest<TResult>(serverId, operationId, callingContextId,
+			                                                                 requestParameters);
 
-            return result;
-        }
+			return result;
+		}
 
-        #endregion
+		#endregion
 
-        #region IDisposable
+		#region IDisposable
 
-        private bool _disposed;
+		private bool _disposed;
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    MessagesDispatcher.Dispose();
-                    MessagesDispatcher = null;
-                }
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!_disposed)
+			{
+				if (disposing)
+				{
+					MessagesDispatcher.Dispose();
+					MessagesDispatcher = null;
+				}
 
-                _disposed = true;
-            }
-        }
+				_disposed = true;
+			}
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

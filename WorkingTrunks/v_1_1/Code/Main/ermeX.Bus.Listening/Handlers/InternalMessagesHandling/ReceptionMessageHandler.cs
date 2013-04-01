@@ -26,6 +26,7 @@ using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
+using ermeX.Domain.Queues;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Threading.Queues;
@@ -34,111 +35,111 @@ using ermeX.Transport.Interfaces;
 
 namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
 {
-    /// <summary>
-    /// Receives a transport message and initiates the incommingworkflow
-    /// </summary>
-    internal sealed class ReceptionMessageHandler : MessageHandlerBase<TransportMessage>
-    {
-        public static Guid OperationIdentifier = OperationIdentifiers.InternalMessagesOperationIdentifier;
+	/// <summary>
+	/// Receives a transport message and initiates the incommingworkflow
+	/// </summary>
+	internal sealed class ReceptionMessageHandler : MessageHandlerBase<TransportMessage>
+	{
+		private readonly IReadIncommingQueue _queueReader;
+		private readonly IWriteIncommingQueue _queueWritter;
+		public static Guid OperationIdentifier = OperationIdentifiers.InternalMessagesOperationIdentifier;
 
-        #region IDisposable
+		#region IDisposable
 
-        //TODO: REMOVE IF NOT NEEDED
-        private bool _disposed;
+		//TODO: REMOVE IF NOT NEEDED
+		private bool _disposed;
 
-        private void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                   
-                }
-                _disposed = true;
-            }
-        }
+		private void Dispose(bool disposing)
+		{
+			if (!_disposed)
+			{
+				if (disposing)
+				{
 
-        public override void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+				}
+				_disposed = true;
+			}
+		}
 
-        ~ReceptionMessageHandler()
-        {
-            Dispose(false);
-        }
-       
+		public override void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
-        #endregion
-
-
-        [Inject]
-        public ReceptionMessageHandler(
-            IIncomingMessagesDataSource incomingMessagesDataSource, IReceptionMessageDistributor receptionMessageDistributor,
-                                      IBusSettings settings, IQueueDispatcherManager queueDispatcherManager)
-        {
-            if (incomingMessagesDataSource == null) throw new ArgumentNullException("incomingMessagesDataSource");
-            if (receptionMessageDistributor == null) throw new ArgumentNullException("receptionMessageDistributor");
-            if (settings == null) throw new ArgumentNullException("settings");
-            if (queueDispatcherManager == null) throw new ArgumentNullException("queueDispatcherManager");
-            IncomingMessagesDataSource = incomingMessagesDataSource;
-            ReceptionMessageDistributor = receptionMessageDistributor;
-            Settings = settings;
-            QueueDispatcherManager = queueDispatcherManager;
-
-            SystemTaskQueue.Instance.EnqueueItem(EnqueueNonDistributedMessages);  //reenqueues non dispatched messages on startup
-        }
-
-       
-
-        private IIncomingMessagesDataSource IncomingMessagesDataSource { get; set; }
-        private IReceptionMessageDistributor ReceptionMessageDistributor { get; set; }
-        private IBusSettings Settings { get; set; }
-        private IQueueDispatcherManager QueueDispatcherManager { get; set; }
-        private readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
+		~ReceptionMessageHandler()
+		{
+			Dispose(false);
+		}
 
 
-        public override object Handle(TransportMessage message)
-        {
-            BusMessage busMessage = message.Data;
-
-            var incomingMessage = new IncomingMessage(BusMessage.Clone(busMessage))
-            {
-                ComponentOwner = Settings.ComponentId,
-                
-                PublishedTo = Settings.ComponentId,
-                TimeReceivedUtc = DateTime.UtcNow,
-                SuscriptionHandlerId = Guid.Empty,
-                Status = Message.MessageStatus.ReceiverReceived,
-            };
-            
-            //this must be done on-line in case of errors so it returns an exception to the caller
-            IncomingMessagesDataSource.Save(incomingMessage); 
-            ReceptionMessageDistributor.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage));
-            Logger.Trace(x=>x("{0} - Message received ", message.Data.MessageId));
-            return null; //Check the correctness of this null
-        }
+		#endregion
 
 
-        /// <summary>
-        /// Messages that havent finished the distribution. the distributor ensures that wont distribute it twice to the same suscriber
-        /// </summary>
-        private void EnqueueNonDistributedMessages()
-        {
-            //Gets all that were not distributed in previous sessions
-            var incomingMessages = IncomingMessagesDataSource.GetNonDistributedMessages();
+		[Inject]
+		public ReceptionMessageHandler(IReadIncommingQueue queueReader,
+			IWriteIncommingQueue queueWritter,
+			IReceptionMessageDistributor receptionMessageDistributor,
+			IBusSettings settings, IQueueDispatcherManager queueDispatcherManager)
+		{
+			_queueReader = queueReader;
+			_queueWritter = queueWritter;
+			if (receptionMessageDistributor == null) throw new ArgumentNullException("receptionMessageDistributor");
+			if (settings == null) throw new ArgumentNullException("settings");
+			if (queueDispatcherManager == null) throw new ArgumentNullException("queueDispatcherManager");
+			ReceptionMessageDistributor = receptionMessageDistributor;
+			Settings = settings;
+			QueueDispatcherManager = queueDispatcherManager;
 
-            foreach (var incomingMessage in incomingMessages)
-                ReceptionMessageDistributor.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage));
-        }
+			SystemTaskQueue.Instance.EnqueueItem(EnqueueNonDistributedMessages); //reenqueues non dispatched messages on startup
+		}
 
-        public void RegisterSuscriber(Action<Guid, object> onMessageReceived) //TODO: THIS IS A bootch and it must be refactored
-        {
-            if (onMessageReceived == null) throw new ArgumentNullException("onMessageReceived");
-            Logger.Trace("InternalMessageHandler.RegisterSuscriber");
+		private IReceptionMessageDistributor ReceptionMessageDistributor { get; set; }
+		private IBusSettings Settings { get; set; }
+		private IQueueDispatcherManager QueueDispatcherManager { get; set; }
+		private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
 
-            QueueDispatcherManager.DispatchMessage += onMessageReceived;
-        }
-    }
+		public override object Handle(TransportMessage message)
+		{
+			BusMessage busMessage = message.Data;
+
+			var incomingMessage = new IncomingMessage(BusMessage.Clone(busMessage))
+				{
+					ComponentOwner = Settings.ComponentId,
+
+					PublishedTo = Settings.ComponentId,
+					TimeReceivedUtc = DateTime.UtcNow,
+					SuscriptionHandlerId = Guid.Empty,
+					Status = Message.MessageStatus.ReceiverReceived,
+				};
+
+			//this must be done on-line in case of errors so it returns an exception to the caller
+			_queueWritter.Save(incomingMessage);
+			ReceptionMessageDistributor.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage));
+			Logger.Trace(x => x("{0} - Message received ", message.Data.MessageId));
+			return null; //Check the correctness of this null
+		}
+
+
+		/// <summary>
+		/// Messages that havent finished the distribution. the distributor ensures that wont distribute it twice to the same suscriber
+		/// </summary>
+		private void EnqueueNonDistributedMessages()
+		{
+			//Gets all that were not distributed in previous sessions
+			var incomingMessages = _queueReader.GetNonDistributedMessages();//TODO: ISSUE-281: THIS METHOD IS NOT COMMON IN A QUEUE
+
+			foreach (var incomingMessage in incomingMessages)
+				ReceptionMessageDistributor.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage));
+		}
+
+		public void RegisterSuscriber(Action<Guid, object> onMessageReceived)
+			//TODO: THIS IS A bootch and it must be refactored
+		{
+			if (onMessageReceived == null) throw new ArgumentNullException("onMessageReceived");
+			Logger.Trace("InternalMessageHandler.RegisterSuscriber");
+
+			QueueDispatcherManager.DispatchMessage += onMessageReceived;
+		}
+	}
 }

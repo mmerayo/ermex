@@ -34,7 +34,6 @@ namespace ermeX.Common
             return FromType<TResult>(type);
         }
 
-
         public static TResult FromType<TResult>(Type typeToBuild, params object[] args)
         {
             return ILHelper.CreateInstance<TResult>(typeToBuild, args);

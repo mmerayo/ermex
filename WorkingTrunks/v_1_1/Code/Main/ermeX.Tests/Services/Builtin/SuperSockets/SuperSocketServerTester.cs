@@ -16,6 +16,9 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
+using ermeX.Domain.Messages;
+using ermeX.Domain.Services;
 using ermeX.Tests.Common.SettingsProviders;
 using ermeX.Tests.Services.Mock;
 
@@ -25,19 +28,22 @@ using ermeX.Transport.Interfaces.Receiving.Server;
 
 namespace ermeX.Tests.Services.Builtin.SuperSockets
 {
-    internal class SuperSocketServerTester : ServerTesterBase
-    {
-        protected override IServer GetServerInstance(ServerInfo serverInfo)
-        {
-            var settings =
-                (TestSettingsProvider.ClientSettings) TestSettingsProvider.GetClientConfigurationSettingsSource();
-            settings.MaxMessageKbBeforeChunking = 8192;
-            return new SuperSocketServer(serverInfo, ServiceDetailsDs,null, settings);
-        }
+	internal class SuperSocketServerTester : ServerTesterBase
+	{
+		protected override IServer GetServerInstance(ServerInfo serverInfo)
+		{
+			var settings =
+				(TestSettingsProvider.ClientSettings) TestSettingsProvider.GetClientConfigurationSettingsSource();
+			settings.MaxMessageKbBeforeChunking = 8192;
+			return new SuperSocketServer(serverInfo, GetServiceDetailsReader(),
+			                             GetChunkedMessagesReader(),
+			                             GetChunkedMessagesWritter(),
+			                             settings);
+		}
 
-        protected override IMockTestClient GetTestClientInstance(ServerInfo serverInfo)
-        {
-            return new DummyTestSuperSocketClient(serverInfo);
-        }
-    }
+		protected override IMockTestClient GetTestClientInstance(ServerInfo serverInfo)
+		{
+			return new DummyTestSuperSocketClient(serverInfo);
+		}
+	}
 }

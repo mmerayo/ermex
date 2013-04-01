@@ -26,8 +26,7 @@ using Common.Logging;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-
-
+using ermeX.Domain.Services;
 using ermeX.Transport.Interfaces;
 using ermeX.Transport.Interfaces.Messages;
 
@@ -37,7 +36,7 @@ namespace ermeX.Transport.Reception.ServicesHandling
     {
         private readonly Dictionary<Guid, MethodInfo> Operations = new Dictionary<Guid, MethodInfo>();
 
-        public ServiceRequestDispacher(IService realHandlerInstance, IServiceDetailsDataSource dataSource)
+        public ServiceRequestDispacher(IService realHandlerInstance, ICanReadServiceDetails dataSource)
         {
             if (realHandlerInstance == null) throw new ArgumentNullException("realHandlerInstance");
             if (dataSource == null) throw new ArgumentNullException("dataSource");
@@ -48,9 +47,9 @@ namespace ermeX.Transport.Reception.ServicesHandling
 
         private readonly object SyncLock=new object(); 
 
-
+		//TODO: ISSUE-281: EVERYTHING MUST BE VBLES
         private IService RealHandlerInstance { get; set; }
-        private IServiceDetailsDataSource DataSource { get; set; }
+		private ICanReadServiceDetails DataSource { get; set; }
         private readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
 
         #region IServiceHandler Members

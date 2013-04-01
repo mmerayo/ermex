@@ -23,5 +23,6 @@ namespace ermeX.Bus.Synchronisation.Dialogs.HandledByMessageQueue
 {
     internal interface IUpdatePublishedServiceMessageHandler : IHandleMessages<UpdatePublishedServiceMessage>
     {
+	    void Start();
     }
 }

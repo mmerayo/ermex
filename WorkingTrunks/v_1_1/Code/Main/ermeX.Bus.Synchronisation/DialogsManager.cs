@@ -31,8 +31,10 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-
-
+using ermeX.Domain.Component;
+using ermeX.Domain.Connectivity;
+using ermeX.Domain.Services;
+using ermeX.Domain.Subscriptions;
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
 
@@ -45,32 +47,32 @@ namespace ermeX.Bus.Synchronisation
     internal sealed class DialogsManager : IDialogsManager
     {
         [Inject]
-        public DialogsManager(IMessagePublisher publisher, IMessageListener listener, IComponentSettings settings,IBusSettings busSettings,
-                              IAppComponentDataSource appComponentDataSource,
-                              IServiceDetailsDataSource serviceDetailsDataSource,
-                              IConnectivityDetailsDataSource connectivityDetailsDataSource,
-                              IOutgoingMessageSuscriptionsDataSource outgoingMessageSuscriptionsDataSource,
-                              IIncomingMessageSuscriptionsDataSource incomingMessageSuscriptionsDataSource,
+        public DialogsManager(IMessagePublisher publisher, IMessageListener listener, 
+			IComponentSettings settings,IBusSettings busSettings,
+			ICanReadComponents componentReader,
+			ICanUpdateComponents componentsWritter,
+			ICanReadServiceDetails serviceDetailsReader,
+                             ICanWriteServiceDetails serviceDetailsWritter, 
+			ICanReadConnectivityDetails connectivityDetailsReader,
+			ICanWriteConnectivityDetails connectivityDetailsWritter,
+                              
                               IHandshakeService joinNetworkService,
                               IMessageSuscriptionsService messageSuscriptionsService,
                               IPublishedServicesDefinitionsService publishedServicesDefinitionsService,
                               IUpdatePublishedServiceMessageHandler updatePublishedServiceMessageHandler,
                               IUpdateSuscriptionMessageHandler updateSuscriptionMessageHandler,
             IStatusManager statusManager,
-             IAutoRegistration autoRegistration
+             IRegisterComponents componentsRegistrator,
+			ICanReadIncommingMessagesSubscriptions incommingSubscriptionsReader,
+			ICanUpdateOutgoingMessagesSubscriptions outgoingMessagesSubscriptionsWritter
             )
         {
             if (publisher == null) throw new ArgumentNullException("publisher");
             if (listener == null) throw new ArgumentNullException("listener");
             if (settings == null) throw new ArgumentNullException("settings");
             if (busSettings == null) throw new ArgumentNullException("busSettings");
-            if (appComponentDataSource == null) throw new ArgumentNullException("appComponentDataSource");
-            if (serviceDetailsDataSource == null) throw new ArgumentNullException("serviceDetailsDataSource");
-            if (connectivityDetailsDataSource == null) throw new ArgumentNullException("connectivityDetailsDataSource");
-            if (outgoingMessageSuscriptionsDataSource == null)
-                throw new ArgumentNullException("outgoingMessageSuscriptionsDataSource");
-            if (incomingMessageSuscriptionsDataSource == null)
-                throw new ArgumentNullException("incomingMessageSuscriptionsDataSource");
+            
+          
             if (joinNetworkService == null) throw new ArgumentNullException("joinNetworkService");
             if (messageSuscriptionsService == null) throw new ArgumentNullException("messageSuscriptionsService");
             if (publishedServicesDefinitionsService == null)
@@ -80,30 +82,33 @@ namespace ermeX.Bus.Synchronisation
             if (updateSuscriptionMessageHandler == null)
                 throw new ArgumentNullException("updateSuscriptionMessageHandler");
             if (statusManager == null) throw new ArgumentNullException("statusManager");
-            if (autoRegistration == null) throw new ArgumentNullException("autoRegistration");
 
 
             Publisher = publisher;
             Listener = listener;
             Settings = settings;
             BusSettings = busSettings;
-            AppComponentDataSource = appComponentDataSource;
-            ServiceDetailsDataSource = serviceDetailsDataSource;
-            ConnectivityDetailsDataSource = connectivityDetailsDataSource;
-            OutgoingMessageSuscriptionsDataSource = outgoingMessageSuscriptionsDataSource;
-            IncomingMessageSuscriptionsDataSource = incomingMessageSuscriptionsDataSource;
+	        ComponentReader = componentReader;
+	        ComponentsWritter = componentsWritter;
+	        ServiceDetailsReader = serviceDetailsReader;
+	        ServiceDetailsWritter = serviceDetailsWritter;
+	        ConnectivityDetailsReader = connectivityDetailsReader;
+	        ConnectivityDetailsWritter = connectivityDetailsWritter;
+
             JoinNetworkService = joinNetworkService;
             MessageSuscriptionsService = messageSuscriptionsService;
             PublishedServicesDefinitionsService = publishedServicesDefinitionsService;
             UpdatePublishedServiceMessageHandler = updatePublishedServiceMessageHandler;
             UpdateSuscriptionMessageHandler = updateSuscriptionMessageHandler;
             StatusManager = statusManager;
-            AutoRegistration = autoRegistration;
+	        ComponentsRegistrator = componentsRegistrator;
+	        IncommingSubscriptionsReader = incommingSubscriptionsReader;
+	        OutgoingMessagesSubscriptionsWritter = outgoingMessagesSubscriptionsWritter;
 
 
-            //Creates this service details as is an special case
+	        //Creates this service details as is an special case
             if (BusSettings.FriendComponent != null)
-                AutoRegistration.CreateRemoteComponentInitialSetOfData(BusSettings.FriendComponent.ComponentId,
+                ComponentsRegistrator.CreateRemoteComponent(BusSettings.FriendComponent.ComponentId,
                                                       BusSettings.FriendComponent.Endpoint.Address.ToString(),
                                                       BusSettings.FriendComponent.Endpoint.Port);
             //PublishLocalSystemServices();
@@ -113,20 +118,25 @@ namespace ermeX.Bus.Synchronisation
 
         private IComponentSettings Settings { get; set; }
         private IBusSettings BusSettings { get; set; }
-        private IAppComponentDataSource AppComponentDataSource { get; set; }
-        private IServiceDetailsDataSource ServiceDetailsDataSource { get; set; }
-        private IConnectivityDetailsDataSource ConnectivityDetailsDataSource { get; set; }
-        private IOutgoingMessageSuscriptionsDataSource OutgoingMessageSuscriptionsDataSource { get; set; }
-        private IIncomingMessageSuscriptionsDataSource IncomingMessageSuscriptionsDataSource { get; set; }
+	    private ICanReadComponents ComponentReader { get; set; }
+	    private ICanUpdateComponents ComponentsWritter { get; set; }
+	    private ICanReadServiceDetails ServiceDetailsReader { get; set; }
+	    private ICanWriteServiceDetails ServiceDetailsWritter { get; set; }
+	    private ICanReadConnectivityDetails ConnectivityDetailsReader { get; set; }
+	    private ICanWriteConnectivityDetails ConnectivityDetailsWritter { get; set; }
+
+	   
         private IHandshakeService JoinNetworkService { get; set; }
         private IMessageSuscriptionsService MessageSuscriptionsService { get; set; }
         private IPublishedServicesDefinitionsService PublishedServicesDefinitionsService { get; set; }
         private IUpdatePublishedServiceMessageHandler UpdatePublishedServiceMessageHandler { get; set; }
         private IUpdateSuscriptionMessageHandler UpdateSuscriptionMessageHandler { get; set; }
         private IStatusManager StatusManager { get; set; }
-        private IAutoRegistration AutoRegistration { get; set; }
+	    private IRegisterComponents ComponentsRegistrator { get; set; }
+	    private ICanReadIncommingMessagesSubscriptions IncommingSubscriptionsReader { get; set; }
+	    private ICanUpdateOutgoingMessagesSubscriptions OutgoingMessagesSubscriptionsWritter { get; set; }
 
-        private IMessageListener Listener { get; set; }
+	    private IMessageListener Listener { get; set; }
 
         private IMessagePublisher Publisher { get; set; }
 
@@ -158,7 +168,7 @@ namespace ermeX.Bus.Synchronisation
             StatusManager.SyncEvents.CreateEvent(
                 ConfigurationManagement.Status.StatusManager.GlobalSync.GlobalEvents.DefinitionsExchanged, componentId);
             
-            var localConnectivity = ConnectivityDetailsDataSource.GetByComponentId(Settings.ComponentId);
+            var localConnectivity = ConnectivityDetailsReader.Fetch(Settings.ComponentId);
 
             var joinNetworkServiceProxy = GetHandshakeServiceProxy(componentId);
 
@@ -167,6 +177,7 @@ namespace ermeX.Bus.Synchronisation
             try
             {
                 friendComponents = joinNetworkServiceProxy.RequestJoinNetwork(message);
+                Debug.Assert(friendComponents!=null);
             }
             catch (Exception ex)
             {
@@ -182,13 +193,13 @@ namespace ermeX.Bus.Synchronisation
         {
 
             Logger.Info(x=>x("HANDSHAKE: Start exchanging definitions Caller {0}", Settings.ComponentId));
-            var componentIds = AppComponentDataSource.GetOtherComponentsWhereDefinitionsNotExchanged(true).Select(x => x.ComponentId);
+            var componentIds = ComponentReader.FetchOtherComponentsNotExchangedDefinitions(true).Select(x => x.ComponentId);
 
             foreach (var componentId in componentIds)
             {
                 //TODO:RAISE THREAD
                 //TODO: TRANSACTIONAL
-                var component= AppComponentDataSource.GetByComponentId(componentId);
+                var component= ComponentReader.Fetch(componentId);
                 ExchangeDefinitions(component);
 
             }
@@ -214,13 +225,13 @@ namespace ermeX.Bus.Synchronisation
             }
             if (componentStatus == ComponentStatus.Running)
             {
-                AppComponent refreshedComponent = AppComponentDataSource.GetByComponentId(component.ComponentId);
+                AppComponent refreshedComponent = ComponentReader.Fetch(component.ComponentId);
                 if ((refreshedComponent.ComponentExchanges == null || refreshedComponent.ComponentExchanges == Settings.ComponentId)//TODO: TRANSACTIONAL as locks who performs the exchange
                     && handshakeServiceProxy.CanExchangeDefinitions(Settings.ComponentId))
                 {
                     component.ComponentExchanges = Settings.ComponentId;
                     component.ExchangedDefinitions = false;
-                    AppComponentDataSource.Save(component);
+                    ComponentsWritter.Save(component);
 
                     Logger.Info(x=>x("HANDSHAKE: Start exchanging definitions caller {0} component {1}",
                                               Settings.ComponentId, component.ComponentId));
@@ -231,12 +242,12 @@ namespace ermeX.Bus.Synchronisation
                     NotifyMyServices(component.ComponentId);
 
                     component.ExchangedDefinitions = true;
-                    AppComponentDataSource.Save(component);
+                    ComponentsWritter.Save(component);
 
                     handshakeServiceProxy.DefinitionsExchanged(Settings.ComponentId);
 
                     component.ComponentExchanges = null;
-                    AppComponentDataSource.Save(component);
+                    ComponentsWritter.Save(component);
 
                     StatusManager.SyncEvents.SignalEvent(
                         ConfigurationManagement.Status.StatusManager.GlobalSync.GlobalEvents.DefinitionsExchanged,
@@ -258,7 +269,7 @@ namespace ermeX.Bus.Synchronisation
         private readonly object _notifyStatusLock=new object();
         public void NotifyCurrentStatus()
         {
-            var components = AppComponentDataSource.GetAll()
+            var components = ComponentReader.FetchAll()
                 .Where(x => x.ComponentId != Settings.ComponentId);
                 
 
@@ -275,7 +286,7 @@ namespace ermeX.Bus.Synchronisation
                             if(!runningComponent.IsRunning && status==ComponentStatus.Running)
                             {
                                 runningComponent.IsRunning = true;
-                                AppComponentDataSource.Save(runningComponent);
+                                ComponentsWritter.Save(runningComponent);
                             }
                         }
                         catch(ermeXComponentNotAvailableException ex)
@@ -292,7 +303,7 @@ namespace ermeX.Bus.Synchronisation
         public void UpdateRemoteServiceDefinition(string interfaceName, string methodName)
         {
             Logger.Debug(x=>x("Requesting {0}.{1} in all components", interfaceName,methodName));
-            var appComponents = AppComponentDataSource.GetAll().Where(x => x.ComponentId != x.ComponentOwner);
+            var appComponents = ComponentReader.FetchAll().Where(x => x.ComponentId != x.ComponentOwner);
 
             foreach (var appComponent in appComponents)
                 UpdateRemoteServiceDefinition(interfaceName, methodName, appComponent);
@@ -329,7 +340,7 @@ namespace ermeX.Bus.Synchronisation
                      ConfigurationManagement.Status.StatusManager.GlobalSync.GlobalEvents.DefinitionsExchanged,
                      appComponent.ComponentId, secondsToWait);
 
-            AppComponent byComponentId = AppComponentDataSource.GetByComponentId(appComponent.ComponentId);
+            AppComponent byComponentId = ComponentReader.Fetch(appComponent.ComponentId);
             if(byComponentId==null)
                 throw new InvalidOperationException("The component doesnt exist");
             if( !byComponentId.ExchangedDefinitions)
@@ -353,7 +364,7 @@ namespace ermeX.Bus.Synchronisation
                     appComponent.ComponentId,secondsToWait);
             }
             //re-exchange and also if new components appeared
-            IEnumerable<AppComponent> componentsToExchange = AppComponentDataSource.GetOtherComponentsWhereDefinitionsNotExchanged(true);
+            IEnumerable<AppComponent> componentsToExchange = ComponentReader.FetchOtherComponentsNotExchangedDefinitions(true);
 
             foreach (var appComponent in componentsToExchange)
             {
@@ -366,10 +377,8 @@ namespace ermeX.Bus.Synchronisation
 
         public void Suscribe(Guid subscriptionHandlerId)
         {
-            var appComponents =
-                AppComponentDataSource.GetOthers().Select(
-                    x => x.ComponentId); //get other components
-            var subscription = IncomingMessageSuscriptionsDataSource.GetByHandlerId(subscriptionHandlerId);
+            var appComponents =ComponentReader.FetchOtherComponents().Select(x => x.ComponentId); //get other components
+            var subscription = IncommingSubscriptionsReader.GetByHandlerId(subscriptionHandlerId);
                 //get the phisical subscription
             foreach (var appComponent in appComponents)
             {
@@ -387,11 +396,10 @@ namespace ermeX.Bus.Synchronisation
         {
             if (serviceInterface == null) throw new ArgumentNullException("serviceInterface");
             if (serviceImplementation == null) throw new ArgumentNullException("serviceImplementation");
-            var appComponents = AppComponentDataSource.GetOthers();
+            var appComponents = ComponentReader.FetchOtherComponents();
 
-            var serviceOperations =
-                ServiceDetailsDataSource.GetByInterfaceType(serviceInterface.FullName).Where(
-                    x => x.Publisher == Settings.ComponentId).ToList();
+			//ISSUE-281: From reader
+            var serviceOperations =ServiceDetailsReader.GetByInterfaceType(serviceInterface.FullName).Where(x => x.Publisher == Settings.ComponentId).ToList();
 
             foreach (var appComponent in appComponents)
             {
@@ -422,10 +430,11 @@ namespace ermeX.Bus.Synchronisation
                 foreach (var componentData in componentsMessage.Components)
                 {
                     //THIS MIGHT NEED TO BE REMOVED AS REDUNDANT OR BECAUSE IT DOESNT LET THE UPDATE ONCE THE COMPONENT WAS REGISTERED, CHECK THIS
-                    if(AppComponentDataSource.GetByComponentId(componentData.Item1.ComponentId)!=null)
+                    if (ComponentReader.Fetch(componentData.Item1.ComponentId) != null)
                         continue;
-
-                    var isNew=AppComponentDataSource.SaveFromOtherComponent(componentData.Item1,
+                   
+					//TODO: ISSUE-281: move logic
+                    var isNew=ComponentsWritter.ImportFromOtherComponent(componentData.Item1,
                                                                   new[]{ new Tuple<string, object>("ComponentId",
                                                                                             componentData.Item1.
                                                                                                 ComponentId)},
@@ -457,17 +466,7 @@ namespace ermeX.Bus.Synchronisation
         {
             if (remoteDefinitions.LocalServiceDefinitions != null)
                 foreach (var svc in remoteDefinitions.LocalServiceDefinitions)
-                {
-                    //TODO: REPEATED WITH THE ADD SERVICE encapsulate
-
-                    var deterministicFilter = new[]
-                        {
-                            new Tuple<string, object>("OperationIdentifier", svc.OperationIdentifier),
-                            new Tuple<string, object>("Publisher", svc.Publisher)
-                        };
-                    ServiceDetailsDataSource.SaveFromOtherComponent(svc,
-                                                                    deterministicFilter);
-                }
+                    ServiceDetailsWritter.ImportFromOtherComponent(svc);
         }
 
         private void RequestMessagesSuscriptions(Guid componentId)
@@ -482,18 +481,7 @@ namespace ermeX.Bus.Synchronisation
                 foreach (var suscription in remoteSuscriptions.MyIncomingSuscriptions)
                 {
                     //TODO: THE FOLLOWING USE CASE SHOULD BE DETECTED AUTOMATICALLY WHEN SAVING 1
-                    var deterministicFilter = new[]
-                        {
-                            new Tuple<string, object>("BizMessageFullTypeName",
-                                                      suscription.BizMessageFullTypeName),
-                            new Tuple<string, object>("Component", componentId)
-                        };
-
-                    var outgoingMessageSuscription = new OutgoingMessageSuscription(suscription, componentId,
-                                                                                    OutgoingMessageSuscriptionsDataSource
-                                                                                        .LocalComponentId);
-                    OutgoingMessageSuscriptionsDataSource.SaveFromOtherComponent(outgoingMessageSuscription,
-                                                                                 deterministicFilter);
+					OutgoingMessagesSubscriptionsWritter.ImportFromOtherComponent(suscription);
                 }
 
             //remote outgoing is local outgoing but local subscriptions
@@ -502,22 +490,14 @@ namespace ermeX.Bus.Synchronisation
                 {
                     if (suscription.Component == Settings.ComponentId)
                         continue;
-                    //TODO: SAME AS 1
-                    var deterministicFilter = new[]
-                        {
-                            new Tuple<string, object>("BizMessageFullTypeName",
-                                                      suscription.BizMessageFullTypeName),
-                            new Tuple<string, object>("Component", suscription.Component)
-                        };
-
-                    OutgoingMessageSuscriptionsDataSource.SaveFromOtherComponent(suscription,
-                                                                                 deterministicFilter);
+	                OutgoingMessagesSubscriptionsWritter.ImportFromOtherComponent(suscription);
+                   
                 }
         }
 
         private void NotifyMySubscriptions(Guid componentId)
         {
-            var myIncomingSubscriptions = IncomingMessageSuscriptionsDataSource.GetAll();
+            var myIncomingSubscriptions = IncommingSubscriptionsReader.FetchAll();
                 //get my subscriptions that are not from componentId
 
             var proxy = Publisher.GetServiceProxy<IMessageSuscriptionsService>(componentId);
@@ -527,7 +507,7 @@ namespace ermeX.Bus.Synchronisation
 
         private void NotifyMyServices(Guid componentId)
         {
-            var myServices = ServiceDetailsDataSource.GetLocalCustomServices() ;
+            var myServices = ServiceDetailsReader.GetLocalCustomServices() ;
 
             var proxy = Publisher.GetServiceProxy<IPublishedServicesDefinitionsService>(componentId);
             if (myServices != null && myServices.Count > 0)
