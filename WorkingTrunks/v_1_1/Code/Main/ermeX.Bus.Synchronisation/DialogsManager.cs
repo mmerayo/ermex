@@ -106,11 +106,7 @@ namespace ermeX.Bus.Synchronisation
 	        OutgoingMessagesSubscriptionsWritter = outgoingMessagesSubscriptionsWritter;
 
 
-	        //Creates this service details as is an special case
-            if (BusSettings.FriendComponent != null)
-                ComponentsRegistrator.CreateRemoteComponent(BusSettings.FriendComponent.ComponentId,
-                                                      BusSettings.FriendComponent.Endpoint.Address.ToString(),
-                                                      BusSettings.FriendComponent.Endpoint.Port);
+	        
             //PublishLocalSystemServices();
 
         }
@@ -372,6 +368,15 @@ namespace ermeX.Bus.Synchronisation
             }
 
             EnsureDefinitionsAreExchanged(componentsToExchange,retries+1);
+        }
+
+        public void Start() //TODO: METHDOS TO NOT TO WORK IF NOT STARTED
+        {
+            //Creates this service details as is an special case
+            if (BusSettings.FriendComponent != null)
+                ComponentsRegistrator.CreateRemoteComponent(BusSettings.FriendComponent.ComponentId,
+                                                      BusSettings.FriendComponent.Endpoint.Address.ToString(),
+                                                      BusSettings.FriendComponent.Endpoint.Port);
         }
 
 

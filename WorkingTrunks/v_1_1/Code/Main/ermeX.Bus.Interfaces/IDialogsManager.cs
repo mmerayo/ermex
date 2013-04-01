@@ -50,5 +50,6 @@ namespace ermeX.Bus.Interfaces
         void UpdateRemoteServiceDefinition(string interfaceName, string methodName, AppComponent appComponent);
         void EnsureDefinitionsAreExchanged(AppComponent appComponent, int retries=1);
         void EnsureDefinitionsAreExchanged(IEnumerable<AppComponent> appComponents,int retries=1);
+        void Start();//TODO: FROM ISTARTABLE
     }
 }
