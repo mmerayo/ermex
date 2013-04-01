@@ -5,6 +5,7 @@ using ermeX.Entities.Base;
 
 namespace ermeX.Domain.QueryDatabase
 {
+	//TODO: TO BE REMOVED, AND ONLY USED BY THE VERSION UPGRADER
 	internal interface IQueryHelper
 	{
 		string ConnectionString { get; }

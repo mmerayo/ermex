@@ -7,7 +7,5 @@ namespace ermeX.Domain.Component
         bool CreateRemoteComponent(Guid remoteComponentId, string ip, int port);
        
         void CreateLocalComponent(int port);
-
-
     }
 }

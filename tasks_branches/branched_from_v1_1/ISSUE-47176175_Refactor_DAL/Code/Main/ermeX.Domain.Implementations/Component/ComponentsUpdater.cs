@@ -7,7 +7,7 @@ using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Implementations.Component
 {
-    internal sealed class ComponentsUpdater : ICanUpdateComponents
+    internal sealed class ComponentsUpdater : ICanWriteComponents
     {
          private IAppComponentDataSource Repository { get; set; }
 
@@ -17,10 +17,10 @@ namespace ermeX.Domain.Implementations.Component
             Repository = repository;
         }
 
-        public bool ImportFromOtherComponent(Entities.Entities.AppComponent entity, Tuple<string, object>[] deterministicFilter, ConnectivityDetails connectivityDetails)
+        public bool ImportFromOtherComponent(AppComponent entity, ConnectivityDetails connectivityDetails)
         {
             //TODO: Simplify usage
-            return Repository.SaveFromOtherComponent(entity, deterministicFilter,connectivityDetails);
+            return Repository.SaveFromOtherComponent(entity, connectivityDetails);
         }
 
         public void SetComponentRunningStatus(Guid componentId, ComponentStatus newStatus, bool exchangedDefinitions = false)

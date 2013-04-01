@@ -4,7 +4,6 @@
     //1.0 Tests
 	//1.1 visibilities
 	//implement domain observer
-	//1.2 remove ===> TODO: ISSUE-281 --> THE RUN UPGRADES TO BE PERFORMED AFTER INJECTIONS
 	//2.1 Create entities de dominio y mapper 
 	//Sacar de los datasources a los commands los metodos de no repositorio
 	//2.2 visibilities again
