@@ -34,7 +34,7 @@ namespace ermeX.DAL.Interfaces
         int GetMaxLatency();
         IList<AppComponent> GetOthers();
 
-        bool SaveFromOtherComponent(AppComponent entity, Tuple<string, object>[] deterministicFilter,ConnectivityDetails connectivityDetails);
+        bool SaveFromOtherComponent(AppComponent entity, ConnectivityDetails connectivityDetails);
         IEnumerable<AppComponent> GetOtherComponentsWhereDefinitionsNotExchanged(bool running=false);
         void SetComponentRunningStatus(Guid componentId, ComponentStatus newStatus, bool exchangedDefinitions = false);
 

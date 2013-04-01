@@ -191,7 +191,7 @@ namespace ermeX.DAL.DataAccess.DataSources
 			base.Save(entity);
 		}
 
-        public bool SaveFromOtherComponent(AppComponent entity, Tuple<string, object>[] deterministicFilter,
+        public bool SaveFromOtherComponent(AppComponent entity, 
                                            ConnectivityDetails connectivityDetails)
         {
             return AutoRegistration.CreateRemoteComponentInitialSetOfData(entity.ComponentId, connectivityDetails.Ip,
