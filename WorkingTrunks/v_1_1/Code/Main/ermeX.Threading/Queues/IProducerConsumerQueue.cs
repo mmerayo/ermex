@@ -29,5 +29,7 @@ namespace ermeX.Threading.Queues
 
         int Count { get; }
         void EnqueueItem(TQueueItem item);
+
+        void Start();//TODO: REMOVE FROM HERE WHEN Istartable is implemented
     }
 }

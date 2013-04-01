@@ -28,6 +28,7 @@ using ermeX.Bus.Interfaces;
 using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.DataSources;
+using ermeX.Domain.Queues;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
@@ -45,15 +46,17 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
         private MessageDistributor GetInstance(DbEngineType dbEngine, Action<MessageSubscribersDispatcher.SubscribersDispatcherMessage> messageReceived, out IMessageSubscribersDispatcher mockedSubscriber)
         {
-            var outgoingDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
-            var outgoingSubscriptionsDataSource = GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine);
             var mock = new Mock<IMessageSubscribersDispatcher>();
             mock.Setup(x=>x.EnqueueItem(It.IsAny<MessageSubscribersDispatcher.SubscribersDispatcherMessage>())).Callback(messageReceived);
             mockedSubscriber = mock.Object;
-            return new MessageDistributor(outgoingSubscriptionsDataSource,outgoingDataSource,mockedSubscriber);
+            var messageDistributor = new MessageDistributor(GetOutgoingMessageSubscriptionsReader(dbEngine),
+                                                            GetOutgoingQueueReader(dbEngine),GetOutgoingQueueWritter(dbEngine),
+                                                            mockedSubscriber);
+            messageDistributor.Start();
+            return messageDistributor;
         }
 
-        private class Dummy
+	    private class Dummy
         {
             public string Data;
         }

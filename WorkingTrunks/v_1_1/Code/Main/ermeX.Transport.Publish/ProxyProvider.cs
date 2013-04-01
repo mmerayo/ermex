@@ -30,18 +30,14 @@ namespace ermeX.Transport.Publish
     {
         [Inject]
         public ProxyProvider(ITransportSettings settings,
-                             IConnectivityDetailsDataSource connectivityDetailsDataSource,
                              IEnumerable<IConcreteServiceLoader> serviceLoaders)
         {
             if (settings == null) throw new ArgumentNullException("settings");
-            if (connectivityDetailsDataSource == null) throw new ArgumentNullException("connectivityDetailsDataSource");
             if (serviceLoaders == null) throw new ArgumentNullException("serviceLoaders");
             Settings = settings;
-            DataSource = connectivityDetailsDataSource;
             ServiceLoaders = serviceLoaders;
         }
 
-        private IConnectivityDetailsDataSource DataSource { get; set; }
         private IEnumerable<IConcreteServiceLoader> ServiceLoaders { get; set; }
 
         private ITransportSettings Settings { get; set; }

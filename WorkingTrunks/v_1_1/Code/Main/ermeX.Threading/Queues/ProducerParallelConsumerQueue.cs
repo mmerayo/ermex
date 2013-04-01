@@ -30,6 +30,7 @@ namespace ermeX.Threading.Queues
     /// <typeparam name="TQueueItem"></typeparam>
     internal abstract class ProducerParallelConsumerQueue<TQueueItem>: IProducerConsumerQueue<TQueueItem>
     {
+        private readonly int _initialWorkerCount;
         private int MaxThreadsNum { get; set; }
         private int QueueSizeToCreateNewThread { get; set; }
         private readonly object _queueLocker = new object();
@@ -58,6 +59,7 @@ namespace ermeX.Threading.Queues
 
         protected ProducerParallelConsumerQueue(int initialWorkerCount,int maxThreadsNum, int queueSizeToCreateNewThread,TimeSpan maxLazyThreadAlive)
         {
+            _initialWorkerCount = initialWorkerCount;
             if(initialWorkerCount<1)
                 throw new ArgumentOutOfRangeException("initialWorkerCount","Must be at least 0");
             if(queueSizeToCreateNewThread==0)
@@ -67,9 +69,16 @@ namespace ermeX.Threading.Queues
             MaxThreadsNum = maxThreadsNum;
             QueueSizeToCreateNewThread = queueSizeToCreateNewThread;
             MaxLazyThreadAlive = maxLazyThreadAlive;
-            for (int i = 0; i < initialWorkerCount; i++)
+           
+        }
+
+        public virtual void Start()
+        {
+            //TODO: ALL THE METHODS TO ENSURE THAT THE COMPONENT IS RUNNING when invoked
+            for (int i = 0; i < _initialWorkerCount; i++)
                 AddNewThread();
         }
+
         protected IQueueWrapper<TQueueItem> ItemsQueue { get; set; }
 
         public int Count

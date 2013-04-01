@@ -29,5 +29,6 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         int Count { get; }
         void EnqueueItem(MessageDistributor.MessageDistributorMessage item);
+        void Start(); //TODO: THE IMPLEMENTOR TO BE ISTARTABLE
     }
 }

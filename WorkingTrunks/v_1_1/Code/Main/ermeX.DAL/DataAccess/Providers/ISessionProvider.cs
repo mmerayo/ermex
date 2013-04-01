@@ -20,6 +20,7 @@ using NHibernate;
 
 namespace ermeX.DAL.DataAccess.Providers
 {
+
     internal interface ISessionProvider
     {
         ISession OpenSession();

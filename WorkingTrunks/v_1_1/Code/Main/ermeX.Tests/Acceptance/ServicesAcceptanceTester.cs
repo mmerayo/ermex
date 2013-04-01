@@ -662,7 +662,7 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
         public void SeveralComponents_Can_Serve_Same_Service_NoReturnValues(DbEngineType engineType)
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -671,9 +671,13 @@ namespace ermeX.Tests.Acceptance
             var c2Port = new TestPort(11000);
             var c3Port = new TestPort(12000);
 
-            using (var component1 = TestComponent.GetComponent())
-            using (var component2 = TestComponent.GetComponent(true))
-            using (var component3 = TestComponent.GetComponent())
+            var c1Id = new Guid("E80C1A32-990F-42E7-AF19-78E90BCF1CFA");
+            var c2Id = new Guid("CA100CC0-35D4-44A2-A29C-C966A4F1F3EF");
+            var c3Id = new Guid("44087493-E076-438A-B513-15FDBAA0AAF1");
+
+            using (var component1 = TestComponent.GetComponent(c1Id))
+            using (var component2 = TestComponent.GetComponent(c2Id,true))
+            using (var component3 = TestComponent.GetComponent(c3Id))
             {
                 InitializeLonelyComponent(engineType, c1Port, component1, dbConnString);
                 InitializeConnectedComponent(engineType, c1Port, c2Port, component1, dbConnString, component2);

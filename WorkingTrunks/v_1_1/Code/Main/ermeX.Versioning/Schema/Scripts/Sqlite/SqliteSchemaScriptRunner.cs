@@ -19,6 +19,7 @@
 using System.Collections.Generic;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
+using ermeX.Domain.QueryDatabase;
 
 namespace ermeX.Versioning.Schema.Scripts.SqlServer
 {
@@ -27,8 +28,8 @@ namespace ermeX.Versioning.Schema.Scripts.SqlServer
     {
         private const string RexPrefx = "ermeX.Versioning.Schema.Scripts.Sqlite";
 
-        public SqliteSchemaScriptRunner(IList<DataSchemaType> schemasApplied, string configurationConnectionString)
-            : base(DbEngineType.Sqlite, schemasApplied, configurationConnectionString)
+        public SqliteSchemaScriptRunner(IList<DataSchemaType> schemasApplied, string configurationConnectionString, IQueryHelper queryHelper)
+            : base(DbEngineType.Sqlite, schemasApplied, configurationConnectionString,queryHelper)
         {
         }
 

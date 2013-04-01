@@ -28,6 +28,7 @@ using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.DataSources;
+using ermeX.Domain.Component;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
@@ -47,15 +48,13 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
         private QueueDispatcherManager GetInstance(DbEngineType dbEngine,Action<Guid,object> deliveryHandler )
         {
             var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
-            var componentsDataSource = GetDataSource<AppComponentDataSource>(dbEngine);
-            var messagesDataSource = GetDataSource<IncomingMessagesDataSource>(dbEngine);
-           
-            var result = new QueueDispatcherManager(settings, componentsDataSource, messagesDataSource);
+
+			var result = new QueueDispatcherManager(settings, GetIncommingQueueWritter(dbEngine), GetLatenciesReader(dbEngine), GetLatenciesWritter(dbEngine));
             result.DispatchMessage += deliveryHandler;
             return result;
         }
 
-        public override void OnStartUp()
+	    public override void OnStartUp()
         {
             base.OnStartUp();
             _sentMessages.Clear();

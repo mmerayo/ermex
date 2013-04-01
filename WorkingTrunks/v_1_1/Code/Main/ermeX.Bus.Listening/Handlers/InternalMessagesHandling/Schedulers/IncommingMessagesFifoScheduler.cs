@@ -20,6 +20,8 @@ using System;
 using System.Linq;
 using Ninject;
 using ermeX.DAL.Interfaces;
+using ermeX.Domain.Component;
+using ermeX.Domain.Queues;
 using ermeX.Entities.Entities;
 
 namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers
@@ -27,24 +29,22 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers
     internal class IncommingMessagesFifoScheduler : IScheduler
     {
         [Inject]
-        public IncommingMessagesFifoScheduler(IIncomingMessagesDataSource dataSource, 
-                                              IAppComponentDataSource componentsDataSource)
+		public IncommingMessagesFifoScheduler(IReadIncommingQueue incomingQueue, 
+                                              ICanReadLatency latencyReader)
         {
-            if (dataSource == null) throw new ArgumentNullException("dataSource");
-            if (componentsDataSource == null) throw new ArgumentNullException("componentsDataSource");
-            DataSource = dataSource;
-            ComponentsDataSource = componentsDataSource;
+	        IncomingQueue = incomingQueue;
+	        LatencyReader = latencyReader;
         }
 
-        private IIncomingMessagesDataSource DataSource { get; set; }
-        private IAppComponentDataSource ComponentsDataSource { get; set; }
-        
-        #region IScheduler Members
+	    public IReadIncommingQueue IncomingQueue { get; set; }
+	    public ICanReadLatency LatencyReader { get; set; }
+
+	    #region IScheduler Members
 
         public IncomingMessage GetNext()
         {
-            var maxLatency = ComponentsDataSource.GetMaxLatency();
-            return DataSource.GetNextDispatchableItem(maxLatency);
+            var maxLatency = LatencyReader.GetMaxLatency();
+			return IncomingQueue.GetNextDispatchableItem(maxLatency);
         }
 
         

@@ -30,9 +30,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-
-
-
+using ermeX.Domain;
 using ermeX.NonMerged;
 
 namespace ermeX.Configuration //on purpose as is public
@@ -396,7 +394,7 @@ namespace ermeX.Configuration //on purpose as is public
 
         #region Nested type: RealConfigure
 
-        internal class RealConfigure : IBizSettings, IBusSettings, ITransportSettings, IDalSettings
+		internal class RealConfigure : IBizSettings, IBusSettings, ITransportSettings, IDalSettings, IDomainSettings
         {
             #region IComponentSettings
 
