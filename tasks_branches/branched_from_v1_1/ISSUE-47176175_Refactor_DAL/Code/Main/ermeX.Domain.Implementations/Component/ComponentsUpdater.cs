@@ -20,7 +20,7 @@ namespace ermeX.Domain.Implementations.Component
         public bool ImportFromOtherComponent(Entities.Entities.AppComponent entity, Tuple<string, object>[] deterministicFilter, ConnectivityDetails connectivityDetails)
         {
             //TODO: Simplify usage
-            return Repository.SaveFromOtherComponent(entity, deterministicFilter);
+            return Repository.SaveFromOtherComponent(entity, deterministicFilter,connectivityDetails);
         }
 
         public void SetComponentRunningStatus(Guid componentId, ComponentStatus newStatus, bool exchangedDefinitions = false)

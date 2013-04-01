@@ -122,15 +122,7 @@ namespace ermeX.DAL.DataAccess.DataSources
 
 			//return GetAll().Where(x => x.ComponentId != LocalComponentId).ToList();
 		}
-
-		public bool SaveFromOtherComponent(AppComponent entity, Tuple<string, object>[] deterministicFilter,
-		                                   ConnectivityDetails connectivityDetails)
-		{
-			return AutoRegistration.CreateRemoteComponentInitialSetOfData(entity.ComponentId, connectivityDetails.Ip,
-			                                                              connectivityDetails.Port);
-
-		}
-
+        
 		public IEnumerable<AppComponent> GetOtherComponentsWhereDefinitionsNotExchanged(bool running = false)
 		{
 			var result = DataAccessExecutor.Perform(session =>
@@ -171,6 +163,21 @@ namespace ermeX.DAL.DataAccess.DataSources
 			return true;
 		}
 
+        public override bool SaveFromOtherComponent(AppComponent entity, Tuple<string, object> deterministicFilter)
+        {
+            return base.SaveFromOtherComponent(entity, deterministicFilter);
+        }
+
+        public override bool SaveFromOtherComponent(AppComponent entity, Tuple<string, object>[] deterministicFilter)
+        {
+            return base.SaveFromOtherComponent(entity, deterministicFilter);
+        }
+
+        public override void Save(IEnumerable<AppComponent> entities)
+        {
+            base.Save(entities);
+        }
+
 		public override void Save(AppComponent entity)
 		{
 			if (entity.ComponentExchanges != null && entity.ComponentExchanges != entity.ComponentId &&
@@ -184,8 +191,13 @@ namespace ermeX.DAL.DataAccess.DataSources
 			base.Save(entity);
 		}
 
+        public bool SaveFromOtherComponent(AppComponent entity, Tuple<string, object>[] deterministicFilter,
+                                           ConnectivityDetails connectivityDetails)
+        {
+            return AutoRegistration.CreateRemoteComponentInitialSetOfData(entity.ComponentId, connectivityDetails.Ip,
+                                                                          connectivityDetails.Port);
 
-
+        }
 
 		protected override void CleanExternalData(AppComponent externalEntity)
 		{
