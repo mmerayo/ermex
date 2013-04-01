@@ -19,15 +19,16 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel>
-    
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ninject">
@@ -50,6 +51,9 @@
     </Compile>
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
+      <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
     <Compile Include="Observers\ChangesInOutgoingSubscriptionsNotifier.cs" />
     <Compile Include="Component\ComponentsReader.cs" />
