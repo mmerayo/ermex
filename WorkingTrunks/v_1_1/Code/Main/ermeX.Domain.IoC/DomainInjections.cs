@@ -50,7 +50,7 @@ namespace ermeX.Domain.IoC
 			//TODO: remove SINGLETON SCOPES
 			//COMPONENT
 			Bind<ICanReadComponents>().To<ComponentsReader>().InSingletonScope();
-			Bind<ICanUpdateComponents>().To<ComponentsUpdater>().InSingletonScope();
+			Bind<ICanWriteComponents>().To<ComponentsUpdater>().InSingletonScope();
 			Bind<ICanReadLatency>().To<LatencyReader>().InSingletonScope();
 			Bind<ICanUpdateLatency>().To<LatencyUpdater>().InSingletonScope();
 			Bind<IRegisterComponents>().To<ComponentsRegistrator>().InSingletonScope();

@@ -38,7 +38,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 {
     internal sealed class HandshakeServiceHandler : IHandshakeService
     {
-	    private readonly ICanUpdateComponents _componentsWritter;
+	    private readonly ICanWriteComponents _componentsWritter;
 	    private readonly IRegisterComponents _componentsRegistrator;
 	    private readonly ICanReadConnectivityDetails _connectivityReader;
 
@@ -46,7 +46,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
         public HandshakeServiceHandler(IMessagePublisher publisher, IMessageListener listener,
                                        IComponentSettings settings,
 			ICanReadComponents componentReader,
-                                       ICanUpdateComponents componentsWritter,
+                                       ICanWriteComponents componentsWritter,
 									   IStatusManager statusManager, IRegisterComponents componentsRegistrator,ICanReadConnectivityDetails connectivityReader)
         {
 		    _componentsWritter = componentsWritter;

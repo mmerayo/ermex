@@ -4,10 +4,9 @@ using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Component
 {
-    //TODO: SIMPLIFY
-    internal interface ICanUpdateComponents
+    internal interface ICanWriteComponents
     {
-        bool ImportFromOtherComponent(Entities.Entities.AppComponent entity, Tuple<string, object>[] deterministicFilter, ConnectivityDetails connectivityDetails);
+        bool ImportFromOtherComponent(AppComponent entity, ConnectivityDetails connectivityDetails);
         void SetComponentRunningStatus(Guid componentId, ComponentStatus newStatus, bool exchangedDefinitions = false);
 	    void Save(AppComponent component);
     }

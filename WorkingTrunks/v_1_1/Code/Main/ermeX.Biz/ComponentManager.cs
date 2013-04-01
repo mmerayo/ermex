@@ -54,7 +54,7 @@ namespace ermeX.Biz
 
                                 IDialogsManager dialogsManager,
                                 ICanReadComponents componentReader,
-                                ICanUpdateComponents componentWriter,
+                                ICanWriteComponents componentWriter,
                                 IStatusManager statusManager,
                                 IRegisterComponents componentsRegister,
                                 IMessageSubscribersDispatcher subscribersDispatcher,
@@ -89,7 +89,7 @@ namespace ermeX.Biz
         private IMessageListener Listener { get; set; }
         private IDialogsManager DialogsManager { get; set; }
         private ICanReadComponents ComponentReader { get; set; }
-        private ICanUpdateComponents ComponentWriter { get; set; }
+        private ICanWriteComponents ComponentWriter { get; set; }
         private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
         private IStatusManager _statusManager;
 
