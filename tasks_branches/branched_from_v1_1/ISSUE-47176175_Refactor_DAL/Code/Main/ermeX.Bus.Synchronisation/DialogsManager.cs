@@ -430,9 +430,9 @@ namespace ermeX.Bus.Synchronisation
                 foreach (var componentData in componentsMessage.Components)
                 {
                     //THIS MIGHT NEED TO BE REMOVED AS REDUNDANT OR BECAUSE IT DOESNT LET THE UPDATE ONCE THE COMPONENT WAS REGISTERED, CHECK THIS
-                    if(ComponentReader.Fetch(componentData.Item1.ComponentId)!=null)
+                    if (ComponentReader.Fetch(componentData.Item1.ComponentId) != null)
                         continue;
-
+                   
 					//TODO: ISSUE-281: move logic
                     var isNew=ComponentsWritter.ImportFromOtherComponent(componentData.Item1,
                                                                   new[]{ new Tuple<string, object>("ComponentId",

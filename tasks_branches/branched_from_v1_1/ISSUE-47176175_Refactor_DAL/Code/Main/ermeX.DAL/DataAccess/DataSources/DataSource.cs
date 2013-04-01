@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
@@ -572,6 +573,11 @@ namespace ermeX.DAL.DataAccess.DataSources
 
                 entity.ComponentOwner = LocalComponentId;
                 bool isNew = entity.Id == 0;
+
+                ////todo: ISSUE-281 REMOVE THIS
+                //if (isNew && entity.GetType()==typeof(AppComponent) &&  entity.ComponentOwner.Equals(new Guid("44087493-e076-438a-b513-15fdbaa0aaf1")))
+                //    Debugger.Launch();
+
                 session.SaveOrUpdate(entity);
 
                 Notify(isNew ? NotifiableDalAction.Add : NotifiableDalAction.Update, entity);
