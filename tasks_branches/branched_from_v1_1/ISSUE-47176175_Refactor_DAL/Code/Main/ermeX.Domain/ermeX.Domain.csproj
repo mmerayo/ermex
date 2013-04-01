@@ -49,6 +49,9 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
+    <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
+      <Link>Properties\TestVisibilityInfo.cs</Link>
+    </Compile>
     <Compile Include="Component\ICanWriteComponents.cs" />
     <Compile Include="Component\ICanUpdateLatency.cs" />
     <Compile Include="Component\ICanReadLatency.cs" />
