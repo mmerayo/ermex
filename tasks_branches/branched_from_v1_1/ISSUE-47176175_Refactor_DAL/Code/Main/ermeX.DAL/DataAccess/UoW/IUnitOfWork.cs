@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ermeX.Tests.DAL
+namespace ermeX.DAL.DataAccess.UoW
 {
-	public class Class1
+	internal interface IUnitOfWork : IDisposable
 	{
 	}
 }
