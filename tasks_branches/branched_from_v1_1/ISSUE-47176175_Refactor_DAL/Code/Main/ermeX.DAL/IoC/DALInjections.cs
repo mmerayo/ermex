@@ -28,6 +28,7 @@ using ermeX.DAL.Interfaces;
 
 namespace ermeX.DAL.IoC
 {
+	//TODO: TO BE MOVED TO ANOTHER ASSEMBLY
     internal class DALInjections : NinjectModule
     {
          private readonly IDalSettings _settings;
