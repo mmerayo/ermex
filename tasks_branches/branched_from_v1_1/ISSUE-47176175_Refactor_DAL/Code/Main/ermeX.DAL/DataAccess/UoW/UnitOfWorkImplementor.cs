@@ -37,7 +37,7 @@ namespace ermeX.DAL.DataAccess.UoW
 
 		public void TransactionalFlush(IsolationLevel isolationLevel)
 		{
-			IGenericTransaction tx = BeginTransaction(isolationLevel);
+			var tx = UnitOfWork.Current.BeginTransaction(isolationLevel);// BeginTransaction(isolationLevel);
 			try
 			{
 				//forces a flush of the current unit of work
@@ -52,6 +52,29 @@ namespace ermeX.DAL.DataAccess.UoW
 			{
 				tx.Dispose();
 			}
+		}
+
+		public bool IsInActiveTransaction
+		{
+			get
+			{
+				return _session.Transaction.IsActive;
+			}
+		}
+
+		public IUnitOfWorkFactory Factory
+		{
+			get { return _factory; }
+		}
+
+		public ISession Session
+		{
+			get { return _session; }
+		}
+
+		public void Flush()
+		{
+			_session.Flush();
 		}
 	}
 }
