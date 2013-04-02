@@ -1,4 +1,5 @@
 ﻿using System;
+using NHibernate;
 
 namespace ermeX.DAL.DataAccess.UoW
 {
@@ -29,6 +30,17 @@ namespace ermeX.DAL.DataAccess.UoW
 		public static bool IsStarted
 		{
 			get { return _innerUnitOfWork != null; }
+		}
+
+		public static ISession CurrentSession
+		{
+			get { return _unitOfWorkFactory.CurrentSession; }
+			internal set { _unitOfWorkFactory.CurrentSession = value; }
+		}
+
+		public static void DisposeUnitOfWork(UnitOfWorkImplementor adapter)
+		{
+			_innerUnitOfWork = null;
 		}
 	}
 }
