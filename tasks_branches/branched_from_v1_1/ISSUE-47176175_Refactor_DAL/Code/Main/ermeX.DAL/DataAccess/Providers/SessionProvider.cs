@@ -24,7 +24,7 @@ using ermeX.ConfigurationManagement.Settings;
 
 namespace ermeX.DAL.DataAccess.Providers
 {
-	//TODO: ISSUE-281 --> MAKE THIS internal
+	//TODO: ISSUE-281 --> MAKE THIS internal and injected
     public sealed class SessionProvider : ISessionProvider
     {
         private readonly IDalSettings _settings;
