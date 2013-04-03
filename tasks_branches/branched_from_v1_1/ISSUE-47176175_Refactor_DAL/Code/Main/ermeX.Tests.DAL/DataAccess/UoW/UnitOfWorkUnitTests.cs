@@ -123,9 +123,16 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 				fieldInfo.SetValue(null, newValue);
 			}
 
+			private static void SetNonPublicProperty(string propertyName, object newValue)
+			{
+				 var propertyInfo = typeof(UnitOfWork).GetProperty(propertyName,
+                                BindingFlags.Static | BindingFlags.SetProperty | BindingFlags.NonPublic);
+					propertyInfo.SetValue(null, newValue, null);
+			}
+
 			public void Dispose()
 			{
-				SetNonPublicVariable("_innerUnitOfWork", null);
+				SetNonPublicProperty("CurrentUnitOfWork", null);
 			}
 		}
 	}
