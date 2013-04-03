@@ -4,6 +4,6 @@ namespace ermeX.Domain.Component
 {
     internal interface ICanUpdateLatency
     {
-        void RegisterComponentRequestLatency(Guid componentId, int requestMilliseconds);
+        void RegisterComponentRequestLatency(Guid remoteComponentId, int requestMilliseconds);
     }
 }

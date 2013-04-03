@@ -4,24 +4,23 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Linq;
 using Remotion.Linq.Utilities;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.UoW;
+using ermeX.DAL.Interfaces;
 using ermeX.Entities.Base;
 using Ninject;
 
 namespace ermeX.DAL.DataAccess.Repository
 {
-	internal sealed class Repository<TEntity> : IPersistRepository<TEntity>,
-		IReadOnlyRepository<TEntity> where TEntity : ModelBase
+	internal sealed class Repository<TEntity> : IPersistRepository<TEntity>
+		 where TEntity : ModelBase
 	{
 		private readonly Guid _localComponentId;
 		private readonly IUnitOfWorkFactory _factory;
-		private readonly Expression<Func<TEntity, bool>> _findByBizKey = null;
-		
-
 
 		[Inject]
 		public Repository(IComponentSettings settings, 
@@ -32,10 +31,6 @@ namespace ermeX.DAL.DataAccess.Repository
 			if (factory == null) throw new ArgumentNullException("factory");
 			_localComponentId = settings.ComponentId;
 			_factory = factory;
-			var fromType = ObjectBuilder.FromType<TEntity>(typeof (TEntity), null);
-			_findByBizKey =
-				ModelToConcreteExpressionConversion(fromType.FindByBizKey);
-
 		}
 
 		private Expression<Func<TEntity, bool>> ModelToConcreteExpressionConversion(Expression<Func<object, bool>> expression)
@@ -50,6 +45,7 @@ namespace ermeX.DAL.DataAccess.Repository
 
 			if (!CanSave(entity))
 				return false;
+
 
 			if (entity.ComponentOwner == _localComponentId)
 				entity.Version = DateTime.UtcNow.Ticks; //Keeps the version of the last updater
@@ -102,14 +98,40 @@ namespace ermeX.DAL.DataAccess.Repository
 			Remove(queryable);
 		}
 
-		public IQueryable<TEntity> FetchAll()
+		public IQueryable<TEntity> FetchAll(bool includingOtherComponents = false)
 		{
-			return _factory.CurrentSession.Query<TEntity>().Where(IsLocalPredicate);
+			var absolute = _factory.CurrentSession.Query<TEntity>();
+			if(!includingOtherComponents)
+				return absolute.Where(IsLocalPredicate);
+			return absolute;
+		}
+
+		public TEntity Single(int id)
+		{
+			var result = _factory.CurrentSession.Get<TEntity>(id);
+			if (result.ComponentOwner != _localComponentId)
+				throw new InvalidOperationException("The id is owned by another component");
+			return result;
+		}
+
+		public TEntity Single(Expression<Func<TEntity, bool>> expression)
+		{
+			return Where(expression).Single();
 		}
 
 		public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> expression)
 		{
 			return Where(expression).SingleOrDefault();
+		}
+
+		public TResult GetMax<TResult>(string propertyName)
+		{
+			return
+				_factory.CurrentSession.QueryOver<TEntity>()
+				        .Where(IsLocalPredicate)
+				        .Select(Projections.Max(propertyName))
+				        .SingleOrDefault<TResult>();
+
 		}
 
 		public IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> expression)
@@ -127,12 +149,6 @@ namespace ermeX.DAL.DataAccess.Repository
 			return Where(expression).Count();
 		}
 
-		public TEntity Single(int id)
-		{
-			var result=_factory.CurrentSession.Get<TEntity>(id);
-			if (result.ComponentOwner!=_localComponentId)
-				throw new InvalidOperationException("The id is owned by another component");
-			return result;
-		}
+		
 	}
 }

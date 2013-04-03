@@ -20,12 +20,16 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using Ninject.Modules;
+using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.DataAccess.Providers;
+using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces;
+using ermeX.Entities.Base;
+using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.IoC
 {
@@ -50,20 +54,36 @@ namespace ermeX.DAL.IoC
         {
             //TODO: create interfaces and bind
 
-            Bind<IAppComponentDataSource>().To<AppComponentDataSource>().InSingletonScope();
-            Bind<IConnectivityDetailsDataSource>().To<ConnectivityDetailsDataSource>().InSingletonScope();
-            Bind<IOutgoingMessageSuscriptionsDataSource>().To<OutgoingMessageSuscriptionsDataSource>().InSingletonScope();
-            Bind<IIncomingMessageSuscriptionsDataSource>().To<IncomingMessageSuscriptionsDataSource>().InSingletonScope();
-            Bind<IOutgoingMessagesDataSource>().To<OutgoingMessagesDataSource>().InSingletonScope();
-            Bind<IIncomingMessagesDataSource>().To<IncomingMessagesDataSource>().InSingletonScope();
-            Bind<IServiceDetailsDataSource>().To<ServiceDetailsDataSource>().InSingletonScope();
-            Bind<IChunkedServiceRequestMessageDataSource>().To<ChunkedServiceRequestMessageDataSource>().InSingletonScope();
+			//Bind<IAppComponentDataSource>().To<AppComponentDataSource>().InSingletonScope();
+			//Bind<IConnectivityDetailsDataSource>().To<ConnectivityDetailsDataSource>().InSingletonScope();
+			//Bind<IOutgoingMessageSuscriptionsDataSource>().To<OutgoingMessageSuscriptionsDataSource>().InSingletonScope();
+			//Bind<IIncomingMessageSuscriptionsDataSource>().To<IncomingMessageSuscriptionsDataSource>().InSingletonScope();
+			//Bind<IOutgoingMessagesDataSource>().To<OutgoingMessagesDataSource>().InSingletonScope();
+			//Bind<IIncomingMessagesDataSource>().To<IncomingMessagesDataSource>().InSingletonScope();
+			//Bind<IServiceDetailsDataSource>().To<ServiceDetailsDataSource>().InSingletonScope();
+			//Bind<IChunkedServiceRequestMessageDataSource>().To<ChunkedServiceRequestMessageDataSource>().InSingletonScope();
             
-            Bind<IAutoRegistration>().To<AutoRegistration>().InSingletonScope();
-            Bind<IDataAccessExecutor>().To<DataAccessExecutor>().InSingletonScope();
+			//Bind<IAutoRegistration>().To<AutoRegistration>().InSingletonScope();
+			//Bind<IDataAccessExecutor>().To<DataAccessExecutor>().InSingletonScope();
 
-	        Bind<ISessionProvider>().To<SessionProvider>();
+	        BindRepository<AppComponent>();
+			BindRepository<ConnectivityDetails>();
+			BindRepository<OutgoingMessageSuscription>();
+			BindRepository<IncomingMessageSuscription>();
+			BindRepository<OutgoingMessage>();
+			BindRepository<IncomingMessage>();
+			BindRepository<ServiceDetails>();
+			BindRepository<ChunkedServiceRequestMessageData>();
+
+			Bind<ISessionProvider>().To<SessionProvider>();
 	        Bind<IUnitOfWorkFactory>().To<UnitOfWorkFactory>();
+	        
         }
+
+		private void BindRepository<TModel>() where TModel : ModelBase
+		{
+			Bind<IReadOnlyRepository<TModel>>().To<Repository<TModel>>().InSingletonScope();
+			Bind<IPersistRepository<TModel>>().To<Repository<TModel>>().InSingletonScope();
+		}
     }
 }

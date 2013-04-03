@@ -89,8 +89,6 @@
     <Compile Include="DataAccess\Mappings\SqlServer\ServiceDetailsMap.cs" />
     <Compile Include="DataAccess\Providers\ISessionProvider.cs" />
     <Compile Include="DataAccess\Repository\Repository.cs" />
-    <Compile Include="DataAccess\Repository\IPersistRepository.cs" />
-    <Compile Include="DataAccess\Repository\IReadOnlyRepository.cs" />
     <Compile Include="DataAccess\UoW\GenericTransaction.cs" />
     <Compile Include="DataAccess\UoW\IGenericTransaction.cs" />
     <Compile Include="DataAccess\UoW\ILocalData.cs" />
