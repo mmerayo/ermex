@@ -6,7 +6,7 @@ namespace ermeX.DAL.DataAccess.UoW
 {
 	public static class Local
 	{
-		static readonly ILocalData _data = new LocalData();
+		private static readonly ILocalData _data = new LocalData();
 
 		public static ILocalData Data
 		{
@@ -15,19 +15,20 @@ namespace ermeX.DAL.DataAccess.UoW
 
 		private class LocalData : ILocalData
 		{
-			[ThreadStatic]
-			private static Hashtable _localData;
+			[ThreadStatic] private static Hashtable _localData;
 			private static readonly object LocalDataHashtableKey = new object();
 
 			private static Hashtable LocalHashtable
 			{
 				get
 				{
+					Hashtable result;
+
 					if (!RunningInWeb)
 					{
 						if (_localData == null)
 							_localData = new Hashtable();
-						return _localData;
+						result = _localData;
 					}
 					else
 					{
@@ -37,8 +38,9 @@ namespace ermeX.DAL.DataAccess.UoW
 							web_hashtable = new Hashtable();
 							HttpContext.Current.Items[LocalDataHashtableKey] = web_hashtable;
 						}
-						return web_hashtable;
+						result = web_hashtable;
 					}
+					return result;
 				}
 			}
 
@@ -58,7 +60,7 @@ namespace ermeX.DAL.DataAccess.UoW
 				LocalHashtable.Clear();
 			}
 
-			public static bool RunningInWeb
+			private static bool RunningInWeb
 			{
 				get { return HttpContext.Current != null; }
 			}
