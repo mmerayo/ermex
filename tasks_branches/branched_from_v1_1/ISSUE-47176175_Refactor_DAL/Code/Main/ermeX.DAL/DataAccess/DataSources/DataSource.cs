@@ -93,7 +93,7 @@ namespace ermeX.DAL.DataAccess.DataSources
 
         protected internal IDalSettings DataAccessSettings { get; private set; }
 
-        //protected abstract string TableName { get; }
+        protected abstract string TableName { get; }
 
         #region IDataSource<TEntity> Members
 
@@ -329,30 +329,29 @@ namespace ermeX.DAL.DataAccess.DataSources
             return result;
         }
 
-        /// <summary>
-        ///   Gets all the entitites from all the components
-        /// </summary>
-        /// <param name="sortByParams"> tuple name and srot ascending </param>
-        /// <returns> </returns>
-        public virtual IList<TEntity> GetAllAbsolute(params Tuple<string, bool>[] sortByParams)
-        {
-            var result = DataAccessExecutor.Perform(session =>
-                {
-                    var criteria = session.CreateCriteria(typeof(TEntity));
-                    foreach (var p in sortByParams)
-                    {
-                        var order = p.Item2 ? Order.Asc(p.Item1) : Order.Desc(p.Item1);
-                        criteria.AddOrder(order);
-                    }
-                    criteria.SetCacheable(false);
-                    return new DataAccessOperationResult<IList<TEntity>>()
-                        {ResultValue = criteria.List<TEntity>(), Success = true};
-                });
-            if (!result.Success)
-                throw new DataException("Couldnt perform the operation GetAllAbsolute");
+		/// <summary>
+		///   Gets all the entitites from all the components
+		/// </summary>
+		/// <param name="sortByParams"> tuple name and srot ascending </param>
+		/// <returns> </returns>
+		public virtual IList<TEntity> GetAllAbsolute(params Tuple<string, bool>[] sortByParams)
+		{
+			var result = DataAccessExecutor.Perform(session =>
+				{
+					var criteria = session.CreateCriteria(typeof(TEntity));
+					foreach (var p in sortByParams)
+					{
+						var order = p.Item2 ? Order.Asc(p.Item1) : Order.Desc(p.Item1);
+						criteria.AddOrder(order);
+					}
+					criteria.SetCacheable(false);
+					return new DataAccessOperationResult<IList<TEntity>>() { ResultValue = criteria.List<TEntity>(), Success = true };
+				});
+			if (!result.Success)
+				throw new DataException("Couldnt perform the operation GetAllAbsolute");
 
-            return result.ResultValue;
-        }
+			return result.ResultValue;
+		}
 
        
         /// <summary>

@@ -17,17 +17,21 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using System.Linq.Expressions;
 
 namespace ermeX.Entities.Base
 {
-    [Serializable]
-    public abstract class ModelBase
-    {
-        public virtual int Id { get; set; }
+	[Serializable]
+	public abstract class ModelBase
+	{
+		//Expresion to find an entity other than the localkey
+		internal abstract Expression<Func<object, bool>> FindByBizKey { get; }
 
-        //prevents several compoenents using same db
-        public virtual Guid ComponentOwner { get; set; }
+		public virtual int Id { get; set; }
 
-        public virtual long Version { get; set; }
-    }
+		//prevents several compoenents using same db
+		public virtual Guid ComponentOwner { get; set; }
+
+		public virtual long Version { get; set; }
+	}
 }

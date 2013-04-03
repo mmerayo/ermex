@@ -9,9 +9,11 @@ namespace ermeX.DAL.DataAccess.Repository
 	{
 		bool Save(TEntity entity);
 		bool Save(IEnumerable<TEntity> items);
-		bool Remove(int id);
-		bool Remove(TEntity entity);
-		bool Remove(IEnumerable<TEntity> entities);
-		bool Remove(Expression<Func<TEntity, bool>> expression);
+		void Remove(int id);
+		void Remove(TEntity entity);
+		void Remove(IEnumerable<TEntity> entities);
+		void Remove(Expression<Func<TEntity, bool>> expression);
+		int Count(Expression<Func<TEntity, bool>> expression);
+		void RemoveAll();
 	}
 }
