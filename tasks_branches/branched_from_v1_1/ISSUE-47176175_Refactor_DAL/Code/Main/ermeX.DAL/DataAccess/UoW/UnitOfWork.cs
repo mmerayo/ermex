@@ -9,7 +9,7 @@ namespace ermeX.DAL.DataAccess.UoW
 
 		public static IUnitOfWork Start()
 		{
-			if (CurrentUnitOfWork != null)
+			if (IsStarted)
 				throw new InvalidOperationException("You cannot start more than one unit of work at the same time.");
 
 			var unitOfWork = _unitOfWorkFactory.Create();

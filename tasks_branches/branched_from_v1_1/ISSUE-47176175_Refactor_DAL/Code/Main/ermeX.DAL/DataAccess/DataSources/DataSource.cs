@@ -93,7 +93,7 @@ namespace ermeX.DAL.DataAccess.DataSources
 
         protected internal IDalSettings DataAccessSettings { get; private set; }
 
-        protected abstract string TableName { get; }
+        //protected abstract string TableName { get; }
 
         #region IDataSource<TEntity> Members
 
