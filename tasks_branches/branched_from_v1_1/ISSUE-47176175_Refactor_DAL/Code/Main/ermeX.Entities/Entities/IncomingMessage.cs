@@ -18,6 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Data;
+using System.Linq.Expressions;
 using ermeX.LayerMessages;
 
 namespace ermeX.Entities.Entities
@@ -138,5 +139,15 @@ namespace ermeX.Entities.Entities
         }
 
         #endregion
+
+		internal override Expression<Func<object, bool>> FindByBizKey
+		{
+			get
+			{
+				return x => ((IncomingMessage)x).ComponentOwner == ComponentOwner
+							&& ((IncomingMessage)x).SuscriptionHandlerId == this.SuscriptionHandlerId
+							&& ((IncomingMessage)x).MessageId == this.MessageId;
+			}
+		}
     }
 }

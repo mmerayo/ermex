@@ -18,6 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Data;
+using System.Linq.Expressions;
 using ermeX.Entities.Base;
 
 namespace ermeX.Entities.Entities
@@ -54,6 +55,15 @@ namespace ermeX.Entities.Entities
                              };
             return result;
         }
+
+		internal override Expression<Func<object, bool>> FindByBizKey
+		{
+			get
+			{
+				return x => ((IncomingMessageSuscription) x).ComponentOwner == ComponentOwner
+				            && ((IncomingMessageSuscription) x).Id == this.Id;
+			}
+		}
 
         #region Equatable
 

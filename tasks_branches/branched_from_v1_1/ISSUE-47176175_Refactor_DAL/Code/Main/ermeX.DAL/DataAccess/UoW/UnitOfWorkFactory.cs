@@ -21,8 +21,8 @@ namespace ermeX.DAL.DataAccess.UoW
 		{
 			get
 			{
-				if(_currentSession==null || !_currentSession.IsOpen)
-					throw new InvalidOperationException("There is not any current opened session");
+				if (_currentSession == null || !_currentSession.IsOpen)
+					CreateSession();
 				return _currentSession;
 			}
 			set { _currentSession = value; }

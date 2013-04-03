@@ -18,6 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Data;
+using System.Linq.Expressions;
 using ermeX.LayerMessages;
 
 namespace ermeX.Entities.Entities
@@ -141,5 +142,14 @@ namespace ermeX.Entities.Entities
         {
             return DateTime.UtcNow.Subtract(CreatedTimeUtc) > sendExpiringTime;
         }
+
+		internal override Expression<Func<object, bool>> FindByBizKey
+		{
+			get
+			{
+				return x => ((OutgoingMessage)x).ComponentOwner == ComponentOwner
+							&& ((OutgoingMessage)x).MessageId == this.MessageId;
+			}
+		}
     }
 }
