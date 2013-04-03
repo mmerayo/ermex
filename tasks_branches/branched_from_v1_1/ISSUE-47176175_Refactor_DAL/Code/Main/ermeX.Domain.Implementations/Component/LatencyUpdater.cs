@@ -1,23 +1,36 @@
 using System;
 using Ninject;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Component;
+using ermeX.Entities.Entities;
 
 namespace ermeX.Domain.Implementations.Component
 {
-    internal sealed class LatencyUpdater : ICanUpdateLatency
-    {
-        private IAppComponentDataSource Repository { get; set; }
+	internal sealed class LatencyUpdater : ICanUpdateLatency
+	{
+		private readonly IUnitOfWorkFactory _factory;
+		private IPersistRepository<AppComponent> Repository { get; set; }
 
-        [Inject]
-        public LatencyUpdater(IAppComponentDataSource repository)
-        {
-            Repository = repository;
-        }
+		[Inject]
+		public LatencyUpdater(IPersistRepository<AppComponent> repository, IUnitOfWorkFactory factory)
+		{
+			_factory = factory;
+			Repository = repository;
+		}
 
-        public void RegisterComponentRequestLatency(Guid componentId, int requestMilliseconds)
-        {
-            Repository.UpdateRemoteComponentLatency(componentId,requestMilliseconds);//TODO: THE PAYLOAD TO BE DONE HERE
-        }
-    }
+		public void RegisterComponentRequestLatency(Guid remoteComponentId, int requestMilliseconds)
+		{
+			using (var uow = _factory.Create())
+			{
+				var senderComponent = Repository.SingleOrDefault(x => x.ComponentId == remoteComponentId);
+				if (senderComponent != null)
+				{
+					senderComponent.Latency = (senderComponent.Latency + requestMilliseconds)/2;
+					Repository.Save(senderComponent);
+				}
+				uow.Commit();
+			}
+		}
+	}
 }

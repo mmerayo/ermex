@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using ermeX.Entities.Base;
 
-namespace ermeX.DAL.DataAccess.Repository
+namespace ermeX.DAL.Interfaces
 {
-	internal interface IPersistRepository<TEntity> where TEntity : ModelBase
+	internal interface IPersistRepository<TEntity> : IReadOnlyRepository<TEntity>
+		where TEntity : ModelBase
 	{
 		bool Save(TEntity entity);
 		bool Save(IEnumerable<TEntity> items);

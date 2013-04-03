@@ -58,6 +58,8 @@
     <Compile Include="IIncomingMessageSuscriptionsDataSource.cs" />
     <Compile Include="IOutgoingMessagesDataSource.cs" />
     <Compile Include="IOutgoingMessageSuscriptionsDataSource.cs" />
+    <Compile Include="IPersistRepository.cs" />
+    <Compile Include="IReadOnlyRepository.cs" />
     <Compile Include="IServiceDetailsDataSource.cs" />
     <Compile Include="Observer\IDalObservable.cs" />
     <Compile Include="Observer\IDalObserver.cs" />

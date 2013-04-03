@@ -6,7 +6,8 @@ namespace ermeX.Domain.Component
 {
     internal interface ICanWriteComponents
     {
-        bool ImportFromOtherComponent(AppComponent entity, ConnectivityDetails connectivityDetails);
+        //TODO: THIS CALL TO BE DONE BY THE COMPONENT REGISTRATOR 
+		//bool ImportFromOtherComponent(AppComponent entity, ConnectivityDetails connectivityDetails);
         void SetComponentRunningStatus(Guid componentId, ComponentStatus newStatus, bool exchangedDefinitions = false);
 	    void Save(AppComponent component);
     }

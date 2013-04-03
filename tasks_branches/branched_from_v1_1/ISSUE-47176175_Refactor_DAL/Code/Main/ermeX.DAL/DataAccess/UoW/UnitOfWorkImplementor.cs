@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using NHibernate;
 
 namespace ermeX.DAL.DataAccess.UoW
@@ -7,54 +8,50 @@ namespace ermeX.DAL.DataAccess.UoW
 	{
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly ISession _session;
-
+		private readonly IGenericTransaction _transaction;
 		public UnitOfWorkImplementor(IUnitOfWorkFactory factory, ISession session)
 		{
 			_factory = factory;
 			_session = session;
+			_transaction = BeginTransaction(IsolationLevel.ReadCommitted);
 		}
 
 		public void Dispose()
 		{
 			_factory.DisposeUnitOfWork(this);
+			if(_transaction!=null)
+				_transaction.Dispose();
 			_session.Dispose();
 		}
 
-		public IGenericTransaction BeginTransaction()
+		private IGenericTransaction BeginTransaction(IsolationLevel isolationLevel)
 		{
-			return new GenericTransaction(_session.BeginTransaction());
-		}
-
-		public IGenericTransaction BeginTransaction(IsolationLevel isolationLevel)
-		{
+			if (IsInActiveTransaction)
+				return null;
 			return new GenericTransaction(_session.BeginTransaction(isolationLevel));
 		}
 
-		public void TransactionalFlush()
+		public void Commit()
 		{
-			TransactionalFlush(IsolationLevel.ReadCommitted);
-		}
+			if(_transaction==null)
+				throw new InvalidOperationException("This unit of work did not create the transaction");
 
-		public void TransactionalFlush(IsolationLevel isolationLevel)
-		{
-			var tx = BeginTransaction(isolationLevel);
 			try
 			{
-				//forces a flush of the current unit of work
-				tx.Commit();
+				_transaction.Commit();
 			}
 			catch
 			{
-				tx.Rollback();
+				_transaction.Rollback();
 				throw;
 			}
 			finally
 			{
-				tx.Dispose();
+				_transaction.Dispose();
 			}
 		}
 
-		public bool IsInActiveTransaction
+		private bool IsInActiveTransaction
 		{
 			get
 			{
