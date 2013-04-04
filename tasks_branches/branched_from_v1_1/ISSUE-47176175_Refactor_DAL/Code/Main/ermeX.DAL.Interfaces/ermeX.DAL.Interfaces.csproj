@@ -46,21 +46,8 @@
     <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
-    <Compile Include="DataAccessOperationResult.cs" />
-    <Compile Include="IAppComponentDataSource.cs" />
-    <Compile Include="IAutoRegistration.cs" />
-    <Compile Include="IChunkedServiceRequestMessageDataSource.cs" />
-    <Compile Include="IConnectivityDetailsDataSource.cs" />
-    <Compile Include="IDataAccessExecutor.cs" />
-    <Compile Include="IDataAccessUsable.cs" />
-    <Compile Include="IDataSource.cs" />
-    <Compile Include="IIncomingMessagesDataSource.cs" />
-    <Compile Include="IIncomingMessageSuscriptionsDataSource.cs" />
-    <Compile Include="IOutgoingMessagesDataSource.cs" />
-    <Compile Include="IOutgoingMessageSuscriptionsDataSource.cs" />
     <Compile Include="IPersistRepository.cs" />
     <Compile Include="IReadOnlyRepository.cs" />
-    <Compile Include="IServiceDetailsDataSource.cs" />
     <Compile Include="Observer\IDalObservable.cs" />
     <Compile Include="Observer\IDalObserver.cs" />
     <Compile Include="Observer\NotifiableDalAction.cs" />

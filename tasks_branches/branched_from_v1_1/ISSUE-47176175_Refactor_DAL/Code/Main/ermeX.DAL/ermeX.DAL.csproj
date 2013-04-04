@@ -64,10 +64,6 @@
     <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
-    <Compile Include="DataAccess\DataSources\AutoRegistration.cs" />
-    <Compile Include="DataAccess\DataSources\BusMessageDataSource.cs" />
-    <Compile Include="DataAccess\DataSources\ChunkedServiceRequestMessageDataSource.cs" />
-    <Compile Include="DataAccess\Helpers\DataAccessExecutor.cs" />
     <Compile Include="DataAccess\Helpers\Sql2008DbQueryHelper.cs" />
     <Compile Include="DataAccess\Helpers\SqliteDbQueryHelper.cs" />
     <Compile Include="DataAccess\Mappings\ChunkedServiceRequestMessageDataMap.cs" />
@@ -100,17 +96,9 @@
     <Compile Include="DataAccess\UoW\UnitOfWorkImplementor.cs" />
     <Compile Include="IoC\DALInjections.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataAccess\DataSources\DataSource.cs" />
     <Compile Include="DataAccess\Helpers\QueryHelper.cs" />
     <Compile Include="DataAccess\Providers\NHibernateBootstrapper.cs" />
     <Compile Include="DataAccess\Providers\SessionProvider.cs" />
-    <Compile Include="DataAccess\DataSources\AppComponentDataSource.cs" />
-    <Compile Include="DataAccess\DataSources\ConnectivityDetailsDataSource.cs" />
-    <Compile Include="DataAccess\DataSources\IncomingMessagesDataSource.cs" />
-    <Compile Include="DataAccess\DataSources\IncomingMessageSuscriptionsDataSource.cs" />
-    <Compile Include="DataAccess\DataSources\OutgoingMessagesDataSource.cs" />
-    <Compile Include="DataAccess\DataSources\OutgoingMessageSuscriptionsDataSource.cs" />
-    <Compile Include="DataAccess\DataSources\ServiceDetailsDataSource.cs" />
     <Compile Include="DataAccess\Mappings\AppComponentMap.cs" />
     <Compile Include="DataAccess\Mappings\ConnectivityDetailsMap.cs" />
     <Compile Include="DataAccess\Mappings\IncomingMessagesMap.cs" />
