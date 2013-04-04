@@ -6,9 +6,9 @@ namespace ermeX.Domain.Subscriptions
 {
 	internal interface ICanReadIncommingMessagesSubscriptions
 	{
-		IList<IncomingMessageSuscription> GetByMessageType(string bizMessageType);
+		IEnumerable<IncomingMessageSuscription> GetByMessageType(string bizMessageType);
 		IncomingMessageSuscription GetByHandlerId(Guid suscriptionHandlerId);
 		IncomingMessageSuscription GetByHandlerAndMessageType(Type handlerType, Type messageType);
-		IList<IncomingMessageSuscription> FetchAll();
+		IEnumerable<IncomingMessageSuscription> FetchAll();
 	}
 }

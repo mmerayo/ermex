@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Ninject;
+using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Subscriptions;
 using ermeX.Entities.Entities;
@@ -9,27 +11,64 @@ namespace ermeX.Domain.Implementations.Subscriptions
 {
 	internal class CanUpdateIncommingMessagesSubscriptions : ICanUpdateIncommingMessagesSubscriptions
 	{
-		private readonly IIncomingMessageSuscriptionsDataSource _repository;
+		private readonly IPersistRepository<IncomingMessageSuscription> _incomingRepository;
+		private readonly IPersistRepository<OutgoingMessageSuscription> _outgoingRepository;
+		private readonly IUnitOfWorkFactory _factory;
+		private readonly IComponentSettings _settings;
 
 		[Inject]
-		public CanUpdateIncommingMessagesSubscriptions(IIncomingMessageSuscriptionsDataSource repository)
+		public CanUpdateIncommingMessagesSubscriptions(IPersistRepository<IncomingMessageSuscription> incommingRepository,
+			IPersistRepository<OutgoingMessageSuscription> outgoingRepository,
+			IUnitOfWorkFactory factory,
+			IComponentSettings settings)
 		{
-			_repository = repository;
+			_incomingRepository = incommingRepository;
+			_outgoingRepository = outgoingRepository;
+			_factory = factory;
+			_settings = settings;
 		}
 
 		public void RemoveByHandlerId(Guid suscriptionId)
 		{
-			_repository.RemoveByHandlerId(suscriptionId);//TODO: move logic here
+			using (var uow = _factory.Create())
+			{
+				_incomingRepository.Remove(x=>x.SuscriptionHandlerId==suscriptionId);
+				uow.Commit();
+			}
 		}
 
 		public void SaveIncommingSubscription(Guid suscriptionHandlerId, Type handlerType, Type messageType)
 		{
-			_repository.SaveIncommingSubscription(suscriptionHandlerId,handlerType,messageType);//TODO: move logic here
+			using (var uow = _factory.Create())
+			{
+				var incomingMessageSuscription = new IncomingMessageSuscription
+				{
+					ComponentOwner = _settings.ComponentId,
+					BizMessageFullTypeName = messageType.FullName,
+					DateLastUpdateUtc = DateTime.UtcNow,
+					SuscriptionHandlerId = suscriptionHandlerId,
+					HandlerType = handlerType.FullName
+				};
+				_incomingRepository.Save(incomingMessageSuscription);
+				//TODO: TO BE MOVED TO THE OUTGOING SUSCRIPTIONS UPDATER
+
+				if (!_outgoingRepository.Any(
+						x => x.BizMessageFullTypeName == messageType.FullName && x.Component == _settings.ComponentId))
+				{
+					var outgoingMessageSuscription = new OutgoingMessageSuscription(incomingMessageSuscription, _settings.ComponentId, _settings.ComponentId);
+					_outgoingRepository.Save(outgoingMessageSuscription);
+				}
+				uow.Commit();
+			}
 		}
 
-		public void Remove(List<IncomingMessageSuscription> toRemove)
+		public void Remove(IEnumerable<IncomingMessageSuscription> toRemove)
 		{
-			_repository.Remove(toRemove);//TODO: move logic here
+			using (var uow = _factory.Create())
+			{
+				_incomingRepository.Remove(toRemove);
+				uow.Commit();
+			}
 		}
 	}
 }

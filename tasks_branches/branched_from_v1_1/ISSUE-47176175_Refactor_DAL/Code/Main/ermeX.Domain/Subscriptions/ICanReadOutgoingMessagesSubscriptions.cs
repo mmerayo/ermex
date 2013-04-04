@@ -5,7 +5,7 @@ namespace ermeX.Domain.Subscriptions
 {
 	internal interface ICanReadOutgoingMessagesSubscriptions
 	{
-		IList<OutgoingMessageSuscription> GetByMessageType(string bizMessageType);
-		IList<OutgoingMessageSuscription> FetchAll();
+		IEnumerable<OutgoingMessageSuscription> GetByMessageType(string bizMessageType);
+		IEnumerable<OutgoingMessageSuscription> FetchAll();
 	}
 }

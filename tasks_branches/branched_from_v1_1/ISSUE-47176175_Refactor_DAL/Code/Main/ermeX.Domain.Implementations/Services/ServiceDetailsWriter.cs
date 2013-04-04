@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
 using Ninject;
+using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Services;
 using ermeX.Entities.Entities;
@@ -8,27 +12,53 @@ namespace ermeX.Domain.Implementations.Services
 {
 	class ServiceDetailsWriter : ICanWriteServiceDetails
 	{
-		private readonly IServiceDetailsDataSource _repository;
-		
+		private readonly IPersistRepository<ServiceDetails> _repository;
+		private readonly IUnitOfWorkFactory _factory;
+		private readonly IComponentSettings _settings;
+
 		[Inject]
-		public ServiceDetailsWriter(IServiceDetailsDataSource repository)
+		public ServiceDetailsWriter(IPersistRepository<ServiceDetails> repository,
+			IUnitOfWorkFactory factory,
+			IComponentSettings settings)
 		{
 			_repository = repository;
+			_factory = factory;
+			_settings = settings;
 		}
+
 		public void ImportFromOtherComponent(ServiceDetails svc)
 		{
-			//TODO: ISSUE-281: IMPROVE THIS KIND OF CALLS
-			var deterministicFilter = new[]
-                        {
-                            new Tuple<string, object>("OperationIdentifier", svc.OperationIdentifier),
-                            new Tuple<string, object>("Publisher", svc.Publisher)
-                        };
-			_repository.SaveFromOtherComponent(svc, deterministicFilter);
+			if(svc.ComponentOwner==_settings.ComponentId)
+				throw new InvalidOperationException("Cannot import one service from the same component");
+			const string RemoteTypeImplementorValue = "<<REMOTE>>";
+			svc.ServiceImplementationTypeName = RemoteTypeImplementorValue;
+			svc.ComponentOwner = _settings.ComponentId;
+
+			using (var uow = _factory.Create())
+			{
+				Expression<Func<ServiceDetails, bool>> expression = x => x.OperationIdentifier == svc.OperationIdentifier && x.Publisher == svc.Publisher;
+				if (_repository.Any(expression))
+				{
+					ServiceDetails serviceDetails = _repository.Single(expression);
+					svc.Id = serviceDetails.Id;
+					uow.Session.Evict(serviceDetails);
+				}
+				else
+				{
+					svc.Id = 0;
+				}
+				_repository.Save(svc);
+				uow.Commit();
+			}
 		}
 
 		public void Save(ServiceDetails serviceDetails)
 		{
-			_repository.Save(serviceDetails);
+			using (var uow = _factory.Create())
+			{
+				_repository.Save(serviceDetails);
+				uow.Commit();
+			}
 		}
 	}
 }

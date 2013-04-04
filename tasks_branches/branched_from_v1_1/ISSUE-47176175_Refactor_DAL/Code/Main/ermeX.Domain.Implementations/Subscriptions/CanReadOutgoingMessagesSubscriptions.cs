@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using Ninject;
+using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Subscriptions;
 using ermeX.Entities.Entities;
@@ -8,22 +10,41 @@ namespace ermeX.Domain.Implementations.Subscriptions
 {
 	class CanReadOutgoingMessagesSubscriptions : ICanReadOutgoingMessagesSubscriptions
 	{
-		private readonly IOutgoingMessageSuscriptionsDataSource _repository;
+		private readonly IReadOnlyRepository<OutgoingMessageSuscription> _repository;
+		private readonly IUnitOfWorkFactory _factory;
+		private readonly IComponentSettings _settings;
 
 		[Inject]
-		public CanReadOutgoingMessagesSubscriptions(IOutgoingMessageSuscriptionsDataSource repository)
+		public CanReadOutgoingMessagesSubscriptions(IReadOnlyRepository<OutgoingMessageSuscription> repository,
+			IUnitOfWorkFactory factory,
+			IComponentSettings settings)
 		{
 			_repository = repository;
+			_factory = factory;
+			_settings = settings;
 		}
 
-		public IList<OutgoingMessageSuscription> GetByMessageType(string bizMessageType)
+		public IEnumerable<OutgoingMessageSuscription> GetByMessageType(string bizMessageType)
 		{
-			return _repository.GetByMessageType(bizMessageType);//TODO: move logic here
+			IEnumerable<OutgoingMessageSuscription> result;
+			using (var ouw = _factory.Create())
+			{
+				result=_repository.Where(x => x.BizMessageFullTypeName == bizMessageType);
+				ouw.Commit();
+			}
+			return result;
+
 		}
 
-		public IList<OutgoingMessageSuscription> FetchAll()
+		public IEnumerable<OutgoingMessageSuscription> FetchAll()
 		{
-			return _repository.GetAll();
+			IEnumerable<OutgoingMessageSuscription> result;
+			using (var ouw = _factory.Create())
+			{
+				result = _repository.FetchAll();
+				ouw.Commit();
+			}
+			return result;
 		}
 	}
 }
