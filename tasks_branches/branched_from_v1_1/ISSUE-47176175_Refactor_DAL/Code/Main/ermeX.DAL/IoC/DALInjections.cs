@@ -22,7 +22,6 @@ using System.Configuration;
 using Ninject.Modules;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.DataAccess.Providers;
 using ermeX.DAL.DataAccess.Repository;

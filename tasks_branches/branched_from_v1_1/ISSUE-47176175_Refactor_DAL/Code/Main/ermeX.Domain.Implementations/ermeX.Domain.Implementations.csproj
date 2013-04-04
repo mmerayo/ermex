@@ -58,7 +58,7 @@
     <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
-    <Compile Include="Observers\ChangesInOutgoingSubscriptionsNotifier.cs" />
+    <Compile Include="Observers\DomainNotifier.cs" />
     <Compile Include="Component\ComponentsReader.cs" />
     <Compile Include="Component\ComponentsRegistrator.cs" />
     <Compile Include="Component\ComponentsUpdater.cs" />

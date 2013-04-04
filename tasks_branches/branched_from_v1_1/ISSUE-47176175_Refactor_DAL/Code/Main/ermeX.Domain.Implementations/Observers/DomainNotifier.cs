@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Ninject;
-using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Observer;
 using ermeX.Domain.Observers;
@@ -12,21 +11,13 @@ namespace ermeX.Domain.Implementations.Observers
 {
 
 	internal sealed class DomainNotifier : IDomainObservable,
-	                                                               IDalObserver<OutgoingMessageSuscription>
+		IDalObserver<OutgoingMessageSuscription>
 	{
-		private readonly IDalObservable<OutgoingMessageSuscription> _outgoingMessageSuscriptionsDataSource;
 		private readonly IList<Type> _supportedModelTypes = new[] {typeof (OutgoingMessageSuscription)};
 
 		private Dictionary<Type, List<object>> _subscribers = new Dictionary<Type, List<object>>();
 
-		[Inject]
-		public DomainNotifier(
-			IOutgoingMessageSuscriptionsDataSource outgoingMessageSuscriptionsDataSource)
-		{
-			_outgoingMessageSuscriptionsDataSource = outgoingMessageSuscriptionsDataSource;
-
-
-		}
+		
 
 		public void AddObserver<TModelInfo>(IDomainObserver<TModelInfo> observer)
 		{
@@ -42,7 +33,6 @@ namespace ermeX.Domain.Implementations.Observers
 				if (!_subscribers.ContainsKey(modelType))
 				{
 					_subscribers.Add(modelType, new List<object>());
-					_outgoingMessageSuscriptionsDataSource.AddObserver(this);
 				}
 				_subscribers[modelType].Add(observer);
 			}

@@ -18,6 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 
 using Ninject.Modules;
+using ermeX.DAL.Interfaces.Observer;
 using ermeX.Domain.Component;
 using ermeX.Domain.Connectivity;
 using ermeX.Domain.Implementations.Component;
@@ -85,8 +86,8 @@ namespace ermeX.Domain.IoC
 			Bind<IQueryHelperFactory>().To<QueryHelperFactory>().InSingletonScope();
 
 			//Notifiers
+			//TODO: REMOVE
 			Bind<IDomainObservable>().To<DomainNotifier>().InSingletonScope();
-			
 		}
 	}
 }
