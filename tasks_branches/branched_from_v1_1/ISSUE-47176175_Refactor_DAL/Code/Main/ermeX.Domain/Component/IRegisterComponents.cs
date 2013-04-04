@@ -13,6 +13,6 @@ namespace ermeX.Domain.Component
 		/// <returns>a value indicating whether the component is new or not</returns>
         bool CreateRemoteComponent(Guid remoteComponentId, string ip, int port);
        
-        void CreateLocalComponent(int port);
+        void CreateLocalComponent(ushort port);
     }
 }

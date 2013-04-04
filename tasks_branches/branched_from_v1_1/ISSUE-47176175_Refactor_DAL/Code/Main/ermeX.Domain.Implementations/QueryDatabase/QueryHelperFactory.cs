@@ -6,6 +6,8 @@ using ermeX.Domain.QueryDatabase;
 
 namespace ermeX.Domain.Implementations.QueryDatabase
 {
+	//TODO: THIS NEEDS TO BE REMOVED
+
 	class QueryHelperFactory : IQueryHelperFactory
 	{
 		public IQueryHelper GetHelper(DbEngineType type, string connectionString)

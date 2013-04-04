@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Ninject;
+using ermeX.Common;
+using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Queues;
 using ermeX.Entities.Entities;
@@ -9,37 +13,92 @@ namespace ermeX.Domain.Implementations.Queues
 {
 	class ReaderIncommingQueue : IReadIncommingQueue
 	{
-		private IIncomingMessagesDataSource Repository { get; set; }
+		private readonly IReadOnlyRepository<IncomingMessage> _repository;
+		private readonly IUnitOfWorkFactory _factory;
 
-        [Inject]
-		public ReaderIncommingQueue(IIncomingMessagesDataSource repository)
+		[Inject]
+		public ReaderIncommingQueue(IReadOnlyRepository<IncomingMessage> repository,
+			IUnitOfWorkFactory factory,
+			IComponentSettings settings)
         {
-            Repository = repository;
+	        _repository = repository;
+	        _factory = factory;
         }
 
 		public IncomingMessage GetNextDispatchableItem(int maxLatency)
 		{
-			return Repository.GetNextDispatchableItem(maxLatency);//TODO: MOVE LOGIC HERE
+			IncomingMessage result = null;
+			using (var uow = _factory.Create())
+			{
+				IOrderedQueryable<IncomingMessage> incomingMessages = _repository
+					.Where(x => x.Status == Message.MessageStatus.ReceiverDispatching)
+					.OrderBy(x => x.CreatedTimeUtc);
+				foreach (var incomingMessage in incomingMessages)
+				{
+					var timeSpan = DateTime.UtcNow.Subtract(incomingMessage.CreatedTimeUtc);
+					var milliseconds = timeSpan.TotalMilliseconds;
+					if (milliseconds >= maxLatency)
+					{
+						result = incomingMessage;
+						break;
+					}
+				}
+
+				uow.Commit();
+			}
+			return result;
 		}
 
 		public IEnumerable<IncomingMessage> GetMessagesToDispatch()
 		{
-			return Repository.GetMessagesToDispatch();//TODO: MOVE LOGIC HERE
+			IEnumerable<IncomingMessage> result;
+			using (var uow = _factory.Create())
+			{
+				result = _repository
+					.Where(x => x.Status == Message.MessageStatus.ReceiverReceived)
+					.OrderBy(x => x.CreatedTimeUtc);
+				uow.Commit();
+			}
+			return result;
 		}
 
 		public IEnumerable<IncomingMessage> GetByStatus(params Message.MessageStatus[] status)
 		{
-			return Repository.GetByStatus(status);//TODO: MOVE LOGIC HERE
+			IEnumerable<IncomingMessage> result;
+			using (var uow = _factory.Create())
+			{
+				result = _repository
+					.Where(x => status.Contains(x.Status))
+					.OrderBy(x => x.CreatedTimeUtc);
+				uow.Commit();
+			}
+			return result;
 		}
 
-		public bool ContainsMessageFor(Guid messageId, Guid destination)
+		public bool ContainsMessageFor(Guid messageId, Guid destinationComponent)
 		{
-			return Repository.ContainsMessageFor(messageId,destination);//TODO: MOVE LOGIC HERE
+			if (messageId.IsEmpty() || destinationComponent.IsEmpty())
+				throw new ArgumentException("the arguments cannot be empty");
+
+			bool result;
+			using (var uow = _factory.Create())
+			{
+				result =
+					_repository.Any(x => x.MessageId == messageId && x.SuscriptionHandlerId == destinationComponent);
+				uow.Commit();
+			}
+			return result;
 		}
 
 		public IEnumerable<IncomingMessage> GetNonDistributedMessages()
 		{
-			return Repository.GetNonDistributedMessages();//TODO: MOVE LOGIC HERE
+			IEnumerable<IncomingMessage> result;
+			using (var uow = _factory.Create())
+			{
+				result=_repository.Where(x => x.Status == Message.MessageStatus.ReceiverReceived && x.SuscriptionHandlerId == Guid.Empty);
+				uow.Commit();
+			}
+			return result;
 		}
 	}
 }

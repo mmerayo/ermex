@@ -9,8 +9,6 @@ namespace ermeX.Domain.Queues
 	interface IReadOutgoingQueue
 	{
 		IEnumerable<OutgoingMessage> GetItemsPendingSorted();
-		OutgoingMessage GetNextDeliverable();
-		OutgoingMessage GetByBusMessageId(int id);
 		IEnumerable<OutgoingMessage> GetExpiredMessages(TimeSpan expirationTime);
 		
 		bool ContainsMessageFor(Guid messageId, Guid destinationComponent);
