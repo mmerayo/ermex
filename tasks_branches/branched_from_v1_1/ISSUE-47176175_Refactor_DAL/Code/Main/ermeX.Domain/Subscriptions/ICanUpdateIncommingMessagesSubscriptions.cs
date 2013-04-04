@@ -8,6 +8,6 @@ namespace ermeX.Domain.Subscriptions
 	{
 		void RemoveByHandlerId(Guid suscriptionId);
 		void SaveIncommingSubscription(Guid suscriptionHandlerId, Type handlerType, Type messageType);
-		void Remove(List<IncomingMessageSuscription> toRemove);
+		void Remove(IEnumerable<IncomingMessageSuscription> toRemove);
 	}
 }

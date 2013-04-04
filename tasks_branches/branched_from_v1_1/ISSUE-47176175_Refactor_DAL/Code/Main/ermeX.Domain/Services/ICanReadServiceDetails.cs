@@ -22,10 +22,10 @@ namespace ermeX.Domain.Services
 		/// <returns> </returns>
 		ServiceDetails GetByOperationId(Guid publisher, Guid operationId); //TODO: ISSUE-281: All this Guids to be concrete types
 
-		IList<ServiceDetails> GetByInterfaceType(Type interfaceType);
-		IList<ServiceDetails> GetByInterfaceType(string interfaceTypeFullName);
-		IList<ServiceDetails> GetByMethodName(string interfaceTypeName, string methodName);
+		IEnumerable<ServiceDetails> GetByInterfaceType(Type interfaceType);
+		IEnumerable<ServiceDetails> GetByInterfaceType(string interfaceTypeFullName);
+		IEnumerable<ServiceDetails> GetByMethodName(string interfaceTypeName, string methodName);
 		ServiceDetails GetByMethodName(string interfaceTypeName, string methodName, Guid publisherComponent);
-		IList<ServiceDetails> GetLocalCustomServices();
+		IEnumerable<ServiceDetails> GetLocalCustomServices();
 	}
 }

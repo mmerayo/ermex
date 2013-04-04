@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Ninject;
+using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Subscriptions;
 using ermeX.Entities.Entities;
@@ -9,33 +11,64 @@ namespace ermeX.Domain.Implementations.Subscriptions
 {
 	class CanReadIncommingMessagesSubscriptions : ICanReadIncommingMessagesSubscriptions
 	{
-		private readonly IIncomingMessageSuscriptionsDataSource _repository;
+		private readonly IReadOnlyRepository<IncomingMessageSuscription> _repository;
+		private readonly IUnitOfWorkFactory _factory;
+		private readonly IComponentSettings _settings;
 
 		[Inject]
-		public CanReadIncommingMessagesSubscriptions(IIncomingMessageSuscriptionsDataSource repository)
+		public CanReadIncommingMessagesSubscriptions(IReadOnlyRepository<IncomingMessageSuscription> repository,
+			IUnitOfWorkFactory factory,
+			IComponentSettings settings)
 		{
 			_repository = repository;
+			_factory = factory;
+			_settings = settings;
 		}
 
-		public IList<IncomingMessageSuscription> GetByMessageType(string bizMessageType)
+		public IEnumerable<IncomingMessageSuscription> GetByMessageType(string bizMessageType)
 		{
-			return _repository.GetByMessageType(bizMessageType);//TODO: move logic here
+			IEnumerable<IncomingMessageSuscription> result;
+			using (var uow = _factory.Create())
+			{
+				result=_repository.Where(x => x.BizMessageFullTypeName == bizMessageType);
+				uow.Commit();
+			}
+			return result;
 		}
 
 		public IncomingMessageSuscription GetByHandlerId(Guid suscriptionHandlerId)
 		{
-			return _repository.GetByHandlerId(suscriptionHandlerId);//TODO: move logic here
+			IncomingMessageSuscription result;
+			using (var uow = _factory.Create())
+			{
+				result = _repository.SingleOrDefault(x => x.SuscriptionHandlerId == suscriptionHandlerId);
+				uow.Commit();
+			}
+
+			return result;
 		}
 
 		public IncomingMessageSuscription GetByHandlerAndMessageType(Type handlerType, Type messageType)
 		{
-			return _repository.GetByHandlerAndMessageType(handlerType,messageType);//TODO: move logic here
+			IncomingMessageSuscription result;
+			using (var uow = _factory.Create())
+			{
+				result = _repository.SingleOrDefault(x => x.HandlerType == handlerType.FullName && x.BizMessageFullTypeName==messageType.FullName);
+				uow.Commit();
+			}
+
+			return result;
 		}
 
-		//TODO: ISSUE-281: RETURN VALUES TO BE enumerable
-		public IList<IncomingMessageSuscription> FetchAll()
+		public IEnumerable<IncomingMessageSuscription> FetchAll()
 		{
-			return _repository.GetAll();
+			IEnumerable<IncomingMessageSuscription> result;
+			using (var uow = _factory.Create())
+			{
+				result = _repository.FetchAll();
+				uow.Commit();
+			}
+			return result;
 		}
 	}
 }
