@@ -9,6 +9,7 @@ namespace ermeX.DAL.DataAccess.UoW
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly ISession _session;
 		private readonly IGenericTransaction _transaction;
+
 		public UnitOfWorkImplementor(IUnitOfWorkFactory factory, ISession session)
 		{
 			_factory = factory;
@@ -19,7 +20,7 @@ namespace ermeX.DAL.DataAccess.UoW
 		public void Dispose()
 		{
 			_factory.DisposeUnitOfWork(this);
-			if(_transaction!=null)
+			if (_transaction != null)
 				_transaction.Dispose();
 			_session.Dispose();
 		}
@@ -33,12 +34,13 @@ namespace ermeX.DAL.DataAccess.UoW
 
 		public void Commit()
 		{
-			if(_transaction==null)
-				throw new InvalidOperationException("This unit of work did not create the transaction");
+			if (_transaction == null)
+				return;
 
 			try
 			{
 				_transaction.Commit();
+				Flush();
 			}
 			catch
 			{
@@ -53,10 +55,7 @@ namespace ermeX.DAL.DataAccess.UoW
 
 		private bool IsInActiveTransaction
 		{
-			get
-			{
-				return _session.Transaction.IsActive;
-			}
+			get { return _session.Transaction.IsActive; }
 		}
 
 		public IUnitOfWorkFactory Factory

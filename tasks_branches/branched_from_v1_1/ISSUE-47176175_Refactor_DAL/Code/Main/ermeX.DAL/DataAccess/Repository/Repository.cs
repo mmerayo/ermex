@@ -134,6 +134,11 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		}
 
+		public bool Any(Expression<Func<TEntity, bool>> expression)
+		{
+			return Where(expression).Any();
+		}
+
 		public IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> expression)
 		{
 			return _factory.CurrentSession.Query<TEntity>().Where(IsLocalPredicate).Where(expression); //TODO: IMPROVE USING AND BETWEEN BOTH EXPRESSIONS

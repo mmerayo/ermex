@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
 using Ninject;
+using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Queues;
 using ermeX.Entities.Entities;
@@ -8,22 +11,35 @@ namespace ermeX.Domain.Implementations.Queues
 {
 	internal class WriteOutgoingQueue : IWriteOutgoingQueue
 	{
-		private IOutgoingMessagesDataSource Repository { get; set; }
+		private readonly IUnitOfWorkFactory _factory;
+		private readonly IPersistRepository<OutgoingMessage> _repository;
 
 		[Inject]
-		public WriteOutgoingQueue(IOutgoingMessagesDataSource repository)
+		public WriteOutgoingQueue(IPersistRepository<OutgoingMessage> repository, 
+			IUnitOfWorkFactory factory, 
+			IComponentSettings settings)
 		{
-			Repository = repository;
+			_factory = factory;
+			_repository = repository;
 		}
 
 		public void RemoveExpiredMessages(TimeSpan expirationTime)
 		{
-			Repository.RemoveExpiredMessages(expirationTime); //TODO: MOVE LOGIC HERE
+			using (var uow = _factory.Create())
+			{
+				DateTime dateTime = DateTime.UtcNow - expirationTime;
+				_repository.Remove(x => x.CreatedTimeUtc <= dateTime);
+				uow.Commit();
+			}
 		}
 
 		public void Save(OutgoingMessage message)
 		{
-			Repository.Save(message);
+			using (var uow = _factory.Create())
+			{
+				_repository.Save(message);
+				uow.Commit();
+			}
 		}
 	}
 }

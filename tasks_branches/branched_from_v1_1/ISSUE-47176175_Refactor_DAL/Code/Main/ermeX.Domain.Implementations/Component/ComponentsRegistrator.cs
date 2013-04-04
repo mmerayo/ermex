@@ -7,11 +7,14 @@ using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Component;
+using ermeX.Domain.Connectivity;
 using ermeX.Entities.Entities;
 using ermeX.ConfigurationManagement.IoC;
 
 namespace ermeX.Domain.Implementations.Component
 {
+
+	//TODO: MOVE TO THE COMPONENTS UPDATER
 	internal sealed class ComponentsRegistrator : IRegisterComponents
 	{
 		private readonly IUnitOfWorkFactory _factory;
@@ -20,6 +23,7 @@ namespace ermeX.Domain.Implementations.Component
 		private readonly IPersistRepository<ServiceDetails> _serviceDetailsRepository;
 		private readonly IComponentSettings _settings;
 		private readonly IStatusManager _statusManager;
+		private readonly ICanWriteConnectivityDetails _connectivityDetailsWritter;
 
 		[Inject]
 		public ComponentsRegistrator(IUnitOfWorkFactory factory,
@@ -27,7 +31,8 @@ namespace ermeX.Domain.Implementations.Component
 		                             IPersistRepository<ConnectivityDetails> connectivityRepository,
 		                             IPersistRepository<ServiceDetails> serviceDetailsRepository,
 		                             IComponentSettings settings,
-		                             IStatusManager statusManager)
+		                             IStatusManager statusManager,
+			ICanWriteConnectivityDetails connectivityDetailsWritter)
 		{
 			_factory = factory;
 			_componentsRepository = componentsRepository;
@@ -35,6 +40,7 @@ namespace ermeX.Domain.Implementations.Component
 			_serviceDetailsRepository = serviceDetailsRepository;
 			_settings = settings;
 			_statusManager = statusManager;
+			_connectivityDetailsWritter = connectivityDetailsWritter;
 		}
 
 		public bool CreateRemoteComponent(Guid remoteComponentId, string ip, int port)
@@ -53,30 +59,20 @@ namespace ermeX.Domain.Implementations.Component
 
 		}
 
-		public void CreateLocalComponent(int port)
+		public void CreateLocalComponent(ushort port)
 		{
 			using (var uow = _factory.Create())
 			{
 				CreateLocalAppComponent();
 
-				CreateLocalConnectivityDetails(port);
+				_connectivityDetailsWritter.CreateComponentConnectivityDetails(port,true);
 
 				RegisterSystemServices(_settings.ComponentId);
 				uow.Commit();
 			}
 		}
 
-		private void CreateLocalConnectivityDetails(int port)
-		{
-			var connectivityDetails = new ConnectivityDetails
-				{
-					ComponentOwner = _settings.ComponentId,
-					ServerId = _settings.ComponentId,
-					Ip = Networking.GetLocalhostIp(),
-					Port = port
-				};
-			_connectivityRepository.Save(connectivityDetails);
-		}
+		
 
 		private void CreateLocalAppComponent()
 		{

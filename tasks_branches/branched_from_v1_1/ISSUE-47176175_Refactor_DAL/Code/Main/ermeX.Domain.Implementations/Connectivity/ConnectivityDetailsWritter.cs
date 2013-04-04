@@ -1,7 +1,10 @@
 using System;
+using System.Diagnostics;
 using System.Net.Sockets;
 using Ninject;
 using ermeX.Common;
+using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces;
 using ermeX.Domain.Connectivity;
 using ermeX.Entities.Entities;
@@ -10,38 +13,54 @@ namespace ermeX.Domain.Implementations.Connectivity
 {
 	internal sealed class ConnectivityDetailsWritter : ICanWriteConnectivityDetails
 	{
-		private IConnectivityDetailsDataSource Repository { get; set; }
+		private readonly IPersistRepository<ConnectivityDetails> _repository;
+		private readonly IUnitOfWorkFactory _factory;
+		private readonly IComponentSettings _settings;
 
-		private Guid LocalComponentId { get { return Repository.LocalComponentId; } } //TODO: ISSUE-281 --> THE LOCALCOMPONENT TO BE INJECTED
 
 		[Inject]
-		public ConnectivityDetailsWritter(IConnectivityDetailsDataSource repository)
+		public ConnectivityDetailsWritter(IPersistRepository<ConnectivityDetails> repository,
+			IUnitOfWorkFactory factory,IComponentSettings settings)
 		{
-			Repository = repository;
+			_repository = repository;
+			_factory = factory;
+			_settings = settings;
 		}
 
 		public void RemoveComponentDetails(Guid componentId)
 		{
-			Repository.RemoveByProperty("ServerId", componentId.ToString());
+			using (var uow = _factory.Create())
+			{
+				_repository.Remove(x=>x.ServerId== componentId);
+				uow.Commit();
+			}
 		}
 
 		public void RemoveLocalComponentDetails()
 		{
-			Repository.RemoveByProperty("ServerId", LocalComponentId.ToString()); 
+			using (var uow = _factory.Create())
+			{
+				_repository.Remove(x => x.ServerId == _settings.ComponentId);
+				uow.Commit();
+			}
 		}
 
-		public ConnectivityDetails CreateLocalComponentConnectivityDetails(ushort port, bool asLocal = true)
+		public ConnectivityDetails CreateComponentConnectivityDetails(ushort port, bool asLocal = true)
 		{
 			var connectivityDetails = new ConnectivityDetails
 			{
-				ServerId = LocalComponentId,
-				ComponentOwner = LocalComponentId,
-				Ip = Networking.GetLocalhostIp(AddressFamily.InterNetwork),
-				IsLocal = asLocal, //TODO: ISSUE-281: --> review this is valid
-				Port = port
+				ComponentOwner = _settings.ComponentId,
+				ServerId = _settings.ComponentId,
+				Ip = Networking.GetLocalhostIp(),
+				Port = port,
+				IsLocal = asLocal
 			};
-			Repository.Save(connectivityDetails);
-
+			using (var uow = _factory.Create())
+			{
+				_repository.Save(connectivityDetails);
+				uow.Commit();
+			}
+			Debug.Assert(connectivityDetails.Id!=0,"The id was not populated");
 			return connectivityDetails;
 		}
 	}
