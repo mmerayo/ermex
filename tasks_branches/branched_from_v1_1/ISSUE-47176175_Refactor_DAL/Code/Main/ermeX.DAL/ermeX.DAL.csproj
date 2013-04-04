@@ -98,7 +98,6 @@
     <Compile Include="DataAccess\UoW\UnitOfWork.cs" />
     <Compile Include="DataAccess\UoW\UnitOfWorkFactory.cs" />
     <Compile Include="DataAccess\UoW\UnitOfWorkImplementor.cs" />
-    <Compile Include="DataAccess\UoW\With.cs" />
     <Compile Include="IoC\DALInjections.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataAccess\DataSources\DataSource.cs" />
