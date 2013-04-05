@@ -58,28 +58,7 @@
     <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
-    <Compile Include="Observers\DomainNotifier.cs" />
-    <Compile Include="Component\ComponentsReader.cs" />
-    <Compile Include="Component\ComponentsRegistrator.cs" />
-    <Compile Include="Component\ComponentsUpdater.cs" />
-    <Compile Include="Component\LatencyReader.cs" />
-    <Compile Include="Component\LatencyUpdater.cs" />
-    <Compile Include="Connectivity\ConnectivityDetailsReader.cs" />
-    <Compile Include="Connectivity\ConnectivityDetailsWritter.cs" />
-    <Compile Include="Messages\ChunkedMessagesWriter.cs" />
-    <Compile Include="Messages\ChunkedMessagesReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueryDatabase\QueryHelperFactory.cs" />
-    <Compile Include="Queues\CanUpdateOutgoingMessagesQueueInfo.cs" />
-    <Compile Include="Queues\IncommingMessagesQueueWriter.cs" />
-    <Compile Include="Queues\ReaderIncommingMessagesQueueInfo.cs" />
-    <Compile Include="Queues\ReaderOutgoingMessagesQueueInfo.cs" />
-    <Compile Include="Services\ServiceDetailsReader.cs" />
-    <Compile Include="Services\ServiceDetailsWriter.cs" />
-    <Compile Include="Subscriptions\CanReadIncommingMessagesSubscriptions.cs" />
-    <Compile Include="Subscriptions\CanReadOutgoingMessagesSubscriptions.cs" />
-    <Compile Include="Subscriptions\CanUpdateIncommingMessagesSubscriptions.cs" />
-    <Compile Include="Subscriptions\CanUpdateOutgoingMessagesSubscriptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ermeX\KeyFile.snk">

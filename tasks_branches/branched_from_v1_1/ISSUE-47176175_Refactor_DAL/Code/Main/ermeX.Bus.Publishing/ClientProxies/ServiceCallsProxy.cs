@@ -140,9 +140,9 @@ namespace ermeX.Bus.Publishing.ClientProxies
             if (DestinationComponent.IsEmpty()) //TODO: REFACTOR BOTH
             {
                 var methods = ServiceDetailsReader.GetByMethodName(interfaceTypeName, methodName);
-                if (methods.Count == 0)
+                if (!methods.Any())
                     throw new ermeXUndefinedServiceException(interfaceTypeName, methodName);
-                if(methods.Count>1 && invocation.Method.ReturnType !=typeof(void))
+                if(methods.Count()>1 && invocation.Method.ReturnType !=typeof(void))
                     throw new InvalidOperationException("There are several services that return values, the system only supports one service definition if returns values");
 
                 foreach (var method in methods)

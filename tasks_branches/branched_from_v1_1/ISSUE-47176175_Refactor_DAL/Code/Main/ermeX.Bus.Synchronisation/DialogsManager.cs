@@ -447,8 +447,9 @@ namespace ermeX.Bus.Synchronisation
 						continue;
 
 					//TODO: ISSUE-281: move logic
-					var isNew = ComponentsWritter.ImportFromOtherComponent(componentData.Item1,
-					                                                       componentData.Item2);
+					var isNew = ComponentsRegistrator.CreateRemoteComponent(componentData.Item2.ServerId,
+																		   componentData.Item2.Ip, 
+																		   componentData.Item2.Port);
 					if (isNew)
 						pendingJoinRequests.Add(componentData.Item1.ComponentId);
 
@@ -511,7 +512,7 @@ namespace ermeX.Bus.Synchronisation
 			//get my subscriptions that are not from componentId
 
 			var proxy = Publisher.GetServiceProxy<IMessageSuscriptionsService>(componentId);
-			if (myIncomingSubscriptions != null && myIncomingSubscriptions.Count > 0)
+			if (myIncomingSubscriptions != null && myIncomingSubscriptions.Any())
 				proxy.AddSuscriptions(myIncomingSubscriptions);
 		}
 
@@ -520,7 +521,7 @@ namespace ermeX.Bus.Synchronisation
 			var myServices = ServiceDetailsReader.GetLocalCustomServices();
 
 			var proxy = Publisher.GetServiceProxy<IPublishedServicesDefinitionsService>(componentId);
-			if (myServices != null && myServices.Count > 0)
+			if (myServices != null && myServices.Any())
 				foreach (var svc in myServices)
 				{
 					proxy.AddService(svc);

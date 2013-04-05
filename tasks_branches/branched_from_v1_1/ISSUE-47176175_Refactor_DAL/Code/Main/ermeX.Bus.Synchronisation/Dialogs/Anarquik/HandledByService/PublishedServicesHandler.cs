@@ -72,7 +72,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 			if (request == null) throw new ArgumentNullException("request");
 
 			StatusManager.WaitIsRunning();
-			IList<ServiceDetails> localServiceDefinitions;
+			IEnumerable<ServiceDetails> localServiceDefinitions;
 			if (request.IsSingleResult)
 			{
 				localServiceDefinitions = new List<ServiceDetails>
@@ -83,7 +83,6 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 			else
 			{
 				localServiceDefinitions = _serviceDetailsReader.GetLocalCustomServices();
-				//GetAll().Where(x => x.Publisher == Settings.ComponentId && !x.IsSystemService).ToList();
 			}
 			var result = new PublishedServicesResponseMessage(Settings.ComponentId, request.CorrelationId)
 				{

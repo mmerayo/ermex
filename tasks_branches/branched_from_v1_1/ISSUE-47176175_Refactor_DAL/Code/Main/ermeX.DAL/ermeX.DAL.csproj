@@ -64,6 +64,27 @@
     <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
+    <Compile Include="Commands\Component\ComponentsReader.cs" />
+    <Compile Include="Commands\Component\ComponentsRegistrator.cs" />
+    <Compile Include="Commands\Component\ComponentsUpdater.cs" />
+    <Compile Include="Commands\Component\LatencyReader.cs" />
+    <Compile Include="Commands\Component\LatencyUpdater.cs" />
+    <Compile Include="Commands\Connectivity\ConnectivityDetailsReader.cs" />
+    <Compile Include="Commands\Connectivity\ConnectivityDetailsWritter.cs" />
+    <Compile Include="Commands\Messages\ChunkedMessagesReader.cs" />
+    <Compile Include="Commands\Messages\ChunkedMessagesWriter.cs" />
+    <Compile Include="Commands\Observers\DomainNotifier.cs" />
+    <Compile Include="Commands\QueryDatabase\QueryHelperFactory.cs" />
+    <Compile Include="Commands\Queues\CanUpdateOutgoingMessagesQueueInfo.cs" />
+    <Compile Include="Commands\Queues\IncommingMessagesQueueWriter.cs" />
+    <Compile Include="Commands\Queues\ReaderIncommingMessagesQueueInfo.cs" />
+    <Compile Include="Commands\Queues\ReaderOutgoingMessagesQueueInfo.cs" />
+    <Compile Include="Commands\Services\ServiceDetailsReader.cs" />
+    <Compile Include="Commands\Services\ServiceDetailsWriter.cs" />
+    <Compile Include="Commands\Subscriptions\CanReadIncommingMessagesSubscriptions.cs" />
+    <Compile Include="Commands\Subscriptions\CanReadOutgoingMessagesSubscriptions.cs" />
+    <Compile Include="Commands\Subscriptions\CanUpdateIncommingMessagesSubscriptions.cs" />
+    <Compile Include="Commands\Subscriptions\CanUpdateOutgoingMessagesSubscriptions.cs" />
     <Compile Include="DataAccess\Helpers\Sql2008DbQueryHelper.cs" />
     <Compile Include="DataAccess\Helpers\SqliteDbQueryHelper.cs" />
     <Compile Include="DataAccess\Mappings\ChunkedServiceRequestMessageDataMap.cs" />
@@ -95,6 +116,8 @@
     <Compile Include="DataAccess\UoW\UnitOfWorkFactory.cs" />
     <Compile Include="DataAccess\UoW\UnitOfWorkImplementor.cs" />
     <Compile Include="IoC\DALInjections.cs" />
+    <Compile Include="DataAccess\Repository\IPersistRepository.cs" />
+    <Compile Include="DataAccess\Repository\IReadOnlyRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataAccess\Helpers\QueryHelper.cs" />
     <Compile Include="DataAccess\Providers\NHibernateBootstrapper.cs" />
@@ -148,6 +171,10 @@
     <ProjectReference Include="..\ermeX.Threading\ermeX.Threading.csproj">
       <Project>{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}</Project>
       <Name>ermeX.Threading</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Interfaces\ermeX.Transport.Interfaces.csproj">
+      <Project>{991296BF-95D5-4462-A7EF-574E56C679F3}</Project>
+      <Name>ermeX.Transport.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
