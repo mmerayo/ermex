@@ -22,11 +22,27 @@ using System.Configuration;
 using Ninject.Modules;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.Commands.Component;
+using ermeX.DAL.Commands.Connectivity;
+using ermeX.DAL.Commands.Messages;
+using ermeX.DAL.Commands.Observers;
+using ermeX.DAL.Commands.QueryDatabase;
+using ermeX.DAL.Commands.Queues;
+using ermeX.DAL.Commands.Services;
+using ermeX.DAL.Commands.Subscriptions;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.DataAccess.Providers;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces;
+using ermeX.Domain.Component;
+using ermeX.Domain.Connectivity;
+using ermeX.Domain.Messages;
+using ermeX.Domain.Observers;
+using ermeX.Domain.QueryDatabase;
+using ermeX.Domain.Queues;
+using ermeX.Domain.Services;
+using ermeX.Domain.Subscriptions;
 using ermeX.Entities.Base;
 using ermeX.Entities.Entities;
 
@@ -53,18 +69,7 @@ namespace ermeX.DAL.IoC
         {
             //TODO: create interfaces and bind
 
-			//Bind<IAppComponentDataSource>().To<AppComponentDataSource>().InSingletonScope();
-			//Bind<IConnectivityDetailsDataSource>().To<ConnectivityDetailsDataSource>().InSingletonScope();
-			//Bind<IOutgoingMessageSuscriptionsDataSource>().To<OutgoingMessageSuscriptionsDataSource>().InSingletonScope();
-			//Bind<IIncomingMessageSuscriptionsDataSource>().To<IncomingMessageSuscriptionsDataSource>().InSingletonScope();
-			//Bind<IOutgoingMessagesDataSource>().To<OutgoingMessagesDataSource>().InSingletonScope();
-			//Bind<IIncomingMessagesDataSource>().To<IncomingMessagesDataSource>().InSingletonScope();
-			//Bind<IServiceDetailsDataSource>().To<ServiceDetailsDataSource>().InSingletonScope();
-			//Bind<IChunkedServiceRequestMessageDataSource>().To<ChunkedServiceRequestMessageDataSource>().InSingletonScope();
-            
-			//Bind<IAutoRegistration>().To<AutoRegistration>().InSingletonScope();
-			//Bind<IDataAccessExecutor>().To<DataAccessExecutor>().InSingletonScope();
-
+			
 	        BindRepository<AppComponent>();
 			BindRepository<ConnectivityDetails>();
 			BindRepository<OutgoingMessageSuscription>();
@@ -76,6 +81,45 @@ namespace ermeX.DAL.IoC
 
 			Bind<ISessionProvider>().To<SessionProvider>();
 	        Bind<IUnitOfWorkFactory>().To<UnitOfWorkFactory>();
+
+			Bind<ICanReadComponents>().To<ComponentsReader>().InSingletonScope();
+			Bind<ICanWriteComponents>().To<ComponentsUpdater>().InSingletonScope();
+			Bind<ICanReadLatency>().To<LatencyReader>().InSingletonScope();
+			Bind<ICanUpdateLatency>().To<LatencyUpdater>().InSingletonScope();
+			Bind<IRegisterComponents>().To<ComponentsRegistrator>().InSingletonScope();
+
+			//connectivity
+			Bind<ICanReadConnectivityDetails>().To<ConnectivityDetailsReader>().InSingletonScope();
+			Bind<ICanWriteConnectivityDetails>().To<ConnectivityDetailsWritter>().InSingletonScope();
+
+			//Messages
+			Bind<ICanReadChunkedMessages>().To<ChunkedMessagesReader>().InSingletonScope();
+			Bind<ICanWriteChunkedMessages>().To<ChunkedMessagesWriter>().InSingletonScope();
+
+			//queues
+
+			Bind<IReadOutgoingQueue>().To<ReaderOutgoingQueue>().InSingletonScope();
+			Bind<IWriteOutgoingQueue>().To<WriteOutgoingQueue>().InSingletonScope();
+
+			Bind<IReadIncommingQueue>().To<ReaderIncommingQueue>().InSingletonScope();
+			Bind<IWriteIncommingQueue>().To<IncommingQueueWriter>().InSingletonScope();
+
+			//service details
+			Bind<ICanReadServiceDetails>().To<ServiceDetailsReader>().InSingletonScope();
+			Bind<ICanWriteServiceDetails>().To<ServiceDetailsWriter>().InSingletonScope();
+
+			//Subscriptions
+			Bind<ICanReadOutgoingMessagesSubscriptions>().To<CanReadOutgoingMessagesSubscriptions>().InSingletonScope();
+			Bind<ICanReadIncommingMessagesSubscriptions>().To<CanReadIncommingMessagesSubscriptions>().InSingletonScope();
+			Bind<ICanUpdateOutgoingMessagesSubscriptions>().To<CanUpdateOutgoingMessagesSubscriptions>().InSingletonScope();
+			Bind<ICanUpdateIncommingMessagesSubscriptions>().To<CanUpdateIncommingMessagesSubscriptions>().InSingletonScope();
+
+			//QueryDatabase
+			Bind<IQueryHelperFactory>().To<QueryHelperFactory>().InSingletonScope();
+
+			//Notifiers
+			//TODO: REMOVE
+			Bind<IDomainObservable>().To<DomainNotifier>().InSingletonScope();
 	        
         }
 

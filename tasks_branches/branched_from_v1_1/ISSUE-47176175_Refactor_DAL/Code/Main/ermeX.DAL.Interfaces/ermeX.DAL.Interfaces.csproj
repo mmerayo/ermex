@@ -43,21 +43,49 @@
     <Compile Include="..\ermeX\Properties\KeyFileInfo.cs">
       <Link>Properties\KeyFileInfo.cs</Link>
     </Compile>
+    <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
+      <Link>Properties\ProjectInfo.cs</Link>
+    </Compile>
     <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
-    <Compile Include="IPersistRepository.cs" />
-    <Compile Include="IReadOnlyRepository.cs" />
+    <Compile Include="Component\ICanReadComponents.cs" />
+    <Compile Include="Component\ICanReadLatency.cs" />
+    <Compile Include="Component\ICanUpdateLatency.cs" />
+    <Compile Include="Component\ICanWriteComponents.cs" />
+    <Compile Include="Component\IRegisterComponents.cs" />
+    <Compile Include="Connectivity\ICanReadConnectivityDetails.cs" />
+    <Compile Include="Connectivity\ICanWriteConnectivityDetails.cs" />
+    <Compile Include="Messages\ICanReadChunkedMessages.cs" />
+    <Compile Include="Messages\ICanWriteChunkedMessages.cs" />
+    <Compile Include="Observers\IDomainObservable.cs" />
+    <Compile Include="Observers\IDomainObserver.cs" />
     <Compile Include="Observer\IDalObservable.cs" />
     <Compile Include="Observer\IDalObserver.cs" />
     <Compile Include="Observer\NotifiableDalAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\LayerInfo.cs" />
+    <None Include="Properties\LayerInfo.cs" />
+    <Compile Include="QueryDatabase\IQueryHelper.cs" />
+    <Compile Include="QueryDatabase\IQueryHelperFactory.cs" />
+    <Compile Include="Queues\IReadIncommingQueue.cs" />
+    <Compile Include="Queues\IReadOutgoingQueue.cs" />
+    <Compile Include="Queues\IWriteIncommingQueue.cs" />
+    <Compile Include="Queues\IWriteOutgoingQueue.cs" />
+    <Compile Include="Services\ICanReadServiceDetails.cs" />
+    <Compile Include="Services\ICanWriteServiceDetails.cs" />
+    <Compile Include="Subscriptions\ICanReadIncommingMessagesSubscriptions.cs" />
+    <Compile Include="Subscriptions\ICanReadOutgoingMessagesSubscriptions.cs" />
+    <Compile Include="Subscriptions\ICanUpdateIncommingMessagesSubscriptions.cs" />
+    <Compile Include="Subscriptions\ICanUpdateOutgoingMessagesSubscriptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="KeyFile.snk" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement.Settings\ermeX.ConfigurationManagement.Settings.csproj">
+      <Project>{A6C2D141-25F0-4BFF-93BC-F9EF0CBDB3B1}</Project>
+      <Name>ermeX.ConfigurationManagement.Settings</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.ConfigurationManagement\ermeX.ConfigurationManagement.csproj">
       <Project>{C4536E30-DC91-4AA4-8860-ECBDAF1AE4DE}</Project>
       <Name>ermeX.ConfigurationManagement</Name>
@@ -69,6 +97,10 @@
     <ProjectReference Include="..\ermeX.LayerMessages\ermeX.LayerMessages.csproj">
       <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
       <Name>ermeX.LayerMessages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Interfaces\ermeX.Transport.Interfaces.csproj">
+      <Project>{991296BF-95D5-4462-A7EF-574E56C679F3}</Project>
+      <Name>ermeX.Transport.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

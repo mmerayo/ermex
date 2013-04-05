@@ -18,6 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Castle.DynamicProxy;
 using Ninject;
 using ermeX.Bus.Interfaces;
@@ -58,8 +59,8 @@ namespace ermeX.Bus.Publishing
 		//when the service is exposed by several components it specifies the concrete one
 		public TServiceInterface GetServiceProxy<TServiceInterface>(Guid componentId) where TServiceInterface : IService
 		{
-			IList<ServiceDetails> operations = _serviceDetailsReader.GetByInterfaceType(typeof (TServiceInterface));
-			if (operations.Count == 0)
+			var operations = _serviceDetailsReader.GetByInterfaceType(typeof (TServiceInterface));
+			if (!operations.Any())
 				return default(TServiceInterface);
 
 			//TODO: REPLACE in the cases THERE ARE REAL local implementations instead of the PROXIES

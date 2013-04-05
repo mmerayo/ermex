@@ -47,6 +47,6 @@ namespace ermeX.Bus.Synchronisation.Dialogs.HandledByService
         /// </summary>
         /// <param name="request"> </param>
         [ServiceOperation("32211B80-73A8-4775-8A08-A7533E273CFB")]
-        void AddSuscriptions(IList<IncomingMessageSuscription> request);
+        void AddSuscriptions(IEnumerable<IncomingMessageSuscription> request);
     }
 }

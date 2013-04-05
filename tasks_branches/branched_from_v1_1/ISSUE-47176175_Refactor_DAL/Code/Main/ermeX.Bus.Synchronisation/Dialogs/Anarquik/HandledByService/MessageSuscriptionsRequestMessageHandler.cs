@@ -93,7 +93,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 			}
 		}
 
-		public void AddSuscriptions(IList<IncomingMessageSuscription> request)
+		public void AddSuscriptions(IEnumerable<IncomingMessageSuscription> request)
 		{
 			try
 			{

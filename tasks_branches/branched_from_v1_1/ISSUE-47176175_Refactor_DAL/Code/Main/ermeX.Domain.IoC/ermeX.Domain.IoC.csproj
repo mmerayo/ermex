@@ -52,7 +52,6 @@
     <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
-    <Compile Include="DomainInjections.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
