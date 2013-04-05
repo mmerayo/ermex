@@ -35,6 +35,7 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 			_testContext.WithBeginTransaction();
 
 			var target = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session);
+			
 			var transaction = target.BeginTransaction();
 			Assert.IsNotNull(transaction);
 			_testContext.VerifyAll();

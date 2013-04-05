@@ -4,6 +4,7 @@ using Moq;
 using NHibernate;
 using NUnit.Framework;
 using ermeX.DAL.DataAccess.UoW;
+using ermeX.Tests.Common.Reflection;
 
 namespace ermeX.Tests.DAL.DataAccess.UoW
 {
@@ -91,7 +92,7 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 				_mockSession = new Mock<ISession>();
 				_mockFactory = new Mock<IUnitOfWorkFactory>();
 				_mockUnitOfWork = new Mock<IUnitOfWork>();
-				SetNonPublicVariable("_unitOfWorkFactory", _mockFactory.Object);
+				PrivateInspector.SetStaticPrivateVariable(typeof(UnitOfWork),"_unitOfWorkFactory", _mockFactory.Object);
 
 			}
 
@@ -115,24 +116,9 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 				if (_mockUnitOfWork != null) _mockUnitOfWork.VerifyAll();
 			}
 
-
-			private static void SetNonPublicVariable(string vbleName, object newValue)
-			{
-				var fieldInfo = typeof (UnitOfWork).GetField(vbleName,
-				                                             BindingFlags.Static | BindingFlags.SetField | BindingFlags.NonPublic);
-				fieldInfo.SetValue(null, newValue);
-			}
-
-			private static void SetNonPublicProperty(string propertyName, object newValue)
-			{
-				 var propertyInfo = typeof(UnitOfWork).GetProperty(propertyName,
-                                BindingFlags.Static | BindingFlags.SetProperty | BindingFlags.NonPublic);
-					propertyInfo.SetValue(null, newValue, null);
-			}
-
 			public void Dispose()
 			{
-				SetNonPublicProperty("CurrentUnitOfWork", null);
+				PrivateInspector.SetStaticPrivateProperty(typeof(UnitOfWork),"CurrentUnitOfWork", null);
 			}
 		}
 	}
