@@ -25,6 +25,7 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
+using ermeX.DAL.Commands.Queues;
 using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
 
