@@ -5,6 +5,7 @@ using Moq;
 using NHibernate;
 using NUnit.Framework;
 using ermeX.DAL.DataAccess.UoW;
+using ermeX.Tests.Common.Reflection;
 
 namespace ermeX.Tests.DAL.DataAccess.UoW
 {
@@ -30,53 +31,27 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 		}
 
 		[Test]
-		public void Can_BeginTransaction()
+		public void BeginsTransactionWhenFirstCreated()
 		{
 			_testContext.WithBeginTransaction();
 
 			var target = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session);
-			
-			var transaction = target.BeginTransaction();
+			var transaction=(IGenericTransaction)PrivateInspector.GetPrivateVariableValue(target, "_transaction");
 			Assert.IsNotNull(transaction);
 			_testContext.VerifyAll();
 		}
 
 		[Test]
-		public void CanBeginTransaction_WithIsolation()
+		public void DoesNotBeginTransactionWhenPreviouslyCreated()
 		{
-			const IsolationLevel isolationLevel = IsolationLevel.Serializable;
-			_testContext.WithBeginTransaction(isolationLevel);
-
-
+			_testContext.WithBeginTransaction();
+			var existing = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session);
 			var target = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session);
-			var transaction = target.BeginTransaction(isolationLevel);
-		
-			Assert.IsNotNull(transaction);
+			var transaction = (IGenericTransaction)PrivateInspector.GetPrivateVariableValue(target, "_transaction");
+			Assert.IsNull(transaction);
 			_testContext.VerifyAll();
 		}
 
-		[Test]
-		public void Can_execute_TransactionalFlush()
-		{
-			_testContext.WithTransactionalFlush();
-
-			var target = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session);
-
-			target.TransactionalFlush();
-			_testContext.VerifyAll();
-		}
-
-		[Test]
-		public void Can_execute_TransactionalFlush_WithIsolationLevel()
-		{
-			const IsolationLevel isolationLevel = IsolationLevel.Serializable;
-			_testContext.WithTransactionalFlush(isolationLevel);
-
-			var target = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session);
-
-			target.TransactionalFlush(isolationLevel);
-			_testContext.VerifyAll();
-		}
 
 		private class TestContext
 		{

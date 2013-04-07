@@ -24,9 +24,8 @@ using System.Reflection;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-using ermeX.DAL.DataAccess.DataSources;
+using ermeX.DAL.Commands.QueryDatabase;
 using ermeX.DAL.DataAccess.Helpers;
-using ermeX.Domain.Implementations.QueryDatabase;
 using ermeX.Domain.QueryDatabase;
 using ermeX.Entities.Base;
 using ermeX.Entities.Entities;
@@ -228,31 +227,31 @@ namespace ermeX.Tests.Common.DataAccess
 			return id;
 		}
 
-		public AppComponent GetNewAppComponent()
-		{
-			int idComponent = InsertAppComponent(Guid.NewGuid(), LocalComponentId, 0, false, false);
+		//public AppComponent GetNewAppComponent()
+		//{
+		//    int idComponent = InsertAppComponent(Guid.NewGuid(), LocalComponentId, 0, false, false);
 
-			IDalSettings dataAccessSettingsSource = TestSettingsProvider.GetDataAccessSettingsSource(EngineType, SchemasToApply);
-			var dataAccessExecutor = new DataAccessExecutor(dataAccessSettingsSource);
-			var dsComponent =
-				new AppComponentDataSource(dataAccessSettingsSource,
-				                           LocalComponentId, dataAccessExecutor);
+		//    IDalSettings dataAccessSettingsSource = TestSettingsProvider.GetDataAccessSettingsSource(EngineType, SchemasToApply);
+		//    var dataAccessExecutor = new DataAccessExecutor(dataAccessSettingsSource);
+		//    var dsComponent =
+		//        new AppComponentDataSource(dataAccessSettingsSource,
+		//                                   LocalComponentId, dataAccessExecutor);
 
-			return dsComponent.GetById(idComponent);
-		}
+		//    return dsComponent.GetById(idComponent);
+		//}
 
-		public AppComponent GetNewAppComponent(Guid componentId, Guid ownerComponentId)
-		{
-			int idComponent = InsertAppComponent(componentId, ownerComponentId, 0, false, false);
+		//public AppComponent GetNewAppComponent(Guid componentId, Guid ownerComponentId)
+		//{
+		//    int idComponent = InsertAppComponent(componentId, ownerComponentId, 0, false, false);
 
-			IDalSettings dataAccessSettingsSource = TestSettingsProvider.GetDataAccessSettingsSource(EngineType, SchemasToApply);
-			var dataAccessExecutor = new DataAccessExecutor(dataAccessSettingsSource);
-			var dsComponent =
-				new AppComponentDataSource(dataAccessSettingsSource,
-				                           ownerComponentId, dataAccessExecutor);
+		//    IDalSettings dataAccessSettingsSource = TestSettingsProvider.GetDataAccessSettingsSource(EngineType, SchemasToApply);
+		//    var dataAccessExecutor = new DataAccessExecutor(dataAccessSettingsSource);
+		//    var dsComponent =
+		//        new AppComponentDataSource(dataAccessSettingsSource,
+		//                                   ownerComponentId, dataAccessExecutor);
 
-			return dsComponent.GetById(idComponent);
-		}
+		//    return dsComponent.GetById(idComponent);
+		//}
 
 		public int InsertOutgoingMessageSuscriptions(string messageType, DateTime updateTime,
 		                                             Guid componentId, Guid componentOwnerId)
