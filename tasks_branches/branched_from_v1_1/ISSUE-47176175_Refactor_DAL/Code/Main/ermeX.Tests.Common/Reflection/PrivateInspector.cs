@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using ermeX.DAL.DataAccess.UoW;
 
 namespace ermeX.Tests.Common.Reflection
 {
@@ -22,5 +23,11 @@ namespace ermeX.Tests.Common.Reflection
 			propertyInfo.SetValue(null, newValue, null);
 		}
 
+		public static object GetPrivateVariableValue(object obj, string vbleName)
+		{
+			var fieldInfo = obj.GetType().GetField(vbleName,
+														 BindingFlags.GetField | BindingFlags.NonPublic);
+			return fieldInfo.GetValue(obj);
+		}
 	}
 }
