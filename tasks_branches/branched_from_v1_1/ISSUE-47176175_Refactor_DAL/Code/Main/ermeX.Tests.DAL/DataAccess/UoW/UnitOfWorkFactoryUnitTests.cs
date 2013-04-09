@@ -23,8 +23,8 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 		[Test]
 		public void CanCreate_UnitOfWork()
 		{
-			_testContext.WithSession();
-			_testContext.WithTransaction(true);
+			//_testContext.WithSession();
+			_testContext.WithTransactionStarted(true);
 			var factory = _testContext.Factory;
 			var implementor = factory.Create();
 
@@ -64,11 +64,12 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 				_sessionProvider.Setup(x => x.OpenSession()).Returns(_mockSession.Object).Verifiable();
 			}
 
-			public void WithTransaction(bool active)
+			public void WithTransactionStarted(bool started)
 			{
-				_mockTransaction = new Mock<ITransaction>();
-				_mockTransaction.SetupProperty(x => x.IsActive, active);
-				_mockSession.SetupProperty(x => x.Transaction, _mockTransaction.Object);
+				WithSession();
+				_mockTransaction=new Mock<ITransaction>();
+				_mockTransaction.SetupGet(x => x.IsActive).Returns(started);
+				_mockSession.SetupGet(x => x.Transaction).Returns(_mockTransaction.Object);
 			}
 
 			public void VerifySessionWasCreated()

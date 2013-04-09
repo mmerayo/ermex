@@ -31,24 +31,16 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 		}
 
 		[Test]
-		public void BeginsTransactionWhenFirstCreated()
+		public void BeginsTransactionProperly([Values(true,false) ]bool started)
 		{
-			_testContext.WithBeginTransaction();
+			_testContext.WithTransactionStarted(started);
 
 			var target = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session);
 			var transaction=(IGenericTransaction)PrivateInspector.GetPrivateVariableValue(target, "_transaction");
-			Assert.IsNotNull(transaction);
-			_testContext.VerifyAll();
-		}
-
-		[Test]
-		public void DoesNotBeginTransactionWhenPreviouslyCreated()
-		{
-			_testContext.WithBeginTransaction();
-			var existing = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session);
-			var target = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session);
-			var transaction = (IGenericTransaction)PrivateInspector.GetPrivateVariableValue(target, "_transaction");
-			Assert.IsNull(transaction);
+			if(!started)
+				Assert.IsNotNull(transaction);
+			else
+				Assert.IsNull(transaction);
 			_testContext.VerifyAll();
 		}
 
@@ -80,14 +72,17 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 			{
 				_mockFactory.Setup(x => x.DisposeUnitOfWork(It.IsAny<UnitOfWorkImplementor>())).Verifiable();
 				_mockSession.Setup(x => x.Dispose()).Verifiable();
+				WithTransactionStarted(false);
 			}
 
-			public void WithBeginTransaction(IsolationLevel ? level=null)
+		
+			public void WithTransactionStarted(bool started)
 			{
-				if(level.HasValue)
-					_mockSession.Setup(x => x.BeginTransaction(level.Value)).Returns((ITransaction)null);
-				else
-					_mockSession.Setup(x => x.BeginTransaction()).Returns((ITransaction) null);
+				_mockTransaction.SetupGet(x => x.IsActive).Returns(started);
+				_mockSession.SetupGet(x => x.Transaction).Returns(_mockTransaction.Object);
+
+				if (!started)
+					_mockSession.Setup(x => x.BeginTransaction(IsolationLevel.ReadCommitted)).Returns(_mockTransaction.Object);
 			}
 
 			public void VerifyAll()
@@ -96,14 +91,6 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 				_mockSession.VerifyAll();
 				_mockTransaction.VerifyAll();
 			}
-
-			public void WithTransactionalFlush(IsolationLevel level = IsolationLevel.ReadCommitted)
-			{
-				_mockSession.Setup(x => x.BeginTransaction(level)).Returns(_mockTransaction.Object);
-				_mockTransaction.Setup(x=>x.Commit()).Verifiable();
-				_mockTransaction.Setup(x => x.Dispose()).Verifiable();
-			}
-
 
 		}
 	}

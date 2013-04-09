@@ -1,4 +1,5 @@
-﻿using NHibernate;
+﻿using System;
+using NHibernate;
 
 namespace ermeX.DAL.DataAccess.UoW
 {
@@ -8,6 +9,7 @@ namespace ermeX.DAL.DataAccess.UoW
 
 		public GenericTransaction(ITransaction transaction)
 		{
+			if (transaction == null) throw new ArgumentNullException("transaction");
 			_transaction = transaction;
 		}
 
