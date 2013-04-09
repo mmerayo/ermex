@@ -25,8 +25,7 @@ namespace ermeX.Tests.Common.Reflection
 
 		public static object GetPrivateVariableValue(object obj, string vbleName)
 		{
-			var fieldInfo = obj.GetType().GetField(vbleName,
-														 BindingFlags.GetField | BindingFlags.NonPublic);
+			var fieldInfo = obj.GetType().GetField(vbleName, BindingFlags.Instance | BindingFlags.NonPublic);
 			return fieldInfo.GetValue(obj);
 		}
 	}

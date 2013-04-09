@@ -55,7 +55,7 @@ namespace ermeX.DAL.DataAccess.UoW
 
 		private bool IsInActiveTransaction
 		{
-			get { return _session.Transaction.IsActive; }
+			get { return _session.Transaction!=null && _session.Transaction.IsActive; }
 		}
 
 		public IUnitOfWorkFactory Factory
