@@ -1,7 +1,7 @@
 ﻿using System;
 using ermeX.Entities.Entities;
 
-namespace ermeX.Domain.Messages
+namespace ermeX.DAL.Interfaces.Messages
 {
     interface ICanReadChunkedMessages
     {

@@ -1,6 +1,6 @@
 ﻿using ermeX.Entities.Entities;
 
-namespace ermeX.Domain.Services
+namespace ermeX.DAL.Interfaces.Services
 {
 	interface ICanWriteServiceDetails
 	{

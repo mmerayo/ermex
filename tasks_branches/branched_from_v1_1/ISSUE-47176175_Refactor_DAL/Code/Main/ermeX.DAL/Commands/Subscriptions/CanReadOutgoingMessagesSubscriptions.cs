@@ -3,7 +3,7 @@ using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UoW;
-using ermeX.Domain.Subscriptions;
+using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Commands.Subscriptions

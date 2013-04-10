@@ -22,7 +22,7 @@ using System.Linq;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Queues;
+using ermeX.DAL.Interfaces.Queues;
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
 using ermeX.LayerMessages;

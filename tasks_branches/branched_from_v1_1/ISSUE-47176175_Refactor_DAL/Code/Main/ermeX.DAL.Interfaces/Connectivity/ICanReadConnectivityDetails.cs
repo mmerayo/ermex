@@ -1,7 +1,7 @@
 ﻿using System;
 using ermeX.Entities.Entities;
 
-namespace ermeX.Domain.Connectivity
+namespace ermeX.DAL.Interfaces.Connectivity
 {
     interface ICanReadConnectivityDetails
     {

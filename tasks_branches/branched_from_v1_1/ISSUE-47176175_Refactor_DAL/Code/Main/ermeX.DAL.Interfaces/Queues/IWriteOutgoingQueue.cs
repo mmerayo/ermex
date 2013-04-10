@@ -1,7 +1,7 @@
 using System;
 using ermeX.Entities.Entities;
 
-namespace ermeX.Domain.Queues
+namespace ermeX.DAL.Interfaces.Queues
 {
 	interface IWriteOutgoingQueue
     {

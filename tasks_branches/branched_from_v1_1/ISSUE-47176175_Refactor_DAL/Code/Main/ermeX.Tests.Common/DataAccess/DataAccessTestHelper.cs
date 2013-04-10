@@ -26,7 +26,7 @@ using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.Commands.QueryDatabase;
 using ermeX.DAL.DataAccess.Helpers;
-using ermeX.Domain.QueryDatabase;
+using ermeX.DAL.Interfaces.QueryDatabase;
 using ermeX.Entities.Base;
 using ermeX.Entities.Entities;
 using ermeX.NonMerged;

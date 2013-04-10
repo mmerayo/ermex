@@ -28,7 +28,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Subscriptions;
+using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Entities.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService

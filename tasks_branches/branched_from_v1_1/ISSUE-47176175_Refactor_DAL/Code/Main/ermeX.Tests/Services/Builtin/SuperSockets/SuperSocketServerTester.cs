@@ -17,8 +17,6 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 
-using ermeX.Domain.Messages;
-using ermeX.Domain.Services;
 using ermeX.Tests.Common.SettingsProviders;
 using ermeX.Tests.Services.Mock;
 

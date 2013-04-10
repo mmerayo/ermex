@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using ermeX.Entities.Entities;
 
-namespace ermeX.Domain.Queues
+namespace ermeX.DAL.Interfaces.Queues
 {
 	internal interface IWriteIncommingQueue
 	{

@@ -1,6 +1,6 @@
 ﻿using ermeX.Transport.Interfaces.Messages;
 
-namespace ermeX.Domain.Messages
+namespace ermeX.DAL.Interfaces.Messages
 {
 	interface ICanWriteChunkedMessages
 	{

@@ -27,7 +27,7 @@ using System.Threading;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.Commands.QueryDatabase;
 using ermeX.DAL.DataAccess.Helpers;
-using ermeX.Domain.QueryDatabase;
+using ermeX.DAL.Interfaces.QueryDatabase;
 using ermeX.NonMerged;
 using ermeX.Tests.Common.DataAccess;
 using Network = ermeX.Common.Networking;

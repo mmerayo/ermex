@@ -2,7 +2,7 @@ using System;
 using Ninject;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UoW;
-using ermeX.Domain.Connectivity;
+using ermeX.DAL.Interfaces.Connectivity;
 using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Commands.Connectivity

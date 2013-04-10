@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ermeX.DAL.Interfaces.Observer;
-using ermeX.Domain.Observers;
+using ermeX.DAL.Interfaces.Observers;
 using ermeX.Entities.Entities;
 using ermeX.Threading.Queues;
 

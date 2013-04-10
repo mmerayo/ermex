@@ -4,7 +4,7 @@ using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UoW;
-using ermeX.Domain.Services;
+using ermeX.DAL.Interfaces.Services;
 using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Commands.Services

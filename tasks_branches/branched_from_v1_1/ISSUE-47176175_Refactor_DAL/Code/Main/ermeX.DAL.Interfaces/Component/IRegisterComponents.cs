@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ermeX.Domain.Component
+namespace ermeX.DAL.Interfaces.Component
 {
     internal interface IRegisterComponents //TODO: sEE AUTOREGISTRATION
     {

@@ -28,7 +28,7 @@ using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.Interfaces.Observer;
-using ermeX.Domain.Observers;
+using ermeX.DAL.Interfaces.Observers;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;

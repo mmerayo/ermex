@@ -5,8 +5,8 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UoW;
-using ermeX.Domain.Component;
-using ermeX.Domain.Connectivity;
+using ermeX.DAL.Interfaces.Component;
+using ermeX.DAL.Interfaces.Connectivity;
 using ermeX.Entities.Entities;
 using ermeX.ConfigurationManagement.IoC;
 

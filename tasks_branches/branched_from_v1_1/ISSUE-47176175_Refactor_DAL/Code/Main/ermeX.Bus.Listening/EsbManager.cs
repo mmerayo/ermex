@@ -24,7 +24,7 @@ using ermeX.Bus.Interfaces.Dispatching;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Services;
+using ermeX.DAL.Interfaces.Services;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Transport.Interfaces.Messages;
