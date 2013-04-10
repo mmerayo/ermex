@@ -20,6 +20,7 @@ using System;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.Repository;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.Entities.Base;
 using ermeX.Tests.Common.SettingsProviders;
 
@@ -40,9 +41,10 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 		{
 			int id = InsertRecord(engine);
 			TModel expected;
-			using (var uow = GetUnitOfWorkFactory(engine).Create())
+			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
+			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(engine);
+				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				expected = target.Single(id);
 				uow.Commit();
 			}
@@ -50,11 +52,10 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 
 			expected = GetExpectedWithChanges(expected);
 			long expVersion;
-			using (var uow = GetUnitOfWorkFactory(engine).Create())
+			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(engine);
+				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				target.Save(expected);
-
 
 				expVersion = expected.Version;
 				expected.Version--;

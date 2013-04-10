@@ -63,9 +63,10 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			expected.ComponentOwner = LocalComponentId;
 			Assert.IsTrue(expected.Version == DateTime.MinValue.Ticks, "implementation of GetExpected must set version to 0");
 
-			using (var uow = GetUnitOfWorkFactory(engine).Create())
+			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
+			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(engine);
+				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				target.Save(expected);
 				uow.Commit();
 			}
@@ -89,7 +90,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			TModel expected;
 			using (var uow = factory.Create())
 			{
-				var target = GetRepository<TDataSource>(engine);
+				var target = GetRepository<TDataSource>(factory);
 				expected = target.Single(id);
 				uow.Commit();
 			}
@@ -100,7 +101,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			Thread.Sleep(50);
 			using (var uow = factory.Create())
 			{
-				var target = GetRepository<TDataSource>(engine);
+				var target = GetRepository<TDataSource>(factory);
 				target.Save(expected);
 				uow.Commit();
 			}
@@ -121,7 +122,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			var factory = GetUnitOfWorkFactory(engine);
 			using (var uow = factory.Create())
 			{
-				var target = GetRepository<TDataSource>(engine);
+				var target = GetRepository<TDataSource>(factory);
 				item = target.Single(id);
 
 				Assert.IsTrue(item.Version != DateTime.MinValue.Ticks);
@@ -136,6 +137,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 		}
 
 
+		//TODO: REMOVE COMMENT [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
 		[Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
 		public void CanAddRecord(DbEngineType engine)
 		{
@@ -143,9 +145,10 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			dataAccessTestHelper.QueryTestHelper.ExecuteNonQuery(String.Format("Delete From {0}.{1}", SchemaName, TableName));
 
 			TModel expected = GetExpected(engine);
-			using (var uow = GetUnitOfWorkFactory(engine).Create())
+			var unitOfWorkFactory = GetUnitOfWorkFactory(engine);
+			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(engine);
+				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				target.Save(expected);
 				uow.Commit();
 			}
@@ -165,9 +168,10 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 		{
 			int id = InsertRecord(engine);
 			TModel expected;
-			using (var uow = GetUnitOfWorkFactory(engine).Create())
+			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
+			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(engine);
+				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				TModel item = target.Single(id);
 				expected = GetExpectedWithChanges(item);
 				target.Save(expected);
@@ -195,9 +199,10 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 				dataAccessTestHelper.QueryTestHelper.ExecuteScalar<int>(string.Format("Select count(*) from {3}.{0} where {1}={2}",
 																					  TableName, IdFieldName, id, SchemaName));
 			Assert.IsTrue(numRecords == 1);
-			using (var uow = GetUnitOfWorkFactory(engine).Create())
+			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
+			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(engine);
+				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				target.Remove(x=>x.Id== id);
 				uow.Commit();
 			}
@@ -213,9 +218,10 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 		{
 			int id = InsertRecord(engine);
 
-			using (var uow = GetUnitOfWorkFactory(engine).Create())
+			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
+			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(engine);
+				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				TModel actual = target.Single(id);
 				Assert.IsNotNull(actual);
 				target.Remove(actual);
@@ -234,9 +240,10 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			int id = InsertRecord(engine);
 
 			TModel actual;
-			using (var uow = GetUnitOfWorkFactory(engine).Create())
+			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
+			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(engine);
+				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				actual = target.Single(id);
 				Assert.IsNotNull(actual);
 				uow.Commit();
