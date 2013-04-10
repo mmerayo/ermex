@@ -20,8 +20,8 @@ using System;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.DAL.DataAccess.Repository;
 using ermeX.Entities.Entities;
 using ermeX.Tests.Common.DataAccess;
 
@@ -29,7 +29,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 {
     //[TestFixture]
     internal class ConnectivityDetailsDataSourceTester :
-        UpdatableByExternalComponentsTester<ConnectivityDetailsDataSource, ConnectivityDetails>
+        UpdatableByExternalComponentsTester<Repository<ConnectivityDetails>, ConnectivityDetails>
     {
         protected override string IdFieldName
         {

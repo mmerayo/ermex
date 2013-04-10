@@ -20,8 +20,9 @@ using System;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.DataSources;
+
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.DAL.DataAccess.Repository;
 using ermeX.Entities.Entities;
 using ermeX.Tests.Common.SettingsProviders;
 
@@ -31,7 +32,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 
     //[TestFixture]
     internal class ServiceDetailsSourceTester :
-        UpdatableByExternalComponentsTester<ServiceDetailsDataSource, ServiceDetails>
+        UpdatableByExternalComponentsTester<Repository<ServiceDetails>, ServiceDetails>
     {
         protected override string IdFieldName
         {

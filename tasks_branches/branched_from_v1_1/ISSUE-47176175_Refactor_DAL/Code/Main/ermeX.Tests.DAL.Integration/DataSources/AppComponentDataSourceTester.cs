@@ -20,110 +20,106 @@ using System;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.DAL.DataAccess.Repository;
 using ermeX.Entities.Entities;
 using ermeX.Tests.Common.SettingsProviders;
 
 namespace ermeX.Tests.DAL.Integration.DataSources
 {
-    //TODO: test al possible operations in all datasources
+	//TODO: test al possible operations in all datasources
 
-    //[TestFixture]
-    internal class AppComponentDataSourceTester :
-        UpdatableByExternalComponentsTester<AppComponentDataSource, AppComponent>
-    {
-        protected override string IdFieldName
-        {
-            get
-            {
-                return AppComponent.GetDbFieldName("Id"); }
-        }
+	internal class AppComponentDataSourceTester :
+		UpdatableByExternalComponentsTester<Repository<AppComponent>, AppComponent>
+	{
+		protected override string IdFieldName
+		{
+			get { return AppComponent.GetDbFieldName("Id"); }
+		}
 
-        protected override string TableName
-        {
-            get { return AppComponent.TableName; }
-        }
+		protected override string TableName
+		{
+			get { return AppComponent.TableName; }
+		}
 
-        protected override int InsertRecord(DbEngineType engine)
-        {
-            return GetDataHelper(engine).InsertAppComponent(ComponentId, OwnerComponentId, VersionUtc, Latency,IsRunning,ExchangedDefinitions);
-        }
+		protected override int InsertRecord(DbEngineType engine)
+		{
+			return GetDataHelper(engine)
+				.InsertAppComponent(ComponentId, OwnerComponentId, VersionUtc, Latency, IsRunning, ExchangedDefinitions);
+		}
 
-        
+		protected override void CheckInsertedRecord(AppComponent record)
+		{
+			Assert.IsNotNull(record);
+			Assert.AreEqual(record.ComponentId, ComponentId);
+		}
 
+		private const int Latency = 10;
 
-        protected override void CheckInsertedRecord(AppComponent record)
-        {
-            Assert.IsNotNull(record);
-            Assert.AreEqual(record.ComponentId, ComponentId);
-        }
-
-        private const int Latency = 10;
-
-        protected override AppComponent GetExpected(DbEngineType engine)
-        {
-            return new AppComponent
-                       {
-                           ComponentId = ComponentId,
-                           ComponentOwner = OwnerComponentId,
-                           Latency = Latency,
-                           IsRunning = IsRunning
-                       };
-        }
+		protected override AppComponent GetExpected(DbEngineType engine)
+		{
+			return new AppComponent
+				{
+					ComponentId = ComponentId,
+					ComponentOwner = OwnerComponentId,
+					Latency = Latency,
+					IsRunning = IsRunning
+				};
+		}
 
 
-        protected override AppComponent GetExpectedWithChanges(AppComponent source)
-        {
-            source.IsRunning = false;
-            return source;
-        }
+		protected override AppComponent GetExpectedWithChanges(AppComponent source)
+		{
+			source.IsRunning = false;
+			return source;
+		}
 
 
-        private Guid ComponentId
-        {
-            get { return RemoteComponentId; }
-        }
+		private Guid ComponentId
+		{
+			get { return RemoteComponentId; }
+		}
 
-    
-        private Guid OwnerComponentId {
-            get { return LocalComponentId; }
-        }
-         
-        private readonly DateTime VersionUtc = DateTime.UtcNow;
-        private bool IsRunning = true;
-        private bool ExchangedDefinitions=true;
-        
-        
-        [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
-        public void CanGetByComponentId(DbEngineType engine)
-        {
-            int id = InsertRecord(engine);
-            Assert.IsTrue(id>0);
-            AppComponentDataSource target = GetDataSource<AppComponentDataSource>(engine);
-            AppComponent actual = target.GetByComponentId(ComponentId);
-            Assert.IsNotNull(actual);
 
-            CheckInsertedRecord(actual);
-        }
+		private Guid OwnerComponentId
+		{
+			get { return LocalComponentId; }
+		}
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
-        public void CanUpdateExchanger(DbEngineType engine)
-        {
-            int id = InsertRecord(engine);
-            Assert.IsTrue(id > 0);
-            AppComponentDataSource target = GetDataSource<AppComponentDataSource>(engine);
-            AppComponent actual = target.GetByComponentId(ComponentId);
-            Assert.IsNotNull(actual);
-            Assert.IsNull(actual.ComponentExchanges);
+		private readonly DateTime VersionUtc = DateTime.UtcNow;
+		private bool IsRunning = true;
+		private bool ExchangedDefinitions = true;
 
-            actual.ComponentExchanges = RemoteComponentId;
-            target.Save(actual);
 
-            var actual2= target.GetByComponentId(ComponentId);
-            Assert.IsNotNull(actual2.ComponentExchanges);
+		//[Test, TestCaseSource(typeof (TestCaseSources), "AllDbs")]
+		//public void CanGetByComponentId(DbEngineType engine)
+		//{
+		//    int id = InsertRecord(engine);
+		//    Assert.IsTrue(id > 0);
+		//    AppComponentDataSource target = GetDataSource<AppComponentDataSource>(engine);
+		//    AppComponent actual = target.GetByComponentId(ComponentId);
+		//    Assert.IsNotNull(actual);
 
-            Assert.AreEqual(actual.ComponentExchanges, actual2.ComponentExchanges);
-        }
-    }
+		//    CheckInsertedRecord(actual);
+		//}
+
+		//[Test, TestCaseSource(typeof (TestCaseSources), "AllDbs")]
+		//public void CanUpdateExchanger(DbEngineType engine)
+		//{
+		//    int id = InsertRecord(engine);
+		//    Assert.IsTrue(id > 0);
+		//    AppComponentDataSource target = GetDataSource<AppComponentDataSource>(engine);
+		//    AppComponent actual = target.GetByComponentId(ComponentId);
+		//    Assert.IsNotNull(actual);
+		//    Assert.IsNull(actual.ComponentExchanges);
+
+		//    actual.ComponentExchanges = RemoteComponentId;
+		//    target.Save(actual);
+
+		//    var actual2 = target.GetByComponentId(ComponentId);
+		//    Assert.IsNotNull(actual2.ComponentExchanges);
+
+		//    Assert.AreEqual(actual.ComponentExchanges, actual2.ComponentExchanges);
+		//}
+	}
 }
