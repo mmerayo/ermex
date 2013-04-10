@@ -227,31 +227,32 @@ namespace ermeX.Tests.Common.DataAccess
 			return id;
 		}
 
-		public AppComponent GetNewAppComponent()
-		{
-			int idComponent = InsertAppComponent(Guid.NewGuid(), LocalComponentId, 0, false, false);
+		//public AppComponent GetNewAppComponent()
+		//{
+		//    int idComponent = InsertAppComponent(Guid.NewGuid(), LocalComponentId, 0, false, false);
 
-			IDalSettings dataAccessSettingsSource = TestSettingsProvider.GetDataAccessSettingsSource(EngineType, SchemasToApply);
-			var dataAccessExecutor = new DataAccessExecutor(dataAccessSettingsSource);
-			var dsComponent =
-				new AppComponentDataSource(dataAccessSettingsSource,
-										   LocalComponentId, dataAccessExecutor);
+		//    IDalSettings dataAccessSettingsSource = TestSettingsProvider.GetDataAccessSettingsSource(EngineType, SchemasToApply);
 
-			return dsComponent.GetById(idComponent);
-		}
+		//    var dataAccessExecutor = new DataAccessExecutor(dataAccessSettingsSource);
+		//    var dsComponent =
+		//        new AppComponentDataSource(dataAccessSettingsSource,
+		//                                   LocalComponentId, dataAccessExecutor);
 
-		public AppComponent GetNewAppComponent(Guid componentId, Guid ownerComponentId)
-		{
-			int idComponent = InsertAppComponent(componentId, ownerComponentId, 0, false, false);
+		//    return dsComponent.GetById(idComponent);
+		//}
 
-			IDalSettings dataAccessSettingsSource = TestSettingsProvider.GetDataAccessSettingsSource(EngineType, SchemasToApply);
-			var dataAccessExecutor = new DataAccessExecutor(dataAccessSettingsSource);
-			var dsComponent =
-				new AppComponentDataSource(dataAccessSettingsSource,
-										   ownerComponentId, dataAccessExecutor);
+		//public AppComponent GetNewAppComponent(Guid componentId, Guid ownerComponentId)
+		//{
+		//    int idComponent = InsertAppComponent(componentId, ownerComponentId, 0, false, false);
 
-			return dsComponent.GetById(idComponent);
-		}
+		//    IDalSettings dataAccessSettingsSource = TestSettingsProvider.GetDataAccessSettingsSource(EngineType, SchemasToApply);
+		//    var dataAccessExecutor = new DataAccessExecutor(dataAccessSettingsSource);
+		//    var dsComponent =
+		//        new AppComponentDataSource(dataAccessSettingsSource,
+		//                                   ownerComponentId, dataAccessExecutor);
+
+		//    return dsComponent.GetById(idComponent);
+		//}
 
 		public int InsertOutgoingMessageSuscriptions(string messageType, DateTime updateTime,
 		                                             Guid componentId, Guid componentOwnerId)

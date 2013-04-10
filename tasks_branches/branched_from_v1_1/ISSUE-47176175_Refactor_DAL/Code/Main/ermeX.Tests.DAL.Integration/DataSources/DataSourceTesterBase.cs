@@ -245,9 +245,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			CheckInsertedRecord(actual);
 		}
 
-
 		protected abstract int InsertRecord(DbEngineType engine);
-
 
 		protected abstract void CheckInsertedRecord(TModel record);
 

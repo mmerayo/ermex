@@ -24,9 +24,6 @@ namespace ermeX.Entities.Base
 	[Serializable]
 	public abstract class ModelBase
 	{
-		//Expresion to find an entity other than the localkey
-		internal abstract Expression<Func<object, bool>> FindByBizKey { get; }
-
 		public virtual int Id { get; set; }
 
 		//prevents several compoenents using same db

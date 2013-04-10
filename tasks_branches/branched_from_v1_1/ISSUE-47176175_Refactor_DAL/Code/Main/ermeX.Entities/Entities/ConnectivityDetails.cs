@@ -104,14 +104,6 @@ namespace ermeX.Entities.Entities
 
         #endregion
 
-		internal override Expression<Func<object, bool>> FindByBizKey
-		{
-			get
-			{
-				return x => ((ConnectivityDetails)x).ComponentOwner == ComponentOwner
-							&& ((ConnectivityDetails)x).Ip == this.Ip
-							&& ((ConnectivityDetails)x).Port == this.Port;
-			}
-		}
+		
     }
 }

@@ -108,16 +108,5 @@ namespace ermeX.Entities.Entities
             return result;
         }
 
-		internal override Expression<Func<object, bool>> FindByBizKey
-		{
-			get
-			{
-				return x => ((ServiceDetails)x).ComponentOwner == ComponentOwner
-							&& ((ServiceDetails)x).ServiceInterfaceTypeName == ServiceInterfaceTypeName
-							&& ((ServiceDetails)x).ServiceImplementationMethodName == ServiceImplementationMethodName
-							&& ((ServiceDetails)x).Publisher == Publisher;
-
-			}
-		}
     }
 }
