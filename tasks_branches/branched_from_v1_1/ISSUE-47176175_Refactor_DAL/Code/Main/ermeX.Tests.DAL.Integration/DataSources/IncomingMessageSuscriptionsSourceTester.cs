@@ -20,15 +20,15 @@ using System;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.DAL.DataAccess.Repository;
 using ermeX.Entities.Entities;
 using ermeX.Tests.Common.DataAccess;
 
 namespace ermeX.Tests.DAL.Integration.DataSources
 {
     internal class IncomingMessageSuscriptionsSourceTester :
-        DataSourceTesterBase<IncomingMessageSuscriptionsDataSource, IncomingMessageSuscription>
+        DataSourceTesterBase<Repository<IncomingMessageSuscription>, IncomingMessageSuscription>
     {
         private static readonly Guid _suscriptionHandlerId = Guid.NewGuid();
         private static readonly DateTime _updateTime = new DateTime(2012, 2, 5, 7, 8, 9, 330);

@@ -20,8 +20,7 @@ using System;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.DataSources;
-using ermeX.DAL.DataAccess.Helpers;
+using ermeX.DAL.DataAccess.Repository;
 using ermeX.Entities.Entities;
 using ermeX.Tests.Common.DataAccess;
 
@@ -29,7 +28,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 {
     //[TestFixture]
     internal class OutgoingMessageSuscriptionsSourceTester :
-        UpdatableByExternalComponentsTester<OutgoingMessageSuscriptionsDataSource, OutgoingMessageSuscription>
+        UpdatableByExternalComponentsTester<Repository<OutgoingMessageSuscription>, OutgoingMessageSuscription>
     {
         private static readonly Guid _componentId = Guid.NewGuid(); //TODO: CHECK IF ITS REDUNDANT
         private static readonly DateTime _updateTime = new DateTime(2010, 12, 12, 12, 12, 12, 330);

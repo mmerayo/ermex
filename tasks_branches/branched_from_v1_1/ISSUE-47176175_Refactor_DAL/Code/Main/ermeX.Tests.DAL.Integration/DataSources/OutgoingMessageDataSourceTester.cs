@@ -20,8 +20,8 @@ using System;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.DAL.DataAccess.Repository;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
@@ -30,7 +30,7 @@ using ermeX.Tests.Common.Dummies;
 namespace ermeX.Tests.DAL.Integration.DataSources
 {
     //[TestFixture]
-    internal class OutgoingMessageDataSourceTester : DataSourceTesterBase<OutgoingMessagesDataSource, OutgoingMessage>
+    internal class OutgoingMessageDataSourceTester : DataSourceTesterBase<Repository<OutgoingMessage>, OutgoingMessage>
     {
        
         private readonly DateTime TimePublished = new DateTime(2010, 2, 3, 1, 2, 3, 330);
