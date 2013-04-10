@@ -21,22 +21,24 @@ namespace ermeX.DAL.DataAccess.Repository
 	{
 		private readonly Guid _localComponentId;
 		private readonly IUnitOfWorkFactory _factory;
+		private readonly IExpressionHelper<TEntity> _expressionHelper;
 
 		[Inject]
 		public Repository(IComponentSettings settings, 
-			IUnitOfWorkFactory factory)
+			IUnitOfWorkFactory factory,IExpressionHelper<TEntity> expressionHelper )
 		{
 			if (settings.ComponentId==Guid.Empty)
 				throw new ArgumentEmptyException("localComponentId");
 			if (factory == null) throw new ArgumentNullException("factory");
 			_localComponentId = settings.ComponentId;
 			_factory = factory;
+			_expressionHelper = expressionHelper;
 		}
 
-		private Expression<Func<TEntity, bool>> ModelToConcreteExpressionConversion(Expression<Func<object, bool>> expression)
-		{
-			return obj => expression.Compile().Invoke(obj);
-		}
+		//private Expression<Func<TEntity, bool>> ModelToConcreteExpressionConversion(Expression<Func<object, bool>> expression)
+		//{
+		//    return obj => expression.Compile().Invoke(obj);
+		//}
 
 		public bool Save(TEntity entity)
 		{
@@ -58,7 +60,7 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		private bool CanSave(TEntity entity)
 		{
-			var item = SingleOrDefault(ModelToConcreteExpressionConversion(entity.FindByBizKey));
+			var item = SingleOrDefault(_expressionHelper.GetFindByBizKey(entity));
 			return item == null || item.Version <= entity.Version; //Can save if it didnt exist or the version is newer
 		}
 		

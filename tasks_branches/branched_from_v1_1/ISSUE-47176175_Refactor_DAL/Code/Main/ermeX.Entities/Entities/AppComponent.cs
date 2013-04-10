@@ -135,13 +135,6 @@ namespace ermeX.Entities.Entities
 			return result;
 		}
 
-		internal override Expression<Func<object, bool>> FindByBizKey
-		{
-			get
-			{
-				return x => ((AppComponent) x).ComponentOwner == ComponentOwner
-				            && ((AppComponent) x).ComponentId == this.ComponentId;
-			}
-		}
+		
 	}
 }

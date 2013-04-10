@@ -113,15 +113,5 @@ namespace ermeX.Entities.Entities
 
         #endregion
 
-	    internal override Expression<Func<object, bool>> FindByBizKey
-	    {
-			get
-			{
-				return x => ((OutgoingMessageSuscription) x).ComponentOwner == ComponentOwner
-				            && ((OutgoingMessageSuscription) x).BizMessageFullTypeName == BizMessageFullTypeName
-				            && ((OutgoingMessageSuscription) x).Component == Component;
-
-			}
-	    }
     }
 }

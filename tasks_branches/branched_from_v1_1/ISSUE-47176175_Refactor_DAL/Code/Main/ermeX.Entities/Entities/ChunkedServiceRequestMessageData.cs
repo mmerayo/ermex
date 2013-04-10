@@ -142,17 +142,6 @@ namespace ermeX.Entities.Entities
             return result;
         }
 
-	    internal override Expression<Func<object, bool>> FindByBizKey
-	    {
-		    get
-		    {
-			    return x =>
-
-			           ((ChunkedServiceRequestMessageData) x).ComponentOwner == this.ComponentOwner
-			           && ((ChunkedServiceRequestMessageData) x).CorrelationId == this.CorrelationId
-			           && ((ChunkedServiceRequestMessageData) x).Order == Order;
-
-		    }
-	    }
+	   
     }
 }

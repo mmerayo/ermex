@@ -117,6 +117,18 @@ namespace ermeX.DAL.IoC
 			//QueryDatabase
 			Bind<IQueryHelperFactory>().To<QueryHelperFactory>().InSingletonScope();
 
+			//ExpressionsHelper
+	        var expressionsHelper = new ExpressionsHelper();
+
+	        Bind<IExpressionHelper<AppComponent>>().ToConstant(expressionsHelper);
+			Bind<IExpressionHelper<ChunkedServiceRequestMessageData>>().ToConstant(expressionsHelper);
+			Bind<IExpressionHelper<ConnectivityDetails>>().ToConstant(expressionsHelper);
+			Bind<IExpressionHelper<IncomingMessage>>().ToConstant(expressionsHelper);
+			Bind<IExpressionHelper<IncomingMessageSuscription>>().ToConstant(expressionsHelper);
+			Bind<IExpressionHelper<OutgoingMessage>>().ToConstant(expressionsHelper);
+			Bind<IExpressionHelper<OutgoingMessageSuscription>>().ToConstant(expressionsHelper);
+			Bind<IExpressionHelper<ServiceDetails>>().ToConstant(expressionsHelper);
+
 			//Notifiers
 			//TODO: REMOVE
 			Bind<IDomainObservable>().To<DomainNotifier>().InSingletonScope();
