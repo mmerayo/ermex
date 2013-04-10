@@ -79,7 +79,8 @@ namespace ermeX.Tests.Common.DataAccess
 
 		private bool _createDatabase = true;
 
-		private class CompSettings:IComponentSettings
+		//TODO: MOVE FROM HERE, CLEAN,...
+		public class CompSettings:IComponentSettings
 		{
 			public Guid ComponentId { get; set; }
 			public int CacheExpirationSeconds { get; private set; }
@@ -126,13 +127,18 @@ namespace ermeX.Tests.Common.DataAccess
 			return GetUnitOfWorkFactory(dataAccessSettings);
 		}
 
-		public TResult GetRepository<TResult>(IComponentSettings componentSettings, IDalSettings dalSettings)
+		//public TResult GetRepository<TResult>(IDalSettings dalSettings)
+		//{
+		//    var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+		//    return GetRepository<TResult>(unitOfWorkFactory);
+		//}
+
+		public TResult GetRepository<TResult>(IUnitOfWorkFactory factory)
 		{
-			if (componentSettings == null) throw new ArgumentNullException("componentSettings");
+			if (factory == null) throw new ArgumentNullException("factory");
 
-			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
 
-			var result = ObjectBuilder.FromType<TResult>(typeof(TResult), componentSettings, unitOfWorkFactory);
+			var result = ObjectBuilder.FromType<TResult>(typeof(TResult), GetComponentSettings(), factory, new ExpressionsHelper());
 			return result;
 		}
 
@@ -182,10 +188,11 @@ namespace ermeX.Tests.Common.DataAccess
 			return GetDataHelper(engineType).DataAccessSettings;
 		}
 
-		protected TResult GetRepository<TResult>(DbEngineType engineType)
-		{
-			return GetRepository<TResult>(GetComponentSettings(),GetDataHelper(engineType).DataAccessSettings);
-		}
+		//TODO: REMOVE THIS AS IT NEEDS THE FACTORY CREATED AND USE THE OVERLOAD, SEE TEST BASE
+		//protected TResult GetRepository<TResult>(DbEngineType engineType)
+		//{
+		//    return GetRepository<TResult>(GetDataHelper(engineType).DataAccessSettings);
+		//}
 
 		protected IWriteIncommingQueue GetIncommingQueueWritter(DbEngineType dbEngine)
 		{

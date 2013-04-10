@@ -67,8 +67,8 @@ namespace ermeX.Common.ILGeneration
 		{
 			throw new InvalidOperationException(
 				string.Format(
-					"Could not access to the constructor of the type {0}. The constructor must be made either 1)public or 2)internal when the assembly exposes internals to {1}. Exception:{2}",
-					typeImpl.FullName, Assembly.GetExecutingAssembly().FullName, exception.ToString()));
+					"Could not access to the constructor of the type {0}. The constructor must be made either 1)public or 2)internal when the assembly exposes internals to {1}.{3} Exception:{2}",
+					typeImpl.FullName, Assembly.GetExecutingAssembly().FullName, exception, Environment.NewLine));
 		}
 
 
