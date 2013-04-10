@@ -25,7 +25,7 @@ using ermeX.Bus.Interfaces;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Services;
+using ermeX.DAL.Interfaces.Services;
 using ermeX.Entities.Entities;
 
 using ermeX.LayerMessages;

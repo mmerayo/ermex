@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using ermeX.Entities.Entities;
 
-namespace ermeX.Domain.Queues
+namespace ermeX.DAL.Interfaces.Queues
 {
 	interface IReadOutgoingQueue
 	{

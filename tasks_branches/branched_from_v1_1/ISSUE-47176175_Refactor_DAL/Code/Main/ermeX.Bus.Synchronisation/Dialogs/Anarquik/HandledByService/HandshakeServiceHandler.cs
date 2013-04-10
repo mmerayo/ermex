@@ -30,8 +30,8 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Component;
-using ermeX.Domain.Connectivity;
+using ermeX.DAL.Interfaces.Component;
+using ermeX.DAL.Interfaces.Connectivity;
 using ermeX.Entities.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService

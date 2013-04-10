@@ -30,7 +30,7 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Component;
+using ermeX.DAL.Interfaces.Component;
 using ermeX.Entities.Entities;
 using ermeX.Threading.Queues;
 

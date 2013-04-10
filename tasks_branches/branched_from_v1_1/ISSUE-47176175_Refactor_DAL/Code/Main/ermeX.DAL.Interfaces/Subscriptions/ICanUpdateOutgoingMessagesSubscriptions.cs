@@ -1,6 +1,6 @@
 using ermeX.Entities.Entities;
 
-namespace ermeX.Domain.Subscriptions
+namespace ermeX.DAL.Interfaces.Subscriptions
 {
 	internal interface ICanUpdateOutgoingMessagesSubscriptions
 	{

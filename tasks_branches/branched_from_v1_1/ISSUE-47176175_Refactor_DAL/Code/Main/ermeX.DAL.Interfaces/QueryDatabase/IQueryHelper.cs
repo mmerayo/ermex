@@ -3,7 +3,7 @@ using System.Data;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.Entities.Base;
 
-namespace ermeX.Domain.QueryDatabase
+namespace ermeX.DAL.Interfaces.QueryDatabase
 {
 	//TODO: TO BE REMOVED, AND ONLY USED BY THE VERSION UPGRADER
 	internal interface IQueryHelper

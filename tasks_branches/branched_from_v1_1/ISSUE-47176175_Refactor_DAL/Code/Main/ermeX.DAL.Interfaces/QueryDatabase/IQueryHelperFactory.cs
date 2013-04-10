@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.Interfaces;
+﻿using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 
-namespace ermeX.Domain.QueryDatabase
+namespace ermeX.DAL.Interfaces.QueryDatabase
 {
 	internal interface IQueryHelperFactory
 	{

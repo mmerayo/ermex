@@ -28,7 +28,6 @@ using ermeX.ConfigurationManagement.Settings.Data;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.Providers;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.QueryDatabase;
 using ermeX.Entities.Entities;
 
 using ermeX.LayerMessages;

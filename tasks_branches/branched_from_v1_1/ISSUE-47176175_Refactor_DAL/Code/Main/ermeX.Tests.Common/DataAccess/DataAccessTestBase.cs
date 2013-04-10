@@ -1,226 +1,280 @@
-//// /*---------------------------------------------------------------------------------------*/
-////        Licensed to the Apache Software Foundation (ASF) under one
-////        or more contributor license agreements.  See the NOTICE file
-////        distributed with this work for additional information
-////        regarding copyright ownership.  The ASF licenses this file
-////        to you under the Apache License, Version 2.0 (the
-////        "License"); you may not use this file except in compliance
-////        with the License.  You may obtain a copy of the License at
-//// 
-////          http://www.apache.org/licenses/LICENSE-2.0
-//// 
-////        Unless required by applicable law or agreed to in writing,
-////        software distributed under the License is distributed on an
-////        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-////        KIND, either express or implied.  See the License for the
-////        specific language governing permissions and limitations
-////        under the License.
-//// /*---------------------------------------------------------------------------------------*/
-//using System;
-//using System.Collections.Generic;
-//using Common.Logging;
-//using Common.Logging.Simple;
-//using NUnit.Framework;
-//using ermeX.Common;
-//using ermeX.ConfigurationManagement.IoC;
-//using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-//using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-//using ermeX.DAL.Commands.QueryDatabase;
-//using ermeX.DAL.Commands.Queues;
-//using ermeX.DAL.DataAccess.Helpers;
+// /*---------------------------------------------------------------------------------------*/
+//        Licensed to the Apache Software Foundation (ASF) under one
+//        or more contributor license agreements.  See the NOTICE file
+//        distributed with this work for additional information
+//        regarding copyright ownership.  The ASF licenses this file
+//        to you under the Apache License, Version 2.0 (the
+//        "License"); you may not use this file except in compliance
+//        with the License.  You may obtain a copy of the License at
+// 
+//          http://www.apache.org/licenses/LICENSE-2.0
+// 
+//        Unless required by applicable law or agreed to in writing,
+//        software distributed under the License is distributed on an
+//        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+//        KIND, either express or implied.  See the License for the
+//        specific language governing permissions and limitations
+//        under the License.
+// /*---------------------------------------------------------------------------------------*/
+using System;
+using System.Collections.Generic;
+using Common.Logging;
+using Common.Logging.Simple;
+using NUnit.Framework;
+using ermeX.Common;
+using ermeX.ConfigurationManagement.IoC;
+using ermeX.ConfigurationManagement.Settings;
+using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
+using ermeX.ConfigurationManagement.Settings.Data.Schemas;
+using ermeX.DAL.Commands.Component;
+using ermeX.DAL.Commands.QueryDatabase;
+using ermeX.DAL.Commands.Queues;
+using ermeX.DAL.Commands.Subscriptions;
+using ermeX.DAL.DataAccess.Helpers;
+using ermeX.DAL.DataAccess.Providers;
+using ermeX.DAL.DataAccess.Repository;
+using ermeX.DAL.DataAccess.UoW;
+using ermeX.DAL.Interfaces.Component;
+using ermeX.DAL.Interfaces.QueryDatabase;
+using ermeX.DAL.Interfaces.Queues;
+using ermeX.DAL.Interfaces.Subscriptions;
+using ermeX.Entities.Entities;
+using ermeX.NonMerged;
+
+namespace ermeX.Tests.Common.DataAccess
+{
+	[TestFixture]
+	internal abstract class DataAccessTestBase
+	{
+		#region infrastructure
+
+		protected readonly Guid LocalComponentId = Guid.NewGuid();
+		protected readonly Guid RemoteComponentId = Guid.NewGuid();
+
+		#region Datahelper
+
+		protected const string SchemaName = "[ClientComponent]";
+		private readonly object _syncLock = new object();
+
+		private readonly Dictionary<DbEngineType, DataAccessTestHelper> _dataHelpers =
+			new Dictionary<DbEngineType, DataAccessTestHelper>(Enum.GetValues(typeof(DbEngineType)).Length);
+
+		protected DataAccessTestHelper GetDataHelper(DbEngineType engineType)
+		{
+			if (!_dataHelpers.ContainsKey(engineType))
+				lock (_syncLock)
+					if (!_dataHelpers.ContainsKey(engineType))
+						_dataHelpers.Add(engineType,
+										 new DataAccessTestHelper(engineType, CreateDatabase, SchemaName, LocalComponentId,
+																  RemoteComponentId));
+
+			return _dataHelpers[engineType];
+		}
 
 
-//using ermeX.Domain.Observers;
-//using ermeX.Domain.QueryDatabase;
-//using ermeX.Domain.Queues;
-//using ermeX.Domain.Subscriptions;
-//using ermeX.NonMerged;
 
-//namespace ermeX.Tests.Common.DataAccess
-//{
-//    [TestFixture]
-//    internal abstract class DataAccessTestBase
-//    {
-//        #region infrastructure
+		#endregion
 
-//        protected readonly Guid LocalComponentId = Guid.NewGuid();
-//        protected readonly Guid RemoteComponentId = Guid.NewGuid();
+		#endregion
 
-//        #region Datahelper
+		private bool _createDatabase = true;
 
-//        protected const string SchemaName = "[ClientComponent]";
-//        private readonly object _syncLock = new object();
+		private class CompSettings:IComponentSettings
+		{
+			public Guid ComponentId { get; set; }
+			public int CacheExpirationSeconds { get; private set; }
+			public Type ConfigurationManagerType { get; private set; }
+			public bool DevLoggingActive { get; private set; }
+		}
 
-//        private readonly Dictionary<DbEngineType, DataAccessTestHelper> _dataHelpers =
-//            new Dictionary<DbEngineType, DataAccessTestHelper>(Enum.GetValues(typeof (DbEngineType)).Length);
+		protected IComponentSettings GetComponentSettings()
+		{
+				return new CompSettings{ComponentId = LocalComponentId};
+		}
 
-//        protected DataAccessTestHelper GetDataHelper(DbEngineType engineType)
-//        {
-//            if (!_dataHelpers.ContainsKey(engineType))
-//                lock (_syncLock)
-//                    if (!_dataHelpers.ContainsKey(engineType))
-//                        _dataHelpers.Add(engineType,
-//                                         new DataAccessTestHelper(engineType, CreateDatabase, SchemaName, LocalComponentId,
-//                                                                  RemoteComponentId));
+		protected IQueryHelperFactory QueryHelperFactory
+		{
+			get { return new QueryHelperFactory(); }
+		}
 
-//            return _dataHelpers[engineType];
-//        }
+		protected virtual List<DataSchemaType> SchemasToApply
+		{
+			get
+			{
+				return new List<DataSchemaType>
+                    {
+                        DataSchemaType.ClientComponent
+                    };
+			}
+		}
 
-//        #endregion
+		private readonly Dictionary<DbEngineType, ISessionProvider> _sessionProviders =
+			new Dictionary<DbEngineType, ISessionProvider>();
 
-//        #endregion
+		public IUnitOfWorkFactory GetUnitOfWorkFactory(IDalSettings dalSettings)
+		{
+			if (!_sessionProviders.ContainsKey(dalSettings.ConfigurationSourceType))
+				lock (_sessionProviders)
+					if (!_sessionProviders.ContainsKey(dalSettings.ConfigurationSourceType))
+						_sessionProviders.Add(dalSettings.ConfigurationSourceType, new SessionProvider(dalSettings));
 
-//        private bool _createDatabase = true;
+			return new UnitOfWorkFactory(_sessionProviders[dalSettings.ConfigurationSourceType]);
+		}
+		public IUnitOfWorkFactory GetUnitOfWorkFactory(DbEngineType dbEngineType)
+		{
+			var dataAccessSettings = GetDataHelper(dbEngineType).DataAccessSettings;
+			return GetUnitOfWorkFactory(dataAccessSettings);
+		}
 
-//        protected IQueryHelperFactory QueryHelperFactory
-//        {
-//            get { return new QueryHelperFactory(); }
-//        }
+		public TResult GetRepository<TResult>(IComponentSettings componentSettings, IDalSettings dalSettings)
+		{
+			if (componentSettings == null) throw new ArgumentNullException("componentSettings");
 
-//        protected virtual List<DataSchemaType> SchemasToApply
-//        {
-//            get
-//            {
-//                return new List<DataSchemaType>
-//                    {
-//                        DataSchemaType.ClientComponent
-//                    };
-//            }
-//        }
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
 
-//        /// <summary>
-//        /// specifies if the test db provider creates a new database
-//        /// </summary>
-//        protected bool CreateDatabase
-//        {
-//            get { return _createDatabase; }
-//            set { _createDatabase = value; }
-//        }
+			var result = ObjectBuilder.FromType<TResult>(typeof(TResult), componentSettings, unitOfWorkFactory);
+			return result;
+		}
 
-//        [TestFixtureTearDown]
-//        public virtual void OnFixtureTearDown()
-//        {
-//            foreach (var value in _dataHelpers.Values)
-//            {
-//                value.Dispose();
-//            }
-//        }
+		/// <summary>
+		/// specifies if the test db provider creates a new database
+		/// </summary>
+		protected bool CreateDatabase
+		{
+			get { return _createDatabase; }
+			set { _createDatabase = value; }
+		}
 
-//        [TearDown]
-//        public virtual void OnTearDown()
-//        {
-//            foreach (var value in _dataHelpers.Values)
-//            {
-//                value.ClearData();
-//            }
-//        }
+		[TestFixtureTearDown]
+		public virtual void OnFixtureTearDown()
+		{
+			foreach (var value in _dataHelpers.Values)
+			{
+				value.Dispose();
+			}
+		}
 
-//        private DataSourcesFactory _dataSourcesFactory = null;
+		[TearDown]
+		public virtual void OnTearDown()
+		{
+			foreach (var value in _dataHelpers.Values)
+			{
+				value.ClearData();
+			}
+		}
 
-//        [SetUp]
-//        public virtual void OnStartUp()
-//        {
-//            if (LogManager.Adapter is NoOpLoggerFactoryAdapter)
-//                LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
-//        }
 
-//        [TestFixtureSetUp]
-//        public virtual void OnFixtureSetup()
-//        {
-//            ResolveUnmerged.Init();
-//            _dataSourcesFactory = new DataSourcesFactory();
-//        }
+		[SetUp]
+		public virtual void OnStartUp()
+		{
+			if (LogManager.Adapter is NoOpLoggerFactoryAdapter)
+				LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
+		}
 
-//        private readonly Dictionary<DbEngineType, DataAccessExecutor> _dataAccessExecutors =
-//            new Dictionary<DbEngineType, DataAccessExecutor>();
+		[TestFixtureSetUp]
+		public virtual void OnFixtureSetup()
+		{
+			ResolveUnmerged.Init();
+		}
 
-//        protected DataAccessExecutor GetdataAccessExecutor(DbEngineType engineType)
-//        {
-//            if (!_dataAccessExecutors.ContainsKey(engineType))
-//            {
-//                var dataAccessExecutor = new DataAccessExecutor(GetDataHelper(engineType).DataAccessSettings);
-//                _dataAccessExecutors.Add(engineType, dataAccessExecutor);
-//            }
-//            return _dataAccessExecutors[engineType];
-//        }
+		protected IDalSettings GetDalSettings(DbEngineType engineType)
+		{
+			return GetDataHelper(engineType).DataAccessSettings;
+		}
 
-//        protected TResult GetDataSource<TResult>(DbEngineType engineType)
-//        {
-//            return _dataSourcesFactory.GetDataSource<TResult>(engineType, GetdataAccessExecutor(engineType),
-//                                                              LocalComponentId);
-//        }
+		protected TResult GetRepository<TResult>(DbEngineType engineType)
+		{
+			return GetRepository<TResult>(GetComponentSettings(),GetDataHelper(engineType).DataAccessSettings);
+		}
 
-//        private class DataSourcesFactory
-//        {
-//            private readonly Dictionary<DbEngineType, Dictionary<Type, object>> _dataSourcesCache =
-//                new Dictionary<DbEngineType, Dictionary<Type, object>>();
+		protected IWriteIncommingQueue GetIncommingQueueWritter(DbEngineType dbEngine)
+		{
+			var dataSource = GetRepository<Repository<IncomingMessage>>(dbEngine);
+			var dalSettings = GetDalSettings(dbEngine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			var componentSettings = GetComponentSettings();
+			return new IncommingQueueWriter(dataSource,unitOfWorkFactory,componentSettings);
+		}
 
-//            public TResult GetDataSource<TResult>(DbEngineType engineType, DataAccessExecutor executor, Guid componentOwner)
-//            {
-//                if (!_dataSourcesCache.ContainsKey(engineType))
-//                    _dataSourcesCache.Add(engineType, new Dictionary<Type, object>());
+		protected IReadIncommingQueue GetIncommingQueueReader(DbEngineType dbEngine)
+		{
+			var dataSource = GetRepository<Repository<IncomingMessage>>(dbEngine);
+			var dalSettings = GetDalSettings(dbEngine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			var componentSettings = GetComponentSettings();
+			return new ReaderIncommingQueue(dataSource, unitOfWorkFactory, componentSettings);
+		}
 
-//                var dictionary = _dataSourcesCache[engineType];
+		protected ICanUpdateLatency GetLatenciesWritter(DbEngineType dbEngine)
+		{
+			var dataSource = GetRepository<Repository<AppComponent>>(dbEngine);
+			var dalSettings = GetDalSettings(dbEngine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			return new LatencyUpdater(dataSource, unitOfWorkFactory);
+		}
 
-//                if (!dictionary.ContainsKey(typeof (TResult)))
-//                {
-//                    var fromType = ObjectBuilder.FromType<TResult>(typeof (TResult), executor.DalSettings, componentOwner, executor);
-//                    dictionary.Add(typeof (TResult), fromType);
-//                }
-//                return (TResult) dictionary[typeof (TResult)];
-//            }
-//        }
+		protected ICanReadLatency GetLatenciesReader(DbEngineType dbEngine)
+		{
+			var dataSource = GetRepository<Repository<AppComponent>>(dbEngine);
+			var dalSettings = GetDalSettings(dbEngine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
 
-//        protected IWriteIncommingQueue GetIncommingQueueWritter(DbEngineType dbEngine)
-//        {
-//            var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngine);
-//            return new IncommingQueueWriter(dataSource);
-//        }
+			return new LatencyReader(dataSource,unitOfWorkFactory);
+		}
 
-//        protected IReadIncommingQueue GetIncommingQueueReader(DbEngineType dbEngine)
-//        {
-//            var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngine);
-//            return new ReaderIncommingQueue(dataSource);
-//        }
+		protected ICanReadIncommingMessagesSubscriptions GetIncommingMessageSubscriptionsReader(DbEngineType dbEngine)
+		{
+			var dataSource = GetRepository<Repository<IncomingMessageSuscription>>(dbEngine);
+			var dalSettings = GetDalSettings(dbEngine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			var componentSettings = GetComponentSettings();
 
-//        protected ICanUpdateLatency GetLatenciesWritter(DbEngineType dbEngine)
-//        {
-//            return new LatencyUpdater(GetDataSource<AppComponentDataSource>(dbEngine));
-//        }
+			return new CanReadIncommingMessagesSubscriptions(dataSource,unitOfWorkFactory,componentSettings);
+		}
 
-//        protected ICanReadLatency GetLatenciesReader(DbEngineType dbEngine)
-//        {
-//            return new LatencyReader(GetDataSource<AppComponentDataSource>(dbEngine));
-//        }
+		protected ICanReadOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsReader(DbEngineType dbEngine)
+		{
+			var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>(dbEngine);
+			var dalSettings = GetDalSettings(dbEngine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			var componentSettings = GetComponentSettings();
+			return new CanReadOutgoingMessagesSubscriptions(dataSource,unitOfWorkFactory,componentSettings);
+		}
 
-//        protected ICanReadIncommingMessagesSubscriptions GetIncommingMessageSubscriptionsReader(DbEngineType dbEngine)
-//        {
-//            return new CanReadIncommingMessagesSubscriptions(GetDataSource<IncomingMessageSuscriptionsDataSource>(dbEngine));
-//        }
+		//protected ICanUpdateOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsWritter(DbEngineType dbEngine)
+		//{
+		//    var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>(dbEngine);
+		//    var dalSettings = GetDalSettings(dbEngine);
+		//    var unitOfWorkFactory = _dataSourcesFactory.GetUnitOfWorkFactory(dalSettings);
+		//    var componentSettings = GetComponentSettings();
 
-//        protected ICanReadOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsReader(DbEngineType dbEngine)
-//        {
-//            return new CanReadOutgoingMessagesSubscriptions(GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine));
-//        }
+		//    return new CanUpdateOutgoingMessagesSubscriptions(dataSource,);
+		//}
 
-//        protected IWriteOutgoingQueue GetOutgoingMessageSubscriptionsWritter(DbEngineType dbEngine)
-//        {
-//            return new WriteOutgoingQueue(GetDataSource<OutgoingMessagesDataSource>(dbEngine));
-//        }
+		//protected IDomainObservable GetDomainNotifier(DbEngineType dbEngine)
+		//{
+		//    return new DomainNotifier(GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine));
+		//}
 
-//        protected IDomainObservable GetDomainNotifier(DbEngineType dbEngine)
-//        {
-//            return new DomainNotifier(GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine));
-//        }
+		protected IWriteOutgoingQueue GetOutgoingQueueWritter(DbEngineType dbEngine)
+		{
+			var dataSource = GetRepository<Repository<OutgoingMessage>>(dbEngine);
+			var dalSettings = GetDalSettings(dbEngine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			var componentSettings = GetComponentSettings();
 
-//        protected IWriteOutgoingQueue GetOutgoingQueueWritter(DbEngineType dbEngine)
-//        {
-//            return new WriteOutgoingQueue(GetDataSource<OutgoingMessagesDataSource>(dbEngine));
-//        }
+			return new WriteOutgoingQueue(dataSource,unitOfWorkFactory,componentSettings);
+		}
 
-//        protected IReadOutgoingQueue GetOutgoingQueueReader(DbEngineType dbEngine)
-//        {
-//            return new ReaderOutgoingQueue(GetDataSource<OutgoingMessagesDataSource>(dbEngine));
-//        }
-//    }
-//}
+		protected IReadOutgoingQueue GetOutgoingQueueReader(DbEngineType dbEngine)
+		{
+			var dataSource = GetRepository<Repository<OutgoingMessage>>(dbEngine);
+			var dalSettings = GetDalSettings(dbEngine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			var componentSettings = GetComponentSettings();
+
+			return new ReaderOutgoingQueue(dataSource,unitOfWorkFactory,componentSettings);
+		}
+
+	}
+}

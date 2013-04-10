@@ -3,7 +3,7 @@ using Ninject;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UoW;
-using ermeX.Domain.Component;
+using ermeX.DAL.Interfaces.Component;
 using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Commands.Component

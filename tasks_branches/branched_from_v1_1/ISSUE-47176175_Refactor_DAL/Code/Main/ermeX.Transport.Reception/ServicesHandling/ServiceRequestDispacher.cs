@@ -26,7 +26,7 @@ using Common.Logging;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Services;
+using ermeX.DAL.Interfaces.Services;
 using ermeX.Transport.Interfaces;
 using ermeX.Transport.Interfaces.Messages;
 

@@ -6,8 +6,8 @@ using ermeX.DAL.Commands.Observers;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces.Observer;
-using ermeX.Domain.Observers;
-using ermeX.Domain.Subscriptions;
+using ermeX.DAL.Interfaces.Observers;
+using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Commands.Subscriptions

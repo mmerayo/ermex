@@ -1,4 +1,4 @@
-﻿namespace ermeX.Domain.Component
+﻿namespace ermeX.DAL.Interfaces.Component
 {
     internal interface ICanReadLatency
     {

@@ -3,7 +3,7 @@ using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UoW;
-using ermeX.Domain.Queues;
+using ermeX.DAL.Interfaces.Queues;
 using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Commands.Queues

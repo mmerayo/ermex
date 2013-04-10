@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ermeX.Entities.Entities;
 
-namespace ermeX.Domain.Component
+namespace ermeX.DAL.Interfaces.Component
 {
 	internal interface ICanReadComponents
 	{

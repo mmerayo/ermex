@@ -1,6 +1,4 @@
-﻿using ermeX.Entities.Entities;
-
-namespace ermeX.Domain.Observers
+﻿namespace ermeX.DAL.Interfaces.Observers
 {
 	interface IDomainObservable
 	{

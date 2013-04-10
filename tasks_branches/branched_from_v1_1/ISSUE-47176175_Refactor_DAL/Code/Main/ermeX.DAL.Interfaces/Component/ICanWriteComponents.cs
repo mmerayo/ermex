@@ -2,7 +2,7 @@
 using ermeX.ConfigurationManagement.Status;
 using ermeX.Entities.Entities;
 
-namespace ermeX.Domain.Component
+namespace ermeX.DAL.Interfaces.Component
 {
     internal interface ICanWriteComponents
     {

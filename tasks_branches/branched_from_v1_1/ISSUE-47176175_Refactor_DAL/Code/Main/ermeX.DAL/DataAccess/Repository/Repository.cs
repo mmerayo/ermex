@@ -16,7 +16,7 @@ using Ninject;
 
 namespace ermeX.DAL.DataAccess.Repository
 {
-	internal sealed class Repository<TEntity> : IPersistRepository<TEntity>
+	internal class Repository<TEntity> : IPersistRepository<TEntity>
 		 where TEntity : ModelBase
 	{
 		private readonly Guid _localComponentId;

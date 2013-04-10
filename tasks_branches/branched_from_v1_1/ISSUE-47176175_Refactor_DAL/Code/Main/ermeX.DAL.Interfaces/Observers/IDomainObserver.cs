@@ -1,4 +1,4 @@
-namespace ermeX.Domain.Observers
+namespace ermeX.DAL.Interfaces.Observers
 {
 	public enum ObservableAction
 	{
