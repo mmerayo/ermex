@@ -42,27 +42,31 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			int id = InsertRecord(engine);
 			TModel expected;
 			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
+			long expVersion;
+
 			using (var uow = unitOfWorkFactory.Create())
 			{
 				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				expected = target.Single(id);
+
+				Assert.IsTrue(expected.Version != DateTime.MinValue.Ticks);
+
+				expected = GetExpectedWithChanges(expected);
+
+				target.Save(expected);
 				uow.Commit();
 			}
-			Assert.IsTrue(expected.Version != DateTime.MinValue.Ticks);
-
-			expected = GetExpectedWithChanges(expected);
-			long expVersion;
+			//another unit of work
 			using (var uow = unitOfWorkFactory.Create())
 			{
 				var target = GetRepository<TDataSource>(unitOfWorkFactory);
-				target.Save(expected);
-
 				expVersion = expected.Version;
 				expected.Version--;
 
 				target.Save(expected);
 				uow.Commit();
 			}
+			
 			var actual = GetDataHelper(engine).QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
 
 			Assert.AreEqual(expVersion.ToString(), actual.Version.ToString());

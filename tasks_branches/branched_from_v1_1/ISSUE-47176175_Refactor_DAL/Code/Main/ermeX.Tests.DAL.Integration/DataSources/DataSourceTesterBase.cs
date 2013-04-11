@@ -63,7 +63,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			expected.ComponentOwner = LocalComponentId;
 			Assert.IsTrue(expected.Version == DateTime.MinValue.Ticks, "implementation of GetExpected must set version to 0");
 
-			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(engine);
 			using (var uow = unitOfWorkFactory.Create())
 			{
 				var target = GetRepository<TDataSource>(unitOfWorkFactory);

@@ -194,58 +194,45 @@ namespace ermeX.Tests.Common.DataAccess
 		//    return GetRepository<TResult>(GetDataHelper(engineType).DataAccessSettings);
 		//}
 
-		protected IWriteIncommingQueue GetIncommingQueueWritter(DbEngineType dbEngine)
+		protected IWriteIncommingQueue GetIncommingQueueWritter(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<IncomingMessage>>(dbEngine);
-			var dalSettings = GetDalSettings(dbEngine);
-			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
 			var componentSettings = GetComponentSettings();
-			return new IncommingQueueWriter(dataSource,unitOfWorkFactory,componentSettings);
+			return new IncommingQueueWriter(dataSource,factory,componentSettings);
 		}
 
-		protected IReadIncommingQueue GetIncommingQueueReader(DbEngineType dbEngine)
+		protected IReadIncommingQueue GetIncommingQueueReader(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<IncomingMessage>>(dbEngine);
-			var dalSettings = GetDalSettings(dbEngine);
-			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
 			var componentSettings = GetComponentSettings();
-			return new ReaderIncommingQueue(dataSource, unitOfWorkFactory, componentSettings);
+			return new ReaderIncommingQueue(dataSource, factory, componentSettings);
 		}
 
-		protected ICanUpdateLatency GetLatenciesWritter(DbEngineType dbEngine)
+		protected ICanUpdateLatency GetLatenciesWritter(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<AppComponent>>(dbEngine);
-			var dalSettings = GetDalSettings(dbEngine);
-			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
-			return new LatencyUpdater(dataSource, unitOfWorkFactory);
+			var dataSource = GetRepository<Repository<AppComponent>>(factory);
+			return new LatencyUpdater(dataSource, factory);
 		}
 
-		protected ICanReadLatency GetLatenciesReader(DbEngineType dbEngine)
+		protected ICanReadLatency GetLatenciesReader(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<AppComponent>>(dbEngine);
-			var dalSettings = GetDalSettings(dbEngine);
-			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
-
-			return new LatencyReader(dataSource,unitOfWorkFactory);
+			var dataSource = GetRepository<Repository<AppComponent>>(factory);
+			return new LatencyReader(dataSource,factory);
 		}
 
-		protected ICanReadIncommingMessagesSubscriptions GetIncommingMessageSubscriptionsReader(DbEngineType dbEngine)
+		protected ICanReadIncommingMessagesSubscriptions GetIncommingMessageSubscriptionsReader(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<IncomingMessageSuscription>>(dbEngine);
-			var dalSettings = GetDalSettings(dbEngine);
-			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			var dataSource = GetRepository<Repository<IncomingMessageSuscription>>(factory);
 			var componentSettings = GetComponentSettings();
 
-			return new CanReadIncommingMessagesSubscriptions(dataSource,unitOfWorkFactory,componentSettings);
+			return new CanReadIncommingMessagesSubscriptions(dataSource,factory,componentSettings);
 		}
 
-		protected ICanReadOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsReader(DbEngineType dbEngine)
+		protected ICanReadOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsReader(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>(dbEngine);
-			var dalSettings = GetDalSettings(dbEngine);
-			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>(factory);
 			var componentSettings = GetComponentSettings();
-			return new CanReadOutgoingMessagesSubscriptions(dataSource,unitOfWorkFactory,componentSettings);
+			return new CanReadOutgoingMessagesSubscriptions(dataSource,factory,componentSettings);
 		}
 
 		//protected ICanUpdateOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsWritter(DbEngineType dbEngine)
@@ -263,24 +250,20 @@ namespace ermeX.Tests.Common.DataAccess
 		//    return new DomainNotifier(GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine));
 		//}
 
-		protected IWriteOutgoingQueue GetOutgoingQueueWritter(DbEngineType dbEngine)
+		protected IWriteOutgoingQueue GetOutgoingQueueWritter(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<OutgoingMessage>>(dbEngine);
-			var dalSettings = GetDalSettings(dbEngine);
-			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			var dataSource = GetRepository<Repository<OutgoingMessage>>(factory);
 			var componentSettings = GetComponentSettings();
 
-			return new WriteOutgoingQueue(dataSource,unitOfWorkFactory,componentSettings);
+			return new WriteOutgoingQueue(dataSource, factory, componentSettings);
 		}
 
-		protected IReadOutgoingQueue GetOutgoingQueueReader(DbEngineType dbEngine)
+		protected IReadOutgoingQueue GetOutgoingQueueReader(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<OutgoingMessage>>(dbEngine);
-			var dalSettings = GetDalSettings(dbEngine);
-			var unitOfWorkFactory = GetUnitOfWorkFactory(dalSettings);
+			var dataSource = GetRepository<Repository<OutgoingMessage>>(factory);
 			var componentSettings = GetComponentSettings();
 
-			return new ReaderOutgoingQueue(dataSource,unitOfWorkFactory,componentSettings);
+			return new ReaderOutgoingQueue(dataSource, factory, componentSettings);
 		}
 
 	}
