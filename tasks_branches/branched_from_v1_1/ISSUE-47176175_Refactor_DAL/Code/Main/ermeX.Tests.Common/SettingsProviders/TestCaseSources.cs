@@ -24,34 +24,36 @@ using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 
 namespace ermeX.Tests.Common.SettingsProviders
 {
-    class TestCaseSources
-    {
-        public static IEnumerable<DbEngineType> InMemoryDb()
-        {
-            yield return DbEngineType.SqliteInMemory;
-        }
+	internal class TestCaseSources
+	{
+		public static IEnumerable<DbEngineType> InMemoryDb()
+		{
+			yield return DbEngineType.SqliteInMemory;
+		}
 
-        public static IEnumerable<DbEngineType> SqliteDb()
-        {
-            yield return DbEngineType.Sqlite;
-        }
+		public static IEnumerable<DbEngineType> SqliteDb()
+		{
+			yield return DbEngineType.Sqlite;
+		}
 
-        public static IEnumerable<DbEngineType> SqlServerDb()
-        {
-            yield return DbEngineType.SqlServer2008;
-        }
+		public static IEnumerable<DbEngineType> SqlServerDb()
+		{
+			yield return DbEngineType.SqlServer2008;
+		}
 
-        public static IEnumerable<DbEngineType> AllDbs()
-        {
-            //return InMemoryDb();
-            Array enumValues = typeof (DbEngineType).GetEnumValues();
-            return enumValues.Cast<DbEngineType>();
-        }
-        public static IEnumerable<object[]> InMemoryDbWithBool()
-        {
-            yield return new object[] {DbEngineType.SqliteInMemory, true};
-            yield return new object[] {DbEngineType.SqliteInMemory, false};
-        }
+		public static IEnumerable<DbEngineType> AllDbs()
+		{
+			yield return DbEngineType.Sqlite;
+			yield return DbEngineType.SqliteInMemory;
+			//Array enumValues = typeof (DbEngineType).GetEnumValues();
 
-    }
+			//return enumValues.Cast<DbEngineType>();
+		}
+
+		public static IEnumerable<object[]> InMemoryDbWithBool()
+		{
+			yield return new object[] {DbEngineType.SqliteInMemory, true};
+			yield return new object[] {DbEngineType.SqliteInMemory, false};
+		}
+	}
 }
