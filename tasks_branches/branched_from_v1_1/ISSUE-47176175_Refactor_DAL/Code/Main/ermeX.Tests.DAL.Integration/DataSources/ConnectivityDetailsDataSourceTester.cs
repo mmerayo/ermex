@@ -67,10 +67,10 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
 			int idComponent = dataAccessTestHelper.InsertAppComponent(Guid.NewGuid(), LocalComponentId, 0, false, false);
 			AppComponent appComponent;
-			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(engine);
 			using (var uow = unitOfWorkFactory.Create())
 			{
-				var repository = GetRepository<Repository<AppComponent>>(engine);
+				var repository = GetRepository<Repository<AppComponent>>(unitOfWorkFactory);
 				var repo = repository;
 				appComponent = repo.Single(idComponent);
 				uow.Commit();

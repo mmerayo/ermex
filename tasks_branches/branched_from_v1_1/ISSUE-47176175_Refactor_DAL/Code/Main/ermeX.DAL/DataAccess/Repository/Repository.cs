@@ -61,7 +61,11 @@ namespace ermeX.DAL.DataAccess.Repository
 		private bool CanSave(TEntity entity)
 		{
 			var item = SingleOrDefault(_expressionHelper.GetFindByBizKey(entity));
-			return item == null || item.Version <= entity.Version; //Can save if it didnt exist or the version is newer
+			bool result = item == null || item.Version <= entity.Version;
+			if(item!=null)
+				_factory.CurrentSession.Evict(item);
+
+			return result; //Can save if it didnt exist or the version is newer
 		}
 		
 		public bool Save(IEnumerable<TEntity> items)
