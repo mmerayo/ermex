@@ -27,6 +27,8 @@ using NUnit.Framework;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
+using ermeX.DAL.DataAccess.Repository;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
@@ -82,18 +84,24 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
             var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage(new Dummy {Data="theData"}));
 
             //creates subscription
-            var subscriptionsDs = GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine);
+	        IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
+	        var subscriptionsDs = GetRepository<Repository<OutgoingMessageSuscription>>();
             var suscription1 = new OutgoingMessageSuscription()
                 {
                     ComponentOwner = LocalComponentId, BizMessageFullTypeName = typeof (Dummy).FullName, Component = RemoteComponentId
                 };
-            subscriptionsDs.Save(suscription1);
-            var suscription2=new OutgoingMessageSuscription()
-                {
-                    ComponentOwner = LocalComponentId, BizMessageFullTypeName = typeof (Dummy).FullName, Component = Guid.NewGuid()
-                };
-            subscriptionsDs.Save(suscription2);
-            //creates the message as collected
+	        using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
+	        {
+		        subscriptionsDs.Save(suscription1);
+		        var suscription2 = new OutgoingMessageSuscription()
+			        {
+				        ComponentOwner = LocalComponentId,
+				        BizMessageFullTypeName = typeof (Dummy).FullName,
+				        Component = Guid.NewGuid()
+			        };
+		        subscriptionsDs.Save(suscription2);
+	        }
+	        //creates the message as collected
             //the default test set them for one day
             var outgoingMessage = new OutgoingMessage(expected)
                 {
