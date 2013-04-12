@@ -33,7 +33,7 @@ namespace ermeX.DAL.Commands.Queues
 			using (var uow = _factory.Create())
 			{
 				result =
-					_repository.Where(x => x.Status != Message.MessageStatus.SenderFailed)
+					_repository.Where(uow.Session, x => x.Status != Message.MessageStatus.SenderFailed)
 					           .OrderBy(x => x.Tries)
 					           .ThenBy(x => x.CreatedTimeUtc);
 				uow.Commit();
@@ -50,7 +50,7 @@ namespace ermeX.DAL.Commands.Queues
 				DateTime dateTime = DateTime.UtcNow - expirationTime;
 
 				result =
-					_repository.Where(x => x.CreatedTimeUtc <= dateTime)
+					_repository.Where(uow.Session, x => x.CreatedTimeUtc <= dateTime)
 					           .OrderBy(x => x.CreatedTimeUtc);
 				uow.Commit();
 			}
@@ -68,7 +68,7 @@ namespace ermeX.DAL.Commands.Queues
 			using (var uow = _factory.Create())
 			{
 				result =
-					_repository.Any(x => x.MessageId == messageId && x.PublishedTo == destinationComponent);
+					_repository.Any(uow.Session, x => x.MessageId == messageId && x.PublishedTo == destinationComponent);
 				uow.Commit();
 			}
 			return result;
@@ -80,8 +80,8 @@ namespace ermeX.DAL.Commands.Queues
 			using (var uow = _factory.Create())
 			{
 				result = status.Length == 0
-					         ? _repository.FetchAll()
-					         : _repository.Where(x => status.Contains(x.Status));
+					         ? _repository.FetchAll(uow.Session)
+							 : _repository.Where(uow.Session, x => status.Contains(x.Status));
 				uow.Commit();
 			}
 			return result;

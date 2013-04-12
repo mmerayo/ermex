@@ -38,9 +38,9 @@ namespace ermeX.DAL.Commands.Subscriptions
 		{
 			using (var uow = _factory.Create())
 			{
-				if (!_repository.Any(x => x.BizMessageFullTypeName == susbcription.BizMessageFullTypeName
-				                          && x.Component == susbcription.ComponentOwner
-				                          && x.ComponentOwner == _settings.ComponentId))
+				if (!_repository.Any(uow.Session, x => x.BizMessageFullTypeName == susbcription.BizMessageFullTypeName
+				                                && x.Component == susbcription.ComponentOwner
+				                                && x.ComponentOwner == _settings.ComponentId))
 				{
 					var subscriptionToSave = new OutgoingMessageSuscription(susbcription, susbcription.ComponentOwner,
 					                                                        _settings.ComponentId);
@@ -62,18 +62,18 @@ namespace ermeX.DAL.Commands.Subscriptions
 				Expression<Func<OutgoingMessageSuscription, bool>> expression =
 					x => x.Component == susbcription.ComponentOwner && x.BizMessageFullTypeName == susbcription.BizMessageFullTypeName;
 
-				if (!_repository.Any(expression))
+				if (!_repository.Any(uow.Session, expression))
 				{
 					subscriptionToSave.Id = 0;
 					isNew = true;
 				}
 				else
 				{
-					var existing = _repository.Single(expression);
+					var existing = _repository.Single(uow.Session, expression);
 					subscriptionToSave.Id = existing.Id;
 					uow.Session.Evict(existing);
 				}
-				_repository.Save(subscriptionToSave);
+				_repository.Save(uow.Session, subscriptionToSave);
 				uow.Commit();
 
 			}

@@ -66,8 +66,8 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			var unitOfWorkFactory = GetUnitOfWorkFactory(engine);
 			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(unitOfWorkFactory);
-				target.Save(expected);
+				var target = GetRepository<TDataSource>();
+				target.Save(uow.Session, expected);
 				uow.Commit();
 			}
 
@@ -90,8 +90,8 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			TModel expected;
 			using (var uow = factory.Create())
 			{
-				var target = GetRepository<TDataSource>(factory);
-				expected = target.Single(id);
+				var target = GetRepository<TDataSource>();
+				expected = target.Single(uow.Session, id);
 				uow.Commit();
 			}
 			Assert.IsTrue(expected.Version != DateTime.MinValue.Ticks);
@@ -101,8 +101,8 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			Thread.Sleep(50);
 			using (var uow = factory.Create())
 			{
-				var target = GetRepository<TDataSource>(factory);
-				target.Save(expected);
+				var target = GetRepository<TDataSource>();
+				target.Save(uow.Session, expected);
 				uow.Commit();
 			}
 			var dataAccessTestHelper = GetDataHelper(engine);
@@ -122,13 +122,13 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			var factory = GetUnitOfWorkFactory(engine);
 			using (var uow = factory.Create())
 			{
-				var target = GetRepository<TDataSource>(factory);
-				item = target.Single(id);
+				var target = GetRepository<TDataSource>();
+				item = target.Single(uow.Session, id);
 
 				Assert.IsTrue(item.Version != DateTime.MinValue.Ticks);
 				expected = GetExpectedWithChanges(item);
 				expected.ComponentOwner = Guid.NewGuid();
-				target.Save(expected);
+				target.Save(uow.Session, expected);
 				uow.Commit();
 			}
 			DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
@@ -148,8 +148,8 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			var unitOfWorkFactory = GetUnitOfWorkFactory(engine);
 			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(unitOfWorkFactory);
-				target.Save(expected);
+				var target = GetRepository<TDataSource>();
+				target.Save(uow.Session, expected);
 				uow.Commit();
 			}
 			Assert.IsTrue(expected.Id > 0);
@@ -171,10 +171,10 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
 			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(unitOfWorkFactory);
-				TModel item = target.Single(id);
+				var target = GetRepository<TDataSource>();
+				TModel item = target.Single(uow.Session, id);
 				expected = GetExpectedWithChanges(item);
-				target.Save(expected);
+				target.Save(uow.Session, expected);
 				uow.Commit();
 			}
 			var dataAccessTestHelper = GetDataHelper(engine);
@@ -202,8 +202,8 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
 			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(unitOfWorkFactory);
-				target.Remove(x=>x.Id== id);
+				var target = GetRepository<TDataSource>();
+				target.Remove(uow.Session, x => x.Id == id);
 				uow.Commit();
 			}
 			numRecords =
@@ -221,10 +221,10 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
 			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(unitOfWorkFactory);
-				TModel actual = target.Single(id);
+				var target = GetRepository<TDataSource>();
+				TModel actual = target.Single(uow.Session, id);
 				Assert.IsNotNull(actual);
-				target.Remove(actual);
+				target.Remove(uow.Session, actual);
 				uow.Commit();
 			}
 			DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
@@ -243,8 +243,8 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
 			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>(unitOfWorkFactory);
-				actual = target.Single(id);
+				var target = GetRepository<TDataSource>();
+				actual = target.Single(uow.Session, id);
 				Assert.IsNotNull(actual);
 				uow.Commit();
 			}

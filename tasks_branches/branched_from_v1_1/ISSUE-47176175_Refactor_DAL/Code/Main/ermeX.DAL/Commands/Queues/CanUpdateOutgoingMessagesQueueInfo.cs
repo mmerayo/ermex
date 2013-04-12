@@ -27,7 +27,7 @@ namespace ermeX.DAL.Commands.Queues
 			using (var uow = _factory.Create())
 			{
 				DateTime dateTime = DateTime.UtcNow - expirationTime;
-				_repository.Remove(x => x.CreatedTimeUtc <= dateTime);
+				_repository.Remove(uow.Session, x => x.CreatedTimeUtc <= dateTime);
 				uow.Commit();
 			}
 		}
@@ -36,7 +36,7 @@ namespace ermeX.DAL.Commands.Queues
 		{
 			using (var uow = _factory.Create())
 			{
-				_repository.Save(message);
+				_repository.Save(uow.Session, message);
 				uow.Commit();
 			}
 		}

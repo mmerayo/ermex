@@ -25,7 +25,7 @@ namespace ermeX.DAL.Commands.Connectivity
 		    ConnectivityDetails result;
 		    using (var uow = _factory.Create())
 		    {
-			    result=_repository.SingleOrDefault(x=>x.ServerId==componentId);
+				result = _repository.SingleOrDefault(uow.Session, x => x.ServerId == componentId);
 				uow.Commit();
 		    }
 		    return result;

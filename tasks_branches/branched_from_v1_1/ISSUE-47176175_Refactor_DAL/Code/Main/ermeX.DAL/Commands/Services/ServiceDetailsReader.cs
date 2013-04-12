@@ -30,7 +30,7 @@ namespace ermeX.DAL.Commands.Services
 			ServiceDetails result;
 			using (var uow = _factory.Create())
 			{
-				result=_repository.SingleOrDefault(x => x.OperationIdentifier == operationId);
+				result = _repository.SingleOrDefault(uow.Session, x => x.OperationIdentifier == operationId);
 				uow.Commit();
 			}
 			return result;
@@ -41,7 +41,7 @@ namespace ermeX.DAL.Commands.Services
 			ServiceDetails result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.SingleOrDefault(x => x.OperationIdentifier == operationId 
+				result = _repository.SingleOrDefault(uow.Session, x => x.OperationIdentifier == operationId 
 					&& x.Publisher==publisher);
 				uow.Commit();
 			}
@@ -59,7 +59,7 @@ namespace ermeX.DAL.Commands.Services
 			IEnumerable<ServiceDetails> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.Where(x => x.ServiceInterfaceTypeName == interfaceTypeFullName);
+				result = _repository.Where(uow.Session, x => x.ServiceInterfaceTypeName == interfaceTypeFullName);
 				uow.Commit();
 			}
 			return result;
@@ -71,7 +71,7 @@ namespace ermeX.DAL.Commands.Services
 			IEnumerable<ServiceDetails> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.Where(x => x.ServiceInterfaceTypeName == interfaceTypeName 
+				result = _repository.Where(uow.Session, x => x.ServiceInterfaceTypeName == interfaceTypeName 
 					&& x.ServiceImplementationMethodName==methodName);
 				uow.Commit();
 			}
@@ -84,7 +84,7 @@ namespace ermeX.DAL.Commands.Services
 			ServiceDetails result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.SingleOrDefault(x => x.ServiceInterfaceTypeName == interfaceTypeName
+				result = _repository.SingleOrDefault(uow.Session, x => x.ServiceInterfaceTypeName == interfaceTypeName
 					&& x.ServiceImplementationMethodName == methodName && x.Publisher==publisherComponent);
 				uow.Commit();
 			}
@@ -96,7 +96,7 @@ namespace ermeX.DAL.Commands.Services
 			IEnumerable<ServiceDetails> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.Where(x => x.Publisher == _settings.ComponentId
+				result = _repository.Where(uow.Session, x => x.Publisher == _settings.ComponentId
 					&& x.IsSystemService == false );
 				uow.Commit();
 			}

@@ -30,7 +30,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IEnumerable<IncomingMessageSuscription> result;
 			using (var uow = _factory.Create())
 			{
-				result=_repository.Where(x => x.BizMessageFullTypeName == bizMessageType);
+				result = _repository.Where(uow.Session, x => x.BizMessageFullTypeName == bizMessageType);
 				uow.Commit();
 			}
 			return result;
@@ -41,7 +41,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IncomingMessageSuscription result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.SingleOrDefault(x => x.SuscriptionHandlerId == suscriptionHandlerId);
+				result = _repository.SingleOrDefault(uow.Session, x => x.SuscriptionHandlerId == suscriptionHandlerId);
 				uow.Commit();
 			}
 
@@ -53,7 +53,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IncomingMessageSuscription result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.SingleOrDefault(x => x.HandlerType == handlerType.FullName && x.BizMessageFullTypeName==messageType.FullName);
+				result = _repository.SingleOrDefault(uow.Session, x => x.HandlerType == handlerType.FullName && x.BizMessageFullTypeName == messageType.FullName);
 				uow.Commit();
 			}
 
@@ -65,7 +65,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IEnumerable<IncomingMessageSuscription> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.FetchAll();
+				result = _repository.FetchAll(uow.Session);
 				uow.Commit();
 			}
 			return result;
