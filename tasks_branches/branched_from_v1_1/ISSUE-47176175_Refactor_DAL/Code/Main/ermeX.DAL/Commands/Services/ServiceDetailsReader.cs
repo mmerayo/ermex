@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Repository;
@@ -59,7 +60,7 @@ namespace ermeX.DAL.Commands.Services
 			IEnumerable<ServiceDetails> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.Where(uow.Session, x => x.ServiceInterfaceTypeName == interfaceTypeFullName);
+				result = _repository.Where(uow.Session, x => x.ServiceInterfaceTypeName == interfaceTypeFullName).ToList();
 				uow.Commit();
 			}
 			return result;
@@ -71,8 +72,8 @@ namespace ermeX.DAL.Commands.Services
 			IEnumerable<ServiceDetails> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.Where(uow.Session, x => x.ServiceInterfaceTypeName == interfaceTypeName 
-					&& x.ServiceImplementationMethodName==methodName);
+				result = _repository.Where(uow.Session, x => x.ServiceInterfaceTypeName == interfaceTypeName
+					&& x.ServiceImplementationMethodName == methodName).ToList();
 				uow.Commit();
 			}
 			return result;
@@ -97,7 +98,7 @@ namespace ermeX.DAL.Commands.Services
 			using (var uow = _factory.Create())
 			{
 				result = _repository.Where(uow.Session, x => x.Publisher == _settings.ComponentId
-					&& x.IsSystemService == false );
+					&& x.IsSystemService == false).ToList();
 				uow.Commit();
 			}
 			return result;

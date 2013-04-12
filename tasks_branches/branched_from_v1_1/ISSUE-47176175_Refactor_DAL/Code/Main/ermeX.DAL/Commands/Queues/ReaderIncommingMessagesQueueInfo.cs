@@ -56,7 +56,7 @@ namespace ermeX.DAL.Commands.Queues
 			{
 				result = _repository
 					.Where(uow.Session,x => x.Status == Message.MessageStatus.ReceiverReceived)
-					.OrderBy(x => x.CreatedTimeUtc);
+					.OrderBy(x => x.CreatedTimeUtc).ToList();
 				uow.Commit();
 			}
 			return result;
@@ -69,7 +69,7 @@ namespace ermeX.DAL.Commands.Queues
 			{
 				result = _repository
 					.Where(uow.Session, x => status.Contains(x.Status))
-					.OrderBy(x => x.CreatedTimeUtc);
+					.OrderBy(x => x.CreatedTimeUtc).ToList();
 				uow.Commit();
 			}
 			return result;
@@ -95,7 +95,7 @@ namespace ermeX.DAL.Commands.Queues
 			IEnumerable<IncomingMessage> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.Where(uow.Session, x => x.Status == Message.MessageStatus.ReceiverReceived && x.SuscriptionHandlerId == Guid.Empty);
+				result = _repository.Where(uow.Session, x => x.Status == Message.MessageStatus.ReceiverReceived && x.SuscriptionHandlerId == Guid.Empty).ToList();
 				uow.Commit();
 			}
 			return result;

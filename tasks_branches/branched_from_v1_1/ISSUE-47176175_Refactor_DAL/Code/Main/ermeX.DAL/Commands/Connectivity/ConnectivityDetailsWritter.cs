@@ -46,6 +46,17 @@ namespace ermeX.DAL.Commands.Connectivity
 
 		public ConnectivityDetails CreateComponentConnectivityDetails(ushort port, bool asLocal = true)
 		{
+			ConnectivityDetails componentConnectivityDetails;
+			using (var uow = _factory.Create())
+			{
+				componentConnectivityDetails = CreateComponentConnectivityDetails(uow, port, asLocal);
+				uow.Commit();
+			}
+			return componentConnectivityDetails;
+		}
+
+		public ConnectivityDetails CreateComponentConnectivityDetails(IUnitOfWork unitOfWork, ushort port, bool asLocal = true)
+		{
 			var connectivityDetails = new ConnectivityDetails
 			{
 				ComponentOwner = _settings.ComponentId,
@@ -54,11 +65,9 @@ namespace ermeX.DAL.Commands.Connectivity
 				Port = port,
 				IsLocal = asLocal
 			};
-			using (var uow = _factory.Create())
-			{
-				_repository.Save(uow.Session, connectivityDetails);
-				uow.Commit();
-			}
+			
+				_repository.Save(unitOfWork.Session, connectivityDetails);
+			
 			Debug.Assert(connectivityDetails.Id!=0,"The id was not populated");
 			return connectivityDetails;
 		}

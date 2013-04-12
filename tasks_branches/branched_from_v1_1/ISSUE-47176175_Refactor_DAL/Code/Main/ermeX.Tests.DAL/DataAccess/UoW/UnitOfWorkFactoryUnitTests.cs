@@ -29,20 +29,11 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 			var implementor = factory.Create();
 
 			Assert.IsNotNull(implementor);
-			Assert.IsNotNull(factory.CurrentSession);
-			Assert.AreEqual(FlushMode.Commit, factory.CurrentSession.FlushMode);
+			Assert.IsNotNull(implementor.Session);
+			Assert.AreEqual(FlushMode.Commit, implementor.Session.FlushMode);
 			_testContext.VerifySessionWasCreated();
 		}
-
-		[Test]
-		public void AccessingCurrentSession_WhenNoSession_Throws()
-		{
-			Assert.Throws<InvalidOperationException>(() =>
-				{
-					var s = _testContext.Factory.CurrentSession;
-				});
-		}
-
+		
 		private class TestContext
 		{
 			Mock<ISession> _mockSession = null;

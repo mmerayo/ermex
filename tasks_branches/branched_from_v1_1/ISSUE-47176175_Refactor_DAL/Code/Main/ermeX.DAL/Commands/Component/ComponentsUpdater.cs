@@ -28,7 +28,7 @@ namespace ermeX.DAL.Commands.Component
 				localComponent.IsRunning = newStatus == ComponentStatus.Running;
 				localComponent.ExchangedDefinitions = exchangedDefinitions;
 
-				Save(localComponent);
+				_repository.Save(uow.Session, localComponent);
 				uow.Commit();
 			}
 

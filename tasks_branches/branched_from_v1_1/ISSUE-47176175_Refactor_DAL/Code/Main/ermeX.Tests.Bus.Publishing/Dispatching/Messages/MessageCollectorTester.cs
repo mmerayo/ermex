@@ -26,7 +26,7 @@ using NUnit.Framework;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.DataSources;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces.Observer;
 using ermeX.DAL.Interfaces.Observers;
 using ermeX.Entities.Entities;
@@ -44,7 +44,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
 		private readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
 
-		private MessageCollector GetInstance(DbEngineType dbEngine,
+		private MessageCollector GetInstance(IUnitOfWorkFactory factory,
 		                                     Action<MessageDistributor.MessageDistributorMessage> messageReceived,
 		                                     out IMessageDistributor mockedDistributor)
 		{
@@ -53,9 +53,9 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			mock.Setup(x => x.EnqueueItem(It.IsAny<MessageDistributor.MessageDistributorMessage>())).Callback(messageReceived);
 			mockedDistributor = mock.Object;
 			return new MessageCollector(settings, mockedDistributor,
-			                            base.GetOutgoingQueueReader(dbEngine),
-			                            base.GetOutgoingMessageSubscriptionsWritter(dbEngine),
-			                            base.GetDomainNotifier(dbEngine));
+			                            GetOutgoingQueueReader(factory),
+			                            GetOutgoingQueueWritter(factory),
+			                            GetDomainNotifier());
 
 		}
 
@@ -77,6 +77,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 		public void ComponentStopsOnDisposal(DbEngineType dbEngine)
 		{
 			IMessageDistributor mockedDistributor;
+
 			var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor);
 			target.Start();
 			target.Dispose();

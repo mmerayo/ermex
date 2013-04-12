@@ -27,10 +27,10 @@ namespace ermeX.DAL.Commands.Component
 
 	    public IEnumerable<AppComponent> FetchAll()
 	    {
-		    IQueryable<AppComponent> result;
+		    List<AppComponent> result;
 		    using (var uow=_factory.Create())
 		    {
-			    result = Repository.FetchAll(uow.Session);
+			    result = Repository.FetchAll(uow.Session).ToList();
 			    uow.Commit();
 		    }
 		    return result;
@@ -38,10 +38,10 @@ namespace ermeX.DAL.Commands.Component
 
 	    public IEnumerable<AppComponent> FetchOtherComponents()
         {
-			IQueryable<AppComponent> result;
+			List<AppComponent> result;
 			using (var uow = _factory.Create())
 			{
-				result = Repository.Where(uow.Session,x=>x.ComponentId!=_settings.ComponentId);
+				result = Repository.Where(uow.Session,x=>x.ComponentId!=_settings.ComponentId).ToList();
 				uow.Commit();
 			}
 			return result;
@@ -49,12 +49,12 @@ namespace ermeX.DAL.Commands.Component
 
 	    public IEnumerable<AppComponent> FetchOtherComponentsNotExchangedDefinitions(bool running = false)
 	    {
-		    IQueryable<AppComponent> result;
+		    List<AppComponent> result;
 		    using (var uow = _factory.Create())
 		    {
 			    result = Repository.Where(uow.Session,x => x.ComponentId != _settings.ComponentId
 			                                   && !x.ExchangedDefinitions
-			                                   && x.IsRunning == running);
+			                                   && x.IsRunning == running).ToList();
 			    uow.Commit();
 		    }
 		    return result;

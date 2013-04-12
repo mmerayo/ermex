@@ -27,6 +27,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.Commands.Component;
+using ermeX.DAL.Commands.Observers;
 using ermeX.DAL.Commands.QueryDatabase;
 using ermeX.DAL.Commands.Queues;
 using ermeX.DAL.Commands.Subscriptions;
@@ -35,6 +36,7 @@ using ermeX.DAL.DataAccess.Providers;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces.Component;
+using ermeX.DAL.Interfaces.Observers;
 using ermeX.DAL.Interfaces.QueryDatabase;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Interfaces.Subscriptions;
@@ -227,20 +229,19 @@ namespace ermeX.Tests.Common.DataAccess
 			return new CanReadOutgoingMessagesSubscriptions(dataSource,factory,componentSettings);
 		}
 
-		//protected ICanUpdateOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsWritter(DbEngineType dbEngine)
-		//{
-		//    var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>(dbEngine);
-		//    var dalSettings = GetDalSettings(dbEngine);
-		//    var unitOfWorkFactory = _dataSourcesFactory.GetUnitOfWorkFactory(dalSettings);
-		//    var componentSettings = GetComponentSettings();
+		protected ICanUpdateOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsWritter(IUnitOfWorkFactory factory)
+		{
+		    var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>();
+		    var componentSettings = GetComponentSettings();
 
-		//    return new CanUpdateOutgoingMessagesSubscriptions(dataSource,);
-		//}
+		    return new CanUpdateOutgoingMessagesSubscriptions(dataSource,factory,componentSettings,GetDomainNotifier());
+		}
 
-		//protected IDomainObservable GetDomainNotifier(DbEngineType dbEngine)
-		//{
-		//    return new DomainNotifier(GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine));
-		//}
+		protected IDomainObservable GetDomainNotifier()
+		{
+			//var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>();
+			return new DomainNotifier();
+		}
 
 		protected IWriteOutgoingQueue GetOutgoingQueueWritter(IUnitOfWorkFactory factory)
 		{

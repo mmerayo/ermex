@@ -35,7 +35,7 @@ namespace ermeX.DAL.Commands.Queues
 				result =
 					_repository.Where(uow.Session, x => x.Status != Message.MessageStatus.SenderFailed)
 					           .OrderBy(x => x.Tries)
-					           .ThenBy(x => x.CreatedTimeUtc);
+					           .ThenBy(x => x.CreatedTimeUtc).ToList();
 				uow.Commit();
 			}
 			return result;
@@ -51,7 +51,7 @@ namespace ermeX.DAL.Commands.Queues
 
 				result =
 					_repository.Where(uow.Session, x => x.CreatedTimeUtc <= dateTime)
-					           .OrderBy(x => x.CreatedTimeUtc);
+					           .OrderBy(x => x.CreatedTimeUtc).ToList();
 				uow.Commit();
 			}
 			return result;
@@ -80,8 +80,8 @@ namespace ermeX.DAL.Commands.Queues
 			using (var uow = _factory.Create())
 			{
 				result = status.Length == 0
-					         ? _repository.FetchAll(uow.Session)
-							 : _repository.Where(uow.Session, x => status.Contains(x.Status));
+					         ? _repository.FetchAll(uow.Session).ToList()
+							 : _repository.Where(uow.Session, x => status.Contains(x.Status)).ToList();
 				uow.Commit();
 			}
 			return result;
