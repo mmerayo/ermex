@@ -79,7 +79,7 @@ namespace ermeX.DAL.IoC
 			BindRepository<ServiceDetails>();
 			BindRepository<ChunkedServiceRequestMessageData>();
 
-			Bind<ISessionProvider>().To<SessionProvider>();
+	        Bind<ISessionProvider>().To<SessionProvider>().InSingletonScope();
 	        Bind<IUnitOfWorkFactory>().To<UnitOfWorkFactory>();
 
 			Bind<ICanReadComponents>().To<ComponentsReader>().InSingletonScope();

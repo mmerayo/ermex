@@ -35,6 +35,7 @@ using ermeX.DAL.DataAccess.Mappings;
 using Config = NHibernate.Cfg.Configuration;
 namespace ermeX.DAL.DataAccess.Providers
 {
+	//TODO: TO BE INJECTED
     internal static class NHibernateBootstrapper
     {
 #if DEBUG

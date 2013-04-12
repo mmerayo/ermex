@@ -36,9 +36,9 @@ namespace ermeX.DAL.Commands.Services
 			using (var uow = _factory.Create())
 			{
 				Expression<Func<ServiceDetails, bool>> expression = x => x.OperationIdentifier == svc.OperationIdentifier && x.Publisher == svc.Publisher;
-				if (_repository.Any(expression))
+				if (_repository.Any(uow.Session, expression))
 				{
-					ServiceDetails serviceDetails = _repository.Single(expression);
+					ServiceDetails serviceDetails = _repository.Single(uow.Session, expression);
 					svc.Id = serviceDetails.Id;
 					uow.Session.Evict(serviceDetails);
 				}
@@ -46,7 +46,7 @@ namespace ermeX.DAL.Commands.Services
 				{
 					svc.Id = 0;
 				}
-				_repository.Save(svc);
+				_repository.Save(uow.Session, svc);
 				uow.Commit();
 			}
 		}
@@ -55,7 +55,7 @@ namespace ermeX.DAL.Commands.Services
 		{
 			using (var uow = _factory.Create())
 			{
-				_repository.Save(serviceDetails);
+				_repository.Save(uow.Session, serviceDetails);
 				uow.Commit();
 			}
 		}

@@ -20,32 +20,24 @@ namespace ermeX.DAL.DataAccess.Repository
 		 where TEntity : ModelBase
 	{
 		private readonly Guid _localComponentId;
-		private readonly IUnitOfWorkFactory _factory;
 		private readonly IExpressionHelper<TEntity> _expressionHelper;
 
 		[Inject]
 		public Repository(IComponentSettings settings, 
-			IUnitOfWorkFactory factory,IExpressionHelper<TEntity> expressionHelper )
+			IExpressionHelper<TEntity> expressionHelper )
 		{
 			if (settings.ComponentId==Guid.Empty)
 				throw new ArgumentEmptyException("localComponentId");
-			if (factory == null) throw new ArgumentNullException("factory");
 			_localComponentId = settings.ComponentId;
-			_factory = factory;
 			_expressionHelper = expressionHelper;
 		}
 
-		//private Expression<Func<TEntity, bool>> ModelToConcreteExpressionConversion(Expression<Func<object, bool>> expression)
-		//{
-		//    return obj => expression.Compile().Invoke(obj);
-		//}
-
-		public bool Save(TEntity entity)
+		public bool Save(ISession session, TEntity entity)
 		{
 			if (entity.ComponentOwner == Guid.Empty)
 				throw new ArgumentEmptyException("entity.ComponentOwner");
 
-			if (!CanSave(entity))
+			if (!CanSave(session,entity))
 				return false;
 
 
@@ -54,100 +46,106 @@ namespace ermeX.DAL.DataAccess.Repository
 
 			entity.ComponentOwner = _localComponentId;
 
-			_factory.CurrentSession.SaveOrUpdate(entity);
+			session.SaveOrUpdate(entity);
 			return true;
 		}
 
-		private bool CanSave(TEntity entity)
+		private bool CanSave(ISession session,TEntity entity)
 		{
-			var item = SingleOrDefault(_expressionHelper.GetFindByBizKey(entity));
+			var item = SingleOrDefault(session,_expressionHelper.GetFindByBizKey(entity));
 			bool result = item == null || item.Version <= entity.Version;
 			if(item!=null)
-				_factory.CurrentSession.Evict(item);
+				session.Evict(item);
 
 			return result; //Can save if it didnt exist or the version is newer
 		}
 		
-		public bool Save(IEnumerable<TEntity> items)
+		public bool Save(ISession session, IEnumerable<TEntity> items)
 		{
 			foreach (TEntity item in items)
-				Save(item);
+				Save(session, item);
 			return true;
 		}
 
-		public void RemoveAll()
+		public void RemoveAll(ISession session)
 		{
-			var fetchAll = FetchAll();
-			Remove(fetchAll);
+			var fetchAll = FetchAll(session);
+			Remove(session, fetchAll);
 		}
 
-		public void Remove(int id)
+		public void Remove(ISession session)
 		{
-			var toRemove = Single(id);
-			Remove(toRemove);
+			Remove(session, 0);
 		}
 
-		public void Remove(TEntity entity)
+		public void Remove(ISession session, int id)
 		{
-			_factory.CurrentSession.Delete(entity);
+			var toRemove = Single(session, id);
+			Remove(session, toRemove);
 		}
 
-		public void Remove(IEnumerable<TEntity> entities)
+		public void Remove(ISession session, TEntity entity)
+		{
+			session.Delete(entity);
+		}
+
+		public void Remove(ISession session, IEnumerable<TEntity> entities)
 		{
 			foreach (var entity in entities)
-				Remove(entity);
+				Remove(session, entity);
 		}
 
-		public void Remove(Expression<Func<TEntity, bool>> expression)
+		public void Remove(ISession session,Expression<Func<TEntity, bool>> expression)
 		{
-			IQueryable<TEntity> queryable = Where(expression);
-			Remove(queryable);
+			IQueryable<TEntity> queryable = Where(session,expression);
+			Remove(session, queryable);
 		}
 
-		public IQueryable<TEntity> FetchAll(bool includingOtherComponents = false)
+		public IQueryable<TEntity> FetchAll(ISession session, bool includingOtherComponents = false)
 		{
-			var absolute = _factory.CurrentSession.Query<TEntity>();
+			var absolute = session.Query<TEntity>();
 			if(!includingOtherComponents)
 				return absolute.Where(IsLocalPredicate);
 			return absolute;
 		}
 
-		public TEntity Single(int id)
+		public TEntity Single(ISession session, int id)
 		{
-			var result = _factory.CurrentSession.Get<TEntity>(id);
+			var result = session.Get<TEntity>(id);
 			if (result.ComponentOwner != _localComponentId)
 				throw new InvalidOperationException("The id is owned by another component");
 			return result;
 		}
 
-		public TEntity Single(Expression<Func<TEntity, bool>> expression)
+		public TEntity Single(ISession session, Expression<Func<TEntity, bool>> expression)
 		{
-			return Where(expression).Single();
+			return Where(session,expression).Single();
 		}
 
-		public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> expression)
+
+		public TEntity SingleOrDefault(ISession session, Expression<Func<TEntity, bool>> expression)
 		{
-			return Where(expression).SingleOrDefault();
+			return Where(session,expression).SingleOrDefault();
 		}
 
-		public TResult GetMax<TResult>(string propertyName)
+		public TResult GetMax<TResult>(ISession session, string propertyName)
 		{
 			return
-				_factory.CurrentSession.QueryOver<TEntity>()
+				session.QueryOver<TEntity>()
 				        .Where(IsLocalPredicate)
 				        .Select(Projections.Max(propertyName))
 				        .SingleOrDefault<TResult>();
 
 		}
 
-		public bool Any(Expression<Func<TEntity, bool>> expression)
+		public bool Any(ISession session, Expression<Func<TEntity, bool>> expression)
 		{
-			return Where(expression).Any();
+			return Where(session,expression).Any();
 		}
 
-		public IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> expression)
+		public IQueryable<TEntity> Where(ISession session, Expression<Func<TEntity, bool>> expression)
 		{
-			return _factory.CurrentSession.Query<TEntity>().Where(IsLocalPredicate).Where(expression); //TODO: IMPROVE USING AND BETWEEN BOTH EXPRESSIONS
+			return session.Query<TEntity>().Where(IsLocalPredicate).Where(expression); //TODO: IMPROVE USING AND BETWEEN BOTH EXPRESSIONS
 		}
 
 		private Expression<Func<TEntity, bool>> IsLocalPredicate
@@ -155,11 +153,10 @@ namespace ermeX.DAL.DataAccess.Repository
 			get { return x=>x.ComponentOwner==_localComponentId; }
 		}
 
-		public int Count(Expression<Func<TEntity, bool>> expression)
+		public int Count(ISession session, Expression<Func<TEntity, bool>> expression)
 		{
-			return Where(expression).Count();
+			return Where(session,expression).Count();
 		}
-
 		
 	}
 }

@@ -83,9 +83,9 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			var unitOfWorkFactory = GetUnitOfWorkFactory(engine);
 			using (var uow = unitOfWorkFactory.Create())
 			{
-				var repository = GetRepository<Repository<AppComponent>>(unitOfWorkFactory);
+				var repository = GetRepository<Repository<AppComponent>>();
 				var repo = repository;
-				appComponent = repo.Single(idComponent);
+				appComponent = repo.Single(uow.Session, idComponent);
 				uow.Commit();
 			}
 

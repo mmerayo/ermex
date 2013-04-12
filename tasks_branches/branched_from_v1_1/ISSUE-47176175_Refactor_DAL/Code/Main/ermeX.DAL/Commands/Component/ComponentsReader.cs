@@ -30,7 +30,7 @@ namespace ermeX.DAL.Commands.Component
 		    IQueryable<AppComponent> result;
 		    using (var uow=_factory.Create())
 		    {
-			    result = Repository.FetchAll();
+			    result = Repository.FetchAll(uow.Session);
 			    uow.Commit();
 		    }
 		    return result;
@@ -41,7 +41,7 @@ namespace ermeX.DAL.Commands.Component
 			IQueryable<AppComponent> result;
 			using (var uow = _factory.Create())
 			{
-				result = Repository.Where(x=>x.ComponentId!=_settings.ComponentId);
+				result = Repository.Where(uow.Session,x=>x.ComponentId!=_settings.ComponentId);
 				uow.Commit();
 			}
 			return result;
@@ -52,7 +52,7 @@ namespace ermeX.DAL.Commands.Component
 		    IQueryable<AppComponent> result;
 		    using (var uow = _factory.Create())
 		    {
-			    result = Repository.Where(x => x.ComponentId != _settings.ComponentId
+			    result = Repository.Where(uow.Session,x => x.ComponentId != _settings.ComponentId
 			                                   && !x.ExchangedDefinitions
 			                                   && x.IsRunning == running);
 			    uow.Commit();
@@ -65,7 +65,7 @@ namespace ermeX.DAL.Commands.Component
 		    AppComponent result;
 			using (var uow = _factory.Create())
 			{
-				result = Repository.SingleOrDefault(x=>x.ComponentId==componentId);
+				result = Repository.SingleOrDefault(uow.Session,x=>x.ComponentId==componentId);
 				uow.Commit();
 			}
 			return result;

@@ -27,10 +27,10 @@ namespace ermeX.DAL.Commands.Subscriptions
 		public IEnumerable<OutgoingMessageSuscription> GetByMessageType(string bizMessageType)
 		{
 			IEnumerable<OutgoingMessageSuscription> result;
-			using (var ouw = _factory.Create())
+			using (var uow = _factory.Create())
 			{
-				result=_repository.Where(x => x.BizMessageFullTypeName == bizMessageType);
-				ouw.Commit();
+				result = _repository.Where(uow.Session, x => x.BizMessageFullTypeName == bizMessageType);
+				uow.Commit();
 			}
 			return result;
 
@@ -39,10 +39,10 @@ namespace ermeX.DAL.Commands.Subscriptions
 		public IEnumerable<OutgoingMessageSuscription> FetchAll()
 		{
 			IEnumerable<OutgoingMessageSuscription> result;
-			using (var ouw = _factory.Create())
+			using (var uow = _factory.Create())
 			{
-				result = _repository.FetchAll();
-				ouw.Commit();
+				result = _repository.FetchAll(uow.Session);
+				uow.Commit();
 			}
 			return result;
 		}

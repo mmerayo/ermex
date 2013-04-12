@@ -24,7 +24,7 @@ namespace ermeX.DAL.Commands.Component
 		{
 			using (var uow = _factory.Create())
 			{
-				var localComponent = _repository.Single(x => x.ComponentId == componentId);
+				var localComponent = _repository.Single(uow.Session, x => x.ComponentId == componentId);
 				localComponent.IsRunning = newStatus == ComponentStatus.Running;
 				localComponent.ExchangedDefinitions = exchangedDefinitions;
 
@@ -38,7 +38,7 @@ namespace ermeX.DAL.Commands.Component
 		{
 			using (var uow = _factory.Create())
 			{
-				_repository.Save(component);
+				_repository.Save(uow.Session, component);
 				uow.Commit();
 			}
 		}

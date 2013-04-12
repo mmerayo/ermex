@@ -82,14 +82,14 @@ namespace ermeX.DAL.Commands.Component
 					IsRunning = _statusManager.CurrentStatus == ComponentStatus.Running,
 					ExchangedDefinitions = true
 				};
-			_componentsRepository.Save(appComponent);
+			_componentsRepository.Save(_factory.CurrentSession, appComponent);
 		}
 
 
 		private bool AddComponentFromRemote(Guid remoteComponentId)
 		{
 
-			var appComponent = _componentsRepository.SingleOrDefault(x => x.ComponentId == remoteComponentId);
+			var appComponent = _componentsRepository.SingleOrDefault(_factory.CurrentSession, x => x.ComponentId == remoteComponentId);
 
 			bool isNew = false;
 			if (appComponent == null)
@@ -105,21 +105,21 @@ namespace ermeX.DAL.Commands.Component
 			}
 
 			appComponent.ExchangedDefinitions = false;
-			_componentsRepository.Save(appComponent);
+			_componentsRepository.Save(_factory.CurrentSession, appComponent);
 			return isNew;
 		}
 
 		private void AddConnectivityDetailsFromRemote(Guid remoteComponentId, string ip, int port)
 		{
 			ConnectivityDetails connectivityDetails =
-				_connectivityRepository.SingleOrDefault(x => x.ServerId == remoteComponentId) ?? new ConnectivityDetails();
+				_connectivityRepository.SingleOrDefault(_factory.CurrentSession, x => x.ServerId == remoteComponentId) ?? new ConnectivityDetails();
 			connectivityDetails.ComponentOwner = _settings.ComponentId;
 			connectivityDetails.Ip = ip;
 			connectivityDetails.Port = port;
 			connectivityDetails.ServerId = remoteComponentId;
 			connectivityDetails.Version = DateTime.MinValue.Ticks + 1;
 
-			_connectivityRepository.Save(connectivityDetails);
+			_connectivityRepository.Save(_factory.CurrentSession, connectivityDetails);
 
 		}
 
@@ -163,7 +163,7 @@ namespace ermeX.DAL.Commands.Component
 					IsSystemService = true,
 					Version = DateTime.MinValue.Ticks + 1 //to force to update from node
 				};
-			_serviceDetailsRepository.Save(serviceDetails);
+			_serviceDetailsRepository.Save(_factory.CurrentSession, serviceDetails);
 
 		}
 	}
