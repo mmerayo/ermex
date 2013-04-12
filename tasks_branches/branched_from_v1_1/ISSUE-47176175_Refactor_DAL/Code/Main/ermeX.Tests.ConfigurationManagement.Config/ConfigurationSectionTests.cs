@@ -26,7 +26,6 @@ using Common.Logging.Simple;
 using NUnit.Framework;
 using ermeX.Configuration;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.Domain.IoC;
 using ermeX.Tests.Common.Networking;
 
 namespace ermeX.Tests.ConfigurationManagement.Config
