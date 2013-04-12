@@ -106,7 +106,7 @@ namespace ermeX.Transport
 			// CreateConnectivityDetails(IPAddress.Loopback.ToString(),true);
 
 			//IP4
-			ConnectivityDetailsWritter.CreateComponentConnectivityDetails(Settings.TcpPort, false);
+			ConnectivityDetailsWritter.CreateComponentConnectivityDetails(Settings.TcpPort, asLocal: false);
 		}
 
 		protected abstract IServer GetServer(ConnectivityDetails item);

@@ -21,16 +21,6 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 		}
 
 		[Test]
-		public void Can_Dispose_UnitOfWorkImplementor()
-		{
-			_testContext.WithDisposeExpected();
-			var target = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session);
-			target.Dispose();
-
-			_testContext.VerifyAll();
-		}
-
-		[Test]
 		public void BeginsTransactionProperly([Values(true,false) ]bool started)
 		{
 			_testContext.WithTransactionStarted(started);
@@ -68,13 +58,7 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 				get { return _mockSession.Object; }
 			}
 
-			public void WithDisposeExpected()
-			{
-				_mockFactory.Setup(x => x.DisposeUnitOfWork(It.IsAny<UnitOfWorkImplementor>())).Verifiable();
-				_mockSession.Setup(x => x.Dispose()).Verifiable();
-				WithTransactionStarted(false);
-			}
-
+			
 		
 			public void WithTransactionStarted(bool started)
 			{

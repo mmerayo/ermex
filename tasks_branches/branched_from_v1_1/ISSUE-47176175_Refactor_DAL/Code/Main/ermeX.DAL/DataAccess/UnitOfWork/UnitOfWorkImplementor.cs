@@ -19,10 +19,17 @@ namespace ermeX.DAL.DataAccess.UoW
 
 		public void Dispose()
 		{
-			_factory.DisposeUnitOfWork(this);
-			if (_transaction != null)
-				_transaction.Dispose();
-			_session.Dispose();
+			Dispose(true);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_transaction != null)
+					_transaction.Dispose();
+				_session.Dispose();
+			}
 		}
 
 		private IGenericTransaction BeginTransaction(IsolationLevel isolationLevel)

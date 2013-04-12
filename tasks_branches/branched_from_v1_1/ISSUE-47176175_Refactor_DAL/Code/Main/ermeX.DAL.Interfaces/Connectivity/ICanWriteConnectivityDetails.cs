@@ -6,7 +6,7 @@ namespace ermeX.DAL.Interfaces.Connectivity
 	interface ICanWriteConnectivityDetails
 	{
 		void RemoveLocalComponentDetails();
-		ConnectivityDetails CreateComponentConnectivityDetails(ushort port, bool asLocal=true);
+		ConnectivityDetails CreateComponentConnectivityDetails(ushort port, bool asLocal = true);
 		void RemoveComponentDetails(Guid componentId);
 	}
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Repository;
@@ -29,7 +30,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IEnumerable<OutgoingMessageSuscription> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.Where(uow.Session, x => x.BizMessageFullTypeName == bizMessageType);
+				result = _repository.Where(uow.Session, x => x.BizMessageFullTypeName == bizMessageType).ToList();
 				uow.Commit();
 			}
 			return result;
@@ -41,7 +42,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IEnumerable<OutgoingMessageSuscription> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.FetchAll(uow.Session);
+				result = _repository.FetchAll(uow.Session).ToList();
 				uow.Commit();
 			}
 			return result;

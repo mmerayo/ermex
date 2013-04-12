@@ -82,37 +82,37 @@ namespace ermeX.DAL.IoC
 	        Bind<ISessionProvider>().To<SessionProvider>().InSingletonScope();
 	        Bind<IUnitOfWorkFactory>().To<UnitOfWorkFactory>();
 
-			Bind<ICanReadComponents>().To<ComponentsReader>().InSingletonScope();
-			Bind<ICanWriteComponents>().To<ComponentsUpdater>().InSingletonScope();
-			Bind<ICanReadLatency>().To<LatencyReader>().InSingletonScope();
-			Bind<ICanUpdateLatency>().To<LatencyUpdater>().InSingletonScope();
-			Bind<IRegisterComponents>().To<ComponentsRegistrator>().InSingletonScope();
+			Bind<ICanReadComponents>().To<ComponentsReader>();
+			Bind<ICanWriteComponents>().To<ComponentsUpdater>();
+			Bind<ICanReadLatency>().To<LatencyReader>();
+			Bind<ICanUpdateLatency>().To<LatencyUpdater>();
+			Bind<IRegisterComponents>().To<ComponentsRegistrator>();
 
 			//connectivity
-			Bind<ICanReadConnectivityDetails>().To<ConnectivityDetailsReader>().InSingletonScope();
-			Bind<ICanWriteConnectivityDetails>().To<ConnectivityDetailsWritter>().InSingletonScope();
+			Bind<ICanReadConnectivityDetails>().To<ConnectivityDetailsReader>();
+			Bind<ICanWriteConnectivityDetails>().To<ConnectivityDetailsWritter>();
 
 			//Messages
-			Bind<ICanReadChunkedMessages>().To<ChunkedMessagesReader>().InSingletonScope();
-			Bind<ICanWriteChunkedMessages>().To<ChunkedMessagesWriter>().InSingletonScope();
+			Bind<ICanReadChunkedMessages>().To<ChunkedMessagesReader>();
+			Bind<ICanWriteChunkedMessages>().To<ChunkedMessagesWriter>();
 
 			//queues
 
-			Bind<IReadOutgoingQueue>().To<ReaderOutgoingQueue>().InSingletonScope();
-			Bind<IWriteOutgoingQueue>().To<WriteOutgoingQueue>().InSingletonScope();
+			Bind<IReadOutgoingQueue>().To<ReaderOutgoingQueue>();
+			Bind<IWriteOutgoingQueue>().To<WriteOutgoingQueue>();
 
-			Bind<IReadIncommingQueue>().To<ReaderIncommingQueue>().InSingletonScope();
-			Bind<IWriteIncommingQueue>().To<IncommingQueueWriter>().InSingletonScope();
+			Bind<IReadIncommingQueue>().To<ReaderIncommingQueue>();
+			Bind<IWriteIncommingQueue>().To<IncommingQueueWriter>();
 
 			//service details
-			Bind<ICanReadServiceDetails>().To<ServiceDetailsReader>().InSingletonScope();
-			Bind<ICanWriteServiceDetails>().To<ServiceDetailsWriter>().InSingletonScope();
+			Bind<ICanReadServiceDetails>().To<ServiceDetailsReader>();
+			Bind<ICanWriteServiceDetails>().To<ServiceDetailsWriter>();
 
 			//Subscriptions
-			Bind<ICanReadOutgoingMessagesSubscriptions>().To<CanReadOutgoingMessagesSubscriptions>().InSingletonScope();
-			Bind<ICanReadIncommingMessagesSubscriptions>().To<CanReadIncommingMessagesSubscriptions>().InSingletonScope();
-			Bind<ICanUpdateOutgoingMessagesSubscriptions>().To<CanUpdateOutgoingMessagesSubscriptions>().InSingletonScope();
-			Bind<ICanUpdateIncommingMessagesSubscriptions>().To<CanUpdateIncommingMessagesSubscriptions>().InSingletonScope();
+			Bind<ICanReadOutgoingMessagesSubscriptions>().To<CanReadOutgoingMessagesSubscriptions>();
+			Bind<ICanReadIncommingMessagesSubscriptions>().To<CanReadIncommingMessagesSubscriptions>();
+			Bind<ICanUpdateOutgoingMessagesSubscriptions>().To<CanUpdateOutgoingMessagesSubscriptions>();
+			Bind<ICanUpdateIncommingMessagesSubscriptions>().To<CanUpdateIncommingMessagesSubscriptions>();
 
 			//QueryDatabase
 			Bind<IQueryHelperFactory>().To<QueryHelperFactory>().InSingletonScope();

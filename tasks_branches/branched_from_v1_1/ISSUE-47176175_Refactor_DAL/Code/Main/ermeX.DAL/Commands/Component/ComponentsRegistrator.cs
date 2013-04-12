@@ -1,8 +1,10 @@
 using System;
+using NHibernate;
 using Ninject;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Status;
+using ermeX.DAL.Commands.Connectivity;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UoW;
 using ermeX.DAL.Interfaces.Component;
@@ -47,9 +49,9 @@ namespace ermeX.DAL.Commands.Component
 			bool result;
 			using (var uow = _factory.Create())
 			{
-				result = AddComponentFromRemote(remoteComponentId);
-				AddConnectivityDetailsFromRemote(remoteComponentId, ip, port);
-				RegisterSystemServices(remoteComponentId);
+				result = AddComponentFromRemote(uow.Session,remoteComponentId);
+				AddConnectivityDetailsFromRemote(uow.Session,remoteComponentId, ip, port);
+				RegisterSystemServices(uow.Session,remoteComponentId);
 
 				uow.Commit();
 			}
@@ -62,18 +64,19 @@ namespace ermeX.DAL.Commands.Component
 		{
 			using (var uow = _factory.Create())
 			{
-				CreateLocalAppComponent();
+				CreateLocalAppComponent(uow.Session);
 
-				_connectivityDetailsWritter.CreateComponentConnectivityDetails(port,true);
+				//TODO: CREATE LOCAL INTERFACE THAT ACCEPTS UOWS
+				((ConnectivityDetailsWritter)_connectivityDetailsWritter).CreateComponentConnectivityDetails(uow, port, true);
 
-				RegisterSystemServices(_settings.ComponentId);
+				RegisterSystemServices(uow.Session,_settings.ComponentId);
 				uow.Commit();
 			}
 		}
 
 		
 
-		private void CreateLocalAppComponent()
+		private void CreateLocalAppComponent(ISession session)
 		{
 			var appComponent = new AppComponent
 				{
@@ -82,14 +85,14 @@ namespace ermeX.DAL.Commands.Component
 					IsRunning = _statusManager.CurrentStatus == ComponentStatus.Running,
 					ExchangedDefinitions = true
 				};
-			_componentsRepository.Save(_factory.CurrentSession, appComponent);
+			_componentsRepository.Save(session, appComponent);
 		}
 
 
-		private bool AddComponentFromRemote(Guid remoteComponentId)
+		private bool AddComponentFromRemote(ISession session,Guid remoteComponentId)
 		{
 
-			var appComponent = _componentsRepository.SingleOrDefault(_factory.CurrentSession, x => x.ComponentId == remoteComponentId);
+			var appComponent = _componentsRepository.SingleOrDefault(session, x => x.ComponentId == remoteComponentId);
 
 			bool isNew = false;
 			if (appComponent == null)
@@ -105,43 +108,43 @@ namespace ermeX.DAL.Commands.Component
 			}
 
 			appComponent.ExchangedDefinitions = false;
-			_componentsRepository.Save(_factory.CurrentSession, appComponent);
+			_componentsRepository.Save(session, appComponent);
 			return isNew;
 		}
 
-		private void AddConnectivityDetailsFromRemote(Guid remoteComponentId, string ip, int port)
+		private void AddConnectivityDetailsFromRemote(ISession session,Guid remoteComponentId, string ip, int port)
 		{
 			ConnectivityDetails connectivityDetails =
-				_connectivityRepository.SingleOrDefault(_factory.CurrentSession, x => x.ServerId == remoteComponentId) ?? new ConnectivityDetails();
+				_connectivityRepository.SingleOrDefault(session, x => x.ServerId == remoteComponentId) ?? new ConnectivityDetails();
 			connectivityDetails.ComponentOwner = _settings.ComponentId;
 			connectivityDetails.Ip = ip;
 			connectivityDetails.Port = port;
 			connectivityDetails.ServerId = remoteComponentId;
 			connectivityDetails.Version = DateTime.MinValue.Ticks + 1;
 
-			_connectivityRepository.Save(_factory.CurrentSession, connectivityDetails);
+			_connectivityRepository.Save(session, connectivityDetails);
 
 		}
 
-		private void RegisterSystemServices(Guid componentId)
+		private void RegisterSystemServices(ISession session,Guid componentId)
 		{
 			//TODO: BY TYPE
-			RegisterSystemServices(TypesHelper.GetTypeFromDomainByClassName("IHandshakeService"), componentId);
-			RegisterSystemServices(TypesHelper.GetTypeFromDomainByClassName("IMessageSuscriptionsService"), componentId);
-			RegisterSystemServices(TypesHelper.GetTypeFromDomainByClassName("IPublishedServicesDefinitionsService"), componentId);
+			RegisterSystemServices(session,TypesHelper.GetTypeFromDomainByClassName("IHandshakeService"), componentId);
+			RegisterSystemServices(session,TypesHelper.GetTypeFromDomainByClassName("IMessageSuscriptionsService"), componentId);
+			RegisterSystemServices(session,TypesHelper.GetTypeFromDomainByClassName("IPublishedServicesDefinitionsService"), componentId);
 
 		}
 
 
-		private void RegisterSystemServices(Type typeService, Guid remoteComponentId)
+		private void RegisterSystemServices( ISession session,Type typeService, Guid remoteComponentId)
 		{
 			if (typeService == null) throw new ArgumentNullException("typeService");
 			var serviceOperationAttributes = ServiceOperationAttribute.GetServiceNames(typeService);
 			foreach (var name in serviceOperationAttributes)
-				RegisterSystemService(remoteComponentId, name, typeService);
+				RegisterSystemService(session,remoteComponentId, name, typeService);
 		}
 
-		private void RegisterSystemService(Guid componentId, string serviceImplementationMethodName, Type serviceInterfaceType)
+		private void RegisterSystemService(ISession session,Guid componentId, string serviceImplementationMethodName, Type serviceInterfaceType)
 		{
 			if (serviceInterfaceType == null) throw new ArgumentNullException("serviceInterfaceType");
 			var isLocal = _settings.ComponentId == componentId;
@@ -163,7 +166,7 @@ namespace ermeX.DAL.Commands.Component
 					IsSystemService = true,
 					Version = DateTime.MinValue.Ticks + 1 //to force to update from node
 				};
-			_serviceDetailsRepository.Save(_factory.CurrentSession, serviceDetails);
+			_serviceDetailsRepository.Save(session, serviceDetails);
 
 		}
 	}

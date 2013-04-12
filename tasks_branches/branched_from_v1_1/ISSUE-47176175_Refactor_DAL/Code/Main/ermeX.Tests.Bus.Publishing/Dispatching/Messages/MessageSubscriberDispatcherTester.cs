@@ -26,7 +26,6 @@ using Moq;
 using NUnit.Framework;
 using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.DataSources;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
