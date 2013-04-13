@@ -187,14 +187,15 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 
 			Assert.IsTrue(incomingMessage.Id > 0); //now check it is removed
 
-			IncomingMessage byId = dataSource.GetById(incomingMessage.Id);
+			IncomingMessage byId = dataSource.Single(incomingMessage.Id);
 			Assert.IsNull(byId);
 		}
 
 		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
 		public void Can_DeliverMany_Messages_OrderedByGeneration(DbEngineType dbEngineType)
 		{
-			var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngineType);
+			IUnitOfWorkFactory factory = GetUnitOfWorkFactory(dbEngineType);
+			var dataSource = GetRepository<Repository<IncomingMessage>>();
 
 
 			TimeSpan createdTimeDelay = TimeSpan.FromSeconds(3);
@@ -224,7 +225,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			_flagMessageReceivedWhentimes = numMessages; //flag the event when received
 
 
-			using (var target = GetInstance(dbEngineType, DealWithMessage))
+			using (var target = GetInstance(factory, DealWithMessage))
 			{
 				foreach (var incomingMessage in messages)
 				{
@@ -245,7 +246,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 				previous = sentMessage.TheOrder;
 			}
 
-			Assert.IsTrue(dataSource.CountItems() == 0);
+			Assert.IsFalse(dataSource.Any());
 		}
 
 		[Ignore("This class will be upgraded ASAP. Its not worth to test more with the current resources")]

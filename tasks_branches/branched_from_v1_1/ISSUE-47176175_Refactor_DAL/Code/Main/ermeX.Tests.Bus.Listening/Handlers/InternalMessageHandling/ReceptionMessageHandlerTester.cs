@@ -26,6 +26,8 @@ using NUnit.Framework;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
+using ermeX.DAL.DataAccess.Repository;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
@@ -34,112 +36,114 @@ using ermeX.Threading.Queues;
 
 namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling
 {
-    internal class ReceptionMessageHandlerTester:DataAccessTestBase
-    {
+	internal class ReceptionMessageHandlerTester : DataAccessTestBase
+	{
+		private readonly List<ReceptionMessageDistributor.MessageDistributorMessage> _sentMessages =
+			new List<ReceptionMessageDistributor.MessageDistributorMessage>();
 
-        readonly List<ReceptionMessageDistributor.MessageDistributorMessage> _sentMessages = new List<ReceptionMessageDistributor.MessageDistributorMessage>();
-        readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
+		private readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
 
-        private ReceptionMessageHandler GetInstance(DbEngineType dbEngine, Action<ReceptionMessageDistributor.MessageDistributorMessage> messageReceived, out IReceptionMessageDistributor mockedDistributor)
-        {
-            var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
-            
-            
-            var mock = new Mock<IReceptionMessageDistributor>();
-            mock.Setup(x => x.EnqueueItem(It.IsAny<ReceptionMessageDistributor.MessageDistributorMessage>())).Callback(messageReceived);
-
-            mockedDistributor = mock.Object;
-
-            var mock2 = new Mock<IQueueDispatcherManager>();
-
-            var queueMock = mock2.Object;
-
-            var receptionMessageHandler = new ReceptionMessageHandler(GetIncommingQueueReader(dbEngine),GetIncommingQueueWritter(dbEngine),mockedDistributor,settings,queueMock);
-            return receptionMessageHandler;
-        }
-
-	    public override void OnStartUp()
-        {
-            base.OnStartUp();
-            _sentMessages.Clear();
-            _messageReceived.Reset();
-
-        }
-
-        public override void OnFixtureSetup()
-        {
-            base.OnFixtureSetup();
-        }
-
-        private void DealWithMessage(ReceptionMessageDistributor.MessageDistributorMessage message)
-        {
-            _sentMessages.Add(message);
-            _messageReceived.Set();
-        }
-
-        private TransportMessage GetTransportMessage<TData>(TData data)
-        {
-            var bizMessage = new BizMessage(data);
-            var busMessage = new BusMessage(LocalComponentId, bizMessage);
-            var transportMessage = new TransportMessage(RemoteComponentId, busMessage);
-            return transportMessage;
-        }
-
-        private class Dummy
-        {
-            public string TheValue { get; set; }
-        }
-
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void Can_Handle_Message(DbEngineType dbEngineType)
-        {
-            var expected = GetTransportMessage(new Dummy() {TheValue = "Some Data"});
-
-            IReceptionMessageDistributor distributor;
-            using(var target=GetInstance(dbEngineType,DealWithMessage,out distributor))
-            {
-                target.Handle(expected);
-                _messageReceived.WaitOne(TimeSpan.FromSeconds(20));
-            }
-
-            
-            Assert.AreEqual(1,_sentMessages.Count); //assert it was pushed to the next stage
-            var incomingMessagesDataSource = GetDataSource<IncomingMessagesDataSource>(dbEngineType);
-            var incomingMessages = incomingMessagesDataSource.GetAll();
-            Assert.AreEqual(1,incomingMessages.Count);
-            var incomingMessage = incomingMessages[0];
-            Assert.AreEqual(incomingMessage, _sentMessages[0].IncomingMessage);
-            Assert.AreEqual(Message.MessageStatus.ReceiverReceived,incomingMessage.Status);
+		private ReceptionMessageHandler GetInstance(IUnitOfWorkFactory factory,
+		                                            Action<ReceptionMessageDistributor.MessageDistributorMessage>
+		                                            	messageReceived, out IReceptionMessageDistributor mockedDistributor)
+		{
+			var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
 
 
-        }
+			var mock = new Mock<IReceptionMessageDistributor>();
+			mock.Setup(x => x.EnqueueItem(It.IsAny<ReceptionMessageDistributor.MessageDistributorMessage>())).Callback(
+				messageReceived);
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void Enqueues_NonDistributedMessages_OnStartUp(DbEngineType dbEngineType)
-        {
-            var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngineType);
-            TransportMessage transportMessage = GetTransportMessage(new Dummy() {TheValue = "Sample entity"});
+			mockedDistributor = mock.Object;
 
-            var incomingMessage = new IncomingMessage(transportMessage.Data)
-                {
-                    ComponentOwner =RemoteComponentId,
+			var mock2 = new Mock<IQueueDispatcherManager>();
 
-                    PublishedTo = LocalComponentId,
-                    TimeReceivedUtc = DateTime.UtcNow,
-                    SuscriptionHandlerId = Guid.Empty, //important as the p0ending messages have not subscriber yet
-                    Status = Message.MessageStatus.ReceiverReceived,
-                };
-            dataSource.Save(incomingMessage);
+			var queueMock = mock2.Object;
 
-            IReceptionMessageDistributor distributor;
-            using (var target = GetInstance(dbEngineType, DealWithMessage, out distributor))
-                _messageReceived.WaitOne(TimeSpan.FromSeconds(20));
+			var receptionMessageHandler = new ReceptionMessageHandler(GetIncommingQueueReader(factory),
+			                                                          GetIncommingQueueWritter(factory), mockedDistributor,
+			                                                          settings, queueMock);
+			return receptionMessageHandler;
+		}
 
-            Assert.AreEqual(1, _sentMessages.Count); //assert it was pushed to the next stage
+		public override void OnStartUp()
+		{
+			base.OnStartUp();
+			_sentMessages.Clear();
+			_messageReceived.Reset();
 
-            Assert.AreEqual(incomingMessage, _sentMessages[0].IncomingMessage);
+		}
 
-        }
+		private void DealWithMessage(ReceptionMessageDistributor.MessageDistributorMessage message)
+		{
+			_sentMessages.Add(message);
+			_messageReceived.Set();
+		}
 
-    }
+		private TransportMessage GetTransportMessage<TData>(TData data)
+		{
+			var bizMessage = new BizMessage(data);
+			var busMessage = new BusMessage(LocalComponentId, bizMessage);
+			var transportMessage = new TransportMessage(RemoteComponentId, busMessage);
+			return transportMessage;
+		}
+
+		private class Dummy
+		{
+			public string TheValue { get; set; }
+		}
+
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void Can_Handle_Message(DbEngineType dbEngineType)
+		{
+			var factory = GetUnitOfWorkFactory(dbEngineType);
+			var expected = GetTransportMessage(new Dummy() {TheValue = "Some Data"});
+
+			IReceptionMessageDistributor distributor;
+			using (var target = GetInstance(factory, DealWithMessage, out distributor))
+			{
+				target.Handle(expected);
+				_messageReceived.WaitOne(TimeSpan.FromSeconds(20));
+			}
+
+
+			Assert.AreEqual(1, _sentMessages.Count); //assert it was pushed to the next stage
+			var incomingMessagesDataSource = GetRepository<Repository<IncomingMessage>>(factory);
+			var incomingMessages = incomingMessagesDataSource.FetchAll();
+			Assert.AreEqual(1, incomingMessages.Count());
+			var incomingMessage = incomingMessages.First();
+			Assert.AreEqual(incomingMessage, _sentMessages[0].IncomingMessage);
+			Assert.AreEqual(Message.MessageStatus.ReceiverReceived, incomingMessage.Status);
+
+
+		}
+
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void Enqueues_NonDistributedMessages_OnStartUp(DbEngineType dbEngineType)
+		{
+			var factory = GetUnitOfWorkFactory(dbEngineType);
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
+			TransportMessage transportMessage = GetTransportMessage(new Dummy() {TheValue = "Sample entity"});
+
+			var incomingMessage = new IncomingMessage(transportMessage.Data)
+			                      	{
+			                      		ComponentOwner = RemoteComponentId,
+
+			                      		PublishedTo = LocalComponentId,
+			                      		TimeReceivedUtc = DateTime.UtcNow,
+			                      		SuscriptionHandlerId = Guid.Empty,
+			                      		//important as the p0ending messages have not subscriber yet
+			                      		Status = Message.MessageStatus.ReceiverReceived,
+			                      	};
+			dataSource.Save(incomingMessage);
+
+			IReceptionMessageDistributor distributor;
+			using (var target = GetInstance(factory, DealWithMessage, out distributor))
+				_messageReceived.WaitOne(TimeSpan.FromSeconds(20));
+
+			Assert.AreEqual(1, _sentMessages.Count); //assert it was pushed to the next stage
+
+			Assert.AreEqual(incomingMessage, _sentMessages[0].IncomingMessage);
+		}
+	}
 }
