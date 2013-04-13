@@ -129,10 +129,39 @@ namespace ermeX.Tests.Common.DataAccess
 			return GetUnitOfWorkFactory(dataAccessSettings);
 		}
 
+		/// <summary>
+		/// Repository for complex operations
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="factory"></param>
+		/// <returns></returns>
+		public TResult GetRepository<TResult>(IUnitOfWorkFactory factory)
+		{
+			var result = ObjectBuilder.FromType<TResult>(typeof(TResult), GetComponentSettings(), new ExpressionsHelper(),factory);
+			return result;
+		}
+
+		/// <summary>
+		/// Repository for single db operations  
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="engineType"></param>
+		/// <returns></returns>
+		public TResult GetRepository<TResult>(DbEngineType engineType)
+		{
+			var unitOfWorkFactory = GetUnitOfWorkFactory(engineType);
+			var result = GetRepository<TResult>(unitOfWorkFactory);
+			return result;
+		}
+
+		/// <summary>
+		/// use when no single operations are being executed against repository, all operations provide the unit of work
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <returns></returns>
 		public TResult GetRepository<TResult>()
 		{
-
-			var result = ObjectBuilder.FromType<TResult>(typeof(TResult), GetComponentSettings(), new ExpressionsHelper());
+			var result = GetRepository<TResult>(null);
 			return result;
 		}
 
