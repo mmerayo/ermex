@@ -26,6 +26,8 @@ using Moq;
 using NUnit.Framework;
 using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
+using ermeX.DAL.DataAccess.Repository;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
@@ -43,7 +45,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 		private readonly List<TransportMessage> _sentMessages = new List<TransportMessage>();
 		private readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
 
-		private MessageSubscribersDispatcher GetInstance(DbEngineType dbEngine, Action<TransportMessage> messageReceived,
+		private MessageSubscribersDispatcher GetInstance(IUnitOfWorkFactory factory, Action<TransportMessage> messageReceived,
 		                                                 bool valueToReturn, out IServiceProxy mockedService)
 		{
 			var settings = TestSettingsProvider.GetClientConfigurationSettingsSource();
@@ -52,8 +54,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			    .Callback(messageReceived)
 			    .Returns(new ServiceResult(valueToReturn));
 			mockedService = mock.Object;
-		    var result = new MessageSubscribersDispatcher(settings, GetOutgoingQueueReader(dbEngine),
-		                                                                        GetOutgoingQueueWritter(dbEngine),
+			var result = new MessageSubscribersDispatcher(settings, GetOutgoingQueueReader(factory),
+																				GetOutgoingQueueWritter(factory),
 		                                                                        _taskScheduler,
 		                                                                        mockedService);
             result.Start();
@@ -79,8 +81,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 		{
 			IServiceProxy mockedService;
 			var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage("theData"));
-
-			using (var target = GetInstance(dbEngine, DealWithMessage, true, out mockedService))
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
+			using (var target = GetInstance(unitOfWorkFactory, DealWithMessage, true, out mockedService))
 			{
 				var outgoingMessage = new OutgoingMessage(busMessage)
 					{
@@ -90,7 +92,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 						PublishedTo = RemoteComponentId,
 						Status = Message.MessageStatus.SenderDispatchPending
 					};
-				var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+				var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(unitOfWorkFactory);
 				outgoingMessagesDataSource.Save(outgoingMessage);
 
 				target.EnqueueItem(new MessageSubscribersDispatcher.SubscribersDispatcherMessage(outgoingMessage));
@@ -108,7 +110,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 		{
 			IServiceProxy mockedService;
 			var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage("theData"));
-			var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
+			var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(unitOfWorkFactory);
 			var outgoingMessage = new OutgoingMessage(busMessage)
 				{
 					CreatedTimeUtc = DateTime.UtcNow,
@@ -119,7 +122,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 				};
 			outgoingMessagesDataSource.Save(outgoingMessage);
 
-			using (var target = GetInstance(dbEngine, DealWithMessage, true, out mockedService))
+			using (var target = GetInstance(unitOfWorkFactory, DealWithMessage, true, out mockedService))
 			{
 				outgoingMessage.Status = Message.MessageStatus.SenderDispatchPending;
 				outgoingMessagesDataSource.Save(outgoingMessage);
@@ -127,7 +130,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 				target.EnqueueItem(new MessageSubscribersDispatcher.SubscribersDispatcherMessage(outgoingMessage));
 				_messageReceived.WaitOne(TimeSpan.FromSeconds(20));
 			}
-			OutgoingMessage actual = outgoingMessagesDataSource.GetById(outgoingMessage.Id);
+			OutgoingMessage actual = outgoingMessagesDataSource.Single(outgoingMessage.Id);
 			Assert.AreEqual(Message.MessageStatus.SenderSent, actual.Status);
 
 		}
@@ -137,7 +140,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 		{
 			IServiceProxy mockedService;
 			var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage("theData"));
-			var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
+			var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(unitOfWorkFactory);
 			var outgoingMessage = new OutgoingMessage(busMessage)
 				{
 					CreatedTimeUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
@@ -148,7 +152,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 				};
 			outgoingMessagesDataSource.Save(outgoingMessage);
 
-			using (var target = GetInstance(dbEngine, DealWithMessage, true, out mockedService))
+			using (var target = GetInstance(unitOfWorkFactory, DealWithMessage, true, out mockedService))
 			{
 				outgoingMessage.Status = Message.MessageStatus.SenderDispatchPending;
 				outgoingMessagesDataSource.Save(outgoingMessage);
@@ -158,7 +162,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			}
 
 			Assert.IsTrue(_sentMessages.Count == 0);
-			OutgoingMessage actual = outgoingMessagesDataSource.GetById(outgoingMessage.Id);
+			OutgoingMessage actual = outgoingMessagesDataSource.Single(outgoingMessage.Id);
 			Assert.AreEqual(Message.MessageStatus.SenderFailed, actual.Status);
 		}
 
@@ -167,7 +171,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 		{
 			IServiceProxy mockedService;
 			var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage("theData"));
-			var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
+			var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(unitOfWorkFactory);
 			var outgoingMessage = new OutgoingMessage(busMessage)
 				{
 					CreatedTimeUtc = DateTime.UtcNow,
@@ -178,7 +183,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 				};
 			outgoingMessagesDataSource.Save(outgoingMessage);
 
-			using (var target = GetInstance(dbEngine, DealWithMessage, false, out mockedService))
+			using (var target = GetInstance(unitOfWorkFactory, DealWithMessage, false, out mockedService))
 			{
 				outgoingMessage.Status = Message.MessageStatus.SenderDispatchPending;
 				outgoingMessagesDataSource.Save(outgoingMessage);
@@ -186,7 +191,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 				target.EnqueueItem(new MessageSubscribersDispatcher.SubscribersDispatcherMessage(outgoingMessage));
 				Thread.Sleep(TimeSpan.FromSeconds(17)); //resends 5 sec, 15 secs
 			}
-			OutgoingMessage actual = outgoingMessagesDataSource.GetById(outgoingMessage.Id);
+			OutgoingMessage actual = outgoingMessagesDataSource.Single(outgoingMessage.Id);
 			Assert.AreEqual(Message.MessageStatus.SenderDispatchPending, actual.Status);
 			Assert.Greater(actual.Tries, 2, actual.Tries.ToString(CultureInfo.InvariantCulture));
 
@@ -199,7 +204,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 		{
 			IServiceProxy mockedService;
 			var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage("theData"));
-			var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+			var unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
+			var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(unitOfWorkFactory);
 			var outgoingMessage = new OutgoingMessage(busMessage)
 				{
 					CreatedTimeUtc = DateTime.UtcNow,
@@ -210,11 +216,11 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 				};
 			outgoingMessagesDataSource.Save(outgoingMessage);
 
-			using (var target = GetInstance(dbEngine, DealWithMessage, true, out mockedService))
+			using (var target = GetInstance(unitOfWorkFactory, DealWithMessage, true, out mockedService))
 				_messageReceived.WaitOne(TimeSpan.FromSeconds(10));
 
 			Assert.IsTrue(_sentMessages.Count == 1);
-			OutgoingMessage actual = outgoingMessagesDataSource.GetById(outgoingMessage.Id);
+			OutgoingMessage actual = outgoingMessagesDataSource.Single(outgoingMessage.Id);
 			Assert.AreEqual(Message.MessageStatus.SenderSent, actual.Status);
 		}
 	}

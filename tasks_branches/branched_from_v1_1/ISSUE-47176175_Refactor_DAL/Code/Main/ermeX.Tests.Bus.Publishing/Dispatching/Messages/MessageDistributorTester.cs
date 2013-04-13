@@ -37,164 +37,175 @@ using ermeX.Threading.Queues;
 
 namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 {
+	internal sealed class MessageDistributorTester : DataAccessTestBase
+	{
+		private readonly List<MessageSubscribersDispatcher.SubscribersDispatcherMessage> _sentMessages =
+			new List<MessageSubscribersDispatcher.SubscribersDispatcherMessage>();
 
-    sealed class MessageDistributorTester : DataAccessTestBase
-    {
+		private readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
 
-        readonly List<MessageSubscribersDispatcher.SubscribersDispatcherMessage> _sentMessages = new List<MessageSubscribersDispatcher.SubscribersDispatcherMessage>();
-        readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
+		private MessageDistributor GetInstance(IUnitOfWorkFactory factory,
+		                                       Action<MessageSubscribersDispatcher.SubscribersDispatcherMessage>
+		                                       	messageReceived, out IMessageSubscribersDispatcher mockedSubscriber)
+		{
+			var mock = new Mock<IMessageSubscribersDispatcher>();
+			mock.Setup(x => x.EnqueueItem(It.IsAny<MessageSubscribersDispatcher.SubscribersDispatcherMessage>())).Callback(
+				messageReceived);
+			mockedSubscriber = mock.Object;
+			var messageDistributor = new MessageDistributor(GetOutgoingMessageSubscriptionsReader(factory),
+			                                                GetOutgoingQueueReader(factory), GetOutgoingQueueWritter(factory),
+			                                                mockedSubscriber);
+			messageDistributor.Start();
+			return messageDistributor;
+		}
 
-        private MessageDistributor GetInstance(DbEngineType dbEngine, Action<MessageSubscribersDispatcher.SubscribersDispatcherMessage> messageReceived, out IMessageSubscribersDispatcher mockedSubscriber)
-        {
-            var mock = new Mock<IMessageSubscribersDispatcher>();
-            mock.Setup(x=>x.EnqueueItem(It.IsAny<MessageSubscribersDispatcher.SubscribersDispatcherMessage>())).Callback(messageReceived);
-            mockedSubscriber = mock.Object;
-            var messageDistributor = new MessageDistributor(GetOutgoingMessageSubscriptionsReader(dbEngine),
-                                                            GetOutgoingQueueReader(dbEngine),GetOutgoingQueueWritter(dbEngine),
-                                                            mockedSubscriber);
-            messageDistributor.Start();
-            return messageDistributor;
-        }
+		private class Dummy
+		{
+			public string Data;
+		}
 
-	    private class Dummy
-        {
-            public string Data;
-        }
+		public override void OnStartUp()
+		{
+			base.OnStartUp();
+			_sentMessages.Clear();
+			_messageReceived.Reset();
 
-        public override void OnStartUp()
-        {
-            base.OnStartUp();
-            _sentMessages.Clear();
-            _messageReceived.Reset();
+		}
 
-        }
-
-        private void DealWithMessage(MessageSubscribersDispatcher.SubscribersDispatcherMessage message)
-        {
-            _sentMessages.Add(message);
-            _messageReceived.Set();
-        }
+		private void DealWithMessage(MessageSubscribersDispatcher.SubscribersDispatcherMessage message)
+		{
+			_sentMessages.Add(message);
+			_messageReceived.Set();
+		}
 
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void CanDispatch_NotSentMessage(DbEngineType dbEngine )
-        {
-            IMessageSubscribersDispatcher mockedDispatcher;
-            
-            var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage(new Dummy {Data="theData"}));
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void CanDispatch_NotSentMessage(DbEngineType dbEngine)
+		{
+			IMessageSubscribersDispatcher mockedDispatcher;
 
-            //creates subscription
-	        IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
-	        var subscriptionsDs = GetRepository<Repository<OutgoingMessageSuscription>>();
-            var suscription1 = new OutgoingMessageSuscription()
-                {
-                    ComponentOwner = LocalComponentId, BizMessageFullTypeName = typeof (Dummy).FullName, Component = RemoteComponentId
-                };
-	        using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
-	        {
-		        subscriptionsDs.Save(suscription1);
-		        var suscription2 = new OutgoingMessageSuscription()
-			        {
-				        ComponentOwner = LocalComponentId,
-				        BizMessageFullTypeName = typeof (Dummy).FullName,
-				        Component = Guid.NewGuid()
-			        };
-		        subscriptionsDs.Save(suscription2);
-	        }
-	        //creates the message as collected
-            //the default test set them for one day
-            var outgoingMessage = new OutgoingMessage(expected)
-                {
-                    CreatedTimeUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
-                    ComponentOwner = LocalComponentId,
-                    PublishedBy=LocalComponentId,
-                    Status=Message.MessageStatus.SenderCollected
-                };
-            var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
-            outgoingMessagesDataSource.Save(outgoingMessage);
+			var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId,
+			                              new BizMessage(new Dummy {Data = "theData"}));
 
-            //enqueues the message
-            using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDispatcher))
-            {
-                target.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outgoingMessage));
-                _messageReceived.WaitOne(TimeSpan.FromSeconds(5));
-            }
+			//creates subscription
+			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
+			var subscriptionsDs = GetRepository<Repository<OutgoingMessageSuscription>>(unitOfWorkFactory);
+			var suscription1 = new OutgoingMessageSuscription()
+			                   	{
+			                   		ComponentOwner = LocalComponentId,
+			                   		BizMessageFullTypeName = typeof (Dummy).FullName,
+			                   		Component = RemoteComponentId
+			                   	};
+			
+				subscriptionsDs.Save(suscription1);
+				var suscription2 = new OutgoingMessageSuscription()
+				                   	{
+				                   		ComponentOwner = LocalComponentId,
+				                   		BizMessageFullTypeName = typeof (Dummy).FullName,
+				                   		Component = Guid.NewGuid()
+				                   	};
+				subscriptionsDs.Save(suscription2);
+			
+			//creates the message as collected
+			//the default test set them for one day
+			var outgoingMessage = new OutgoingMessage(expected)
+			                      	{
+			                      		CreatedTimeUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
+			                      		ComponentOwner = LocalComponentId,
+			                      		PublishedBy = LocalComponentId,
+			                      		Status = Message.MessageStatus.SenderCollected
+			                      	};
+			var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(dbEngine);
+			outgoingMessagesDataSource.Save(outgoingMessage);
 
-            Assert.IsTrue(_sentMessages.Count == 2); //ensure the message was delivered
+			//enqueues the message
+			using (var target = GetInstance(unitOfWorkFactory, DealWithMessage, out mockedDispatcher))
+			{
+				target.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outgoingMessage));
+				_messageReceived.WaitOne(TimeSpan.FromSeconds(5));
+			}
 
-            Assert.IsTrue(_sentMessages.Count(x => x.OutGoingMessage.PublishedTo == suscription1.Component)==1);
-            Assert.IsTrue(_sentMessages.Count(x => x.OutGoingMessage.PublishedTo == suscription2.Component) == 1);
-            OutgoingMessage outGoingMessage1 = _sentMessages.Single(x => x.OutGoingMessage.PublishedTo == suscription1.Component).OutGoingMessage;
-            Assert.AreEqual(expected, outGoingMessage1.ToBusMessage()); //ensure is the message that was sent
-            Assert.AreEqual(suscription1.Component,outGoingMessage1.PublishedTo);
+			Assert.IsTrue(_sentMessages.Count == 2); //ensure the message was delivered
 
-            OutgoingMessage outGoingMessage2 = _sentMessages.Single(x => x.OutGoingMessage.PublishedTo == suscription2.Component).OutGoingMessage;
-            Assert.AreEqual(expected, outGoingMessage2.ToBusMessage()); //ensure is the message that was sent
-            Assert.AreEqual(suscription2.Component, outGoingMessage2.PublishedTo);
+			Assert.IsTrue(_sentMessages.Count(x => x.OutGoingMessage.PublishedTo == suscription1.Component) == 1);
+			Assert.IsTrue(_sentMessages.Count(x => x.OutGoingMessage.PublishedTo == suscription2.Component) == 1);
+			OutgoingMessage outGoingMessage1 =
+				_sentMessages.Single(x => x.OutGoingMessage.PublishedTo == suscription1.Component).OutGoingMessage;
+			Assert.AreEqual(expected, outGoingMessage1.ToBusMessage()); //ensure is the message that was sent
+			Assert.AreEqual(suscription1.Component, outGoingMessage1.PublishedTo);
 
-            var messagesInDb = outgoingMessagesDataSource.GetAll(); //ensures there are 3 messages the root one and the distributable ones
-            Assert.IsTrue(messagesInDb.Count==3);
+			OutgoingMessage outGoingMessage2 =
+				_sentMessages.Single(x => x.OutGoingMessage.PublishedTo == suscription2.Component).OutGoingMessage;
+			Assert.AreEqual(expected, outGoingMessage2.ToBusMessage()); //ensure is the message that was sent
+			Assert.AreEqual(suscription2.Component, outGoingMessage2.PublishedTo);
 
-            var busMessage = messagesInDb[1].ToBusMessage();//this one is the distributable
+			var messagesInDb = outgoingMessagesDataSource.FetchAll();
+			//ensures there are 3 messages the root one and the distributable ones
+			Assert.IsTrue(messagesInDb.Count() == 3);
 
-            Assert.AreEqual(expected,busMessage);
+			var outgoingMessages = messagesInDb.ToArray();
+			var busMessage = outgoingMessages[1].ToBusMessage(); //this one is the distributable
 
-            Assert.IsTrue(messagesInDb[1].Status == Message.MessageStatus.SenderDispatchPending);
-            var busMessage2 = messagesInDb[2].ToBusMessage();//this one is the distributable
-            Assert.IsTrue(messagesInDb[2].Status == Message.MessageStatus.SenderDispatchPending);
-            Assert.AreEqual(expected,busMessage2); //ensure is the same message
-        }
+			Assert.AreEqual(expected, busMessage);
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void DontDispatchSentMessage(DbEngineType dbEngine)
-        {
-            IMessageSubscribersDispatcher mockedDispatcher;
+			Assert.IsTrue(outgoingMessages[1].Status == Message.MessageStatus.SenderDispatchPending);
+			var busMessage2 = outgoingMessages[2].ToBusMessage(); //this one is the distributable
+			Assert.IsTrue(outgoingMessages[2].Status == Message.MessageStatus.SenderDispatchPending);
+			Assert.AreEqual(expected, busMessage2); //ensure is the same message
+		}
 
-            var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId, new BizMessage(new Dummy { Data = "theData" }));
+		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		public void DontDispatchSentMessage(DbEngineType dbEngine)
+		{
+			IMessageSubscribersDispatcher mockedDispatcher;
 
-            //creates subscription
-            var subscriptionsDs = GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine);
-            var outgoingMessageSuscription = new OutgoingMessageSuscription()
-            {
-                ComponentOwner = LocalComponentId,
-                BizMessageFullTypeName = typeof(Dummy).FullName,
-                Component = RemoteComponentId
-            };
-            subscriptionsDs.Save(outgoingMessageSuscription);
+			var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId,
+			                              new BizMessage(new Dummy {Data = "theData"}));
 
-            //creates the message as collected
-            //the default test set them for one day
-            var outgoingMessage = new OutgoingMessage(expected)
-            {
-                CreatedTimeUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
-                ComponentOwner = LocalComponentId,
-                PublishedBy = LocalComponentId,
-                Status = Message.MessageStatus.SenderCollected
-            };
-            var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
-            outgoingMessagesDataSource.Save(outgoingMessage); //saves one
-            
-            
-            //enqueues the first message pretending it needs to be sent
-            using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDispatcher))
-            {
-                for (int i = 0; i < 500;i++ )
-                {
-                    //pushes it several times
-                    target.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outgoingMessage));
-                }
-                Thread.Sleep(50);
-            }
+			//creates subscription
+			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
+			var subscriptionsDs = GetRepository<Repository<OutgoingMessageSuscription>>(unitOfWorkFactory);
+			var outgoingMessageSuscription = new OutgoingMessageSuscription()
+			                                 	{
+			                                 		ComponentOwner = LocalComponentId,
+			                                 		BizMessageFullTypeName = typeof (Dummy).FullName,
+			                                 		Component = RemoteComponentId
+			                                 	};
+			subscriptionsDs.Save(outgoingMessageSuscription);
 
-            Assert.AreEqual(1,_sentMessages.Count); //Assert only one was sent
-            var outgoingMessages = outgoingMessagesDataSource.GetByStatus(Message.MessageStatus.SenderDispatchPending);
-            Assert.IsTrue(outgoingMessages.Count()==1,outgoingMessages.Count().ToString(CultureInfo.InvariantCulture)); //Asserts the second one was not considered and removed
+			//creates the message as collected
+			//the default test set them for one day
+			var outgoingMessage = new OutgoingMessage(expected)
+			                      	{
+			                      		CreatedTimeUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
+			                      		ComponentOwner = LocalComponentId,
+			                      		PublishedBy = LocalComponentId,
+			                      		Status = Message.MessageStatus.SenderCollected
+			                      	};
+			var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(dbEngine);
+			outgoingMessagesDataSource.Save(outgoingMessage); //saves one
 
-            OutgoingMessage pushedMessage = _sentMessages[0].OutGoingMessage;
-            Assert.IsTrue( pushedMessage.Status==Message.MessageStatus.SenderDispatchPending);
-            Assert.AreEqual(outgoingMessage.ToBusMessage(),pushedMessage.ToBusMessage());
 
-        }
+			//enqueues the first message pretending it needs to be sent
+			using (var target = GetInstance(unitOfWorkFactory, DealWithMessage, out mockedDispatcher))
+			{
+				for (int i = 0; i < 500; i++)
+				{
+					//pushes it several times
+					target.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outgoingMessage));
+				}
+				Thread.Sleep(50);
+			}
 
-    }
+			Assert.AreEqual(1, _sentMessages.Count); //Assert only one was sent
+			
+			var outgoingMessages = GetOutgoingQueueReader(unitOfWorkFactory).GetByStatus(Message.MessageStatus.SenderDispatchPending);
+			Assert.IsTrue(outgoingMessages.Count() == 1, outgoingMessages.Count().ToString(CultureInfo.InvariantCulture));
+			//Asserts the second one was not considered and removed
+
+			OutgoingMessage pushedMessage = _sentMessages[0].OutGoingMessage;
+			Assert.IsTrue(pushedMessage.Status == Message.MessageStatus.SenderDispatchPending);
+			Assert.AreEqual(outgoingMessage.ToBusMessage(), pushedMessage.ToBusMessage());
+		}
+	}
 }
