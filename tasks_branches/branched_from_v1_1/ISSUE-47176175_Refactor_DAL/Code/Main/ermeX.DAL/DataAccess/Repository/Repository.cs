@@ -236,7 +236,7 @@ namespace ermeX.DAL.DataAccess.Repository
 		{
 			var absolute = unitOfWork.Session.Query<TEntity>();
 			if(!includingOtherComponents)
-				return absolute.Where(IsLocalPredicate);
+				return absolute.Where(IsLocalPredicate).ToList().AsQueryable();
 			return absolute;
 		}
 
