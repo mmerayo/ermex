@@ -119,7 +119,8 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		private bool CanSave(IUnitOfWork unitOfWork,TEntity entity)
 		{
-			var item = SingleOrDefault(unitOfWork,_expressionHelper.GetFindByBizKey(entity));
+			var findByBizKey = _expressionHelper.GetFindByBizKey(entity);
+			var item = SingleOrDefault(unitOfWork,findByBizKey);
 			bool result = item == null || item.Version <= entity.Version;
 			if(item!=null)
 				unitOfWork.Session.Evict(item);

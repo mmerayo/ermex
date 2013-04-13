@@ -126,7 +126,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 			}
 			catch (Exception ex)
 			{
-				Logger.Error(x => x("There was an error while distributing an otugoing message. {0}", ex));
+				Logger.Error(x => x("There was an error while distributing an outgoing message. {0}", ex));
 				result = false;
 			}
 			return result;
