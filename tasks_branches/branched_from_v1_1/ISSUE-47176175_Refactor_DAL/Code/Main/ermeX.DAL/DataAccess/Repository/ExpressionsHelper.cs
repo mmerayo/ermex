@@ -50,7 +50,7 @@ namespace ermeX.DAL.DataAccess.Repository
 		public Expression<Func<OutgoingMessage, bool>> GetFindByBizKey(OutgoingMessage e)
 		{
 			return x => (x).ComponentOwner == e.ComponentOwner
-			            && (x).MessageId == e.MessageId;
+			            && (x).MessageId == e.MessageId && x.PublishedTo==e.PublishedTo;
 		}
 
 		public Expression<Func<OutgoingMessageSuscription, bool>> GetFindByBizKey(OutgoingMessageSuscription e)
