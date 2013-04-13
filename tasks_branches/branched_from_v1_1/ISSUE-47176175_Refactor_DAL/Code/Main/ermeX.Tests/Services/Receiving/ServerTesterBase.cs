@@ -25,13 +25,13 @@ using NUnit.Framework;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.DataSources;
 using ermeX.DAL.DataAccess.Helpers;
+using ermeX.DAL.DataAccess.Repository;
+using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Messages;
 using ermeX.DAL.Interfaces.Services;
-using ermeX.Domain.Implementations.Messages;
-using ermeX.Domain.Implementations.Services;
+using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.Dummies;
@@ -63,9 +63,6 @@ namespace ermeX.Tests.Services
 
 		private readonly DummyClientConfigurationSettings _settings = new DummyClientConfigurationSettings();
 		private readonly Guid ComponentId = Guid.NewGuid();
-
-		private ServiceDetailsDataSource ServiceDetailsDs { get; set; }
-		private IChunkedServiceRequestMessageDataSource ChunkedServiceRequestMessageDS { get; set; }
 
 		private void DoCanReceiveMessageTest(bool chunked, int numOfMsgToSend = 1)
 		{
@@ -207,13 +204,13 @@ namespace ermeX.Tests.Services
 			return result;
 		}
 
+		private IUnitOfWorkFactory _unitOfWorkFactory;
+
 		private void RefreshServiceDetailsDataSource(DbEngineType dbEngine)
 		{
 			DataAccessTestHelper dataAccessTestHelper = GetDataHelper(dbEngine);
-			IDalSettings dataAccessSettingsSource = dataAccessTestHelper.DataAccessSettings;
-			ServiceDetailsDs = GetDataSource<ServiceDetailsDataSource>(dataAccessSettingsSource.ConfigurationSourceType);
-			ChunkedServiceRequestMessageDS =
-				GetDataSource<ChunkedServiceRequestMessageDataSource>(dataAccessSettingsSource.ConfigurationSourceType);
+			_unitOfWorkFactory = GetUnitOfWorkFactory(dataAccessTestHelper.DataAccessSettings);
+			
 		}
 
 		protected abstract IServer GetServerInstance(ServerInfo serverInfo);
@@ -332,17 +329,17 @@ namespace ermeX.Tests.Services
 
 		protected ICanWriteChunkedMessages GetChunkedMessagesWritter()
 		{
-			return new ChunkedMessagesWriter(ChunkedServiceRequestMessageDS);
+			return  GetChunkedMessagesWritter(_unitOfWorkFactory);
 		}
 
 		protected ICanReadChunkedMessages GetChunkedMessagesReader()
 		{
-			return new ChunkedMessagesReader(ChunkedServiceRequestMessageDS);
+			return GetChunkedMessagesReader(_unitOfWorkFactory);
 		}
 
 		protected ICanReadServiceDetails GetServiceDetailsReader()
 		{
-			return new ServiceDetailsReader(ServiceDetailsDs);
+			return GetServiceDetailsReader(_unitOfWorkFactory);
 		}
 	}
 }

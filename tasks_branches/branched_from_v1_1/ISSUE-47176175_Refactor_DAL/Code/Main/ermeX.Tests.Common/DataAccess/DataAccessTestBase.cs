@@ -27,18 +27,22 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.Commands.Component;
+using ermeX.DAL.Commands.Messages;
 using ermeX.DAL.Commands.Observers;
 using ermeX.DAL.Commands.QueryDatabase;
 using ermeX.DAL.Commands.Queues;
+using ermeX.DAL.Commands.Services;
 using ermeX.DAL.Commands.Subscriptions;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.DataAccess.Providers;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.DAL.Interfaces.Component;
+using ermeX.DAL.Interfaces.Messages;
 using ermeX.DAL.Interfaces.Observers;
 using ermeX.DAL.Interfaces.QueryDatabase;
 using ermeX.DAL.Interfaces.Queues;
+using ermeX.DAL.Interfaces.Services;
 using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Entities.Entities;
 using ermeX.NonMerged;
@@ -276,6 +280,30 @@ namespace ermeX.Tests.Common.DataAccess
 			var componentSettings = GetComponentSettings();
 
 			return new ReaderOutgoingQueue(dataSource, factory, componentSettings);
+		}
+
+		protected ICanReadChunkedMessages  GetChunkedMessagesReader(IUnitOfWorkFactory factory)
+		{
+			var dataSource = GetRepository<Repository<ChunkedServiceRequestMessageData>>(factory);
+			var componentSettings = GetComponentSettings();
+
+			return new ChunkedMessagesReader(dataSource, factory, componentSettings);
+		}
+
+		protected ICanWriteChunkedMessages GetChunkedMessagesWritter(IUnitOfWorkFactory factory)
+		{
+			var dataSource = GetRepository<Repository<ChunkedServiceRequestMessageData>>(factory);
+			var componentSettings = GetComponentSettings();
+
+			return new ChunkedMessagesWriter(dataSource, factory, componentSettings);
+		}
+
+		protected ICanReadServiceDetails GetServiceDetailsReader(IUnitOfWorkFactory factory)
+		{
+			var dataSource = GetRepository<Repository<ServiceDetails>>(factory);
+			var componentSettings = GetComponentSettings();
+
+			return new ServiceDetailsReader(dataSource, factory, componentSettings);
 		}
 
 	}
