@@ -47,13 +47,13 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			using (var uow = unitOfWorkFactory.Create())
 			{
 				var target = GetRepository<TDataSource>();
-				expected = target.Single(uow.Session, id);
+				expected = target.Single(uow, id);
 
 				Assert.IsTrue(expected.Version != DateTime.MinValue.Ticks);
 
 				expected = GetExpectedWithChanges(expected);
 
-				target.Save(uow.Session, expected);
+				target.Save(uow, expected);
 				uow.Commit();
 			}
 			//another unit of work
@@ -63,7 +63,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 				expVersion = expected.Version;
 				expected.Version--;
 
-				target.Save(uow.Session, expected);
+				target.Save(uow, expected);
 				uow.Commit();
 			}
 			

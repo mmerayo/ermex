@@ -67,7 +67,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			using (var uow = unitOfWorkFactory.Create())
 			{
 				var target = GetRepository<TDataSource>();
-				target.Save(uow.Session, expected);
+				target.Save(uow, expected);
 				uow.Commit();
 			}
 
@@ -91,7 +91,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			using (var uow = factory.Create())
 			{
 				var target = GetRepository<TDataSource>();
-				expected = target.Single(uow.Session, id);
+				expected = target.Single(uow, id);
 				uow.Commit();
 			}
 			Assert.IsTrue(expected.Version != DateTime.MinValue.Ticks);
@@ -102,7 +102,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			using (var uow = factory.Create())
 			{
 				var target = GetRepository<TDataSource>();
-				target.Save(uow.Session, expected);
+				target.Save(uow, expected);
 				uow.Commit();
 			}
 			var dataAccessTestHelper = GetDataHelper(engine);
@@ -123,12 +123,12 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			using (var uow = factory.Create())
 			{
 				var target = GetRepository<TDataSource>();
-				item = target.Single(uow.Session, id);
+				item = target.Single(uow, id);
 
 				Assert.IsTrue(item.Version != DateTime.MinValue.Ticks);
 				expected = GetExpectedWithChanges(item);
 				expected.ComponentOwner = Guid.NewGuid();
-				target.Save(uow.Session, expected);
+				target.Save(uow, expected);
 				uow.Commit();
 			}
 			DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
@@ -149,7 +149,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			using (var uow = unitOfWorkFactory.Create())
 			{
 				var target = GetRepository<TDataSource>();
-				target.Save(uow.Session, expected);
+				target.Save(uow, expected);
 				uow.Commit();
 			}
 			Assert.IsTrue(expected.Id > 0);
@@ -172,9 +172,9 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			using (var uow = unitOfWorkFactory.Create())
 			{
 				var target = GetRepository<TDataSource>();
-				TModel item = target.Single(uow.Session, id);
+				TModel item = target.Single(uow, id);
 				expected = GetExpectedWithChanges(item);
-				target.Save(uow.Session, expected);
+				target.Save(uow, expected);
 				uow.Commit();
 			}
 			var dataAccessTestHelper = GetDataHelper(engine);
@@ -203,7 +203,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			using (var uow = unitOfWorkFactory.Create())
 			{
 				var target = GetRepository<TDataSource>();
-				target.Remove(uow.Session, x => x.Id == id);
+				target.Remove(uow, x => x.Id == id);
 				uow.Commit();
 			}
 			numRecords =
@@ -222,9 +222,9 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			using (var uow = unitOfWorkFactory.Create())
 			{
 				var target = GetRepository<TDataSource>();
-				TModel actual = target.Single(uow.Session, id);
+				TModel actual = target.Single(uow, id);
 				Assert.IsNotNull(actual);
-				target.Remove(uow.Session, actual);
+				target.Remove(uow, actual);
 				uow.Commit();
 			}
 			DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
@@ -244,7 +244,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			using (var uow = unitOfWorkFactory.Create())
 			{
 				var target = GetRepository<TDataSource>();
-				actual = target.Single(uow.Session, id);
+				actual = target.Single(uow, id);
 				Assert.IsNotNull(actual);
 				uow.Commit();
 			}
