@@ -23,11 +23,11 @@ namespace ermeX.DAL.Commands.Component
 		{
 			using (var uow = _factory.Create())
 			{
-				var senderComponent = Repository.SingleOrDefault(uow.Session, x => x.ComponentId == remoteComponentId);
+				var senderComponent = Repository.SingleOrDefault(uow, x => x.ComponentId == remoteComponentId);
 				if (senderComponent != null)
 				{
 					senderComponent.Latency = (senderComponent.Latency + requestMilliseconds)/2;
-					Repository.Save(uow.Session, senderComponent);
+					Repository.Save(uow, senderComponent);
 				}
 				uow.Commit();
 			}

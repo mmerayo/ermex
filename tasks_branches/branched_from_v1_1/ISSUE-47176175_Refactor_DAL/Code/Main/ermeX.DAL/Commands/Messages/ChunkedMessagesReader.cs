@@ -26,7 +26,7 @@ namespace ermeX.DAL.Commands.Messages
 		    ChunkedServiceRequestMessageData result;
 		    using (var uow = _factory.Create())
 		    {
-				result = _repository.SingleOrDefault(uow.Session, x => x.CorrelationId == correlationId && x.Order == order);
+				result = _repository.SingleOrDefault(uow, x => x.CorrelationId == correlationId && x.Order == order);
 				uow.Commit();
 		    }
 		    return result;

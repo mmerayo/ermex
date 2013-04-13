@@ -26,7 +26,7 @@ namespace ermeX.DAL.Commands.Queues
 		{
 			using (var uow = _factory.Create())
 			{
-				_repository.Save(uow.Session, incomingMessage);
+				_repository.Save(uow, incomingMessage);
 				uow.Commit();
 			}
 		}
@@ -35,7 +35,7 @@ namespace ermeX.DAL.Commands.Queues
 		{
 			using (var uow = _factory.Create())
 			{
-				_repository.Save(uow.Session, incomingMessages);
+				_repository.Save(uow, incomingMessages);
 				uow.Commit();
 			}
 		}
@@ -44,7 +44,7 @@ namespace ermeX.DAL.Commands.Queues
 		{
 			using (var uow = _factory.Create())
 			{
-				_repository.Remove(uow.Session, incomingMessage);
+				_repository.Remove(uow, incomingMessage);
 				uow.Commit();
 			}
 			

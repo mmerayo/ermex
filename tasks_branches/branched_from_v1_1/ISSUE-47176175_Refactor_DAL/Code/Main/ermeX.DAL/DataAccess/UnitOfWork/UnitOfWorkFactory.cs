@@ -16,11 +16,11 @@ namespace ermeX.DAL.DataAccess.UoW
 			_sessionFactory = sessionProvider;
 		}
 
-		public IUnitOfWork Create()
+		public IUnitOfWork Create (bool autoCommitWhenDispose=false)
 		{
 			var session = _sessionFactory.OpenSession();
 			session.FlushMode = FlushMode.Commit;
-			return new UnitOfWorkImplementor(this, session);
+			return new UnitOfWorkImplementor(this, session,autoCommitWhenDispose);
 		}
 	}
 }

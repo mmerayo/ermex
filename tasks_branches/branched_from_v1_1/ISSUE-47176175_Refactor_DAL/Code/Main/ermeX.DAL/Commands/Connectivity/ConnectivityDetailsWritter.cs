@@ -30,7 +30,7 @@ namespace ermeX.DAL.Commands.Connectivity
 		{
 			using (var uow = _factory.Create())
 			{
-				_repository.Remove(uow.Session, x=>x.ServerId== componentId);
+				_repository.Remove(uow, x=>x.ServerId== componentId);
 				uow.Commit();
 			}
 		}
@@ -39,7 +39,7 @@ namespace ermeX.DAL.Commands.Connectivity
 		{
 			using (var uow = _factory.Create())
 			{
-				_repository.Remove(uow.Session, x => x.ServerId == _settings.ComponentId);
+				_repository.Remove(uow, x => x.ServerId == _settings.ComponentId);
 				uow.Commit();
 			}
 		}
@@ -66,7 +66,7 @@ namespace ermeX.DAL.Commands.Connectivity
 				IsLocal = asLocal
 			};
 			
-				_repository.Save(unitOfWork.Session, connectivityDetails);
+				_repository.Save(unitOfWork, connectivityDetails);
 			
 			Debug.Assert(connectivityDetails.Id!=0,"The id was not populated");
 			return connectivityDetails;

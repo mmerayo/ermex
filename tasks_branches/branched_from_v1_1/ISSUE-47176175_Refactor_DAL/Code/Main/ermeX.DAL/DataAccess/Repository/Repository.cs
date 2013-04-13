@@ -32,12 +32,12 @@ namespace ermeX.DAL.DataAccess.Repository
 			_expressionHelper = expressionHelper;
 		}
 
-		public bool Save(ISession session, TEntity entity)
+		public bool Save(IUnitOfWork unitofWork, TEntity entity)
 		{
 			if (entity.ComponentOwner == Guid.Empty)
 				throw new ArgumentEmptyException("entity.ComponentOwner");
 
-			if (!CanSave(session,entity))
+			if (!CanSave(unitofWork,entity))
 				return false;
 
 
@@ -46,106 +46,114 @@ namespace ermeX.DAL.DataAccess.Repository
 
 			entity.ComponentOwner = _localComponentId;
 
-			session.SaveOrUpdate(entity);
+			unitofWork.Session.SaveOrUpdate(entity);
 			return true;
 		}
 
-		private bool CanSave(ISession session,TEntity entity)
+		private bool CanSave(IUnitOfWork unitofWork,TEntity entity)
 		{
-			var item = SingleOrDefault(session,_expressionHelper.GetFindByBizKey(entity));
+			var item = SingleOrDefault(unitofWork,_expressionHelper.GetFindByBizKey(entity));
 			bool result = item == null || item.Version <= entity.Version;
 			if(item!=null)
-				session.Evict(item);
+				unitofWork.Session.Evict(item);
 
 			return result; //Can save if it didnt exist or the version is newer
 		}
 		
-		public bool Save(ISession session, IEnumerable<TEntity> items)
+		public bool Save(IUnitOfWork unitofWork, IEnumerable<TEntity> items)
 		{
 			foreach (TEntity item in items)
-				Save(session, item);
+				Save(unitofWork, item);
 			return true;
 		}
 
-		public void RemoveAll(ISession session)
+		public void RemoveAll(IUnitOfWork unitofWork)
 		{
-			var fetchAll = FetchAll(session);
-			Remove(session, fetchAll);
+			var fetchAll = FetchAll(unitofWork);
+			Remove(unitofWork, fetchAll);
 		}
 
-		public void Remove(ISession session)
+		public void Remove(IUnitOfWork unitofWork)
 		{
-			Remove(session, 0);
+			Remove(unitofWork, 0);
 		}
 
-		public void Remove(ISession session, int id)
+		public void Remove(IUnitOfWork unitofWork, int id)
 		{
-			var toRemove = Single(session, id);
-			Remove(session, toRemove);
+			var toRemove = Single(unitofWork, id);
+			Remove(unitofWork, toRemove);
 		}
 
-		public void Remove(ISession session, TEntity entity)
+		public void Remove(IUnitOfWork unitofWork, TEntity entity)
 		{
-			session.Delete(entity);
+			unitofWork.Session.Delete(entity);
 		}
 
-		public void Remove(ISession session, IEnumerable<TEntity> entities)
+		public void Remove(IUnitOfWork unitofWork, IEnumerable<TEntity> entities)
 		{
 			foreach (var entity in entities)
-				Remove(session, entity);
+				Remove(unitofWork, entity);
 		}
 
-		public void Remove(ISession session,Expression<Func<TEntity, bool>> expression)
+		public void Remove(IUnitOfWork unitofWork,Expression<Func<TEntity, bool>> expression)
 		{
-			IQueryable<TEntity> queryable = Where(session,expression);
-			Remove(session, queryable);
+			IQueryable<TEntity> queryable = Where(unitofWork,expression);
+			Remove(unitofWork, queryable);
 		}
 
-		public IQueryable<TEntity> FetchAll(ISession session, bool includingOtherComponents = false)
+		public IQueryable<TEntity> FetchAll(IUnitOfWork unitofWork, bool includingOtherComponents = false)
 		{
-			var absolute = session.Query<TEntity>();
+			var absolute = unitofWork.Session.Query<TEntity>();
 			if(!includingOtherComponents)
 				return absolute.Where(IsLocalPredicate);
 			return absolute;
 		}
 
-		public TEntity Single(ISession session, int id)
+		public TEntity Single(IUnitOfWork unitofWork, int id)
 		{
-			var result = session.Get<TEntity>(id);
+			var result = unitofWork.Session.Get<TEntity>(id);
 			if (result.ComponentOwner != _localComponentId)
-				throw new InvalidOperationException("The id is owned by another component");
+				throw new InvalidOperationException("The entity is owned by another component");
 			return result;
 		}
 
-		public TEntity Single(ISession session, Expression<Func<TEntity, bool>> expression)
+		public TEntity Single(IUnitOfWork unitofWork, Expression<Func<TEntity, bool>> expression)
 		{
-			return Where(session,expression).Single();
+			return Where(unitofWork,expression).Single();
 		}
 
 
-		public TEntity SingleOrDefault(ISession session, Expression<Func<TEntity, bool>> expression)
+		public TEntity SingleOrDefault(IUnitOfWork unitofWork, Expression<Func<TEntity, bool>> expression)
 		{
-			return Where(session,expression).SingleOrDefault();
+			return Where(unitofWork,expression).SingleOrDefault();
 		}
 
-		public TResult GetMax<TResult>(ISession session, string propertyName)
+		public TEntity SingleOrDefault(IUnitOfWork unitofWork, int id)
+		{
+			var result = unitofWork.Session.Get<TEntity>(id);
+			if (result!=null && result.ComponentOwner != _localComponentId)
+				throw new InvalidOperationException("The entity is owned by another component");
+			return result;
+		}
+
+		public TResult GetMax<TResult>(IUnitOfWork unitofWork, string propertyName)
 		{
 			return
-				session.QueryOver<TEntity>()
+				unitofWork.Session.QueryOver<TEntity>()
 				        .Where(IsLocalPredicate)
 				        .Select(Projections.Max(propertyName))
 				        .SingleOrDefault<TResult>();
 
 		}
 
-		public bool Any(ISession session, Expression<Func<TEntity, bool>> expression)
+		public bool Any(IUnitOfWork unitofWork, Expression<Func<TEntity, bool>> expression)
 		{
-			return Where(session,expression).Any();
+			return Where(unitofWork,expression).Any();
 		}
 
-		public IQueryable<TEntity> Where(ISession session, Expression<Func<TEntity, bool>> expression)
+		public IQueryable<TEntity> Where(IUnitOfWork unitofWork, Expression<Func<TEntity, bool>> expression)
 		{
-			return session.Query<TEntity>().Where(IsLocalPredicate).Where(expression); //TODO: IMPROVE USING AND BETWEEN BOTH EXPRESSIONS
+			return unitofWork.Session.Query<TEntity>().Where(IsLocalPredicate).Where(expression); //TODO: IMPROVE USING AND BETWEEN BOTH EXPRESSIONS
 		}
 
 		private Expression<Func<TEntity, bool>> IsLocalPredicate
@@ -153,9 +161,9 @@ namespace ermeX.DAL.DataAccess.Repository
 			get { return x=>x.ComponentOwner==_localComponentId; }
 		}
 
-		public int Count(ISession session, Expression<Func<TEntity, bool>> expression)
+		public int Count(IUnitOfWork unitofWork, Expression<Func<TEntity, bool>> expression)
 		{
-			return Where(session,expression).Count();
+			return Where(unitofWork,expression).Count();
 		}
 		
 	}
