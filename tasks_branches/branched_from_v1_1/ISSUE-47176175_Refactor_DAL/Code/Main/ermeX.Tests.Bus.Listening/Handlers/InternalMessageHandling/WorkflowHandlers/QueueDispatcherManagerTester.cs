@@ -120,7 +120,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			                      	};
 			using (var unitOfWork = factory.Create())
 			{
-				dataSource.Save(unitOfWork.Session, incomingMessage);
+				dataSource.Save(unitOfWork, incomingMessage);
 				unitOfWork.Commit();
 			}
 
@@ -136,7 +136,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			Assert.IsTrue(incomingMessage.Id > 0); //now check it is removed
 			using (var unitOfWork = factory.Create())
 			{
-				var byId = dataSource.SingleOrDefault(unitOfWork.Session, incomingMessage.Id);
+				var byId = dataSource.SingleOrDefault(unitOfWork, incomingMessage.Id);
 				unitOfWork.Commit();
 				Assert.IsNull(byId);
 			}
@@ -171,10 +171,10 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			                      	};
 			using (var unitOfWork = factory.Create())
 			{
-				dataSource.Save(incomingMessage);
+				dataSource.Save(unitOfWork,incomingMessage);
 				unitOfWork.Commit();
 			}
-			using (var target = GetInstance(dbEngineType, DealWithMessageFailingOnce))
+			using (var target = GetInstance(factory, DealWithMessageFailingOnce))
 			{
 				target.EnqueueItem(new QueueDispatcherManager.QueueDispatcherManagerMessage(incomingMessage, true));
 				_messageReceived.WaitOne(TimeSpan.FromSeconds(60));
@@ -186,6 +186,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			Assert.AreEqual(dummy.TheValue, _sentMessages[0].TheValue);
 
 			Assert.IsTrue(incomingMessage.Id > 0); //now check it is removed
+
 			IncomingMessage byId = dataSource.GetById(incomingMessage.Id);
 			Assert.IsNull(byId);
 		}

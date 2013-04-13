@@ -7,16 +7,29 @@ using ermeX.Entities.Base;
 
 namespace ermeX.DAL.DataAccess.Repository
 {
-	internal interface IReadOnlyRepository<TEntity> 
+	internal interface IReadOnlyRepository<TEntity>
 		where TEntity : ModelBase
 	{
-		IQueryable<TEntity> FetchAll(IUnitOfWork unitofWork, bool includingOtherComponents = false);
-		IQueryable<TEntity> Where(IUnitOfWork unitofWork, Expression<Func<TEntity, bool>> expression);
-		TEntity Single(IUnitOfWork unitofWork, int id);
-		TEntity Single(IUnitOfWork unitofWork, Expression<Func<TEntity, bool>> expression);
-		TEntity SingleOrDefault(IUnitOfWork unitofWork, Expression<Func<TEntity, bool>> expression);
-		TEntity SingleOrDefault(IUnitOfWork unitofWork, int id);
-		TResult GetMax<TResult>(IUnitOfWork unitofWork, string propertyName);
-		bool Any(IUnitOfWork unitofWork, Expression<Func<TEntity, bool>> expression);
+		//implicit unit of work of one operation
+		IQueryable<TEntity> FetchAll(bool includingOtherComponents = false);
+		IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> expression);
+		TEntity Single(int id);
+		TEntity Single(Expression<Func<TEntity, bool>> expression);
+		TEntity SingleOrDefault(Expression<Func<TEntity, bool>> expression);
+		TEntity SingleOrDefault(int id);
+		TResult GetMax<TResult>(string propertyName);
+		bool Any(Expression<Func<TEntity, bool>> expression);
+		int Count(Expression<Func<TEntity, bool>> expression);
+
+		//in specified unit of work
+		IQueryable<TEntity> FetchAll(IUnitOfWork unitOfWork, bool includingOtherComponents = false);
+		IQueryable<TEntity> Where(IUnitOfWork unitOfWork, Expression<Func<TEntity, bool>> expression);
+		TEntity Single(IUnitOfWork unitOfWork, int id);
+		TEntity Single(IUnitOfWork unitOfWork, Expression<Func<TEntity, bool>> expression);
+		TEntity SingleOrDefault(IUnitOfWork unitOfWork, Expression<Func<TEntity, bool>> expression);
+		TEntity SingleOrDefault(IUnitOfWork unitOfWork, int id);
+		TResult GetMax<TResult>(IUnitOfWork unitOfWork, string propertyName);
+		bool Any(IUnitOfWork unitOfWork, Expression<Func<TEntity, bool>> expression);
+		int Count(IUnitOfWork unitOfWork, Expression<Func<TEntity, bool>> expression);
 	}
 }
