@@ -102,7 +102,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 		{
 			IUnitOfWorkFactory factory = GetUnitOfWorkFactory(dbEngineType);
 
-			var dataSource = GetRepository<Repository<IncomingMessage>>();
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
 			var dummy = new Dummy() {TheValue = "Sample entity"};
 			TransportMessage transportMessage = GetTransportMessage(dummy);
 
@@ -153,7 +153,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 		public void Retries_Failed_Messages(DbEngineType dbEngineType)
 		{
 			IUnitOfWorkFactory factory = GetUnitOfWorkFactory(dbEngineType);
-			var dataSource = GetRepository<Repository<IncomingMessage>>();
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
 			var dummy = new Dummy() {TheValue = "Sample entity"};
 			TransportMessage transportMessage = GetTransportMessage(dummy);
 
@@ -187,7 +187,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 
 			Assert.IsTrue(incomingMessage.Id > 0); //now check it is removed
 
-			IncomingMessage byId = dataSource.Single(incomingMessage.Id);
+			IncomingMessage byId = dataSource.SingleOrDefault(incomingMessage.Id);
 			Assert.IsNull(byId);
 		}
 
@@ -195,7 +195,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 		public void Can_DeliverMany_Messages_OrderedByGeneration(DbEngineType dbEngineType)
 		{
 			IUnitOfWorkFactory factory = GetUnitOfWorkFactory(dbEngineType);
-			var dataSource = GetRepository<Repository<IncomingMessage>>();
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
 
 
 			TimeSpan createdTimeDelay = TimeSpan.FromSeconds(3);
