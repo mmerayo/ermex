@@ -24,6 +24,7 @@ using Ninject.Modules;
 using ermeX.Common;
 using ermeX.Configuration;
 using ermeX.ConfigurationManagement.IoC;
+using ermeX.ConfigurationManagement.IoC.InjectionModules;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using Cfg = ermeX.Configuration.Configurer;
@@ -79,29 +80,37 @@ namespace ermeX.ConfigurationManagement
 
 
             
-            INinjectModule[] injectionModules = GetInjectionModules(settings as IBizSettings);
+            INinjectModule[] injectionModules = GetInjectionModules(settings);
             IoCManager.SetCurrentInjections(injectionModules);
 
 
             //Already disposed from previous execution and reinjected CacheProvider.ClearCache();
         }
 
-        private static INinjectModule[] GetInjectionModules(IBizSettings settings)
+        private static INinjectModule[] GetInjectionModules(IComponentSettings settings)
         {
             if (settings == null) throw new ArgumentNullException("settings");
-            Type[] moduleTypes =
+
+        	EnsureIocAssembliesAreInDomain();
+			Type[] moduleTypes =
                 TypesHelper.GetTypesFromDomainImplementing<INinjectModule>().Where(
                     x => !x.Namespace.StartsWith("Ninject")).ToArray();
 
             var result = new List<INinjectModule>(moduleTypes.Length);
+
             result.AddRange(
                 moduleTypes.Select(moduleType => ObjectBuilder.FromType<INinjectModule>(moduleType, settings)));
 
             return result.ToArray();
         }
 
+    	private static void EnsureIocAssembliesAreInDomain()
+    	{
+    		TypesHelper.GetAssemblyFromDomain("ermeX.Dal.IoC");//TODO: ADD ALL or define the injections using another mechanism
+    	}
 
-        public static Cfg GetSettingsFromConfig()
+
+    	public static Cfg GetSettingsFromConfig()
         {
             var config = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var target = (ermeXConfiguration) config.GetSection("ermeXConfiguration");
