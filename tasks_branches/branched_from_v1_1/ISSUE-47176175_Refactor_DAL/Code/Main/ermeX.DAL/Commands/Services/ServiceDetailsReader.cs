@@ -31,7 +31,7 @@ namespace ermeX.DAL.Commands.Services
 			ServiceDetails result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.SingleOrDefault(uow.Session, x => x.OperationIdentifier == operationId);
+				result = _repository.SingleOrDefault(uow, x => x.OperationIdentifier == operationId);
 				uow.Commit();
 			}
 			return result;
@@ -42,7 +42,7 @@ namespace ermeX.DAL.Commands.Services
 			ServiceDetails result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.SingleOrDefault(uow.Session, x => x.OperationIdentifier == operationId 
+				result = _repository.SingleOrDefault(uow, x => x.OperationIdentifier == operationId 
 					&& x.Publisher==publisher);
 				uow.Commit();
 			}
@@ -60,7 +60,7 @@ namespace ermeX.DAL.Commands.Services
 			IEnumerable<ServiceDetails> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.Where(uow.Session, x => x.ServiceInterfaceTypeName == interfaceTypeFullName).ToList();
+				result = _repository.Where(uow, x => x.ServiceInterfaceTypeName == interfaceTypeFullName).ToList();
 				uow.Commit();
 			}
 			return result;
@@ -72,7 +72,7 @@ namespace ermeX.DAL.Commands.Services
 			IEnumerable<ServiceDetails> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.Where(uow.Session, x => x.ServiceInterfaceTypeName == interfaceTypeName
+				result = _repository.Where(uow, x => x.ServiceInterfaceTypeName == interfaceTypeName
 					&& x.ServiceImplementationMethodName == methodName).ToList();
 				uow.Commit();
 			}
@@ -85,7 +85,7 @@ namespace ermeX.DAL.Commands.Services
 			ServiceDetails result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.SingleOrDefault(uow.Session, x => x.ServiceInterfaceTypeName == interfaceTypeName
+				result = _repository.SingleOrDefault(uow, x => x.ServiceInterfaceTypeName == interfaceTypeName
 					&& x.ServiceImplementationMethodName == methodName && x.Publisher==publisherComponent);
 				uow.Commit();
 			}
@@ -97,7 +97,7 @@ namespace ermeX.DAL.Commands.Services
 			IEnumerable<ServiceDetails> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.Where(uow.Session, x => x.Publisher == _settings.ComponentId
+				result = _repository.Where(uow, x => x.Publisher == _settings.ComponentId
 					&& x.IsSystemService == false).ToList();
 				uow.Commit();
 			}

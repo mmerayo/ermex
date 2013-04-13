@@ -32,7 +32,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 		{
 			using (var uow = _factory.Create())
 			{
-				_incomingRepository.Remove(uow.Session, x => x.SuscriptionHandlerId == suscriptionId);
+				_incomingRepository.Remove(uow, x => x.SuscriptionHandlerId == suscriptionId);
 				uow.Commit();
 			}
 		}
@@ -49,13 +49,13 @@ namespace ermeX.DAL.Commands.Subscriptions
 					SuscriptionHandlerId = suscriptionHandlerId,
 					HandlerType = handlerType.FullName
 				};
-				_incomingRepository.Save(uow.Session, incomingMessageSuscription);
+				_incomingRepository.Save(uow, incomingMessageSuscription);
 				//TODO: TO BE MOVED TO THE OUTGOING SUSCRIPTIONS UPDATER
 
-				if (!_outgoingRepository.Any(uow.Session, x => x.BizMessageFullTypeName == messageType.FullName && x.Component == _settings.ComponentId))
+				if (!_outgoingRepository.Any(uow, x => x.BizMessageFullTypeName == messageType.FullName && x.Component == _settings.ComponentId))
 				{
 					var outgoingMessageSuscription = new OutgoingMessageSuscription(incomingMessageSuscription, _settings.ComponentId, _settings.ComponentId);
-					_outgoingRepository.Save(uow.Session, outgoingMessageSuscription);
+					_outgoingRepository.Save(uow, outgoingMessageSuscription);
 				}
 				uow.Commit();
 			}
@@ -65,7 +65,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 		{
 			using (var uow = _factory.Create())
 			{
-				_incomingRepository.Remove(uow.Session, toRemove);
+				_incomingRepository.Remove(uow, toRemove);
 				uow.Commit();
 			}
 		}

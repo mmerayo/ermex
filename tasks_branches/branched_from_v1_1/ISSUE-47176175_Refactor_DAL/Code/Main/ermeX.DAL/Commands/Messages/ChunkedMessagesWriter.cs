@@ -25,7 +25,7 @@ namespace ermeX.DAL.Commands.Messages
 		{
 			using (var uow = _factory.Create())
 			{
-				_repository.Save(uow.Session,chunk);
+				_repository.Save(uow,chunk);
 				uow.Commit();
 			}
 		}
@@ -34,7 +34,7 @@ namespace ermeX.DAL.Commands.Messages
 		{
 			using (var uow = _factory.Create())
 			{
-				_repository.Remove(uow.Session, chunk);
+				_repository.Remove(uow, chunk);
 				uow.Commit();
 			}
 

@@ -4,6 +4,6 @@ namespace ermeX.DAL.DataAccess.UoW
 {
 	internal interface IUnitOfWorkFactory
 	{
-		IUnitOfWork Create();
+		IUnitOfWork Create(bool autoCommitWhenDispose=false);
 	}
 }

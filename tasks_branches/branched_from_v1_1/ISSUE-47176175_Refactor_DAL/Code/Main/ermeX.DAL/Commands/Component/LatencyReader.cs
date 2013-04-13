@@ -23,7 +23,7 @@ namespace ermeX.DAL.Commands.Component
 		    int result=0;
 		    using (var u = _factory.Create())
 		    {
-			     result=Repository.GetMax<int>(u.Session, "Latency");
+			     result=Repository.GetMax<int>(u, "Latency");
 				u.Commit();
 		    }
 		    return result;

@@ -31,7 +31,7 @@ namespace ermeX.DAL.Commands.Queues
 			using (var uow = _factory.Create())
 			{
 				IOrderedQueryable<IncomingMessage> incomingMessages = _repository
-					.Where(uow.Session,x => x.Status == Message.MessageStatus.ReceiverDispatching)
+					.Where(uow,x => x.Status == Message.MessageStatus.ReceiverDispatching)
 					.OrderBy(x => x.CreatedTimeUtc);
 				foreach (var incomingMessage in incomingMessages)
 				{
@@ -55,7 +55,7 @@ namespace ermeX.DAL.Commands.Queues
 			using (var uow = _factory.Create())
 			{
 				result = _repository
-					.Where(uow.Session,x => x.Status == Message.MessageStatus.ReceiverReceived)
+					.Where(uow,x => x.Status == Message.MessageStatus.ReceiverReceived)
 					.OrderBy(x => x.CreatedTimeUtc).ToList();
 				uow.Commit();
 			}
@@ -68,7 +68,7 @@ namespace ermeX.DAL.Commands.Queues
 			using (var uow = _factory.Create())
 			{
 				result = _repository
-					.Where(uow.Session, x => status.Contains(x.Status))
+					.Where(uow, x => status.Contains(x.Status))
 					.OrderBy(x => x.CreatedTimeUtc).ToList();
 				uow.Commit();
 			}
@@ -84,7 +84,7 @@ namespace ermeX.DAL.Commands.Queues
 			using (var uow = _factory.Create())
 			{
 				result =
-					_repository.Any(uow.Session, x => x.MessageId == messageId && x.SuscriptionHandlerId == destinationComponent);
+					_repository.Any(uow, x => x.MessageId == messageId && x.SuscriptionHandlerId == destinationComponent);
 				uow.Commit();
 			}
 			return result;
@@ -95,7 +95,7 @@ namespace ermeX.DAL.Commands.Queues
 			IEnumerable<IncomingMessage> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.Where(uow.Session, x => x.Status == Message.MessageStatus.ReceiverReceived && x.SuscriptionHandlerId == Guid.Empty).ToList();
+				result = _repository.Where(uow, x => x.Status == Message.MessageStatus.ReceiverReceived && x.SuscriptionHandlerId == Guid.Empty).ToList();
 				uow.Commit();
 			}
 			return result;

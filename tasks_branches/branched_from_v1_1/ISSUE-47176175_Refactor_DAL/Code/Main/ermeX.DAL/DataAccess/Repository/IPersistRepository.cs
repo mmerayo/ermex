@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using NHibernate;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.Entities.Base;
 
 namespace ermeX.DAL.DataAccess.Repository
@@ -9,13 +10,13 @@ namespace ermeX.DAL.DataAccess.Repository
 	internal interface IPersistRepository<TEntity> : IReadOnlyRepository<TEntity>
 		where TEntity : ModelBase
 	{
-		bool Save(ISession session, TEntity entity);
-		bool Save(ISession session, IEnumerable<TEntity> items);
-		void Remove(ISession session, int id);
-		void Remove(ISession session, TEntity entity);
-		void Remove(ISession session, IEnumerable<TEntity> entities);
-		void Remove(ISession session, Expression<Func<TEntity, bool>> expression);
-		int Count(ISession session, Expression<Func<TEntity, bool>> expression);
-		void RemoveAll(ISession session);
+		bool Save(IUnitOfWork unitofWork, TEntity entity);
+		bool Save(IUnitOfWork unitofWork, IEnumerable<TEntity> items);
+		void Remove(IUnitOfWork unitofWork, int id);
+		void Remove(IUnitOfWork unitofWork, TEntity entity);
+		void Remove(IUnitOfWork unitofWork, IEnumerable<TEntity> entities);
+		void Remove(IUnitOfWork unitofWork, Expression<Func<TEntity, bool>> expression);
+		int Count(IUnitOfWork unitofWork, Expression<Func<TEntity, bool>> expression);
+		void RemoveAll(IUnitOfWork unitofWork);
 	}
 }

@@ -30,7 +30,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IEnumerable<OutgoingMessageSuscription> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.Where(uow.Session, x => x.BizMessageFullTypeName == bizMessageType).ToList();
+				result = _repository.Where(uow, x => x.BizMessageFullTypeName == bizMessageType).ToList();
 				uow.Commit();
 			}
 			return result;
@@ -42,7 +42,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IEnumerable<OutgoingMessageSuscription> result;
 			using (var uow = _factory.Create())
 			{
-				result = _repository.FetchAll(uow.Session).ToList();
+				result = _repository.FetchAll(uow).ToList();
 				uow.Commit();
 			}
 			return result;
