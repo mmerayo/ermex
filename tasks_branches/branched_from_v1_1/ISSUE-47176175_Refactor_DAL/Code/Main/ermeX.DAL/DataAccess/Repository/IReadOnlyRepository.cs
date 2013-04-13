@@ -20,6 +20,8 @@ namespace ermeX.DAL.DataAccess.Repository
 		TResult GetMax<TResult>(string propertyName);
 		bool Any(Expression<Func<TEntity, bool>> expression);
 		int Count(Expression<Func<TEntity, bool>> expression);
+		bool Any();
+		int Count();
 
 		//in specified unit of work
 		IQueryable<TEntity> FetchAll(IUnitOfWork unitOfWork, bool includingOtherComponents = false);
@@ -31,5 +33,7 @@ namespace ermeX.DAL.DataAccess.Repository
 		TResult GetMax<TResult>(IUnitOfWork unitOfWork, string propertyName);
 		bool Any(IUnitOfWork unitOfWork, Expression<Func<TEntity, bool>> expression);
 		int Count(IUnitOfWork unitOfWork, Expression<Func<TEntity, bool>> expression);
+		bool Any(IUnitOfWork unitOfWork);
+		int Count(IUnitOfWork unitOfWork);
 	}
 }

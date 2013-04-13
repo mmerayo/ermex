@@ -84,6 +84,16 @@ namespace ermeX.DAL.DataAccess.Repository
 			return result;
 		}
 
+		public bool Any()
+		{
+			return FetchAll().Any();
+		}
+
+		public int Count()
+		{
+			return FetchAll().Count();
+		}
+
 		public void RemoveAll()
 		{
 			using (var unitOfWork = _implicitFactory.Create(true))
@@ -97,7 +107,6 @@ namespace ermeX.DAL.DataAccess.Repository
 
 			if (!CanSave(unitOfWork,entity))
 				return false;
-
 
 			if (entity.ComponentOwner == _localComponentId)
 				entity.Version = DateTime.UtcNow.Ticks; //Keeps the version of the last updater
@@ -287,6 +296,15 @@ namespace ermeX.DAL.DataAccess.Repository
 		{
 			return Where(unitOfWork,expression).Count();
 		}
-		
+
+		public bool Any(IUnitOfWork unitOfWork)
+		{
+			return FetchAll(unitOfWork).Any();
+		}
+
+		public int Count(IUnitOfWork unitOfWork)
+		{
+			return FetchAll(unitOfWork).Count();
+		}
 	}
 }
