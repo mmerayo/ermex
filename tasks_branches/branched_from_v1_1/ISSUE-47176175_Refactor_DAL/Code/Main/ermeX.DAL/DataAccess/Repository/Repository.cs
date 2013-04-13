@@ -257,7 +257,8 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		public TEntity SingleOrDefault(IUnitOfWork unitOfWork, Expression<Func<TEntity, bool>> expression)
 		{
-			return Where(unitOfWork,expression).SingleOrDefault();
+			var queryable = Where(unitOfWork,expression);
+			return queryable.SingleOrDefault();
 		}
 
 		public TEntity SingleOrDefault(IUnitOfWork unitOfWork, int id)
