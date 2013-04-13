@@ -96,7 +96,6 @@ namespace ermeX.DAL.IoC
 			Bind<ICanWriteChunkedMessages>().To<ChunkedMessagesWriter>();
 
 			//queues
-
 			Bind<IReadOutgoingQueue>().To<ReaderOutgoingQueue>();
 			Bind<IWriteOutgoingQueue>().To<WriteOutgoingQueue>();
 

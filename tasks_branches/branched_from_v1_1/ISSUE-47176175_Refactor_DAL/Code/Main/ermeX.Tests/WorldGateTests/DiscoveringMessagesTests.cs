@@ -38,7 +38,7 @@ using ermeX.Tests.SupportTypes.Messages;
 namespace ermeX.Tests.WorldGateTests
 {
 
-    [Category(TestCategories.CoreFunctionalTest)]
+    [Category(TestCategories.CoreSystemTest)]
     //[TestFixture]
     internal class DiscoveringMessagesTests : DataAccessTestBase
     {

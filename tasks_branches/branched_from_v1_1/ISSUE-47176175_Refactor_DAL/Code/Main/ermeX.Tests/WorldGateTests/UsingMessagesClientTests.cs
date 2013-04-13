@@ -37,7 +37,7 @@ using ermeX.Tests.WorldGateTests.Mock.Messages;
 
 namespace ermeX.Tests.WorldGateTests
 {
-    [Category(TestCategories.CoreFunctionalTest)]
+    [Category(TestCategories.CoreSystemTest)]
     //[TestFixture]
     internal class UsingMessagesClientTests : DataAccessTestBase
     {

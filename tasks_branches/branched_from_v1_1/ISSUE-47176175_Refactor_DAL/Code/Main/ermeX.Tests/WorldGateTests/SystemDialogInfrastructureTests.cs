@@ -34,7 +34,7 @@ using ermeX.Tests.WorldGateTests.Mock;
 namespace ermeX.Tests.WorldGateTests
 {
 
-    [Category(TestCategories.CoreFunctionalTest)]
+    [Category(TestCategories.CoreSystemTest)]
    // [TestFixture]
     class SystemDialogInfrastructureTests :DataAccessTestBase
     {
