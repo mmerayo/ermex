@@ -108,6 +108,10 @@
       <Project>{C4536E30-DC91-4AA4-8860-ECBDAF1AE4DE}</Project>
       <Name>ermeX.ConfigurationManagement</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Dal.Commands\ermeX.Dal.Commands.csproj">
+      <Project>{4CB1C5B5-6883-4FBE-80CC-97B2EDC2F5DE}</Project>
+      <Name>ermeX.Dal.Commands</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.DAL.Interfaces\ermeX.DAL.Interfaces.csproj">
       <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>
       <Name>ermeX.DAL.Interfaces</Name>
