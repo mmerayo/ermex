@@ -25,6 +25,8 @@ using NUnit.Framework;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
+using ermeX.DAL.DataAccess.Repository;
+using ermeX.DAL.DataAccess.UoW;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
@@ -40,7 +42,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 
 		private readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
 
-		private ReceptionMessageDistributor GetInstance(DbEngineType dbEngine,
+		private ReceptionMessageDistributor GetInstance(IUnitOfWorkFactory factory,
 		                                                Action<QueueDispatcherManager.QueueDispatcherManagerMessage>
 			                                                messageReceived, out IQueueDispatcherManager mockedDispatcher)
 		{
@@ -50,8 +52,8 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 
 			mockedDispatcher = mock.Object;
 
-		    var result = new ReceptionMessageDistributor(GetIncommingMessageSubscriptionsReader(dbEngine),
-		                                                                      GetIncommingQueueReader(dbEngine), GetIncommingQueueWritter(dbEngine),
+		    var result = new ReceptionMessageDistributor(GetIncommingMessageSubscriptionsReader(factory),
+		                                                                      GetIncommingQueueReader(factory), GetIncommingQueueWritter(factory),
 		                                                                      mockedDispatcher);
             result.Start();
 		    return result;
@@ -92,7 +94,8 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
 		public void Can_Distribute_Messages(DbEngineType dbEngineType)
 		{
-			var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngineType);
+			var factory = GetUnitOfWorkFactory(dbEngineType);
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
 			TransportMessage transportMessage = GetTransportMessage(new Dummy() {TheValue = "Sample entity"});
 
 			var incomingMessage = new IncomingMessage(transportMessage.Data)
@@ -113,11 +116,11 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 					SuscriptionHandlerId = Guid.NewGuid(),
 					HandlerType = typeof (string).FullName
 				};
-			var incomingMessageSuscriptionsDataSource = GetDataSource<IncomingMessageSuscriptionsDataSource>(dbEngineType);
+			var incomingMessageSuscriptionsDataSource = GetRepository<Repository<IncomingMessageSuscription>>(factory);
 			incomingMessageSuscriptionsDataSource.Save(s1);
 
 			IQueueDispatcherManager mockedDispatcher;
-			using (var target = GetInstance(dbEngineType, DealWithMessage, out mockedDispatcher))
+			using (var target = GetInstance(factory, DealWithMessage, out mockedDispatcher))
 			{
 				target.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage));
 				_messageReceived.WaitOne(TimeSpan.FromSeconds(10));
@@ -126,9 +129,9 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			Assert.IsTrue(_sentMessages.Count == 1); // asserts the original was removed
 			var queueDispatcherManagerMessage = _sentMessages[0];
 			Assert.IsTrue(queueDispatcherManagerMessage.MustCalculateLatency); //It was enqueued to recalculate latency
-			var incomingMessages = dataSource.GetAll();
-			Assert.IsTrue(incomingMessages.Count == 1);
-			var distributedMessage = incomingMessages[0];
+			var incomingMessages = dataSource.FetchAll();
+			Assert.IsTrue(incomingMessages.Count() == 1);
+			var distributedMessage = incomingMessages.First();
 
 			Assert.AreEqual(s1.SuscriptionHandlerId, distributedMessage.SuscriptionHandlerId);
 			Assert.AreEqual(queueDispatcherManagerMessage.IncomingMessage, distributedMessage);
@@ -139,7 +142,8 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
 		public void Enqueues_NonDeliveredMessages_OnStartUp(DbEngineType dbEngineType)
 		{
-			var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngineType);
+			var factory = GetUnitOfWorkFactory(dbEngineType);
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
 			var transportMessage = GetTransportMessage(new Dummy() {TheValue = "Sample entity"});
 
 			var s1 = new IncomingMessageSuscription()
@@ -149,7 +153,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 					SuscriptionHandlerId = Guid.NewGuid(),
 					HandlerType = typeof (string).FullName
 				};
-			var incomingMessageSuscriptionsDataSource = GetDataSource<IncomingMessageSuscriptionsDataSource>(dbEngineType);
+			var incomingMessageSuscriptionsDataSource = GetRepository<Repository<IncomingMessageSuscription>>(factory); ;
 			incomingMessageSuscriptionsDataSource.Save(s1);
 
 			var incomingMessage = new IncomingMessage(transportMessage.Data)
@@ -164,15 +168,15 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			dataSource.Save(incomingMessage);
 
 			IQueueDispatcherManager mockedDispatcher;
-			using (var target = GetInstance(dbEngineType, DealWithMessage, out mockedDispatcher))
+			using (var target = GetInstance(factory, DealWithMessage, out mockedDispatcher))
 				_messageReceived.WaitOne(TimeSpan.FromSeconds(10));
 
 			Assert.IsTrue(_sentMessages.Count == 1); // asserts there is original was removed
 			var queueDispatcherManagerMessage = _sentMessages[0];
 			Assert.IsFalse(queueDispatcherManagerMessage.MustCalculateLatency); //It was enqueued to NOT TO recalculate latency
-			var incomingMessages = dataSource.GetAll();
-			Assert.IsTrue(incomingMessages.Count == 1);
-			var distributedMessage = incomingMessages[0];
+			var incomingMessages = dataSource.FetchAll();
+			Assert.IsTrue(incomingMessages.Count() == 1);
+			var distributedMessage = incomingMessages.First();
 
 			Assert.AreEqual(s1.SuscriptionHandlerId, distributedMessage.SuscriptionHandlerId);
 			Assert.AreEqual(queueDispatcherManagerMessage.IncomingMessage, distributedMessage);
@@ -190,7 +194,8 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
 		public void When_Subscribed_ToBase_Type_Will_DistributeIt_Correctly(DbEngineType dbEngineType)
 		{
-			var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngineType);
+			var factory = GetUnitOfWorkFactory(dbEngineType);
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
 			TransportMessage transportMessage = GetTransportMessage(new Dummy2() {TheValue = "Sample entity", TheValue2 = "2222"});
 
 			var incomingMessage = new IncomingMessage(transportMessage.Data)
@@ -211,11 +216,11 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 					SuscriptionHandlerId = Guid.NewGuid(),
 					HandlerType = typeof (string).FullName
 				};
-			var incomingMessageSuscriptionsDataSource = GetDataSource<IncomingMessageSuscriptionsDataSource>(dbEngineType);
+			var incomingMessageSuscriptionsDataSource = GetRepository<Repository<IncomingMessageSuscription>>(factory);
 			incomingMessageSuscriptionsDataSource.Save(s1);
 
 			IQueueDispatcherManager mockedDispatcher;
-			using (var target = GetInstance(dbEngineType, DealWithMessage, out mockedDispatcher))
+			using (var target = GetInstance(factory, DealWithMessage, out mockedDispatcher))
 			{
 				target.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage));
 				_messageReceived.WaitOne(TimeSpan.FromSeconds(10));
@@ -224,9 +229,9 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			Assert.IsTrue(_sentMessages.Count == 1); // asserts the original was removed
 			var queueDispatcherManagerMessage = _sentMessages[0];
 			Assert.IsTrue(queueDispatcherManagerMessage.MustCalculateLatency); //It was enqueued to recalculate latency
-			var incomingMessages = dataSource.GetAll();
-			Assert.IsTrue(incomingMessages.Count == 1);
-			var distributedMessage = incomingMessages[0];
+			var incomingMessages = dataSource.FetchAll();
+			Assert.IsTrue(incomingMessages.Count() == 1);
+			var distributedMessage = incomingMessages.First();
 
 			Assert.AreEqual(s1.SuscriptionHandlerId, distributedMessage.SuscriptionHandlerId);
 			Assert.AreEqual(queueDispatcherManagerMessage.IncomingMessage, distributedMessage);
@@ -236,7 +241,8 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
 		public void When_Subscribed_ToConcrete_Type_Will_DistributeIt_Correctly(DbEngineType dbEngineType)
 		{
-			var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngineType);
+			var factory = GetUnitOfWorkFactory(dbEngineType);
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
 			TransportMessage transportMessage1 =
 				GetTransportMessage(new Dummy2() {TheValue = "Sample entity", TheValue2 = "2222"});
 
@@ -271,11 +277,11 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 					SuscriptionHandlerId = Guid.NewGuid(),
 					HandlerType = typeof (string).FullName
 				};
-			var incomingMessageSuscriptionsDataSource = GetDataSource<IncomingMessageSuscriptionsDataSource>(dbEngineType);
+			var incomingMessageSuscriptionsDataSource = GetRepository<Repository<IncomingMessageSuscription>>(factory);
 			incomingMessageSuscriptionsDataSource.Save(s1);
 
 			IQueueDispatcherManager mockedDispatcher;
-			using (var target = GetInstance(dbEngineType, DealWithMessage, out mockedDispatcher))
+			using (var target = GetInstance(factory, DealWithMessage, out mockedDispatcher))
 			{
 				target.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage1));
 				target.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage2));
@@ -286,9 +292,9 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			// asserts the original was removed and only one Dmmy2 was distributed as there are not more subscribers
 			var queueDispatcherManagerMessage = _sentMessages[0];
 			Assert.IsTrue(queueDispatcherManagerMessage.MustCalculateLatency); //It was enqueued to recalculate latency
-			var incomingMessages = dataSource.GetAll();
-			Assert.IsTrue(incomingMessages.Count == 1);
-			var distributedMessage = incomingMessages[0];
+			var incomingMessages = dataSource.FetchAll();
+			Assert.IsTrue(incomingMessages.Count() == 1);
+			var distributedMessage = incomingMessages.First();
 
 			Assert.AreEqual(s1.SuscriptionHandlerId, distributedMessage.SuscriptionHandlerId);
 			Assert.AreEqual(queueDispatcherManagerMessage.IncomingMessage, distributedMessage);
