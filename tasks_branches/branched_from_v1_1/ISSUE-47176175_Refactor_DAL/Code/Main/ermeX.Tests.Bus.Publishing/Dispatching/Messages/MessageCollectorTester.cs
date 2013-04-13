@@ -104,11 +104,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			BusMessage busMessage = _sentMessages[0].OutGoingMessage.ToBusMessage();
 			Assert.AreEqual(expected, busMessage); //asserts is the same that was pushed
 			List<OutgoingMessage> messagesInDb;
-			using (IUnitOfWork unitOfWork = factory.Create())
-			{
-				messagesInDb = GetRepository<Repository<OutgoingMessage>>().FetchAll(unitOfWork.Session).ToList();
-				unitOfWork.Commit();
-			}
+			messagesInDb = GetRepository<Repository<OutgoingMessage>>(factory).FetchAll().ToList();
 			Assert.IsTrue(messagesInDb.Count() == 1); //asserts the message was created
 
 			OutgoingMessage outgoingMessage = messagesInDb.First();
@@ -124,36 +120,26 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
 			//the default test set them for one day
 			var outgoingMessage = new OutgoingMessage(busMessage)
-				{
-					CreatedTimeUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
-					ComponentOwner = LocalComponentId,
-					PublishedBy = LocalComponentId,
-					Status = Message.MessageStatus.SenderCollected
-				};
+			                      	{
+			                      		CreatedTimeUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
+			                      		ComponentOwner = LocalComponentId,
+			                      		PublishedBy = LocalComponentId,
+			                      		Status = Message.MessageStatus.SenderCollected
+			                      	};
 			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
-			var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>();
-			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
-			{
-				outgoingMessagesDataSource.Save(unitOfWork.Session, outgoingMessage);
-				unitOfWork.Commit();
-			}
-			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
-			{
-				int count = outgoingMessagesDataSource.FetchAll(unitOfWork.Session).Count();
-				unitOfWork.Commit();
-				Assert.IsTrue(count == 1); //assert it was saved
-			}
+			var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(unitOfWorkFactory);
+			outgoingMessagesDataSource.Save(outgoingMessage);
+
+			int count = outgoingMessagesDataSource.Count();
+			Assert.IsTrue(count == 1); //assert it was saved
 			IMessageDistributor mockedDistributor;
 			using (var target = GetInstance(unitOfWorkFactory, DealWithMessage, out mockedDistributor))
 			{
 				target.Start();
 				Thread.Sleep(250);
 			}
-			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
-			{
-				Assert.IsTrue(!outgoingMessagesDataSource.FetchAll(unitOfWork.Session).Any()); //asserts it was removed
-				unitOfWork.Commit();
-			}
+
+			Assert.IsTrue(!outgoingMessagesDataSource.Any()); //asserts it was removed
 		}
 
 		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
@@ -164,19 +150,17 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
 			//the default test set them for one day
 			var outgoingMessage = new OutgoingMessage(busMessage) //creates this message as a pending one
-				{
-					CreatedTimeUtc = DateTime.UtcNow,
-					ComponentOwner = LocalComponentId,
-					PublishedBy = LocalComponentId,
-					Status = Message.MessageStatus.SenderCollected
-				};
+			                      	{
+			                      		CreatedTimeUtc = DateTime.UtcNow,
+			                      		ComponentOwner = LocalComponentId,
+			                      		PublishedBy = LocalComponentId,
+			                      		Status = Message.MessageStatus.SenderCollected
+			                      	};
 			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
-			var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>();
-			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
-			{
-				outgoingMessagesDataSource.Save(unitOfWork.Session, outgoingMessage);
-				unitOfWork.Commit();
-			}
+			var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(unitOfWorkFactory);
+
+			outgoingMessagesDataSource.Save(outgoingMessage);
+
 
 			IMessageDistributor mockedDistributor;
 			using (var target = GetInstance(unitOfWorkFactory, DealWithMessage, out mockedDistributor))
@@ -213,26 +197,22 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 				target.Start();
 				//the default test set them for one day
 				var outgoingMessage = new OutgoingMessage(busMessage) //creates this message as a pending one
-					{
-						CreatedTimeUtc = DateTime.UtcNow,
-						ComponentOwner = LocalComponentId,
-						PublishedBy = LocalComponentId,
-						Status = Message.MessageStatus.SenderCollected
-					};
-				var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>();
-				using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
-				{
-					outgoingMessagesDataSource.Save(unitOfWork.Session, outgoingMessage);
-					unitOfWork.Commit();
-				}
+				                      	{
+				                      		CreatedTimeUtc = DateTime.UtcNow,
+				                      		ComponentOwner = LocalComponentId,
+				                      		PublishedBy = LocalComponentId,
+				                      		Status = Message.MessageStatus.SenderCollected
+				                      	};
+				var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(unitOfWorkFactory);
+				outgoingMessagesDataSource.Save(outgoingMessage);
 
 				target.Notify(ObservableAction.Add, new OutgoingMessageSuscription()
-					{
-						BizMessageFullTypeName = typeof (SomeData).FullName,
-						Component = LocalComponentId,
-						ComponentOwner = LocalComponentId,
-						DateLastUpdateUtc = DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
-					});
+				                                    	{
+				                                    		BizMessageFullTypeName = typeof (SomeData).FullName,
+				                                    		Component = LocalComponentId,
+				                                    		ComponentOwner = LocalComponentId,
+				                                    		DateLastUpdateUtc = DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
+				                                    	});
 
 				_messageReceived.WaitOne(TimeSpan.FromSeconds(10));
 
