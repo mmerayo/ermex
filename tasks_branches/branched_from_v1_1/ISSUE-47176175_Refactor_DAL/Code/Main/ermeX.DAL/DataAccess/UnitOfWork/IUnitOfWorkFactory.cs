@@ -1,6 +1,4 @@
-﻿using NHibernate;
-
-namespace ermeX.DAL.DataAccess.UoW
+﻿namespace ermeX.DAL.DataAccess.UnitOfWork
 {
 	internal interface IUnitOfWorkFactory
 	{

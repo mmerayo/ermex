@@ -21,7 +21,6 @@ using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UoW;
 using ermeX.Entities.Entities;
 using ermeX.Tests.Common.DataAccess;
 

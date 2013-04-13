@@ -28,7 +28,7 @@ using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UoW;
+using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;

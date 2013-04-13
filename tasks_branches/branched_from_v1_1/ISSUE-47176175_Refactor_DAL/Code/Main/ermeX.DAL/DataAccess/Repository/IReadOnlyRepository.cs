@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using NHibernate;
-using ermeX.DAL.DataAccess.UoW;
+using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.Entities.Base;
 
 namespace ermeX.DAL.DataAccess.Repository

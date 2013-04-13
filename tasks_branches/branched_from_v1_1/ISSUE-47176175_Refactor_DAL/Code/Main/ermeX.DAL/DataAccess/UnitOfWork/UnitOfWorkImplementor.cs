@@ -4,7 +4,7 @@ using Common.Logging;
 using NHibernate;
 using ermeX.ConfigurationManagement.Settings;
 
-namespace ermeX.DAL.DataAccess.UoW
+namespace ermeX.DAL.DataAccess.UnitOfWork
 {
 	internal class UnitOfWorkImplementor : IUnitOfWork
 	{

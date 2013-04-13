@@ -34,7 +34,7 @@ using ermeX.DAL.Commands.Subscriptions;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.DataAccess.Providers;
 using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UoW;
+using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Observers;
 using ermeX.DAL.Interfaces.QueryDatabase;

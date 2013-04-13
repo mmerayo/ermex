@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
 using NHibernate;
 
-namespace ermeX.DAL.DataAccess.UoW
+namespace ermeX.DAL.DataAccess.UnitOfWork
 {
 	internal interface IUnitOfWork : IDisposable
 	{

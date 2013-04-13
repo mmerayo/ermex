@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Web;
 
-namespace ermeX.DAL.DataAccess.UoW
+namespace ermeX.DAL.DataAccess.UnitOfWork
 {
 	public static class Local
 	{

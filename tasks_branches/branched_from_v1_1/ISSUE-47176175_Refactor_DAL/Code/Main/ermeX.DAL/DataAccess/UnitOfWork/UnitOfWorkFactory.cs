@@ -1,10 +1,8 @@
-﻿using System;
-using NHibernate;
+﻿using NHibernate;
 using Ninject;
-using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Providers;
 
-namespace ermeX.DAL.DataAccess.UoW
+namespace ermeX.DAL.DataAccess.UnitOfWork
 {
 	internal class UnitOfWorkFactory : IUnitOfWorkFactory
 	{
