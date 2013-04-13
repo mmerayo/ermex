@@ -82,7 +82,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			{
 				var repository = GetRepository<Repository<AppComponent>>();
 				var repo = repository;
-				appComponent = repo.Single(uow.Session, idComponent);
+				appComponent = repo.Single(uow, idComponent);
 				uow.Commit();
 			}
 
