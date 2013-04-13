@@ -137,6 +137,7 @@ namespace ermeX.Tests.Common.DataAccess
 		/// <returns></returns>
 		public TResult GetRepository<TResult>(IUnitOfWorkFactory factory)
 		{
+			if (factory == null) throw new ArgumentNullException("factory");
 			var result = ObjectBuilder.FromType<TResult>(typeof(TResult), GetComponentSettings(), new ExpressionsHelper(),factory);
 			return result;
 		}
@@ -151,17 +152,6 @@ namespace ermeX.Tests.Common.DataAccess
 		{
 			var unitOfWorkFactory = GetUnitOfWorkFactory(engineType);
 			var result = GetRepository<TResult>(unitOfWorkFactory);
-			return result;
-		}
-
-		/// <summary>
-		/// use when no single operations are being executed against repository, all operations provide the unit of work
-		/// </summary>
-		/// <typeparam name="TResult"></typeparam>
-		/// <returns></returns>
-		public TResult GetRepository<TResult>()
-		{
-			var result = GetRepository<TResult>(null);
 			return result;
 		}
 
@@ -219,33 +209,33 @@ namespace ermeX.Tests.Common.DataAccess
 
 		protected IWriteIncommingQueue GetIncommingQueueWritter(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<IncomingMessage>>();
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
 			var componentSettings = GetComponentSettings();
 			return new IncommingQueueWriter(dataSource,factory,componentSettings);
 		}
 
 		protected IReadIncommingQueue GetIncommingQueueReader(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<IncomingMessage>>();
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
 			var componentSettings = GetComponentSettings();
 			return new ReaderIncommingQueue(dataSource, factory, componentSettings);
 		}
 
 		protected ICanUpdateLatency GetLatenciesWritter(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<AppComponent>>();
+			var dataSource = GetRepository<Repository<AppComponent>>(factory);
 			return new LatencyUpdater(dataSource, factory);
 		}
 
 		protected ICanReadLatency GetLatenciesReader(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<AppComponent>>();
+			var dataSource = GetRepository<Repository<AppComponent>>(factory);
 			return new LatencyReader(dataSource,factory);
 		}
 
 		protected ICanReadIncommingMessagesSubscriptions GetIncommingMessageSubscriptionsReader(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<IncomingMessageSuscription>>();
+			var dataSource = GetRepository<Repository<IncomingMessageSuscription>>(factory);
 			var componentSettings = GetComponentSettings();
 
 			return new CanReadIncommingMessagesSubscriptions(dataSource,factory,componentSettings);
@@ -253,14 +243,14 @@ namespace ermeX.Tests.Common.DataAccess
 
 		protected ICanReadOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsReader(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>();
+			var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>(factory);
 			var componentSettings = GetComponentSettings();
 			return new CanReadOutgoingMessagesSubscriptions(dataSource,factory,componentSettings);
 		}
 
 		protected ICanUpdateOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsWritter(IUnitOfWorkFactory factory)
 		{
-		    var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>();
+			var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>(factory);
 		    var componentSettings = GetComponentSettings();
 
 		    return new CanUpdateOutgoingMessagesSubscriptions(dataSource,factory,componentSettings,GetDomainNotifier());
@@ -274,7 +264,7 @@ namespace ermeX.Tests.Common.DataAccess
 
 		protected IWriteOutgoingQueue GetOutgoingQueueWritter(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<OutgoingMessage>>();
+			var dataSource = GetRepository<Repository<OutgoingMessage>>(factory);
 			var componentSettings = GetComponentSettings();
 
 			return new WriteOutgoingQueue(dataSource, factory, componentSettings);
@@ -282,7 +272,7 @@ namespace ermeX.Tests.Common.DataAccess
 
 		protected IReadOutgoingQueue GetOutgoingQueueReader(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetRepository<Repository<OutgoingMessage>>();
+			var dataSource = GetRepository<Repository<OutgoingMessage>>(factory);
 			var componentSettings = GetComponentSettings();
 
 			return new ReaderOutgoingQueue(dataSource, factory, componentSettings);

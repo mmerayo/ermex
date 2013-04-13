@@ -35,10 +35,13 @@ namespace ermeX.DAL.DataAccess.UoW
 		{
 			if (disposing)
 			{
-				Commit(true);
-
-				if (_transaction != null)
-					_transaction.Dispose();
+				if (_autoCommitWhenDispose)
+					Commit(true);
+				else
+				{
+					if (_transaction != null)
+						_transaction.Dispose();
+				}
 				_session.Dispose();
 			}
 			else
