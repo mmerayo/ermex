@@ -68,21 +68,17 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			int idComponent = dataAccessTestHelper.InsertAppComponent(Guid.NewGuid(), LocalComponentId, 0, false, false);
 			AppComponent appComponent;
 			var unitOfWorkFactory = GetUnitOfWorkFactory(engine);
-			using (var uow = unitOfWorkFactory.Create())
-			{
-				var repository = GetRepository<Repository<AppComponent>>();
-				var repo = repository;
-				appComponent = repo.Single(uow, idComponent);
-				uow.Commit();
-			}
+
+			var repository = GetRepository<Repository<AppComponent>>(unitOfWorkFactory);
+			appComponent = repository.Single(idComponent);
 
 			return new ConnectivityDetails
-				{
-					ComponentOwner = appComponent.ComponentOwner,
-					Ip = IP,
-					Port = Port,
-					ServerId = appComponent.ComponentId
-				};
+			       	{
+			       		ComponentOwner = appComponent.ComponentOwner,
+			       		Ip = IP,
+			       		Port = Port,
+			       		ServerId = appComponent.ComponentId
+			       	};
 		}
 
 

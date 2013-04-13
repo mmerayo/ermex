@@ -46,7 +46,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 
 			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>();
+				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				expected = target.Single(uow, id);
 
 				Assert.IsTrue(expected.Version != DateTime.MinValue.Ticks);
@@ -59,7 +59,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			//another unit of work
 			using (var uow = unitOfWorkFactory.Create())
 			{
-				var target = GetRepository<TDataSource>();
+				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				expVersion = expected.Version;
 				expected.Version--;
 
