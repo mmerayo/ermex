@@ -27,7 +27,7 @@ using ermeX.Bus.Interfaces;
 using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UoW;
+using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.DAL.Interfaces.Observer;
 using ermeX.DAL.Interfaces.Observers;
 using ermeX.Entities.Entities;

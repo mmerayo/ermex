@@ -24,7 +24,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UoW;
+using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.DAL.Interfaces.Observer;
 using ermeX.Entities.Base;
 using ermeX.Tests.Common.DataAccess;

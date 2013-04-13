@@ -9,7 +9,7 @@ using NHibernate.Linq;
 using Remotion.Linq.Utilities;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.DAL.DataAccess.UoW;
+using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.DAL.Interfaces;
 using ermeX.Entities.Base;
 using Ninject;
