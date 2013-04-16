@@ -106,6 +106,10 @@
       <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
       <Name>ermeX.LayerMessages</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.NonMerged\ermeX.NonMerged.csproj">
+      <Project>{E72B0ECE-557C-4002-9368-2273101F76F3}</Project>
+      <Name>ermeX.NonMerged</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Tests.Common\ermeX.Tests.Common.csproj">
       <Project>{7E841F70-E81D-4AB8-B387-DD7383202915}</Project>
       <Name>ermeX.Tests.Common</Name>
