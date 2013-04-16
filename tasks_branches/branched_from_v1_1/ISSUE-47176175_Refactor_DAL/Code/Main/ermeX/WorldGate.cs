@@ -146,7 +146,7 @@ namespace ermeX
 			catch (Exception ex)
 			{
 				Logger.Error(x => x("Unhandled ermeX exception: {0}", ex));
-				throw ex;
+				throw;
 			}
 		}
 

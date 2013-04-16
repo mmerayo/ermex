@@ -105,7 +105,7 @@ namespace ermeX.DAL.DataAccess.Repository
 			if (entity.ComponentOwner == Guid.Empty)
 				throw new ArgumentEmptyException("entity.ComponentOwner");
 
-			if (!CanSave(unitOfWork,entity))
+			if (!CanSave(unitOfWork, entity))
 				return false;
 
 			if (entity.ComponentOwner == _localComponentId)
@@ -121,9 +121,13 @@ namespace ermeX.DAL.DataAccess.Repository
 		{
 			var findByBizKey = _expressionHelper.GetFindByBizKey(entity);
 			var item = SingleOrDefault(unitOfWork,findByBizKey);
-			bool result = item == null || item.Version <= entity.Version;
-			if(item!=null)
+			//is true if it didnt exist or the current one is new or if it existed but is older than the new version
+			bool result = item == null || entity.Version == 0 || item.Version <= entity.Version ;
+			if (item != null)
+			{
+				entity.Id = item.Id;
 				unitOfWork.Session.Evict(item);
+			}
 
 			return result; //Can save if it didnt exist or the version is newer
 		}
