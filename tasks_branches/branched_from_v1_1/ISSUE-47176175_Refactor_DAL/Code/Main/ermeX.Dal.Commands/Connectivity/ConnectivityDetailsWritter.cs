@@ -58,17 +58,17 @@ namespace ermeX.DAL.Commands.Connectivity
 		public ConnectivityDetails CreateComponentConnectivityDetails(IUnitOfWork unitOfWork, ushort port, bool asLocal = true)
 		{
 			var connectivityDetails = new ConnectivityDetails
-			{
-				ComponentOwner = _settings.ComponentId,
-				ServerId = _settings.ComponentId,
-				Ip = Networking.GetLocalhostIp(),
-				Port = port,
-				IsLocal = asLocal
-			};
-			
-				_repository.Save(unitOfWork, connectivityDetails);
-			
-			Debug.Assert(connectivityDetails.Id!=0,"The id was not populated");
+				{
+					ComponentOwner = _settings.ComponentId,
+					ServerId = _settings.ComponentId,
+					Ip = Networking.GetLocalhostIp(),
+					Port = port,
+					IsLocal = asLocal
+				};
+
+			_repository.Save(unitOfWork, connectivityDetails);
+
+			Debug.Assert(connectivityDetails.Id != 0, "The id was not populated");
 			return connectivityDetails;
 		}
 	}

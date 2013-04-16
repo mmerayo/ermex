@@ -253,17 +253,19 @@ namespace ermeX.Bus.Listening
 
 			var svcList = _serviceDetailsReader.GetByInterfaceType(interfaceType);
 			//SYSTEM SERVICES CAN BE DUPLICATED, BUSINESS SERVICES NO while there are return values, THE NEXT LINES ARE FINE WITH SMALL CHANGES
-			var details = svcList.First();
-			if (svcList.Any() && !details.IsSystemService &&
-				details.Publisher != ComponentSettings.ComponentId &&
-				details.ComponentOwner == ComponentSettings.ComponentId &&
-			    TypesHelper.GetPublicInstanceMethods(interfaceType).Any(x => x.ReturnType != typeof (void))
-				)
-				throw new InvalidOperationException(
-					string.Format("The service is already published by the component with Id:{0}." +
-					              "{1}Only the services whose methods dont return values can be published by several components.",
-					              details.Publisher, Environment.NewLine));
-
+			if (svcList.Any())
+			{
+				var details = svcList.First();
+				if (!details.IsSystemService &&
+				    details.Publisher != ComponentSettings.ComponentId &&
+				    details.ComponentOwner == ComponentSettings.ComponentId &&
+				    TypesHelper.GetPublicInstanceMethods(interfaceType).Any(x => x.ReturnType != typeof (void))
+					)
+					throw new InvalidOperationException(
+						string.Format("The service is already published by the component with Id:{0}." +
+						              "{1}Only the services whose methods dont return values can be published by several components.",
+						              details.Publisher, Environment.NewLine));
+			}
 			var methods = TypesHelper.GetPublicInstanceMethods(interfaceType);
 
 			foreach (MethodInfo method in methods) //join with next when overloaded
