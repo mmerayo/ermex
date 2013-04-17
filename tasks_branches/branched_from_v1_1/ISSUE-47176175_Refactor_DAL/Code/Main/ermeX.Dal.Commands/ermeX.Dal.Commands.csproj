@@ -70,7 +70,7 @@
     <Compile Include="Observers\DomainNotifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryDatabase\QueryHelperFactory.cs" />
-    <Compile Include="Queues\CanUpdateOutgoingMessagesQueueInfo.cs" />
+    <Compile Include="Queues\WriteOutgoingQueue.cs" />
     <Compile Include="Queues\IncommingMessagesQueueWriter.cs" />
     <Compile Include="Queues\ReaderIncommingMessagesQueueInfo.cs" />
     <Compile Include="Queues\ReaderOutgoingMessagesQueueInfo.cs" />
