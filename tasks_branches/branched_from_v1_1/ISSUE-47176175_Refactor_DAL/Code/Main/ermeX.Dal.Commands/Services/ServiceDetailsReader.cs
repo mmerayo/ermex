@@ -28,13 +28,8 @@ namespace ermeX.DAL.Commands.Services
 
 		public ServiceDetails GetByOperationId(Guid operationId)
 		{
-			ServiceDetails result;
-			using (var uow = _factory.Create())
-			{
-				result = _repository.SingleOrDefault(uow, x => x.OperationIdentifier == operationId);
-				uow.Commit();
-			}
-			return result;
+			
+			return GetByOperationId(_settings.ComponentId, operationId);
 		}
 
 		public ServiceDetails GetByOperationId(Guid publisher, Guid operationId)

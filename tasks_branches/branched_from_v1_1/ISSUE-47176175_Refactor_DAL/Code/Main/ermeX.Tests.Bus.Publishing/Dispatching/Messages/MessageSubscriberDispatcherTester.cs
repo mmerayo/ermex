@@ -191,6 +191,8 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 				target.EnqueueItem(new MessageSubscribersDispatcher.SubscribersDispatcherMessage(outgoingMessage));
 				Thread.Sleep(TimeSpan.FromSeconds(17)); //resends 5 sec, 15 secs
 			}
+			Thread.Sleep(150);
+
 			OutgoingMessage actual = outgoingMessagesDataSource.Single(outgoingMessage.Id);
 			Assert.AreEqual(Message.MessageStatus.SenderDispatchPending, actual.Status);
 			Assert.Greater(actual.Tries, 2, actual.Tries.ToString(CultureInfo.InvariantCulture));
@@ -220,6 +222,9 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 				_messageReceived.WaitOne(TimeSpan.FromSeconds(10));
 
 			Assert.IsTrue(_sentMessages.Count == 1);
+
+			//THIS IS BECAUSE trhe writting is enqueued and could be delayed
+			Thread.Sleep(150);
 			OutgoingMessage actual = outgoingMessagesDataSource.Single(outgoingMessage.Id);
 			Assert.AreEqual(Message.MessageStatus.SenderSent, actual.Status);
 		}
