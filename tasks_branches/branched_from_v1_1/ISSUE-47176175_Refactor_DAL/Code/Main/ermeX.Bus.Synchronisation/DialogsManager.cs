@@ -136,7 +136,7 @@ namespace ermeX.Bus.Synchronisation
 
 		private IMessagePublisher Publisher { get; set; }
 
-		private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(DialogsManager).FullName);
 
 		/// <summary>
 		///   Indicates if the component has already joined the rest of components

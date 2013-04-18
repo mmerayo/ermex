@@ -39,7 +39,7 @@ namespace ermeX.DAL.DataAccess.Helpers
 	/// </summary>
 	internal abstract class QueryHelper : IQueryHelper
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(QueryHelper).FullName);
 		private readonly string _connectionString;
 
 		protected QueryHelper(string connectionString)

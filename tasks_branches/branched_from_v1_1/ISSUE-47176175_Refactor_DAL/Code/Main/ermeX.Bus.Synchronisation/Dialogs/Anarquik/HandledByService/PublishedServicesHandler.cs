@@ -62,7 +62,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		private IMessageListener Listener { get; set; }
 		private IComponentSettings Settings { get; set; }
-		private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(PublishedServicesHandler).FullName);
 		private IStatusManager StatusManager { get; set; }
 
 		#region IPublishedServicesDefinitionsService Members

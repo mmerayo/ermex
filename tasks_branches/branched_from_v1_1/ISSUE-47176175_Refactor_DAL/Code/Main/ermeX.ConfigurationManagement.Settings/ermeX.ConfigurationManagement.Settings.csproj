@@ -49,7 +49,6 @@
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
     <Compile Include="IDomainSettings.cs" />
-    <Compile Include="StaticSettings.cs" />
     <Compile Include="DalSettingsValidator.cs" />
     <Compile Include="TransportSettingsValidator.cs" />
     <Compile Include="IBizSettings.cs" />

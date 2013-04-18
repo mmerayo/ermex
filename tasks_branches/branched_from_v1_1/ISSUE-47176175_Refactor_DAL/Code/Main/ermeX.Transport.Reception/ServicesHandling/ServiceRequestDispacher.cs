@@ -50,7 +50,7 @@ namespace ermeX.Transport.Reception.ServicesHandling
 		//TODO: ISSUE-281: EVERYTHING MUST BE VBLES
         private IService RealHandlerInstance { get; set; }
 		private ICanReadServiceDetails DataSource { get; set; }
-        private readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ServiceRequestDispacher).FullName);
 
         #region IServiceHandler Members
 

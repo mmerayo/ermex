@@ -97,7 +97,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
 		private IReceptionMessageDistributor ReceptionMessageDistributor { get; set; }
 		private IBusSettings Settings { get; set; }
 		private IQueueDispatcherManager QueueDispatcherManager { get; set; }
-		private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ReceptionMessageHandler).FullName);
 
 		public override object Handle(TransportMessage message)
 		{

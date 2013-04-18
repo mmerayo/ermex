@@ -1,4 +1,5 @@
-﻿using Common.Logging;
+﻿using System.Threading;
+using Common.Logging;
 using NHibernate;
 using Ninject;
 using ermeX.DAL.DataAccess.Providers;
@@ -18,7 +19,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		public IUnitOfWork Create (bool autoCommitWhenDispose=false)
 		{
-			Logger.DebugFormat("Create. autoCommitWhenDispose={0}",autoCommitWhenDispose);
+			Logger.DebugFormat("Create. autoCommitWhenDispose={0} Thread={1}",autoCommitWhenDispose,Thread.CurrentThread.ManagedThreadId);
 			var session = _sessionFactory.OpenSession();
 			session.FlushMode = FlushMode.Commit;
 			return new UnitOfWorkImplementor(this, session,autoCommitWhenDispose);

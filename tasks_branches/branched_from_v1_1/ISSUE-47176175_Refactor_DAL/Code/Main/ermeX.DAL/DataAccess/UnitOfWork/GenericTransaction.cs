@@ -12,26 +12,26 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		public GenericTransaction(ITransaction transaction)
 		{
-			Logger.Debug("cctor");
+			Logger.DebugFormat("cctor thread {0} ",System.Threading.Thread.CurrentThread.ManagedThreadId);
 			if (transaction == null) throw new ArgumentNullException("transaction");
 			_transaction = transaction;
 		}
 
 		public void Commit()
 		{
-			Logger.Debug("Commit");
+			Logger.DebugFormat("Commit thread={0} ", System.Threading.Thread.CurrentThread.ManagedThreadId);
 			_transaction.Commit();
 		}
 
 		public void Rollback()
 		{
-			Logger.Debug("Rollback");
+			Logger.DebugFormat("Rollback thread={0} ", System.Threading.Thread.CurrentThread.ManagedThreadId);
 			_transaction.Rollback();
 		}
 
 		public void Dispose()
 		{
-			Logger.Debug("Dispose");
+			Logger.DebugFormat("Dispose thread={0} ", System.Threading.Thread.CurrentThread.ManagedThreadId);
 			_transaction.Dispose();
 		}
 	}

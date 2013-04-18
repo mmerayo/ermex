@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Threading;
 using Common.Logging;
 using NHibernate;
 using ermeX.ConfigurationManagement.Settings;
@@ -17,7 +18,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		public UnitOfWorkImplementor(IUnitOfWorkFactory factory, ISession session, bool autoCommitWhenDispose=false)
 		{
-			Logger.Debug("cctor");
+			Logger.DebugFormat("cctor. Thread={0}", Thread.CurrentThread.ManagedThreadId);
 			_factory = factory;
 			_session = session;
 			_autoCommitWhenDispose = autoCommitWhenDispose;
@@ -64,7 +65,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		public void Commit(bool disposing)
 		{
-			Logger.DebugFormat("Commit. disposing={0}", disposing);
+			Logger.DebugFormat("Commit. disposing={0}, thread={1}", disposing, Thread.CurrentThread.ManagedThreadId);
 			if (_autoCommitWhenDispose && !disposing)
 				throw new InvalidOperationException(
 					"The unit of work is configured to autocommit when dispose, Commit cannot be requested by caller as is automatic");
@@ -110,7 +111,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		public void Flush()
 		{
-			Logger.Debug("Flush");
+			Logger.DebugFormat("Flush. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_session.Flush();
 		}
 	}

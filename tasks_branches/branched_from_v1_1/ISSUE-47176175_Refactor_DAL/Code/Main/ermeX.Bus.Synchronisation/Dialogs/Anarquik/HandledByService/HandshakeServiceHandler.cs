@@ -70,8 +70,8 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
         private IMessageListener Listener { get; set; }
         private IComponentSettings Settings { get; set; }
 	    private ICanReadComponents ComponentReader { get; set; }
-        
-        private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(HandshakeServiceHandler).FullName);
         private IStatusManager StatusManager { get; set; }
 
         //this handler id is static

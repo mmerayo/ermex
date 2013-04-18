@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using Common.Logging;
 using NHibernate;
 using NHibernate.Criterion;
@@ -29,7 +30,7 @@ namespace ermeX.DAL.DataAccess.Repository
 		public Repository(IComponentSettings settings, 
 			IExpressionHelper<TEntity> expressionHelper, IUnitOfWorkFactory implicitFactory )
 		{
-			Logger.Debug("cctor");
+			Logger.DebugFormat("cctor. Thread={0}", Thread.CurrentThread.ManagedThreadId);
 			if (settings.ComponentId==Guid.Empty)
 				throw new ArgumentEmptyException("localComponentId");
 			_localComponentId = settings.ComponentId;
@@ -39,7 +40,7 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		public bool Save(TEntity entity)
 		{
-			Logger.Debug("Save entity");
+			Logger.DebugFormat("Save. entity={0}, thread={1}",entity, Thread.CurrentThread.ManagedThreadId);
 			bool result;
 			using (var unitOfWork = _implicitFactory.Create(true))
 				result = Save(unitOfWork, entity);
@@ -49,7 +50,7 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		public bool Save(IEnumerable<TEntity> items)
 		{
-			Logger.Debug("Save entities");
+			Logger.DebugFormat("Save entities thread={0}", Thread.CurrentThread.ManagedThreadId);
 			bool result;
 			using (var unitOfWork = _implicitFactory.Create(true))
 				result = Save(unitOfWork, items);
@@ -58,21 +59,21 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		public void Remove(int id)
 		{
-			Logger.DebugFormat("Remove id:{0}",id);
+			Logger.DebugFormat("Remove id:{0} Thread={1}",id, Thread.CurrentThread.ManagedThreadId);
 			using (var unitOfWork = _implicitFactory.Create(true))
 				Remove(unitOfWork, id);
 		}
 
 		public void Remove(TEntity entity)
 		{
-			Logger.DebugFormat("Remove by entity: {0}",entity.ToString());
+			Logger.DebugFormat("Remove by entity: {0} thread={1}", entity, Thread.CurrentThread.ManagedThreadId);
 			using (var unitOfWork = _implicitFactory.Create(true))
 				Remove(unitOfWork, entity);
 		}
 
 		public void Remove(IEnumerable<TEntity> entities)
 		{
-			Logger.Debug("Remove entitites");
+			Logger.DebugFormat("Remove entitites. Thread={0}", Thread.CurrentThread.ManagedThreadId);
 			using (var unitOfWork = _implicitFactory.Create(true))
 				Remove(unitOfWork, entities);
 		}
@@ -182,7 +183,7 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		public void Remove(IUnitOfWork unitOfWork, IEnumerable<TEntity> entities)
 		{
-			Logger.Debug("Remove entities");
+			Logger.DebugFormat("Remove entities. Thread={0}", Thread.CurrentThread.ManagedThreadId);
 			foreach (var entity in entities)
 				Remove(unitOfWork, entity);
 		}
@@ -196,7 +197,7 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		public IQueryable<TEntity> FetchAll(bool includingOtherComponents = false)
 		{
-			Logger.DebugFormat("FetchAll, includingOtherComponents= {0}", includingOtherComponents);
+			Logger.DebugFormat("FetchAll, includingOtherComponents= {0}, Thread={1}", includingOtherComponents, Thread.CurrentThread.ManagedThreadId);
 			IQueryable<TEntity> result;
 			using(var unitOfWork = _implicitFactory.Create(true))
 				result = FetchAll(unitOfWork, includingOtherComponents);
@@ -215,7 +216,7 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		public TEntity Single(int id)
 		{
-			Logger.DebugFormat("Single Id:{0}", id);
+			Logger.DebugFormat("Single Id:{0}, thread={1}", id, Thread.CurrentThread.ManagedThreadId);
 			TEntity result;
 			using (var unitOfWork = _implicitFactory.Create(true))
 				result = Single(unitOfWork, id);
@@ -287,21 +288,21 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		public TEntity Single(IUnitOfWork unitOfWork, Expression<Func<TEntity, bool>> expression)
 		{
-			Logger.DebugFormat("Single expression: {0}", expression);
+			Logger.DebugFormat("Single expression: {0} thread={1}", expression, Thread.CurrentThread.ManagedThreadId);
 			return Where(unitOfWork,expression).Single();
 		}
 
 
 		public TEntity SingleOrDefault(IUnitOfWork unitOfWork, Expression<Func<TEntity, bool>> expression)
 		{
-			Logger.DebugFormat("SingleOrDefault expression: {0}", expression);
+			Logger.DebugFormat("SingleOrDefault expression: {0}, thread={1}", expression, Thread.CurrentThread.ManagedThreadId);
 			var queryable = Where(unitOfWork,expression);
 			return queryable.SingleOrDefault();
 		}
 
 		public TEntity SingleOrDefault(IUnitOfWork unitOfWork, int id)
 		{
-			Logger.DebugFormat("SingleOrDefault id: {0}", id);
+			Logger.DebugFormat("SingleOrDefault id: {0} thread={1}", id, Thread.CurrentThread.ManagedThreadId);
 			var result = unitOfWork.Session.Get<TEntity>(id);
 			if (result!=null && result.ComponentOwner != _localComponentId)
 				throw new InvalidOperationException("The entity is owned by another component");
@@ -310,7 +311,7 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		public TResult GetMax<TResult>(IUnitOfWork unitOfWork, string propertyName)
 		{
-			Logger.DebugFormat("GetMax propertyName: {0}", propertyName);
+			Logger.DebugFormat("GetMax propertyName: {0} thread={1}", propertyName, Thread.CurrentThread.ManagedThreadId);
 			return
 				unitOfWork.Session.QueryOver<TEntity>()
 				        .Where(IsLocalPredicate)
@@ -338,19 +339,19 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		public int Count(IUnitOfWork unitOfWork, Expression<Func<TEntity, bool>> expression)
 		{
-			Logger.DebugFormat("Count expression: {0}", expression);
+			Logger.DebugFormat("Count expression: {0} thread={1}", expression, Thread.CurrentThread.ManagedThreadId);
 			return Where(unitOfWork,expression).Count();
 		}
 
 		public bool Any(IUnitOfWork unitOfWork)
 		{
-			Logger.Debug("Any");
+			Logger.DebugFormat("Any. Thread={0}", Thread.CurrentThread.ManagedThreadId);
 			return FetchAll(unitOfWork).Any();
 		}
 
 		public int Count(IUnitOfWork unitOfWork)
 		{
-			Logger.Debug("Count");
+			Logger.DebugFormat("Count. Thread={0}", Thread.CurrentThread.ManagedThreadId);
 			return FetchAll(unitOfWork).Count();
 		}
 	}

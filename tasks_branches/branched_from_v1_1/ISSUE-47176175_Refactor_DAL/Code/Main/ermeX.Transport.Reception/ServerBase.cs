@@ -65,7 +65,7 @@ namespace ermeX.Transport.Reception
         }
 
         public ServerInfo ServerInfo { get; set; }
-        protected readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		protected static readonly ILog Logger = LogManager.GetLogger(typeof(ServerBase).FullName);
 
         #region IDisposable
 

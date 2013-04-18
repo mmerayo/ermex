@@ -65,7 +65,7 @@ namespace ermeX.Bus.Publishing.ClientProxies
         private IBusSettings Settings { get; set; }
 	    private ICanReadComponents ComponentReader { get; set; }
 	    private ICanReadServiceDetails ServiceDetailsReader { get; set; }
-	    private readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ServiceCallsProxy).FullName);
         private IStatusManager StatusManager { get; set; }
 
         private Guid DestinationComponent { get; set; }

@@ -70,7 +70,7 @@ namespace ermeX.Bus.Listening
 
 		private IComponentSettings ComponentSettings { get; set; }
 		private IListeningManager ListeningManager { get; set; }
-		private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(MessageListeningManager).FullName);
 
 		#region IMessageListener Members
 

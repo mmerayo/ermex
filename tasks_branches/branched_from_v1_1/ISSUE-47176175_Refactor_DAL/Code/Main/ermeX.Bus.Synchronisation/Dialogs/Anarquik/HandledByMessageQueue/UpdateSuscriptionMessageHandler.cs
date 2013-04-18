@@ -28,7 +28,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByMessageQueue
 {
     internal sealed class UpdateSuscriptionMessageHandler : IUpdateSuscriptionMessageHandler
     {
-        private readonly ILog Logger = LogManager.GetLogger(typeof(UpdateSuscriptionMessageHandler).FullName);
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(UpdateSuscriptionMessageHandler).FullName);
         
         [Inject]
         public UpdateSuscriptionMessageHandler(IMessagePublisher publisher, IMessageListener listener)

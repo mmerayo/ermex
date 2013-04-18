@@ -98,7 +98,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
 		private IBusSettings Settings { get; set; }
 		private IMessageDistributor MessageDistributor { get; set; }
-		private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(MessageCollector).FullName);
 		private int _dispatchedItems = 0;
 
 		#region IMessagePublisherDispatcherStrategy Members
