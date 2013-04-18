@@ -46,16 +46,15 @@ namespace ermeX.DAL.DataAccess.Mappings
             
             Table( tableName);
 
-            //LazyLoad();
-            Id(x => x.Id).GeneratedBy.Identity().Column(ChunkedServiceRequestMessageData.GetDbFieldName("Id"));
-            Map(x => x.ComponentOwner).Column(ChunkedServiceRequestMessageData.GetDbFieldName("ComponentOwner"));
-            Map(x => x.Version).Column(ChunkedServiceRequestMessageData.GetDbFieldName("Version"));
-            Map(x => x.CorrelationId).Column(ChunkedServiceRequestMessageData.GetDbFieldName("CorrelationId"));
-            Map(x => x.DataBytes).Column(ChunkedServiceRequestMessageData.GetDbFieldName("Data")).
-                CustomType("BinaryBlob").Length(int.MaxValue); 
-            Map(x => x.Eof).Column(ChunkedServiceRequestMessageData.GetDbFieldName("Eof"));
-            Map(x => x.Operation).Column(ChunkedServiceRequestMessageData.GetDbFieldName("Operation"));
-            Map(x => x.Order).Column(ChunkedServiceRequestMessageData.GetDbFieldName("Order"));
+            //
+			Id(x => x.Id).GeneratedBy.Identity().Column(ChunkedServiceRequestMessageData.GetDbFieldName("Id")).Not.Nullable();
+			Map(x => x.ComponentOwner).Column(ChunkedServiceRequestMessageData.GetDbFieldName("ComponentOwner")).Not.Nullable();
+			Map(x => x.Version).Column(ChunkedServiceRequestMessageData.GetDbFieldName("Version")).Not.Nullable();
+			Map(x => x.CorrelationId).Column(ChunkedServiceRequestMessageData.GetDbFieldName("CorrelationId")).Not.Nullable();
+            Map(x => x.DataBytes).Column(ChunkedServiceRequestMessageData.GetDbFieldName("Data")).CustomType("BinaryBlob").Length(int.MaxValue);
+			Map(x => x.Eof).Column(ChunkedServiceRequestMessageData.GetDbFieldName("Eof")).Not.Nullable();
+			Map(x => x.Operation).Column(ChunkedServiceRequestMessageData.GetDbFieldName("Operation")).Not.Nullable();
+			Map(x => x.Order).Column(ChunkedServiceRequestMessageData.GetDbFieldName("Order")).Not.Nullable();
             //TODO:restrictions composite key
         }
     }

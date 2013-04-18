@@ -127,8 +127,11 @@ namespace ermeX.DAL.DataAccess.Repository
 				entity.Version = DateTime.UtcNow.Ticks; //Keeps the version of the last updater
 
 			entity.ComponentOwner = _localComponentId;
-
-			unitOfWork.Session.SaveOrUpdate(entity);
+			if(entity.Id==0)
+				unitOfWork.Session.Save(entity);
+			else
+				unitOfWork.Session.Merge(entity);
+			
 			return true;
 		}
 
@@ -139,10 +142,10 @@ namespace ermeX.DAL.DataAccess.Repository
 			//is true if it didnt exist or the current one is new or if it existed but is older than the new version
 			bool result = item == null || entity.Version == 0 || item.Version <= entity.Version ;
 			if (item != null)
-			{
+			//{
 				entity.Id = item.Id;
-				unitOfWork.Session.Evict(item);
-			}
+			//    unitOfWork.Session.Evict(item);
+			//}
 
 			return result; //Can save if it didnt exist or the version is newer
 		}
