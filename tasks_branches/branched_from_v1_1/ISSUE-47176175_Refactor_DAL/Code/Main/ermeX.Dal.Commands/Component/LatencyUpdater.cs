@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Common.Logging;
 using Ninject;
 using ermeX.DAL.DataAccess.Repository;
@@ -18,7 +19,7 @@ namespace ermeX.DAL.Commands.Component
 		[Inject]
 		public LatencyUpdater(IPersistRepository<AppComponent> repository, IUnitOfWorkFactory factory)
 		{
-			Logger.Debug("cctor");
+			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_factory = factory;
 			Repository = repository;
 		}

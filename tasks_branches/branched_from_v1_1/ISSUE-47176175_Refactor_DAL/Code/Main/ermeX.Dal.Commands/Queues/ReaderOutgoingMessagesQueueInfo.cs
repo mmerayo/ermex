@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Common.Logging;
 using Ninject;
 using ermeX.Common;
@@ -25,7 +26,7 @@ namespace ermeX.DAL.Commands.Queues
 		                           IUnitOfWorkFactory factory,
 		                           IComponentSettings settings)
 		{
-			Logger.Debug("cctor");
+			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_repository = repository;
 			_factory = factory;
 			_settings = settings;

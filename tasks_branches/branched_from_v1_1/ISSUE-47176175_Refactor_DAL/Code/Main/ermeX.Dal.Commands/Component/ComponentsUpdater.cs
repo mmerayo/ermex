@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Status;
@@ -19,7 +20,7 @@ namespace ermeX.DAL.Commands.Component
 		[Inject]
 		public ComponentsUpdater(IPersistRepository<AppComponent> repository, IUnitOfWorkFactory factory)
 		{
-			Logger.Debug("cctor");
+			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_factory = factory;
 			_repository = repository;
 		}
