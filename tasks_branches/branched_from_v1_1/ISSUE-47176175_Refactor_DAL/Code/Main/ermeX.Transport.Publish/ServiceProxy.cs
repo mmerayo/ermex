@@ -66,6 +66,8 @@ namespace ermeX.Transport.Publish
 
         public ServiceResult Send(TransportMessage message)
         {
+			Logger.TraceFormat("Send. message: {0}",message.Data.Data.JsonMessage);
+
             var realMsg =
                 ServiceRequestMessage.GetForMessagePublishing(message);
 
