@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Common.Logging;
 using NHibernate;
 using Ninject;
@@ -37,7 +38,7 @@ namespace ermeX.DAL.Commands.Component
 		                             IStatusManager statusManager,
 			ICanWriteConnectivityDetails connectivityDetailsWritter)
 		{
-			Logger.Debug("cctor");
+			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_factory = factory;
 			_componentsRepository = componentsRepository;
 			_connectivityRepository = connectivityRepository;

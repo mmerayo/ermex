@@ -1,5 +1,6 @@
 using System;
 using System.Linq.Expressions;
+using System.Threading;
 using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
@@ -13,8 +14,6 @@ using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Commands.Subscriptions
 {
-
-	
 	class CanUpdateOutgoingMessagesSubscriptions : ICanUpdateOutgoingMessagesSubscriptions
 	{
 		private static readonly ILog Logger = LogManager.GetLogger(typeof(CanUpdateOutgoingMessagesSubscriptions).FullName);
@@ -29,14 +28,14 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IUnitOfWorkFactory factory,
 			IComponentSettings settings, IDomainObservable domainNotifier )
 		{
-			Logger.Debug("cctor");
+			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_repository = repository;
 			_factory = factory;
 			_settings = settings;
 			_domainNotifier =(DomainNotifier) domainNotifier;
 		}
 
-
+		//TODO: THIS MUST BE REMOVED AND MADE BY THE CLIENT CODE
 		public void ImportFromOtherComponent(IncomingMessageSuscription susbcription)
 		{
 			Logger.DebugFormat("ImportFromOtherComponent. susbcription={0}", susbcription);
@@ -49,42 +48,46 @@ namespace ermeX.DAL.Commands.Subscriptions
 					var subscriptionToSave = new OutgoingMessageSuscription(susbcription, susbcription.ComponentOwner,
 					                                                        _settings.ComponentId);
 
-					ImportFromOtherComponent(subscriptionToSave);
-					uow.Commit();
+					ImportFromOtherComponent(uow, subscriptionToSave);
 				}
+				uow.Commit();
 			}
 		}
 
+		//TODO: THIS MUST BE REMOVED AND MADE BY THE CLIENT CODE
 		public void ImportFromOtherComponent(OutgoingMessageSuscription susbcription)
 		{
 			Logger.DebugFormat("ImportFromOtherComponent. susbcription={0}", susbcription);
 			bool isNew = false;
-			var subscriptionToSave = susbcription;
 
 			using (var uow = _factory.Create())
 			{
-
-				Expression<Func<OutgoingMessageSuscription, bool>> expression =
-					x => x.Component == susbcription.ComponentOwner && x.BizMessageFullTypeName == susbcription.BizMessageFullTypeName;
-
-				if (!_repository.Any(uow, expression))
-				{
-					subscriptionToSave.Id = 0;
-					isNew = true;
-				}
-				else
-				{
-					var existing = _repository.Single(uow, expression);
-					subscriptionToSave.Id = existing.Id;
-					uow.Session.Evict(existing);
-				}
-				_repository.Save(uow, subscriptionToSave);
+				isNew = ImportFromOtherComponent(uow,susbcription );
 				uow.Commit();
-
 			}
 
 			//TODO: THIS AND ITS MECHANISM MUST BE REMOVED
-			_domainNotifier.Notify(isNew ? NotifiableDalAction.Add : NotifiableDalAction.Update, subscriptionToSave);
+			_domainNotifier.Notify(isNew ? NotifiableDalAction.Add : NotifiableDalAction.Update,susbcription);
+		}
+
+		private bool ImportFromOtherComponent(IUnitOfWork uow,OutgoingMessageSuscription susbcription)
+		{
+			Expression<Func<OutgoingMessageSuscription, bool>> expression =
+				x => x.Component == susbcription.ComponentOwner && x.BizMessageFullTypeName == susbcription.BizMessageFullTypeName;
+			bool result = false;
+			if (!_repository.Any(uow, expression))
+			{
+				susbcription.Id = 0;
+				result = true;
+			}
+			else
+			{
+				var existing = _repository.Single(uow, expression);
+				susbcription.Id = existing.Id;
+				uow.Session.Evict(existing);
+			}
+			_repository.Save(uow, susbcription);
+			return result;
 		}
 	}
 }
