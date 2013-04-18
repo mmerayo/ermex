@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Repository;
@@ -11,6 +12,8 @@ namespace ermeX.DAL.Commands.Services
 {
 	class ServiceDetailsWriter : ICanWriteServiceDetails
 	{
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ServiceDetailsWriter).FullName);
+
 		private readonly IPersistRepository<ServiceDetails> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;
@@ -20,6 +23,7 @@ namespace ermeX.DAL.Commands.Services
 			IUnitOfWorkFactory factory,
 			IComponentSettings settings)
 		{
+			Logger.Debug("cctor");
 			_repository = repository;
 			_factory = factory;
 			_settings = settings;
@@ -27,6 +31,8 @@ namespace ermeX.DAL.Commands.Services
 
 		public void ImportFromOtherComponent(ServiceDetails svc)
 		{
+			Logger.DebugFormat("ImportFromOtherComponent, svc={0}",svc);
+
 			if(svc.ComponentOwner==_settings.ComponentId)
 				throw new InvalidOperationException("Cannot import one service from the same component");
 			const string RemoteTypeImplementorValue = "<<REMOTE>>";
@@ -53,6 +59,7 @@ namespace ermeX.DAL.Commands.Services
 
 		public void Save(ServiceDetails serviceDetails)
 		{
+			Logger.DebugFormat("Save. serviceDetails={0}",serviceDetails);
 			using (var uow = _factory.Create())
 			{
 				_repository.Save(uow, serviceDetails);

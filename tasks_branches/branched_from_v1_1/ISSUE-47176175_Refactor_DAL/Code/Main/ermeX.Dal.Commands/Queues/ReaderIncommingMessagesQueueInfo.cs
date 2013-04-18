@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common.Logging;
 using Ninject;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
@@ -13,6 +14,7 @@ namespace ermeX.DAL.Commands.Queues
 {
 	class ReaderIncommingQueue : IReadIncommingQueue
 	{
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ReaderIncommingQueue).FullName);
 		private readonly IReadOnlyRepository<IncomingMessage> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 
@@ -21,12 +23,15 @@ namespace ermeX.DAL.Commands.Queues
 			IUnitOfWorkFactory factory,
 			IComponentSettings settings)
         {
+			Logger.Debug("cctor");
 	        _repository = repository;
 	        _factory = factory;
         }
 
 		public IncomingMessage GetNextDispatchableItem(int maxLatency)
 		{
+			Logger.DebugFormat("GetNextDispatchableItem. maxLatency={0}",maxLatency);
+			
 			IncomingMessage result = null;
 			using (var uow = _factory.Create())
 			{
@@ -51,6 +56,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public IEnumerable<IncomingMessage> GetMessagesToDispatch()
 		{
+			Logger.Debug("GetMessagesToDispatch");
 			IEnumerable<IncomingMessage> result;
 			using (var uow = _factory.Create())
 			{
@@ -64,6 +70,8 @@ namespace ermeX.DAL.Commands.Queues
 
 		public IEnumerable<IncomingMessage> GetByStatus(params Message.MessageStatus[] status)
 		{
+			Logger.Debug("GetByStatus");
+
 			IEnumerable<IncomingMessage> result;
 			using (var uow = _factory.Create())
 			{
@@ -77,6 +85,8 @@ namespace ermeX.DAL.Commands.Queues
 
 		public bool ContainsMessageFor(Guid messageId, Guid destinationComponent)
 		{
+			Logger.DebugFormat("ContainsMessageFor. messageId={0}, destinationComponent={1}",messageId,destinationComponent);
+
 			if (messageId.IsEmpty() || destinationComponent.IsEmpty())
 				throw new ArgumentException("the arguments cannot be empty");
 
@@ -92,6 +102,8 @@ namespace ermeX.DAL.Commands.Queues
 
 		public IEnumerable<IncomingMessage> GetNonDistributedMessages()
 		{
+			Logger.Debug("GetNonDistributedMessages");
+
 			IEnumerable<IncomingMessage> result;
 			using (var uow = _factory.Create())
 			{

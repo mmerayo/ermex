@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common.Logging;
 using Ninject;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
@@ -13,6 +14,8 @@ namespace ermeX.DAL.Commands.Queues
 {
 	internal class ReaderOutgoingQueue : IReadOutgoingQueue
 	{
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ReaderOutgoingQueue).FullName);
+
 		private readonly IReadOnlyRepository<OutgoingMessage> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;
@@ -22,6 +25,7 @@ namespace ermeX.DAL.Commands.Queues
 		                           IUnitOfWorkFactory factory,
 		                           IComponentSettings settings)
 		{
+			Logger.Debug("cctor");
 			_repository = repository;
 			_factory = factory;
 			_settings = settings;
@@ -29,6 +33,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public IEnumerable<OutgoingMessage> GetItemsPendingSorted()
 		{
+			Logger.Debug("GetItemsPendingSorted");
 			IEnumerable<OutgoingMessage> result;
 			using (var uow = _factory.Create())
 			{
@@ -44,6 +49,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public IEnumerable<OutgoingMessage> GetExpiredMessages(TimeSpan expirationTime)
 		{
+			Logger.DebugFormat("GetExpiredMessages. expirationTime={0}",expirationTime);
 			IEnumerable<OutgoingMessage> result;
 			using (var uow = _factory.Create())
 			{
@@ -61,6 +67,8 @@ namespace ermeX.DAL.Commands.Queues
 
 		public bool ContainsMessageFor(Guid messageId, Guid destinationComponent)
 		{
+			Logger.DebugFormat("ContainsMessageFor. messageId={0} destinationComponent={1}", messageId,destinationComponent);
+
 			if (messageId.IsEmpty() || destinationComponent.IsEmpty())
 				throw new ArgumentException("the arguments cannot be empty");
 
@@ -76,6 +84,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public IEnumerable<OutgoingMessage> GetByStatus(params Message.MessageStatus[] status)
 		{
+			Logger.Debug("GetByStatus");
 			IEnumerable<OutgoingMessage> result;
 			using (var uow = _factory.Create())
 			{

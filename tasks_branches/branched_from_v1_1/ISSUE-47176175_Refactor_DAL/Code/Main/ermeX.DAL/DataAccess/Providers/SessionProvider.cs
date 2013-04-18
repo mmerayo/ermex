@@ -18,6 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Data.SQLite;
+using Common.Logging;
 using NHibernate;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
@@ -27,6 +28,8 @@ namespace ermeX.DAL.DataAccess.Providers
 	//TODO: ISSUE-281 --> MAKE THIS internal and injected
     public sealed class SessionProvider : ISessionProvider
     {
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(SessionProvider).FullName);
+
         private readonly IDalSettings _settings;
 
         private volatile  ISessionFactory _sessionFactory;
@@ -61,11 +64,13 @@ namespace ermeX.DAL.DataAccess.Providers
         
         public ISession OpenSession()
         {
+			Logger.Debug("OpenSession");
             return SessionFactory.OpenSession();
         }
 
         public static void SetInMemoryDb(string connectionString)
         {
+			Logger.DebugFormat("SetInMemoeryDb: {0}",connectionString);
             if (_inMemoryDb != null && _inMemoryDb.ConnectionString == connectionString)
                 return;
             _inMemoryDb = new SQLiteConnection(connectionString);//TODO: DIsPOSE? not yet as it is in memory

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Common.Logging;
 using Ninject;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
@@ -12,6 +13,7 @@ namespace ermeX.DAL.Commands.Connectivity
 {
 	internal sealed class ConnectivityDetailsWritter : ICanWriteConnectivityDetails
 	{
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ConnectivityDetailsWritter).FullName);
 		private readonly IPersistRepository<ConnectivityDetails> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;
@@ -21,6 +23,7 @@ namespace ermeX.DAL.Commands.Connectivity
 		public ConnectivityDetailsWritter(IPersistRepository<ConnectivityDetails> repository,
 			IUnitOfWorkFactory factory,IComponentSettings settings)
 		{
+			Logger.Debug("cctor");
 			_repository = repository;
 			_factory = factory;
 			_settings = settings;
@@ -28,6 +31,8 @@ namespace ermeX.DAL.Commands.Connectivity
 
 		public void RemoveComponentDetails(Guid componentId)
 		{
+			Logger.DebugFormat("RemoveComponentDetails. componentId={0}", componentId);
+
 			using (var uow = _factory.Create())
 			{
 				_repository.Remove(uow, x=>x.ServerId== componentId);
@@ -37,6 +42,7 @@ namespace ermeX.DAL.Commands.Connectivity
 
 		public void RemoveLocalComponentDetails()
 		{
+			Logger.Debug("RemoveLocalComponentDetails");
 			using (var uow = _factory.Create())
 			{
 				_repository.Remove(uow, x => x.ServerId == _settings.ComponentId);
@@ -57,6 +63,8 @@ namespace ermeX.DAL.Commands.Connectivity
 
 		public ConnectivityDetails CreateComponentConnectivityDetails(IUnitOfWork unitOfWork, ushort port, bool asLocal = true)
 		{
+			Logger.DebugFormat("CreateComponentConnectivityDetails. port={0}, asLocal={1}", port, asLocal);
+
 			var connectivityDetails = new ConnectivityDetails
 				{
 					ComponentOwner = _settings.ComponentId,

@@ -8,7 +8,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 {
 	internal class UnitOfWorkImplementor : IUnitOfWork
 	{
-		protected readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		protected readonly ILog Logger = LogManager.GetLogger(typeof(UnitOfWorkImplementor).FullName);
 
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly ISession _session;
@@ -17,6 +17,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		public UnitOfWorkImplementor(IUnitOfWorkFactory factory, ISession session, bool autoCommitWhenDispose=false)
 		{
+			Logger.Debug("cctor");
 			_factory = factory;
 			_session = session;
 			_autoCommitWhenDispose = autoCommitWhenDispose;
@@ -33,6 +34,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		protected virtual void Dispose(bool disposing)
 		{
+			Logger.DebugFormat("Dispose. disposing={0}",disposing);
 			if (disposing)
 			{
 				if (_autoCommitWhenDispose)
@@ -62,6 +64,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		public void Commit(bool disposing)
 		{
+			Logger.DebugFormat("Commit. disposing={0}", disposing);
 			if (_autoCommitWhenDispose && !disposing)
 				throw new InvalidOperationException(
 					"The unit of work is configured to autocommit when dispose, Commit cannot be requested by caller as is automatic");
@@ -107,6 +110,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		public void Flush()
 		{
+			Logger.Debug("Flush");
 			_session.Flush();
 		}
 	}

@@ -1,5 +1,6 @@
 using System;
 using System.Linq.Expressions;
+using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Commands.Observers;
@@ -16,6 +17,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 	
 	class CanUpdateOutgoingMessagesSubscriptions : ICanUpdateOutgoingMessagesSubscriptions
 	{
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(CanUpdateOutgoingMessagesSubscriptions).FullName);
 		private readonly IPersistRepository<OutgoingMessageSuscription> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;
@@ -27,6 +29,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IUnitOfWorkFactory factory,
 			IComponentSettings settings, IDomainObservable domainNotifier )
 		{
+			Logger.Debug("cctor");
 			_repository = repository;
 			_factory = factory;
 			_settings = settings;
@@ -36,6 +39,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public void ImportFromOtherComponent(IncomingMessageSuscription susbcription)
 		{
+			Logger.DebugFormat("ImportFromOtherComponent. susbcription={0}", susbcription);
 			using (var uow = _factory.Create())
 			{
 				if (!_repository.Any(uow, x => x.BizMessageFullTypeName == susbcription.BizMessageFullTypeName
@@ -53,6 +57,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public void ImportFromOtherComponent(OutgoingMessageSuscription susbcription)
 		{
+			Logger.DebugFormat("ImportFromOtherComponent. susbcription={0}", susbcription);
 			bool isNew = false;
 			var subscriptionToSave = susbcription;
 

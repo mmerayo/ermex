@@ -1,4 +1,5 @@
 using System;
+using Common.Logging;
 using NHibernate;
 using Ninject;
 using ermeX.Common;
@@ -18,6 +19,7 @@ namespace ermeX.DAL.Commands.Component
 	//TODO: MOVE TO THE COMPONENTS UPDATER
 	internal sealed class ComponentsRegistrator : IRegisterComponents
 	{
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ComponentsRegistrator).FullName);
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IPersistRepository<AppComponent> _componentsRepository;
 		private readonly IPersistRepository<ConnectivityDetails> _connectivityRepository;
@@ -35,6 +37,7 @@ namespace ermeX.DAL.Commands.Component
 		                             IStatusManager statusManager,
 			ICanWriteConnectivityDetails connectivityDetailsWritter)
 		{
+			Logger.Debug("cctor");
 			_factory = factory;
 			_componentsRepository = componentsRepository;
 			_connectivityRepository = connectivityRepository;
@@ -46,6 +49,7 @@ namespace ermeX.DAL.Commands.Component
 
 		public bool CreateRemoteComponent(Guid remoteComponentId, string ip, int port)
 		{
+			Logger.DebugFormat("CreateRemoteComponent. remoteComponentId={0}, ip={1}, port={2}",remoteComponentId,ip,port);
 			bool result;
 			using (var uow = _factory.Create())
 			{
@@ -62,6 +66,7 @@ namespace ermeX.DAL.Commands.Component
 
 		public void CreateLocalComponent(ushort port)
 		{
+			Logger.DebugFormat("CreateLocalComponent. port={0}", port);
 			using (var uow = _factory.Create())
 			{
 				CreateLocalAppComponent(uow);

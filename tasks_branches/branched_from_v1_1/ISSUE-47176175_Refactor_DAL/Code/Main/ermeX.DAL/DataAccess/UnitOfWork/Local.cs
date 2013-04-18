@@ -15,7 +15,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		private class LocalData : ILocalData
 		{
-			[ThreadStatic] //this makes it thread-safe
+			[ThreadStatic] 
 			private static Hashtable _localData;
 			private static readonly object LocalDataHashtableKey = new object();
 

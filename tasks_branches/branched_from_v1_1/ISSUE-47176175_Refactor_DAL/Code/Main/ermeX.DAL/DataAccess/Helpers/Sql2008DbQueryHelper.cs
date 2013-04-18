@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 
 namespace ermeX.DAL.DataAccess.Helpers
 {
+	//TODO: REMOVE SUPPORT TO SQL SERVER
 	internal class Sql2008DbQueryHelper : QueryHelper
 	{
 		public Sql2008DbQueryHelper(string connectionString)
