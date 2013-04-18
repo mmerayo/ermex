@@ -76,8 +76,8 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 			try
 			{
-				_transaction.Commit();
 				Flush();
+				_transaction.Commit();
 			}
 			catch
 			{
