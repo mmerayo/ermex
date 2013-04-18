@@ -90,7 +90,7 @@ namespace ermeX.Biz
         private IDialogsManager DialogsManager { get; set; }
         private ICanReadComponents ComponentReader { get; set; }
         private ICanWriteComponents ComponentWriter { get; set; }
-        private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ComponentManager).FullName);
         private IStatusManager _statusManager;
 
         private IStatusManager StatusManager

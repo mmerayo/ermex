@@ -39,7 +39,7 @@ namespace ermeX.Biz.Services
 
         private IMessagePublisher Publisher { get; set; }
         private IMessageListener Listener { get; set; }
-        private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(Manager).FullName);
 
         #region IServicesManager Members
 

@@ -54,7 +54,7 @@ namespace ermeX.Transport
 		protected ICanReadConnectivityDetails ConnectivityDetailsReader { get; set; }
 		private ICanWriteConnectivityDetails ConnectivityDetailsWritter { get; set; }
 		protected ICacheProvider CacheProvider { get; set; }
-		protected readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		protected static readonly ILog Logger = LogManager.GetLogger(typeof(LoaderBase).FullName);
 
 		#region IConcreteServiceLoader Members
 
