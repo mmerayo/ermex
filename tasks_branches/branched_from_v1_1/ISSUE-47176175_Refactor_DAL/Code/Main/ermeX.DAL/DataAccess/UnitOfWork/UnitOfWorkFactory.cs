@@ -22,7 +22,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 		{
 			Logger.DebugFormat("Create. autoCommitWhenDispose={0} Thread={1}",autoCommitWhenDispose,Thread.CurrentThread.ManagedThreadId);
 			var session = _sessionFactory.OpenSession();
-			session.FlushMode = FlushMode.Commit;
+			//session.FlushMode = FlushMode.Commit;
 			return new UnitOfWorkImplementor(this, session,autoCommitWhenDispose);
 		}
 	}
