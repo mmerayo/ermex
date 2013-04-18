@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Repository;
@@ -14,8 +14,8 @@ namespace ermeX.DAL.Commands.Queues
 		private readonly IPersistRepository<OutgoingMessage> _repository;
 
 		[Inject]
-		public WriteOutgoingQueue(IPersistRepository<OutgoingMessage> repository,
-			IUnitOfWorkFactory factory,
+		public WriteOutgoingQueue(IPersistRepository<OutgoingMessage> repository, 
+			IUnitOfWorkFactory factory, 
 			IComponentSettings settings)
 		{
 			_factory = factory;
