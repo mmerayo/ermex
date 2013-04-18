@@ -44,14 +44,14 @@ namespace ermeX.DAL.DataAccess.Mappings
             }
 
             Table(tableName);
-            //LazyLoad();
-            Id(x => x.Id).GeneratedBy.Identity().Column(ConnectivityDetails.GetDbFieldName("Id"));
-            Map(x => x.Ip).Column(ConnectivityDetails.GetDbFieldName("Ip")).Unique();
-            Map(x => x.Port).Column(ConnectivityDetails.GetDbFieldName("Port"));
-            Map(x => x.IsLocal).Column(ConnectivityDetails.GetDbFieldName("IsLocal"));
-            Map(x => x.ServerId).Column(ConnectivityDetails.GetDbFieldName("ServerId"));
-            Map(x => x.ComponentOwner).Column(ConnectivityDetails.GetDbFieldName("ComponentOwner"));
-            Map(x => x.Version).Column(ConnectivityDetails.GetDbFieldName("Version"));
+            //
+			Id(x => x.Id).GeneratedBy.Identity().Column(ConnectivityDetails.GetDbFieldName("Id")).Not.Nullable();
+			Map(x => x.Ip).Column(ConnectivityDetails.GetDbFieldName("Ip")).Unique().Not.Nullable();
+			Map(x => x.Port).Column(ConnectivityDetails.GetDbFieldName("Port")).Not.Nullable();
+			Map(x => x.IsLocal).Column(ConnectivityDetails.GetDbFieldName("IsLocal")).Not.Nullable();
+			Map(x => x.ServerId).Column(ConnectivityDetails.GetDbFieldName("ServerId")).Not.Nullable();
+			Map(x => x.ComponentOwner).Column(ConnectivityDetails.GetDbFieldName("ComponentOwner")).Not.Nullable();
+			Map(x => x.Version).Column(ConnectivityDetails.GetDbFieldName("Version")).Not.Nullable();
             //TODO:restrictions composite key
         }
     }

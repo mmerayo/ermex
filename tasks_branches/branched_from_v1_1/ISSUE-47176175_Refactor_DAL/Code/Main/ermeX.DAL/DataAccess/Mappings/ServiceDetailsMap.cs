@@ -44,18 +44,18 @@ namespace ermeX.DAL.DataAccess.Mappings
             }
 
             Table(tableName);
-            //LazyLoad();
-            Id(x => x.Id).GeneratedBy.Identity().Column(ServiceDetails.GetDbFieldName("Id"));
-            Map(x => x.ComponentOwner).Column(ServiceDetails.GetDbFieldName("ComponentOwner"));
-            Map(x => x.OperationIdentifier).Column(ServiceDetails.GetDbFieldName("OperationIdentifier"));
+            //
+			Id(x => x.Id).GeneratedBy.Identity().Column(ServiceDetails.GetDbFieldName("Id")).Not.Nullable();
+			Map(x => x.ComponentOwner).Column(ServiceDetails.GetDbFieldName("ComponentOwner")).Not.Nullable();
+			Map(x => x.OperationIdentifier).Column(ServiceDetails.GetDbFieldName("OperationIdentifier")).Not.Nullable();
             Map(x => x.ServiceImplementationMethodName).Column(
-                ServiceDetails.GetDbFieldName("ServiceImplementationMethodName"));
+				ServiceDetails.GetDbFieldName("ServiceImplementationMethodName")).Not.Nullable();
             Map(x => x.ServiceImplementationTypeName).Column(
-                ServiceDetails.GetDbFieldName("ServiceImplementationTypeName"));
-            Map(x => x.Publisher).Column(ServiceDetails.GetDbFieldName("Publisher"));
-            Map(x => x.Version).Column(ServiceDetails.GetDbFieldName("Version"));
-            Map(x => x.ServiceInterfaceTypeName).Column(ServiceDetails.GetDbFieldName("ServiceInterfaceTypeName"));
-            Map(x => x.IsSystemService).Column(ServiceDetails.GetDbFieldName("IsSystemService"));
+				ServiceDetails.GetDbFieldName("ServiceImplementationTypeName")).Not.Nullable();
+			Map(x => x.Publisher).Column(ServiceDetails.GetDbFieldName("Publisher")).Not.Nullable();
+			Map(x => x.Version).Column(ServiceDetails.GetDbFieldName("Version")).Not.Nullable();
+			Map(x => x.ServiceInterfaceTypeName).Column(ServiceDetails.GetDbFieldName("ServiceInterfaceTypeName")).Not.Nullable();
+			Map(x => x.IsSystemService).Column(ServiceDetails.GetDbFieldName("IsSystemService")).Not.Nullable();
         }
     }
 }

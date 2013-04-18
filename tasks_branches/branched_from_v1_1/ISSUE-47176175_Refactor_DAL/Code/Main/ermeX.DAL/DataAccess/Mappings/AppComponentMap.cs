@@ -45,14 +45,13 @@ namespace ermeX.DAL.DataAccess.Mappings
             
             Table( tableName);
 
-            //LazyLoad();
-            Id(x => x.Id).GeneratedBy.Identity().Column(AppComponent.GetDbFieldName("Id"));
-            Map(x => x.ComponentId).Column(AppComponent.GetDbFieldName("ComponentId")).Unique();
-            Map(x => x.ComponentOwner).Column(AppComponent.GetDbFieldName("ComponentOwner"));
-            Map(x => x.Latency).Column(AppComponent.GetDbFieldName("Latency"));
-            Map(x => x.Version).Column(AppComponent.GetDbFieldName("Version"));
-            Map(x => x.IsRunning).Column(AppComponent.GetDbFieldName("IsRunning"));
-            Map(x => x.ExchangedDefinitions).Column(AppComponent.GetDbFieldName("ExchangedDefinitions"));
+			Id(x => x.Id).GeneratedBy.Identity().Column(AppComponent.GetDbFieldName("Id")).Not.Nullable();
+			Map(x => x.ComponentId).Column(AppComponent.GetDbFieldName("ComponentId")).Unique().Not.Nullable();
+			Map(x => x.ComponentOwner).Column(AppComponent.GetDbFieldName("ComponentOwner")).Not.Nullable();
+			Map(x => x.Latency).Column(AppComponent.GetDbFieldName("Latency")).Not.Nullable();
+			Map(x => x.Version).Column(AppComponent.GetDbFieldName("Version")).Not.Nullable();
+			Map(x => x.IsRunning).Column(AppComponent.GetDbFieldName("IsRunning")).Not.Nullable();
+			Map(x => x.ExchangedDefinitions).Column(AppComponent.GetDbFieldName("ExchangedDefinitions")).Not.Nullable();
             Map(x => x.ComponentExchanges).Column(AppComponent.GetDbFieldName("ComponentExchanges"));
             //TODO:restrictions composite key
         }

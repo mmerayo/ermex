@@ -45,15 +45,15 @@ namespace ermeX.DAL.DataAccess.Mappings
             }
 
             Table(tableName);
-            //LazyLoad();
-            Id(x => x.Id).GeneratedBy.Identity().Column(OutgoingMessageSuscription.GetDbFieldName("Id"));
-            Map(x => x.Component).Column(OutgoingMessageSuscription.GetDbFieldName("ComponentId"));
+            //
+			Id(x => x.Id).GeneratedBy.Identity().Column(OutgoingMessageSuscription.GetDbFieldName("Id")).Not.Nullable();
+			Map(x => x.Component).Column(OutgoingMessageSuscription.GetDbFieldName("ComponentId")).Not.Nullable();
             Map(x => x.DateLastUpdateUtc).Column(OutgoingMessageSuscription.GetDbFieldName("DateLastUpdateUtc")).
-                CustomType(typeof (DateTimeUserType));
+				CustomType(typeof(DateTimeUserType)).Not.Nullable();
             Map(x => x.BizMessageFullTypeName).Column(OutgoingMessageSuscription.GetDbFieldName("BizMessageFullTypeName"))
-                .Length(256);
-            Map(x => x.ComponentOwner).Column(OutgoingMessageSuscription.GetDbFieldName("ComponentOwner"));
-            Map(x => x.Version).Column(OutgoingMessageSuscription.GetDbFieldName("Version"));
+				.Length(256).Not.Nullable();
+			Map(x => x.ComponentOwner).Column(OutgoingMessageSuscription.GetDbFieldName("ComponentOwner")).Not.Nullable();
+			Map(x => x.Version).Column(OutgoingMessageSuscription.GetDbFieldName("Version")).Not.Nullable();
             //TODO:restrictions composite key
         }
     }
