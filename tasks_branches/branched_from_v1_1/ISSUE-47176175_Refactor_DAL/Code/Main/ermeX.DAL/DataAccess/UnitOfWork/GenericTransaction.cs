@@ -25,7 +25,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		public void Rollback()
 		{
-			Logger.DebugFormat("Rollback thread={0} ", System.Threading.Thread.CurrentThread.ManagedThreadId);
+			Logger.WarnFormat("Rollback thread={0} ", System.Threading.Thread.CurrentThread.ManagedThreadId);
 			_transaction.Rollback();
 		}
 

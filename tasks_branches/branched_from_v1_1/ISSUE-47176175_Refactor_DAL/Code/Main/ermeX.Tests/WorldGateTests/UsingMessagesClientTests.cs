@@ -20,6 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Common.Logging;
+using Common.Logging.Simple;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings;
@@ -37,163 +39,184 @@ using ermeX.Tests.WorldGateTests.Mock.Messages;
 
 namespace ermeX.Tests.WorldGateTests
 {
-    [Category(TestCategories.CoreSystemTest)]
-    //[TestFixture]
-    internal class UsingMessagesClientTests : DataAccessTestBase
-    {
-        #region Setup/Teardown
-        public override void OnTearDown()
-        {
-            WorldGate.Reset();
-            TestService.Reset();
+	[Category(TestCategories.CoreSystemTest)]
+	//[TestFixture]
+	internal class UsingMessagesClientTests : DataAccessTestBase
+	{
+		#region Setup/Teardown
 
-            base.OnTearDown();
-        }
-        public override void OnStartUp()
-        {
-            CreateDatabase = false;
-            base.OnStartUp();
-        }
-        #endregion
+		public override void OnTearDown()
+		{
+			WorldGate.Reset();
+			TestService.Reset();
 
-       
+			base.OnTearDown();
+		}
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void Can_Receive_PublishedMessage( DbEngineType dbEngine)
-        {
-            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
-            WorldGate.ConfigureAndStart(cfg);
+		public override void OnStartUp()
+		{
+			CreateDatabase = false;
+			base.OnStartUp();
 
-            var autoResetEvent = new AutoResetEvent(false);
+			//TODO: REMOVE FROM HERE
+			LogManager.Adapter = new NoOpLoggerFactoryAdapter();
+		}
 
-            var handler = WorldGate.Suscribe<TestMessageHandlerOneMessage>(typeof(TestMessageHandlerOneMessage));
-            handler.ExpectedMessages = 1;
-            handler.SetReceivedEvent(autoResetEvent);
-            var dummyDomainEntity = new DummyDomainEntity {Id = Guid.NewGuid()};
-            WorldGate.Publish(dummyDomainEntity);
+		#endregion
 
-            autoResetEvent.WaitOne(new TimeSpan(0, 0, 25));
-            var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity>();
+		//private const string DbType = "InMemoryDb";
+		private const string DbType = "SqliteDb";
 
-            Assert.IsNotNull(lastEntityReceived);
-            Assert.IsTrue(lastEntityReceived.Id == dummyDomainEntity.Id);
-        }
+		[Test, TestCaseSource(typeof (TestCaseSources), DbType)]
+		public void Can_Receive_PublishedMessage(DbEngineType dbEngine)
+		{
+			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+			WorldGate.ConfigureAndStart(cfg);
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void Can_Receive_Several_Messages(DbEngineType dbEngine)
-        {
-            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
-            WorldGate.ConfigureAndStart(cfg);
+			var autoResetEvent = new AutoResetEvent(false);
 
-            var autoResetEvent = new AutoResetEvent(false);
+			var handler = WorldGate.Suscribe<TestMessageHandlerOneMessage>(typeof (TestMessageHandlerOneMessage));
+			handler.ExpectedMessages = 1;
+			handler.SetReceivedEvent(autoResetEvent);
+			var dummyDomainEntity = new DummyDomainEntity {Id = Guid.NewGuid()};
+			WorldGate.Publish(dummyDomainEntity);
+
+			autoResetEvent.WaitOne(new TimeSpan(0, 0, 25));
+			var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity>();
+
+			Assert.IsNotNull(lastEntityReceived);
+			Assert.IsTrue(lastEntityReceived.Id == dummyDomainEntity.Id);
+		}
+
+		[Test, TestCaseSource(typeof (TestCaseSources), DbType)]
+		public void Can_Receive_Several_Messages(DbEngineType dbEngine)
+		{
+			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+			WorldGate.ConfigureAndStart(cfg);
+
+			var autoResetEvent = new AutoResetEvent(false);
 
 
-            var handler = WorldGate.Suscribe<TestMessageHandlerSeveralMessages>();
-            TestMessageHandlerSeveralMessages.AutoResetEvent = autoResetEvent;
-            handler.ExpectedMessages = 1;
-            var dummyDomainEntity = new DummyDomainEntity { Id = Guid.NewGuid() };
-            WorldGate.Publish(dummyDomainEntity);
+			var handler = WorldGate.Suscribe<TestMessageHandlerSeveralMessages>();
+			TestMessageHandlerSeveralMessages.AutoResetEvent = autoResetEvent;
+			handler.ExpectedMessages = 1;
+			var dummyDomainEntity = new DummyDomainEntity {Id = Guid.NewGuid()};
+			WorldGate.Publish(dummyDomainEntity);
 
-            autoResetEvent.WaitOne(new TimeSpan(0, 0, 25));
-            var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity>();
+			autoResetEvent.WaitOne(new TimeSpan(0, 0, 25));
+			var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity>();
 
-            Assert.IsNotNull(lastEntityReceived);
-            Assert.IsTrue(lastEntityReceived.Id == dummyDomainEntity.Id);
+			Assert.IsNotNull(lastEntityReceived);
+			Assert.IsTrue(lastEntityReceived.Id == dummyDomainEntity.Id);
 
-            handler.Clear();
-            handler.ExpectedMessages = 1;
-            autoResetEvent.Reset();
-            var dummyDomainEntity2 = new DummyDomainEntity2 { Data = RandomHelper.GetRandomString()};
-            WorldGate.Publish(dummyDomainEntity2);
+			handler.Clear();
+			handler.ExpectedMessages = 1;
+			autoResetEvent.Reset();
+			var dummyDomainEntity2 = new DummyDomainEntity2 {Data = RandomHelper.GetRandomString()};
+			WorldGate.Publish(dummyDomainEntity2);
 
-            autoResetEvent.WaitOne(new TimeSpan(0, 0, 25));
-            var lastEntityReceived2 = handler.LastEntityReceived<DummyDomainEntity2>();
+			autoResetEvent.WaitOne(new TimeSpan(0, 0, 25));
+			var lastEntityReceived2 = handler.LastEntityReceived<DummyDomainEntity2>();
 
-            Assert.IsNotNull(lastEntityReceived2);
-            Assert.IsTrue(lastEntityReceived2.Data== dummyDomainEntity2.Data);
-        }
+			Assert.IsNotNull(lastEntityReceived2);
+			Assert.IsTrue(lastEntityReceived2.Data == dummyDomainEntity2.Data);
+		}
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void BaseTypeHandler_Receives_Inherited_Message(DbEngineType dbEngine)
-        {
-            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
-            WorldGate.ConfigureAndStart(cfg);
+		[Test, TestCaseSource(typeof (TestCaseSources), DbType)]
+		public void BaseTypeHandler_Receives_Inherited_Message(DbEngineType dbEngine)
+		{
+			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+			WorldGate.ConfigureAndStart(cfg);
 
-            var autoResetEvent = new AutoResetEvent(false);
+			var autoResetEvent = new AutoResetEvent(false);
 
-            var handler = WorldGate.Suscribe<TestMessageHandlerBaseType>();
-            TestMessageHandlerBaseType.AutoResetEvent = autoResetEvent;
-            handler.ExpectedMessages= 1;
-            var dummyDomainEntity = new DummyDomainEntity3 {Data=RandomHelper.GetRandomString(),DateTime=RandomHelper.GetRandomDateTime()};
-            WorldGate.Publish(dummyDomainEntity);
+			var handler = WorldGate.Suscribe<TestMessageHandlerBaseType>();
+			TestMessageHandlerBaseType.AutoResetEvent = autoResetEvent;
+			handler.ExpectedMessages = 1;
+			var dummyDomainEntity = new DummyDomainEntity3
+				{
+					Data = RandomHelper.GetRandomString(),
+					DateTime = RandomHelper.GetRandomDateTime()
+				};
+			WorldGate.Publish(dummyDomainEntity);
 
-            autoResetEvent.WaitOne(new TimeSpan(0, 0, 25));
-            var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity3>();
+			autoResetEvent.WaitOne(new TimeSpan(0, 0, 25));
+			var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity3>();
 
-            Assert.IsNotNull(lastEntityReceived);
-            Assert.IsTrue(lastEntityReceived.Data == dummyDomainEntity.Data);
-            Assert.IsTrue(lastEntityReceived.DateTime == dummyDomainEntity.DateTime);
-        }
+			Assert.IsNotNull(lastEntityReceived);
+			Assert.IsTrue(lastEntityReceived.Data == dummyDomainEntity.Data);
+			Assert.IsTrue(lastEntityReceived.DateTime == dummyDomainEntity.DateTime);
+		}
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void BaseTypeHandler_And_ConcreteHandlerType_Receives_Inherited_Message(DbEngineType dbEngine)
-        {
-            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
-            WorldGate.ConfigureAndStart(cfg);
+		[Test, TestCaseSource(typeof (TestCaseSources), DbType)]
+		public void BaseTypeHandler_And_ConcreteHandlerType_Receives_Inherited_Message(DbEngineType dbEngine)
+		{
+			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+			WorldGate.ConfigureAndStart(cfg);
 
-            var autoResetEvent = new AutoResetEvent(false);
+			var autoResetEvent = new AutoResetEvent(false);
 
-            var handler = WorldGate.Suscribe<TestMessageHandlerSeveralMessagesWithInheritance>(); //this one is subscribed to two messages
-            handler.SetReceivedEvent( autoResetEvent);
-            handler.ExpectedMessages = 2;
-            var dummyDomainEntity = new DummyDomainEntity3 { Data = RandomHelper.GetRandomString(), DateTime = RandomHelper.GetRandomDateTime() };
-            WorldGate.Publish(dummyDomainEntity);
-          
-            autoResetEvent.WaitOne(new TimeSpan(0, 1, 0));
-            var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity3>();
+			var handler = WorldGate.Suscribe<TestMessageHandlerSeveralMessagesWithInheritance>();
+			//this one is subscribed to two messages
+			handler.SetReceivedEvent(autoResetEvent);
+			handler.ExpectedMessages = 2;
+			var dummyDomainEntity = new DummyDomainEntity3
+				{
+					Data = RandomHelper.GetRandomString(),
+					DateTime = RandomHelper.GetRandomDateTime()
+				};
+			WorldGate.Publish(dummyDomainEntity);
 
-            Assert.IsNotNull(lastEntityReceived);
-            Assert.IsTrue(lastEntityReceived.Data == dummyDomainEntity.Data);
-            Assert.IsTrue(lastEntityReceived.DateTime == dummyDomainEntity.DateTime);
+			autoResetEvent.WaitOne(new TimeSpan(0, 1, 0));
+			var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity3>();
 
-            Thread.Sleep(500);//we want to ensure that nothing else is delivered 
+			Assert.IsNotNull(lastEntityReceived);
+			Assert.IsTrue(lastEntityReceived.Data == dummyDomainEntity.Data);
+			Assert.IsTrue(lastEntityReceived.DateTime == dummyDomainEntity.DateTime);
 
-            Assert.IsTrue(handler.ReceivedMessages.Count == 2, string.Format("Expected:2 Received: {0}", handler.ReceivedMessages.Count));
-            var first = (DummyDomainEntity3) handler.ReceivedMessages[0];
-            var second = (DummyDomainEntity3) handler.ReceivedMessages[1];
-            Assert.IsTrue(first.Data == second.Data);
-            Assert.IsTrue(first.DateTime == second.DateTime);
-        }
+			Thread.Sleep(500); //we want to ensure that nothing else is delivered 
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-        public void InterfaceTypeHandler_And_ConcreteHandlerType_Receives_Inherited_Message(DbEngineType dbEngine)
-        {
-            var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
-            WorldGate.ConfigureAndStart(cfg);
+			Assert.IsTrue(handler.ReceivedMessages.Count == 2,
+			              string.Format("Expected:2 Received: {0}", handler.ReceivedMessages.Count));
+			var first = (DummyDomainEntity3) handler.ReceivedMessages[0];
+			var second = (DummyDomainEntity3) handler.ReceivedMessages[1];
+			Assert.IsTrue(first.Data == second.Data);
+			Assert.IsTrue(first.DateTime == second.DateTime);
+		}
 
-            var autoResetEvent = new AutoResetEvent(false);
+		[Test, TestCaseSource(typeof (TestCaseSources), DbType)]
+		public void InterfaceTypeHandler_And_ConcreteHandlerType_Receives_Inherited_Message(DbEngineType dbEngine)
+		{
+			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
+			WorldGate.ConfigureAndStart(cfg);
 
-            var handler = WorldGate.Suscribe<TestMessageHandlerSeveralMessagesWithInterfacesInheritance>();
-            handler.SetReceivedEvent( autoResetEvent);
-            handler.ExpectedMessages = 2;
-            var dummyDomainEntity = new DummyDomainEntity3 { Data = RandomHelper.GetRandomString(), DateTime = RandomHelper.GetRandomDateTime() };
-            WorldGate.Publish(dummyDomainEntity);
-          
-            autoResetEvent.WaitOne(new TimeSpan(0, 1, 0));
-            var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity3>();
+			var autoResetEvent = new AutoResetEvent(false);
 
-            Assert.IsNotNull(lastEntityReceived);
-            Assert.IsTrue(lastEntityReceived.Data == dummyDomainEntity.Data);
-            Assert.IsTrue(lastEntityReceived.DateTime == dummyDomainEntity.DateTime);
-            Thread.Sleep(500);//ensure no more messages are received
-            Assert.IsTrue(handler.ReceivedMessages.Count==2);
-            var first = (DummyDomainEntity3) handler.ReceivedMessages[0];
-            var second = (DummyDomainEntity3) handler.ReceivedMessages[1];
-            Assert.IsTrue(first.Data == second.Data);
-            Assert.IsTrue(first.DateTime == second.DateTime);
-        }
+			var handler = WorldGate.Suscribe<TestMessageHandlerSeveralMessagesWithInterfacesInheritance>();
+			handler.SetReceivedEvent(autoResetEvent);
+			handler.ExpectedMessages = 2;
+			var dummyDomainEntity = new DummyDomainEntity3
+				{
+					Data = RandomHelper.GetRandomString(),
+					DateTime = RandomHelper.GetRandomDateTime()
+				};
+			WorldGate.Publish(dummyDomainEntity);
 
-        
-       //todo: interfaces, abstract types etc
-    }
+			autoResetEvent.WaitOne(new TimeSpan(0, 1, 0));
+			var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity3>();
+
+			Assert.IsNotNull(lastEntityReceived);
+			Assert.IsTrue(lastEntityReceived.Data == dummyDomainEntity.Data);
+			Assert.IsTrue(lastEntityReceived.DateTime == dummyDomainEntity.DateTime);
+			Thread.Sleep(500); //ensure no more messages are received
+			Assert.IsTrue(handler.ReceivedMessages.Count == 2);
+			var first = (DummyDomainEntity3) handler.ReceivedMessages[0];
+			var second = (DummyDomainEntity3) handler.ReceivedMessages[1];
+			Assert.IsTrue(first.Data == second.Data);
+			Assert.IsTrue(first.DateTime == second.DateTime);
+		}
+
+
+		//todo: interfaces, abstract types etc
+	}
 }
