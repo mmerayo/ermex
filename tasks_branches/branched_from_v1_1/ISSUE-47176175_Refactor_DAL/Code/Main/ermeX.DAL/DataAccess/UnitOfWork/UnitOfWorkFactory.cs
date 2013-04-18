@@ -14,6 +14,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 		[Inject]
 		public UnitOfWorkFactory(ISessionProvider sessionProvider)
 		{
+			Logger.DebugFormat("cctor: thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_sessionFactory = sessionProvider;
 		}
 

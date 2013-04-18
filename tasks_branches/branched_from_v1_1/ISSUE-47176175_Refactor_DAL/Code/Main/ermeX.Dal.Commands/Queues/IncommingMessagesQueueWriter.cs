@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
@@ -29,7 +30,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public void Save(IncomingMessage incomingMessage)
 		{
-			Logger.DebugFormat("Save. incomingMessage:{0}",incomingMessage.ToString());
+			Logger.DebugFormat("Save. incomingMessage:{0} - ThreadId:{1}",incomingMessage,Thread.CurrentThread.ManagedThreadId);
 			using (var uow = _factory.Create())
 			{
 				_repository.Save(uow, incomingMessage);
@@ -49,7 +50,8 @@ namespace ermeX.DAL.Commands.Queues
 
 		public void Remove(IncomingMessage incomingMessage)
 		{
-			Logger.DebugFormat("Remove. incomingMessage:{0}", incomingMessage.ToString());
+			//TODO: ADD THE THREAD AS A SUFFIX FOR ALL LOGGERS
+			Logger.DebugFormat("Remove. incomingMessage:{0} - ThreadId:{1}", incomingMessage,Thread.CurrentThread.ManagedThreadId);
 			using (var uow = _factory.Create())
 			{
 				_repository.Remove(uow, incomingMessage);

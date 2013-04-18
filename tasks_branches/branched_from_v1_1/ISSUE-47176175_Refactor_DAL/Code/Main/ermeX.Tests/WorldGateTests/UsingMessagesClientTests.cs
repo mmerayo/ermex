@@ -59,13 +59,13 @@ namespace ermeX.Tests.WorldGateTests
 			base.OnStartUp();
 
 			//TODO: REMOVE FROM HERE
-			LogManager.Adapter = new NoOpLoggerFactoryAdapter();
+			//LogManager.Adapter = new NoOpLoggerFactoryAdapter();
 		}
 
 		#endregion
 
-		//private const string DbType = "InMemoryDb";
-		private const string DbType = "SqliteDb";
+		private const string DbType = "InMemoryDb";
+		//private const string DbType = "SqliteDb";
 
 		[Test, TestCaseSource(typeof (TestCaseSources), DbType)]
 		public void Can_Receive_PublishedMessage(DbEngineType dbEngine)

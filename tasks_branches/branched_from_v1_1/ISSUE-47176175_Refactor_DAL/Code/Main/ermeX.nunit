@@ -1,5 +1,5 @@
 ﻿<NUnitProject>
-  <Settings activeconfig="Release" domainUsage="Multiple" />
+  <Settings activeconfig="Debug" domainUsage="Multiple" />
   <Config name="Release" binpathtype="Auto">
     <assembly path="ermeX.Tests\bin\Release\ermeX.Tests.dll" />
     <assembly path="ermeX.Tests.DAL.Integration\bin\Release\ermeX.Tests.DAL.Integration.dll" />
