@@ -40,6 +40,11 @@ namespace ermeX.DAL.Commands.Queues
 		public void Save(OutgoingMessage message)
 		{
 			Logger.DebugFormat("Save. message={0}", message);
+			if (message.Status == Message.MessageStatus.NotSet)
+			{
+				Logger.Fatal("Save: message status wasnt set");
+				throw new InvalidOperationException("Must set the status");
+			}
 			using (var uow = _factory.Create())
 			{
 				_repository.Save(uow, message);

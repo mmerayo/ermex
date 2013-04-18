@@ -16,9 +16,10 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 		private readonly bool _autoCommitWhenDispose;
 		private readonly IGenericTransaction _transaction;
 
+		private readonly Guid _id = Guid.NewGuid();
 		public UnitOfWorkImplementor(IUnitOfWorkFactory factory, ISession session, bool autoCommitWhenDispose=false)
 		{
-			Logger.DebugFormat("cctor. Thread={0}", Thread.CurrentThread.ManagedThreadId);
+			Logger.DebugFormat("cctor. Thread={0} - Id: {1}", Thread.CurrentThread.ManagedThreadId,_id);
 			_factory = factory;
 			_session = session;
 			_autoCommitWhenDispose = autoCommitWhenDispose;
@@ -35,7 +36,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		protected virtual void Dispose(bool disposing)
 		{
-			Logger.DebugFormat("Dispose. disposing={0}",disposing);
+			Logger.DebugFormat("Dispose. disposing={0} - Thread:{1} - Id: {2}", disposing, Thread.CurrentThread.ManagedThreadId, _id);
 			if (disposing)
 			{
 				if (_autoCommitWhenDispose)
@@ -51,7 +52,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 			{
 				if(_autoCommitWhenDispose && IsInActiveTransaction)
 				{
-					Logger.Fatal(m=>m("despite UoW is configured to autocommit when disposed was never commited."));
+					Logger.FatalFormat("Despite UoW is configured to autocommit when disposed was never commited. - Id: {1}",_id);
 				}
 			}
 		}
@@ -65,7 +66,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 
 		public void Commit(bool disposing)
 		{
-			Logger.DebugFormat("Commit. disposing={0}, thread={1}", disposing, Thread.CurrentThread.ManagedThreadId);
+			Logger.DebugFormat("Commit. disposing={0}, thread={1} - Id: {2}", disposing, Thread.CurrentThread.ManagedThreadId,_id);
 			if (_autoCommitWhenDispose && !disposing)
 				throw new InvalidOperationException(
 					"The unit of work is configured to autocommit when dispose, Commit cannot be requested by caller as is automatic");
@@ -80,6 +81,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 			}
 			catch
 			{
+				Logger.DebugFormat("RollingBack={0}, thread={1} - Id: {2}", disposing, Thread.CurrentThread.ManagedThreadId, _id);
 				_transaction.Rollback();
 				throw;
 			}
