@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.Commands.Services;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.DAL.Interfaces.Subscriptions;
@@ -12,6 +14,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 {
 	class CanReadIncommingMessagesSubscriptions : ICanReadIncommingMessagesSubscriptions
 	{
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(CanReadIncommingMessagesSubscriptions).FullName);
 		private readonly IReadOnlyRepository<IncomingMessageSuscription> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;
@@ -21,6 +24,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IUnitOfWorkFactory factory,
 			IComponentSettings settings)
 		{
+			Logger.Debug("cctor");
 			_repository = repository;
 			_factory = factory;
 			_settings = settings;
@@ -28,6 +32,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public IEnumerable<IncomingMessageSuscription> GetByMessageType(string bizMessageType)
 		{
+			Logger.DebugFormat("GetByMessageType. bizMessageType={0}", bizMessageType);
 			IEnumerable<IncomingMessageSuscription> result;
 			using (var uow = _factory.Create())
 			{
@@ -39,6 +44,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public IncomingMessageSuscription GetByHandlerId(Guid suscriptionHandlerId)
 		{
+			Logger.DebugFormat("GetByHandlerId. suscriptionHandlerId={0}", suscriptionHandlerId);
 			IncomingMessageSuscription result;
 			using (var uow = _factory.Create())
 			{
@@ -51,6 +57,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public IncomingMessageSuscription GetByHandlerAndMessageType(Type handlerType, Type messageType)
 		{
+			Logger.DebugFormat("GetByHandlerAndMessageType. handlerType={0}, messageType={1}", handlerType,messageType);
 			IncomingMessageSuscription result;
 			using (var uow = _factory.Create())
 			{
@@ -63,6 +70,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public IEnumerable<IncomingMessageSuscription> FetchAll()
 		{
+			Logger.DebugFormat("FetchAll");
 			IEnumerable<IncomingMessageSuscription> result;
 			using (var uow = _factory.Create())
 			{

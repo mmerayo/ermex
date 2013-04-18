@@ -1,4 +1,5 @@
 using System;
+using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Repository;
@@ -10,6 +11,7 @@ namespace ermeX.DAL.Commands.Queues
 {
 	internal class WriteOutgoingQueue : IWriteOutgoingQueue
 	{
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(WriteOutgoingQueue).FullName);
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IPersistRepository<OutgoingMessage> _repository;
 
@@ -18,12 +20,14 @@ namespace ermeX.DAL.Commands.Queues
 			IUnitOfWorkFactory factory, 
 			IComponentSettings settings)
 		{
+			Logger.Debug("cctor");
 			_factory = factory;
 			_repository = repository;
 		}
 
 		public void RemoveExpiredMessages(TimeSpan expirationTime)
 		{
+			Logger.DebugFormat("RemoveExpiredMessages. expirationTime={0}",expirationTime);
 			using (var uow = _factory.Create())
 			{
 				DateTime dateTime = DateTime.UtcNow - expirationTime;
@@ -34,6 +38,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public void Save(OutgoingMessage message)
 		{
+			Logger.DebugFormat("Save. message={0}", message);
 			using (var uow = _factory.Create())
 			{
 				_repository.Save(uow, message);

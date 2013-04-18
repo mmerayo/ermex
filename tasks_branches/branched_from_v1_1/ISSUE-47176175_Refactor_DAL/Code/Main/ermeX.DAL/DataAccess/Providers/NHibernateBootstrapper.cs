@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using Common.Logging;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Mapping;
@@ -38,6 +39,8 @@ namespace ermeX.DAL.DataAccess.Providers
 	//TODO: TO BE INJECTED
     internal static class NHibernateBootstrapper
     {
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(NHibernateBootstrapper).FullName);
+
 #if DEBUG
         public class LoggingInterceptor : EmptyInterceptor
         {
@@ -45,7 +48,7 @@ namespace ermeX.DAL.DataAccess.Providers
             {
                 try
                 {
-                    Console.WriteLine(sql);
+                    Logger.Debug(sql);
                 }
                 catch
                 {
@@ -61,6 +64,7 @@ namespace ermeX.DAL.DataAccess.Providers
 
         public static ISessionFactory BootStrap(IDalSettings settings)
         {
+			Logger.Debug("Bootstrap");
             _currentSettings = settings;
             IPersistenceConfigurer concreteDbType = GetConcreteDbType(settings);
             _nhConfiguration = Fluently.Configure()
@@ -162,6 +166,7 @@ namespace ermeX.DAL.DataAccess.Providers
 
         public static void UpdateSchema()
         {
+			Logger.Debug("UpdateSchema");
             new SchemaUpdate(_nhConfiguration)
                 .Execute(false, true);
         }

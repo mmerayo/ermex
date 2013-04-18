@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Common.Logging;
+using ermeX.DAL.DataAccess.Providers;
 using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.DataAccess.Repository
@@ -14,6 +16,7 @@ namespace ermeX.DAL.DataAccess.Repository
 	                                     IExpressionHelper<OutgoingMessageSuscription>,
 	                                     IExpressionHelper<ServiceDetails>
 	{
+
 		public Expression<Func<AppComponent, bool>> GetFindByBizKey(AppComponent e)
 		{
 			return x => (x).ComponentOwner == e.ComponentOwner

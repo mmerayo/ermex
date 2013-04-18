@@ -1,4 +1,5 @@
 using System;
+using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.DataAccess.Repository;
@@ -10,18 +11,23 @@ namespace ermeX.DAL.Commands.Component
 {
 	internal sealed class ComponentsUpdater : ICanWriteComponents
 	{
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ComponentsUpdater).FullName);
+
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IPersistRepository<AppComponent> _repository;
 
 		[Inject]
 		public ComponentsUpdater(IPersistRepository<AppComponent> repository, IUnitOfWorkFactory factory)
 		{
+			Logger.Debug("cctor");
 			_factory = factory;
 			_repository = repository;
 		}
 
 		public void SetComponentRunningStatus(Guid componentId, ComponentStatus newStatus, bool exchangedDefinitions = false)
 		{
+			Logger.DebugFormat("SetComponentRunningStatus. componentId={0}, newStatus={1}, exchangedDefinitions={2}", componentId,
+			                   newStatus, exchangedDefinitions);
 			using (var uow = _factory.Create())
 			{
 				var localComponent = _repository.Single(uow, x => x.ComponentId == componentId);
@@ -36,6 +42,7 @@ namespace ermeX.DAL.Commands.Component
 
 		public void Save(AppComponent component)
 		{
+			Logger.DebugFormat("Save. component={0}", component);
 			using (var uow = _factory.Create())
 			{
 				_repository.Save(uow, component);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.DataAccess.Repository;
@@ -11,6 +12,8 @@ namespace ermeX.DAL.Commands.Subscriptions
 {
 	internal class CanUpdateIncommingMessagesSubscriptions : ICanUpdateIncommingMessagesSubscriptions
 	{
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(CanUpdateIncommingMessagesSubscriptions).FullName);
+
 		private readonly IPersistRepository<IncomingMessageSuscription> _incomingRepository;
 		private readonly IPersistRepository<OutgoingMessageSuscription> _outgoingRepository;
 		private readonly IUnitOfWorkFactory _factory;
@@ -22,6 +25,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IUnitOfWorkFactory factory,
 			IComponentSettings settings)
 		{
+			Logger.Debug("cctor");
 			_incomingRepository = incommingRepository;
 			_outgoingRepository = outgoingRepository;
 			_factory = factory;
@@ -30,6 +34,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public void RemoveByHandlerId(Guid suscriptionId)
 		{
+			Logger.DebugFormat("RemoveByHandlerId. suscriptionId={0}", suscriptionId);
 			using (var uow = _factory.Create())
 			{
 				_incomingRepository.Remove(uow, x => x.SuscriptionHandlerId == suscriptionId);
@@ -39,6 +44,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public void SaveIncommingSubscription(Guid suscriptionHandlerId, Type handlerType, Type messageType)
 		{
+			Logger.DebugFormat("SaveIncommingSubscription. suscriptionHandlerId={0} handlerType={1} messageType={2}", suscriptionHandlerId, handlerType, messageType);
 			using (var uow = _factory.Create())
 			{
 				var incomingMessageSuscription = new IncomingMessageSuscription

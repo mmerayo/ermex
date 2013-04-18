@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.Commands.Queues;
 using ermeX.DAL.DataAccess.Repository;
 using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.DAL.Interfaces.Services;
@@ -12,6 +14,7 @@ namespace ermeX.DAL.Commands.Services
 {
 	class ServiceDetailsReader : ICanReadServiceDetails
 	{
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ServiceDetailsReader).FullName);
 		private readonly IReadOnlyRepository<ServiceDetails> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;
@@ -21,6 +24,7 @@ namespace ermeX.DAL.Commands.Services
 			IUnitOfWorkFactory factory,
 			IComponentSettings settings)
 		{
+			Logger.Debug("cctor");
 			_repository = repository;
 			_factory = factory;
 			_settings = settings;
@@ -34,6 +38,8 @@ namespace ermeX.DAL.Commands.Services
 
 		public ServiceDetails GetByOperationId(Guid publisher, Guid operationId)
 		{
+			Logger.DebugFormat("GetByOperationId. publisher={0}, operationId={1}",publisher,operationId);
+
 			ServiceDetails result;
 			using (var uow = _factory.Create())
 			{
@@ -51,6 +57,8 @@ namespace ermeX.DAL.Commands.Services
 
 		public IEnumerable<ServiceDetails> GetByInterfaceType(string interfaceTypeFullName)
 		{
+			Logger.DebugFormat("GetByInterfaceType. interfaceTypeFullName={0}", interfaceTypeFullName);
+
 			if (string.IsNullOrEmpty(interfaceTypeFullName)) throw new ArgumentNullException("interfaceTypeFullName");
 			IEnumerable<ServiceDetails> result;
 			using (var uow = _factory.Create())
@@ -63,6 +71,7 @@ namespace ermeX.DAL.Commands.Services
 
 		public IEnumerable<ServiceDetails> GetByMethodName(string interfaceTypeName, string methodName)
 		{
+			Logger.DebugFormat("GetByMethodName. interfaceTypeName={0}, methodName={1}", interfaceTypeName, methodName);
 			if (string.IsNullOrEmpty(interfaceTypeName)) throw new ArgumentNullException("interfaceTypeName");
 			IEnumerable<ServiceDetails> result;
 			using (var uow = _factory.Create())
@@ -76,6 +85,7 @@ namespace ermeX.DAL.Commands.Services
 
 		public ServiceDetails GetByMethodName(string interfaceTypeName, string methodName, Guid publisherComponent)
 		{
+			Logger.DebugFormat("GetByMethodName. interfaceTypeName={0}, methodName={1}, publisherComponent={2}", interfaceTypeName, methodName,publisherComponent);
 			if (string.IsNullOrEmpty(interfaceTypeName)) throw new ArgumentNullException("interfaceTypeName");
 			ServiceDetails result;
 			using (var uow = _factory.Create())
@@ -89,6 +99,7 @@ namespace ermeX.DAL.Commands.Services
 
 		public IEnumerable<ServiceDetails> GetLocalCustomServices()
 		{
+			Logger.Debug("GetLocalCustomServices");
 			IEnumerable<ServiceDetails> result;
 			using (var uow = _factory.Create())
 			{
