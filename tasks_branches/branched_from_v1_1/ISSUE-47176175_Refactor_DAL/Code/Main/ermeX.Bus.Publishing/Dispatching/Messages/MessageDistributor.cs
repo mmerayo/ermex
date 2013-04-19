@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Common.Logging;
 using Ninject;
 using ermeX.Bus.Interfaces;
@@ -127,7 +128,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 			}
 			catch (Exception ex)
 			{
-				Logger.Error(x => x("There was an error while distributing an outgoing message. {0}", ex));
+				Logger.Error(x => x("Thread:{1} There was an error while distributing an outgoing message. {0}", ex,Thread.CurrentThread.ManagedThreadId));
 				result = false;
 			}
 			return result;

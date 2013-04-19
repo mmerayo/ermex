@@ -97,26 +97,26 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		public bool Any()
 		{
-			Logger.Debug("Any");
+			Logger.DebugFormat("Any Thread={0}", Thread.CurrentThread.ManagedThreadId);
 			return FetchAll().Any();
 		}
 
 		public int Count()
 		{
-			Logger.Debug("Count");
+			Logger.DebugFormat("Count Thread={0}", Thread.CurrentThread.ManagedThreadId);
 			return FetchAll().Count();
 		}
 
 		public void RemoveAll()
 		{
-			Logger.Debug("RemoveAll");
+			Logger.DebugFormat("RemoveAll  Thread={0}", Thread.CurrentThread.ManagedThreadId);
 			using (var unitOfWork = _implicitFactory.Create(true))
 				RemoveAll(unitOfWork);
 		}
 
 		public bool Save(IUnitOfWork unitOfWork, TEntity entity)
 		{
-			Logger.DebugFormat("Save: {0}", entity);
+			Logger.DebugFormat("Save: {0}  Thread={1}", Thread.CurrentThread.ManagedThreadId, entity);
 			if (entity.ComponentOwner == Guid.Empty)
 				throw new ArgumentEmptyException("entity.ComponentOwner");
 
@@ -298,7 +298,8 @@ namespace ermeX.DAL.DataAccess.Repository
 		{
 			Logger.DebugFormat("SingleOrDefault expression: {0}, thread={1}", expression, Thread.CurrentThread.ManagedThreadId);
 			var queryable = Where(unitOfWork,expression);
-			return queryable.SingleOrDefault();
+			TEntity singleOrDefault = queryable.SingleOrDefault();
+			return singleOrDefault;
 		}
 
 		public TEntity SingleOrDefault(IUnitOfWork unitOfWork, int id)
