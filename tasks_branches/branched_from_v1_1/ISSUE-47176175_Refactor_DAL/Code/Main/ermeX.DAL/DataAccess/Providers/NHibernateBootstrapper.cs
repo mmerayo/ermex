@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 using Common.Logging;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
@@ -48,7 +49,7 @@ namespace ermeX.DAL.DataAccess.Providers
             {
                 try
                 {
-                    Logger.Debug(sql);
+                    Logger.DebugFormat("DomainId: {0} - ThreadId: {1} - SQL: {2}",AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId, sql);
                 }
                 catch
                 {
