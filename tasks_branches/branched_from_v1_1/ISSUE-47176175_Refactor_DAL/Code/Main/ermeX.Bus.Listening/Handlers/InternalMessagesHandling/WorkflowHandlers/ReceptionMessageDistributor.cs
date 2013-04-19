@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Common.Logging;
 using Ninject;
 using ermeX.Common;
 using ermeX.DAL.Interfaces;
@@ -57,6 +58,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                                    IQueueDispatcherManager dispatcher)
             : base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
         {
+			Logger = LogManager.GetLogger<ReceptionMessageDistributor>();
 	        _incommingSubscriptionsReader = incommingSubscriptionsReader;
 	        _queueReader = queueReader;
 	        _queueWritter = queueWritter;

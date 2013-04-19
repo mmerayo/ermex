@@ -47,7 +47,8 @@ namespace ermeX.DAL.Commands.Services
 				{
 					ServiceDetails serviceDetails = _repository.Single(uow, expression);
 					svc.Id = serviceDetails.Id;
-					uow.Session.Evict(serviceDetails);
+					uow.Session.Merge(svc);
+					uow.Flush();
 				}
 				else
 				{

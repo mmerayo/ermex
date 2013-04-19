@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
@@ -66,6 +67,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 		                                    IServiceProxy service)
 			: base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
 		{
+			Logger = LogManager.GetLogger<MessageSubscribersDispatcher>();
 			_outgoingQueueReader = outgoingQueueReader;
 			_outgoingQueueWritter = outgoingQueueWritter;
 			if (settings == null) throw new ArgumentNullException("settings");

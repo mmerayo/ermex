@@ -66,6 +66,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 		                          IMessageSubscribersDispatcher dispatcher)
 			: base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
 		{
+			Logger = LogManager.GetLogger<MessageDistributor>();
 			_outgoingMessagesSubscriptionsReader = outgoingMessagesSubscriptionsReader;
 			_outgoingQueueReader = outgoingQueueReader;
 			_outgoingQueueWritter = outgoingQueueWritter;
