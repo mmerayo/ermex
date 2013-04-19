@@ -43,14 +43,14 @@ namespace ermeX.Tests.WorldGateTests
 	{
 
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void Can_Register_Service(DbEngineType dbEngine)
 		{
 			DoTestRegisterService(dbEngine);
 		}
 
-		[Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
-		//[Test, TestCaseSource(typeof (TestCaseSources), "SqliteDb")]
+		[Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+		//[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.SqliteDb)]
 		public void Can_Update_Service_Registration_When_Published_ByLocal_Component(DbEngineType dbEngine)
 		{
 			DoTestRegisterService(dbEngine);
@@ -58,14 +58,14 @@ namespace ermeX.Tests.WorldGateTests
 			Assert.DoesNotThrow(() => DoTestRegisterService(dbEngine));
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void Cant_Register_Biz_Service_When_Published_ByAnother_Component_and_ReturnValues(
 			DbEngineType dbEngine)
 		{
 			DoRepeatedServiceRegistrationTest(dbEngine, false);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void Can_Register_Biz_Service_When_Published_ByAnother_Component_and_Dont_ReturnValues(
 			DbEngineType dbEngine)
 		{
@@ -83,7 +83,7 @@ namespace ermeX.Tests.WorldGateTests
 
 
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void Can_Register_System_Service_When_Published_ByAnother_Component(
 			DbEngineType dbEngine)
 		{

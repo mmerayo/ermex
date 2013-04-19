@@ -93,7 +93,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling
 			public string TheValue { get; set; }
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void Can_Handle_Message(DbEngineType dbEngineType)
 		{
 			var factory = GetUnitOfWorkFactory(dbEngineType);
@@ -118,7 +118,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling
 
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void Enqueues_NonDistributedMessages_OnStartUp(DbEngineType dbEngineType)
 		{
 			var factory = GetUnitOfWorkFactory(dbEngineType);

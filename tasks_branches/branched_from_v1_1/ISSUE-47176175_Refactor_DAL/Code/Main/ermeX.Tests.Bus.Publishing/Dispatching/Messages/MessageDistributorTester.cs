@@ -79,7 +79,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 		}
 
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void CanDispatch_NotSentMessage(DbEngineType dbEngine)
 		{
 			IMessageSubscribersDispatcher mockedDispatcher;
@@ -154,7 +154,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			Assert.AreEqual(expected, busMessage2); //ensure is the same message
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void DontDispatchSentMessage(DbEngineType dbEngine)
 		{
 			IMessageSubscribersDispatcher mockedDispatcher;

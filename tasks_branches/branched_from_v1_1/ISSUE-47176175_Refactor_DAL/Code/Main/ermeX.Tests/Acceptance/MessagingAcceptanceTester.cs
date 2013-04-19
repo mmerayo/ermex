@@ -40,7 +40,7 @@ namespace ermeX.Tests.Acceptance
     internal sealed class MessagingAcceptanceTester : AcceptanceTester
     {
         
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void SendMessageAndReception(DbEngineType engineType)
         {
             //arrange
@@ -82,7 +82,7 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void SeveralReceiversSendMessageAndReception(DbEngineType engineType)
         {
 
@@ -183,14 +183,14 @@ namespace ermeX.Tests.Acceptance
 
 
         [Ignore("TODO: FIX OR DEVELOP")]
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void CanSubscribeBeforeStartUp(DbEngineType engineType)
         {
             throw new NotImplementedException();
         }
 
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void SuscriptorCanReceiveMessagesAfterBeingOffline(DbEngineType engineType)
         {
             //arrange
@@ -238,7 +238,7 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void TwoComponentsCanReceiveMessagesAfterBeingOffLine(DbEngineType engineType)
         {
             //arrange
@@ -298,7 +298,7 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void SuscriptorCanReceiveMessagesAfterBeing_Disconnected(DbEngineType engineType)
         {
             //arrange
@@ -352,7 +352,7 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void SuscriptorCanReceiveMessagesAfterBeing_Disconnected_And_Add_Subscriptions(DbEngineType engineType)
         {
             //arrange
@@ -438,7 +438,7 @@ namespace ermeX.Tests.Acceptance
         }
 
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void TwoSuscriptions_Of_The_SameHandler_Are_HandledBy_TheSame_ObjectHandler(DbEngineType engineType)
         {
             //arrange
@@ -483,7 +483,7 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void TwoComponentsCanExchangeMessages(DbEngineType engineType)
         {
             //arrange
@@ -544,7 +544,7 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void OneComponentCanSubscribeToItsOwnMessages(DbEngineType engineType)
         {
             //arrange
@@ -576,7 +576,7 @@ namespace ermeX.Tests.Acceptance
 
 
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void SeveralComponentsCanExchangeMessages(DbEngineType engineType) //the server subscribes to messages that ar sent from the recivers and each receiver gets one message from the server
         {
             //arrange
@@ -645,7 +645,7 @@ namespace ermeX.Tests.Acceptance
         }
 
         [Ignore("TODO: FIX OR DEVELOP")]
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void Several_Components_SuscriptorsOnlyReceives_Its_Own_Suscriptions(DbEngineType engineType)
         {
             throw new NotImplementedException();
@@ -653,7 +653,7 @@ namespace ermeX.Tests.Acceptance
 
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void MessagesAreDeliveredFIFO(DbEngineType engineType)
         {
             const int numberOfMessages = 10;    //arrange
@@ -698,7 +698,7 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void MessagesAreDeliveredFIFO_SeveralComponents(DbEngineType engineType)
         {
             const int numberOfMessages = 26;
@@ -754,13 +754,13 @@ namespace ermeX.Tests.Acceptance
 
 
         [Ignore("TODO: FIX OR DEVELOP")]
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void FiveComponentsCanReceiveMessagesAfterBeingOffLine(DbEngineType engineType)
         {
             throw new NotImplementedException();
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void Components_CanPublish_Any_Message(DbEngineType engineType)
         {
             string dbConnString = TestSettingsProvider.GetConnString(engineType);

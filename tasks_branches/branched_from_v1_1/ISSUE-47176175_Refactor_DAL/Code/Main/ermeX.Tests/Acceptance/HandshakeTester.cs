@@ -45,7 +45,7 @@ namespace ermeX.Tests.Acceptance
         private const int BottomPort = 9000;
 
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
         public void SeveralComponents_Using_SameFriend_CanStart_AtSameTime(DbEngineType engineType)
         {
             //arrange

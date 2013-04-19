@@ -91,7 +91,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			public string TheValue2 { get; set; }
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void Can_Distribute_Messages(DbEngineType dbEngineType)
 		{
 			var factory = GetUnitOfWorkFactory(dbEngineType);
@@ -139,7 +139,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void Enqueues_NonDeliveredMessages_OnStartUp(DbEngineType dbEngineType)
 		{
 			var factory = GetUnitOfWorkFactory(dbEngineType);
@@ -184,14 +184,14 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 		}
 
 		[Ignore("Tehre are assertions in the other tests to probe this")]
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void Removes_Source_Message_Once_Distributed(DbEngineType dbEngineType)
 		{
 			throw new NotImplementedException();
 		}
 
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void When_Subscribed_ToBase_Type_Will_DistributeIt_Correctly(DbEngineType dbEngineType)
 		{
 			var factory = GetUnitOfWorkFactory(dbEngineType);
@@ -238,7 +238,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void When_Subscribed_ToConcrete_Type_Will_DistributeIt_Correctly(DbEngineType dbEngineType)
 		{
 			var factory = GetUnitOfWorkFactory(dbEngineType);
