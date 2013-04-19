@@ -42,6 +42,8 @@ namespace ermeX.DAL.DataAccess.Repository
 		public Expression<Func<IncomingMessage, bool>> GetFindByBizKey(IncomingMessage e)
 		{
 			return x => x.ComponentOwner == e.ComponentOwner
+						&& x.SuscriptionHandlerId==e.SuscriptionHandlerId
+						&& x.Status==e.Status
 			            && x.MessageId == e.MessageId
 			            && x.PublishedBy == e.PublishedBy
 			            && x.PublishedTo == e.PublishedTo;

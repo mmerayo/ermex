@@ -101,6 +101,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
 
 		public override object Handle(TransportMessage message)
 		{
+			Logger.DebugFormat("Handle",message);
 			BusMessage busMessage = message.Data;
 
 			var incomingMessage = new IncomingMessage(BusMessage.Clone(busMessage))
@@ -112,6 +113,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
 					SuscriptionHandlerId = Guid.Empty,
 					Status = Message.MessageStatus.ReceiverReceived,
 				};
+
 
 			//this must be done on-line in case of errors so it returns an exception to the caller
 			_queueWritter.Save(incomingMessage);
