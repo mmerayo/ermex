@@ -23,7 +23,7 @@ namespace ermeX.DAL.DataAccess.UnitOfWork
 			_factory = factory;
 			_session = session;
 			_autoCommitWhenDispose = autoCommitWhenDispose;
-			_transaction = BeginTransaction(IsolationLevel.ReadCommitted);
+			_transaction = BeginTransaction(IsolationLevel.ReadCommitted); //TODO: IsolationLevel.sERIALIZABLE THE SERIALIZABLE IS WHEN SEVERAL COMPONENTS SHARINGDB
 		}
 		~UnitOfWorkImplementor()
 		{
