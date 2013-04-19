@@ -44,8 +44,12 @@ namespace ermeX.Threading.Queues
 		/// </summary>
 		protected abstract Func<TQueueItem, bool> RunActionOnDequeue { get; }
 
-		protected static readonly ILog Logger =
-			LogManager.GetLogger(typeof (ProducerParallelConsumerQueue<TQueueItem>).FullName);
+		protected ILog Logger
+		{
+			get { return _logger; }
+			set { _logger = value; }
+		}
+
 
 		/// <summary>
 		/// Number of threads active currently
@@ -121,6 +125,7 @@ namespace ermeX.Threading.Queues
 		}
 
 		private bool _shuttingDown = false;
+		private static ILog _logger = LogManager.GetLogger<ProducerParallelConsumerQueue<TQueueItem>>();
 
 		private void Shutdown(bool waitForWorkers)
 		{

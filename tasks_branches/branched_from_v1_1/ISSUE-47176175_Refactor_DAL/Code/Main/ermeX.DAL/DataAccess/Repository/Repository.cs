@@ -131,25 +131,22 @@ namespace ermeX.DAL.DataAccess.Repository
 				unitOfWork.Session.Save(entity);
 			else
 				unitOfWork.Session.Merge(entity);
-			
+			unitOfWork.Flush();
 			return true;
 		}
 
-		private bool CanSave(IUnitOfWork unitOfWork,TEntity entity)
+		private bool CanSave(IUnitOfWork unitOfWork, TEntity entity)
 		{
 			var findByBizKey = _expressionHelper.GetFindByBizKey(entity);
-			var item = SingleOrDefault(unitOfWork,findByBizKey);
+			var item = SingleOrDefault(unitOfWork, findByBizKey);
 			//is true if it didnt exist or the current one is new or if it existed but is older than the new version
-			bool result = item == null || entity.Version == 0 || item.Version <= entity.Version ;
+			bool result = item == null || entity.Version == 0 || item.Version <= entity.Version;
 			if (item != null)
-			//{
 				entity.Id = item.Id;
-			//    unitOfWork.Session.Evict(item);
-			//}
 
 			return result; //Can save if it didnt exist or the version is newer
 		}
-		
+
 		public bool Save(IUnitOfWork unitOfWork, IEnumerable<TEntity> items)
 		{
 			Logger.Debug("Save entities");
@@ -182,6 +179,7 @@ namespace ermeX.DAL.DataAccess.Repository
 		{
 			Logger.DebugFormat("Remove: {0}",entity);
 			unitOfWork.Session.Delete(entity);
+			unitOfWork.Flush();
 		}
 
 		public void Remove(IUnitOfWork unitOfWork, IEnumerable<TEntity> entities)

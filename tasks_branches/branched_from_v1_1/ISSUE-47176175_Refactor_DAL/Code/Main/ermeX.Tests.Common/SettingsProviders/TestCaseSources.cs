@@ -26,6 +26,9 @@ namespace ermeX.Tests.Common.SettingsProviders
 {
 	internal class TestCaseSources
 	{
+		public const string DbInMemory = "InMemoryDb";
+		public const string DbPersistent = "SqliteDb";
+
 		public static IEnumerable<DbEngineType> InMemoryDb()
 		{
 			yield return DbEngineType.SqliteInMemory;
