@@ -64,10 +64,9 @@ namespace ermeX.Tests.WorldGateTests
 
 		#endregion
 
-		private const string DbType = "InMemoryDb";
-		//private const string DbType = "SqliteDb";
+		
 
-		[Test, TestCaseSource(typeof (TestCaseSources), DbType)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void Can_Receive_PublishedMessage(DbEngineType dbEngine)
 		{
 			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
@@ -88,7 +87,7 @@ namespace ermeX.Tests.WorldGateTests
 			Assert.IsTrue(lastEntityReceived.Id == dummyDomainEntity.Id);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), DbType)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void Can_Receive_Several_Messages(DbEngineType dbEngine)
 		{
 			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
@@ -122,7 +121,7 @@ namespace ermeX.Tests.WorldGateTests
 			Assert.IsTrue(lastEntityReceived2.Data == dummyDomainEntity2.Data);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), DbType)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void BaseTypeHandler_Receives_Inherited_Message(DbEngineType dbEngine)
 		{
 			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
@@ -148,7 +147,7 @@ namespace ermeX.Tests.WorldGateTests
 			Assert.IsTrue(lastEntityReceived.DateTime == dummyDomainEntity.DateTime);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), DbType)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbPersistent)]
 		public void BaseTypeHandler_And_ConcreteHandlerType_Receives_Inherited_Message(DbEngineType dbEngine)
 		{
 			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
@@ -167,7 +166,7 @@ namespace ermeX.Tests.WorldGateTests
 				};
 			WorldGate.Publish(dummyDomainEntity);
 
-			autoResetEvent.WaitOne(new TimeSpan(0, 1, 0));
+			autoResetEvent.WaitOne(new TimeSpan(0, 0, 15));
 			var lastEntityReceived = handler.LastEntityReceived<DummyDomainEntity3>();
 
 			Assert.IsNotNull(lastEntityReceived);
@@ -184,7 +183,7 @@ namespace ermeX.Tests.WorldGateTests
 			Assert.IsTrue(first.DateTime == second.DateTime);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), DbType)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void InterfaceTypeHandler_And_ConcreteHandlerType_Receives_Inherited_Message(DbEngineType dbEngine)
 		{
 			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);

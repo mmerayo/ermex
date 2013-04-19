@@ -18,6 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -109,7 +110,8 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 			DateTime receivedHere = DateTime.UtcNow;
 
 			IncomingMessage incomingMessage = message.IncomingMessage;
-
+			//Debug.Assert(incomingMessage.MessageId!=Guid.Empty,"Incomming message, MessageId cannot be empty");
+			
 			if (message.MustCalculateLatency)
 			{
 				UpdateComponentLatency(incomingMessage.ToBusMessage(), receivedHere);

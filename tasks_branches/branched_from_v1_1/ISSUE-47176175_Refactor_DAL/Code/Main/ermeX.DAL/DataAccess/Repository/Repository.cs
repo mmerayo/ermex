@@ -177,7 +177,7 @@ namespace ermeX.DAL.DataAccess.Repository
 
 		public void Remove(IUnitOfWork unitOfWork, TEntity entity)
 		{
-			Logger.DebugFormat("Remove: {0}",entity);
+			Logger.DebugFormat("Remove: Entity: {0} - ThreadId=",entity,Thread.CurrentThread.ManagedThreadId);
 			unitOfWork.Session.Delete(entity);
 			unitOfWork.Flush();
 		}
