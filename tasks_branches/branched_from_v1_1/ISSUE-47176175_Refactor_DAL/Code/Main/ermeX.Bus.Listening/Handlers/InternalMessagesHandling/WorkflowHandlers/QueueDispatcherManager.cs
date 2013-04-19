@@ -87,6 +87,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 		                              ICanUpdateLatency latenciesUpdater)
 			: base(new QueueComparer())
 		{
+			Logger = LogManager.GetLogger<QueueDispatcherManager>();
 			if (settings == null) throw new ArgumentNullException("settings");
 			Settings = settings;
 			IncommingQueueWriter = incommingQueueWriter;
