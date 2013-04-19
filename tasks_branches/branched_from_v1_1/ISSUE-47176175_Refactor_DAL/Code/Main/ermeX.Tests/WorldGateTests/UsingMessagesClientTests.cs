@@ -147,7 +147,7 @@ namespace ermeX.Tests.WorldGateTests
 			Assert.IsTrue(lastEntityReceived.DateTime == dummyDomainEntity.DateTime);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbPersistent)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
 		public void BaseTypeHandler_And_ConcreteHandlerType_Receives_Inherited_Message(DbEngineType dbEngine)
 		{
 			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
