@@ -29,17 +29,17 @@ namespace ermeX.DAL.Commands.Component
 			Logger.DebugFormat("RegisterComponentRequestLatency. AppDomain:{0} - threadId={1} - remoteComponentId:{2}, requestMilliseconds:{3}",
 				AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId,
 			                   remoteComponentId, requestMilliseconds);
-			var senderComponent = Repository.SingleOrDefault(x => x.ComponentId == remoteComponentId);
-			if (senderComponent != null)
-			{
+			
 				using (var uow = _factory.Create())
 				{
-
-					senderComponent.Latency = (senderComponent.Latency + requestMilliseconds)/2;
-					Repository.Save(uow, senderComponent);
-					uow.Commit();
+					var senderComponent = Repository.SingleOrDefault(x => x.ComponentId == remoteComponentId);
+					if (senderComponent != null)
+					{
+						senderComponent.Latency = (senderComponent.Latency + requestMilliseconds)/2;
+						Repository.Save(uow, senderComponent);
+						uow.Commit();
+					}
 				}
-			}
 		}
 	}
 }
