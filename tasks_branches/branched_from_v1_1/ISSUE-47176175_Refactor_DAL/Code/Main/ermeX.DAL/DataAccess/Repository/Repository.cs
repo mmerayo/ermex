@@ -138,7 +138,7 @@ namespace ermeX.DAL.DataAccess.Repository
 			}
 			catch (GenericADOException e)
 			{
-				Logger.WarnFormat("Exception: Thread={0} - Exception: {1}" ,Thread.CurrentThread.ManagedThreadId,e);
+				Logger.FatalFormat("Exception: Thread={0} - Exception: {1}" ,Thread.CurrentThread.ManagedThreadId,e);
 				throw;
 			}
 			return true;
@@ -340,7 +340,7 @@ namespace ermeX.DAL.DataAccess.Repository
 		public IQueryable<TEntity> Where(IUnitOfWork unitOfWork, Expression<Func<TEntity, bool>> expression)
 		{
 			Logger.DebugFormat("Where expression: {0}", expression);
-			return unitOfWork.Session.Query<TEntity>().Where(IsLocalPredicate).Where(expression); //TODO: IMPROVE USING AND BETWEEN BOTH EXPRESSIONS
+			return unitOfWork.Session.Query<TEntity>().Where(IsLocalPredicate).Where(expression).ToList().AsQueryable(); //TODO: IMPROVE USING AND BETWEEN BOTH EXPRESSIONS
 		}
 
 		private Expression<Func<TEntity, bool>> IsLocalPredicate
