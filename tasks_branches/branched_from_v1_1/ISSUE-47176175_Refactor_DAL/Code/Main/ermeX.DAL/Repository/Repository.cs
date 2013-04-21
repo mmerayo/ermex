@@ -2,22 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading;
 using Common.Logging;
-using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Exceptions;
 using NHibernate.Linq;
 using Remotion.Linq.Utilities;
-using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.DAL.DataAccess.UnitOfWork;
-using ermeX.DAL.Interfaces;
+using ermeX.DAL.UnitOfWork;
 using ermeX.Entities.Base;
 using Ninject;
 
-namespace ermeX.DAL.DataAccess.Repository
+namespace ermeX.DAL.Repository
 {
 	internal class Repository<TEntity> : IPersistRepository<TEntity>
 		 where TEntity : ModelBase

@@ -1,9 +1,8 @@
 ﻿using System;
 using Common.Logging;
 using NHibernate;
-using ermeX.DAL.DataAccess.Repository;
 
-namespace ermeX.DAL.DataAccess.UnitOfWork
+namespace ermeX.DAL.UnitOfWork
 {
 	public class GenericTransaction : IGenericTransaction
 	{

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Common.Logging;
-using ermeX.DAL.DataAccess.Providers;
 using ermeX.Entities.Entities;
 
-namespace ermeX.DAL.DataAccess.Repository
+namespace ermeX.DAL.Repository
 {
 	//TODO: TEST && needs to be optimized
 	internal class ExpressionsHelper : IExpressionHelper<AppComponent>,

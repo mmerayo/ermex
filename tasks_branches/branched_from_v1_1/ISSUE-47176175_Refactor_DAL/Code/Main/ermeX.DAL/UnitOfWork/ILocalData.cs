@@ -1,4 +1,4 @@
-namespace ermeX.DAL.DataAccess.UnitOfWork
+namespace ermeX.DAL.UnitOfWork
 {
 	public interface ILocalData
 	{

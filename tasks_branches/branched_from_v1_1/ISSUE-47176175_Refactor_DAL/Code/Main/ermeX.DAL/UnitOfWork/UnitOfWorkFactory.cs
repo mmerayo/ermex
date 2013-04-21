@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using Common.Logging;
-using NHibernate;
 using Ninject;
-using ermeX.DAL.DataAccess.Providers;
+using ermeX.DAL.Providers;
 
-namespace ermeX.DAL.DataAccess.UnitOfWork
+namespace ermeX.DAL.UnitOfWork
 {
 	internal class UnitOfWorkFactory : IUnitOfWorkFactory
 	{

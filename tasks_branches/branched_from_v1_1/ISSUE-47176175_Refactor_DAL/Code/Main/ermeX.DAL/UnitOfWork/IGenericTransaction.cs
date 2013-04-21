@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ermeX.DAL.DataAccess.UnitOfWork
+namespace ermeX.DAL.UnitOfWork
 {
 	public interface IGenericTransaction : IDisposable
 	{

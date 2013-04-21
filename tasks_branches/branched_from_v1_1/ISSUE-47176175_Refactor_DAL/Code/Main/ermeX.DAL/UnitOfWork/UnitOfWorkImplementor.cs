@@ -3,9 +3,8 @@ using System.Data;
 using System.Threading;
 using Common.Logging;
 using NHibernate;
-using ermeX.ConfigurationManagement.Settings;
 
-namespace ermeX.DAL.DataAccess.UnitOfWork
+namespace ermeX.DAL.UnitOfWork
 {
 	internal class UnitOfWorkImplementor : IUnitOfWork
 	{
