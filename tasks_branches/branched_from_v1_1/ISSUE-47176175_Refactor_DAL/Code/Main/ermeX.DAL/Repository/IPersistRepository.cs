@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using NHibernate;
-using ermeX.DAL.DataAccess.UnitOfWork;
+using ermeX.DAL.UnitOfWork;
 using ermeX.Entities.Base;
 
-namespace ermeX.DAL.DataAccess.Repository
+namespace ermeX.DAL.Repository
 {
 	internal interface IPersistRepository<TEntity> : IReadOnlyRepository<TEntity>
 		where TEntity : ModelBase

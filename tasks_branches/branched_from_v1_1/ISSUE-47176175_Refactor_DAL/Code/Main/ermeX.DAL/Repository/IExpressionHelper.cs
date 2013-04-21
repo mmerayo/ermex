@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace ermeX.DAL.DataAccess.Repository
+namespace ermeX.DAL.Repository
 {
 	internal interface IExpressionHelper<TModel>
 	{

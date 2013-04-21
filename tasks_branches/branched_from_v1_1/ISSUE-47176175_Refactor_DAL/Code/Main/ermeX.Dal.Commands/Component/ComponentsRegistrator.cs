@@ -7,10 +7,10 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Commands.Connectivity;
-using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Connectivity;
+using ermeX.DAL.Repository;
+using ermeX.DAL.UnitOfWork;
 using ermeX.Entities.Entities;
 using ermeX.ConfigurationManagement.IoC;
 

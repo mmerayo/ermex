@@ -3,9 +3,9 @@ using System.Threading;
 using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.DAL.Interfaces.Queues;
+using ermeX.DAL.Repository;
+using ermeX.DAL.UnitOfWork;
 using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Commands.Queues
