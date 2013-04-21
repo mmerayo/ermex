@@ -26,7 +26,8 @@ namespace ermeX.DAL.Commands.Component
 
 		public void RegisterComponentRequestLatency(Guid remoteComponentId, int requestMilliseconds)
 		{
-			Logger.DebugFormat("RegisterComponentRequestLatency. remoteComponentId:{0}, requestMilliseconds:{1}",
+			Logger.DebugFormat("RegisterComponentRequestLatency. AppDomain:{0} - threadId={1} - remoteComponentId:{2}, requestMilliseconds:{3}",
+				AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId,
 			                   remoteComponentId, requestMilliseconds);
 			var senderComponent = Repository.SingleOrDefault(x => x.ComponentId == remoteComponentId);
 			if (senderComponent != null)

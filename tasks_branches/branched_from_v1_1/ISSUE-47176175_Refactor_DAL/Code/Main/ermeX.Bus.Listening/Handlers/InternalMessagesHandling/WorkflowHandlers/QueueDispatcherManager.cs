@@ -54,6 +54,11 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 				IncomingMessage = message;
 				MustCalculateLatency = mustCalculateLatency;
 			}
+
+			public override string ToString()
+			{
+				return IncomingMessage.ToString();
+			}
 		}
 
 		private class QueueComparer : IComparer<QueueDispatcherManagerMessage>
@@ -107,6 +112,8 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 
 		private bool DoDeliver(QueueDispatcherManagerMessage message)
 		{
+			Logger.TraceFormat("DoDeliver -Domain:{0} - ThreadId: {1} - Message:{2} ",AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId,message.ToString());
+
 			bool result;
 			DateTime receivedHere = DateTime.UtcNow;
 

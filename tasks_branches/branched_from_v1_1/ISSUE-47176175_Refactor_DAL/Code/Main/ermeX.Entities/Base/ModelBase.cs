@@ -33,7 +33,7 @@ namespace ermeX.Entities.Base
 
 		public override string ToString()
 		{
-			return string.Format("{0} - Id: {1}", GetType().FullName, Id);
+			return string.Format("{0} - Id: {1} - ComponentOwner: {2}", GetType().FullName, Id, ComponentOwner);
 		}
 	}
 }
