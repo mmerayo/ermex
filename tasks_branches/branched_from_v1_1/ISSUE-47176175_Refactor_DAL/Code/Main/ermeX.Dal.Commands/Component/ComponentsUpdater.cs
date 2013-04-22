@@ -28,15 +28,16 @@ namespace ermeX.DAL.Commands.Component
 		public void SetComponentRunningStatus(Guid componentId, ComponentStatus newStatus, bool exchangedDefinitions = false)
 		{
 			Logger.DebugFormat(
-				"SetComponentRunningStatus. AppDomain: {0} - ThreadId: {1}  componentId={1}, newStatus={2}, exchangedDefinitions={3}",
+				"SetComponentRunningStatus. AppDomain: {0} - ThreadId: {1}  componentId={2}, newStatus={3}, exchangedDefinitions={4}",
 				AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId,
 				componentId, newStatus, exchangedDefinitions);
+
+			var localComponent = _repository.Single(x => x.ComponentId == componentId);
+			localComponent.IsRunning = newStatus == ComponentStatus.Running;
+			localComponent.ExchangedDefinitions = exchangedDefinitions;
+
 			_factory.ExecuteInUnitOfWork(uow =>
 				{
-					var localComponent = _repository.Single(uow, x => x.ComponentId == componentId);
-					localComponent.IsRunning = newStatus == ComponentStatus.Running;
-					localComponent.ExchangedDefinitions = exchangedDefinitions;
-
 					_repository.Save(uow, localComponent);
 				});
 		}
