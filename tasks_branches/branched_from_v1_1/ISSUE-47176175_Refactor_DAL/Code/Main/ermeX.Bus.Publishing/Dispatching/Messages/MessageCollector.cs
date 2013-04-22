@@ -204,6 +204,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 			}
 		}
 
+		//TODO: THIS NEEDS TO BE CHANGED WHEN REFACTORING THE STATE MACHINE
 		private void SendMessagesPublishedBeforeSubscriptionWasReceived(OutgoingMessageSuscription newSubscription)
 		{
 			var outgoingMessages = _outgoingReader.GetByStatus(Message.MessageStatus.SenderCollected);

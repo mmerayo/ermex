@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ermeX.Entities.Entities;
 
 namespace ermeX.DAL.Interfaces.Subscriptions
@@ -10,5 +11,7 @@ namespace ermeX.DAL.Interfaces.Subscriptions
 		void ImportFromOtherComponent(IncomingMessageSuscription susbcription);
 
 		void ImportFromOtherComponent(OutgoingMessageSuscription susbcription);
+		void ImportFromOtherComponent(IEnumerable<IncomingMessageSuscription> incomingSuscriptions);
+		void ImportFromOtherComponent(IEnumerable<OutgoingMessageSuscription> outgoingMessageSuscriptions);
 	}
 }

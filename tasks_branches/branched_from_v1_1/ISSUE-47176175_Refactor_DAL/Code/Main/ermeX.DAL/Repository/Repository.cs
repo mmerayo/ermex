@@ -113,29 +113,23 @@ namespace ermeX.DAL.Repository
 		public bool Save(IUnitOfWork unitOfWork, TEntity entity)
 		{
 			Logger.DebugFormat("Save: {0}  Thread={1}", Thread.CurrentThread.ManagedThreadId, entity);
-			try
-			{
-				if (entity.ComponentOwner == Guid.Empty)
-					throw new ArgumentEmptyException("entity.ComponentOwner");
 
-				if (!CanSave(unitOfWork, entity))
-					return false;
+			if (entity.ComponentOwner == Guid.Empty)
+				throw new ArgumentEmptyException("entity.ComponentOwner");
 
-				if (entity.ComponentOwner == _localComponentId)
-					entity.Version = DateTime.UtcNow.Ticks; //Keeps the version of the last updater
+			if (!CanSave(unitOfWork, entity))
+				return false;
 
-				entity.ComponentOwner = _localComponentId;
-				if (entity.Id == 0)
-					unitOfWork.Session.Save(entity);
-				else
-					unitOfWork.Session.Merge(entity);
-				unitOfWork.Flush();
-			}
-			catch (GenericADOException e)
-			{
-				Logger.FatalFormat("Exception: Thread={0} - Exception: {1}" ,Thread.CurrentThread.ManagedThreadId,e);
-				throw;
-			}
+			if (entity.ComponentOwner == _localComponentId)
+				entity.Version = DateTime.UtcNow.Ticks; //Keeps the version of the last updater
+
+			entity.ComponentOwner = _localComponentId;
+			if (entity.Id == 0)
+				unitOfWork.Session.Save(entity);
+			else
+				unitOfWork.Session.Merge(entity);
+			unitOfWork.Flush();
+
 			return true;
 		}
 

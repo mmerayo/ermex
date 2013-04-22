@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using Common.Logging;
@@ -40,49 +42,65 @@ namespace ermeX.DAL.Commands.Subscriptions
 		{
 			Logger.DebugFormat("ImportFromOtherComponent. susbcription={0}", susbcription);
 
+			_factory.ExecuteInUnitOfWork(uow => ImportForeignIncomming(uow, susbcription));
+		}
+
+		private void ImportForeignIncomming( IUnitOfWork uow,IncomingMessageSuscription susbcription)
+		{
+			if (!_repository.Any(uow, x => x.BizMessageFullTypeName == susbcription.BizMessageFullTypeName
+			                               && x.Component == susbcription.ComponentOwner
+			                               && x.ComponentOwner == _settings.ComponentId))
+			{
+				var subscriptionToSave = new OutgoingMessageSuscription(susbcription, susbcription.ComponentOwner,
+				                                                        _settings.ComponentId);
+
+				_repository.Save(uow, subscriptionToSave);
+			}
+		}
+
+
+		public void ImportFromOtherComponent(IEnumerable<IncomingMessageSuscription> incomingSuscriptions)
+		{
+			Logger.DebugFormat("ImportFromOtherComponent. enumeration");
+
 			_factory.ExecuteInUnitOfWork(uow =>
 				{
-					if (!_repository.Any(uow, x => x.BizMessageFullTypeName == susbcription.BizMessageFullTypeName
-					                               && x.Component == susbcription.ComponentOwner
-					                               && x.ComponentOwner == _settings.ComponentId))
-					{
-						var subscriptionToSave = new OutgoingMessageSuscription(susbcription, susbcription.ComponentOwner,
-						                                                        _settings.ComponentId);
-
-						ImportFromOtherComponent(uow, subscriptionToSave);
-					}
+					foreach (var s in incomingSuscriptions)
+						ImportForeignIncomming(uow, s);
 				});
 		}
 
 		//TODO: THIS MUST BE REMOVED AND MADE BY THE CLIENT CODE
 		public void ImportFromOtherComponent(OutgoingMessageSuscription susbcription)
-		{
+		{			
 			Logger.DebugFormat("ImportFromOtherComponent. susbcription={0}", susbcription);
-			bool isNew = false;
-			_factory.ExecuteInUnitOfWork(uow => isNew = ImportFromOtherComponent(uow, susbcription));
-
-			//TODO: THIS AND ITS MECHANISM MUST BE REMOVED
-			_domainNotifier.Notify(isNew ? NotifiableDalAction.Add : NotifiableDalAction.Update,susbcription);
+			_factory.ExecuteInUnitOfWork(uow => ImportFromOtherComponent(uow, susbcription));
 		}
 
-		private bool ImportFromOtherComponent(IUnitOfWork uow,OutgoingMessageSuscription susbcription)
+		private void ImportFromOtherComponent( IUnitOfWork uow, OutgoingMessageSuscription susbcription)
 		{
-			Expression<Func<OutgoingMessageSuscription, bool>> expression =
-				x => x.Component == susbcription.ComponentOwner && x.BizMessageFullTypeName == susbcription.BizMessageFullTypeName;
-			bool result = false;
-			if (!_repository.Any(uow, expression))
-			{
-				susbcription.Id = 0;
-				result = true;
-			}
-			else
-			{
-				var existing = _repository.Single(uow, expression);
-				susbcription.Id = existing.Id;
-				uow.Session.Evict(existing);
-			}
+			susbcription.Id = 0;
+			susbcription.ComponentOwner = _settings.ComponentId;
 			_repository.Save(uow, susbcription);
-			return result;
+			//TODO: THIS AND ITS MECHANISM MUST BE REMOVED when state machine is in place
+
+			//_domainNotifier.Notify(isNew ? NotifiableDalAction.Add : NotifiableDalAction.Update,susbcription);
+		}
+
+
+		public void ImportFromOtherComponent(IEnumerable<OutgoingMessageSuscription> remoteSuscriptions)
+		{
+			if (remoteSuscriptions == null) throw new ArgumentNullException("remoteSuscriptions");
+			
+			//discard the local suscriptions
+			var outgoingMessageSuscriptions = remoteSuscriptions.Where(x => x.Component != _settings.ComponentId);
+			
+			_factory.ExecuteInUnitOfWork(uow =>
+				{
+					foreach (var outgoingMessageSuscription in outgoingMessageSuscriptions)
+						ImportFromOtherComponent(uow,outgoingMessageSuscription);
+				});
+
 		}
 	}
 }
