@@ -51,16 +51,14 @@ namespace ermeX.DAL.Commands.Component
 		public bool CreateRemoteComponent(Guid remoteComponentId, string ip, int port)
 		{
 			Logger.DebugFormat("CreateRemoteComponent. remoteComponentId={0}, ip={1}, port={2}",remoteComponentId,ip,port);
-			bool result;
-			using (var uow = _factory.Create())
-			{
-				result = AddComponentFromRemote(uow,remoteComponentId);
-				AddConnectivityDetailsFromRemote(uow,remoteComponentId, ip, port);
-				RegisterSystemServices(uow,remoteComponentId);
-
-				uow.Commit();
-			}
-
+			bool result=false;
+			_factory.ExecuteInUnitOfWork(uow =>
+				{
+					result = AddComponentFromRemote(uow, remoteComponentId);
+					AddConnectivityDetailsFromRemote(uow, remoteComponentId, ip, port);
+					RegisterSystemServices(uow, remoteComponentId);
+				});
+			
 			return result;
 
 		}
@@ -68,19 +66,18 @@ namespace ermeX.DAL.Commands.Component
 		public void CreateLocalComponent(ushort port)
 		{
 			Logger.DebugFormat("CreateLocalComponent. port={0}", port);
-			using (var uow = _factory.Create())
-			{
-				CreateLocalAppComponent(uow);
-
-				//TODO: CREATE LOCAL INTERFACE THAT ACCEPTS UOWS
-				((ConnectivityDetailsWritter)_connectivityDetailsWritter).CreateComponentConnectivityDetails(uow, port, true);
-
-				RegisterSystemServices(uow,_settings.ComponentId);
-				uow.Commit();
-			}
+			_factory.ExecuteInUnitOfWork((uow) =>
+					CreateLocalComponent(uow,port)
+				);
 		}
 
-		
+		private void CreateLocalComponent(IUnitOfWork uow,ushort port)
+		{
+			CreateLocalAppComponent(uow);
+			((ConnectivityDetailsWritter) _connectivityDetailsWritter).CreateComponentConnectivityDetails(uow, port, true);
+
+			RegisterSystemServices(uow, _settings.ComponentId);
+		}
 
 		private void CreateLocalAppComponent(IUnitOfWork uow)
 		{

@@ -4,7 +4,7 @@ using System.Reflection;
 using Moq;
 using NHibernate;
 using NUnit.Framework;
-using ermeX.DAL.DataAccess.UnitOfWork;
+using ermeX.DAL.UnitOfWork;
 using ermeX.Tests.Common.Reflection;
 
 namespace ermeX.Tests.DAL.DataAccess.UoW

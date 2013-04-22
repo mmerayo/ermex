@@ -6,8 +6,8 @@ using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Commands.Queues;
-using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UnitOfWork;
+using ermeX.DAL.Repository;
+using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.Entities.Entities;
 
@@ -41,13 +41,11 @@ namespace ermeX.DAL.Commands.Services
 		{
 			Logger.DebugFormat("GetByOperationId. publisher={0}, operationId={1}",publisher,operationId);
 
-			ServiceDetails result;
-			using (var uow = _factory.Create())
-			{
-				result = _repository.SingleOrDefault(uow, x => x.OperationIdentifier == operationId 
-					&& x.Publisher==publisher);
-				uow.Commit();
-			}
+			ServiceDetails result = null;
+
+			_factory.ExecuteInUnitOfWork(
+				uow => result = _repository.SingleOrDefault(uow, x => x.OperationIdentifier == operationId
+				                                                      && x.Publisher == publisher));
 			return result;
 		}
 
@@ -61,12 +59,9 @@ namespace ermeX.DAL.Commands.Services
 			Logger.DebugFormat("GetByInterfaceType. interfaceTypeFullName={0}", interfaceTypeFullName);
 
 			if (string.IsNullOrEmpty(interfaceTypeFullName)) throw new ArgumentNullException("interfaceTypeFullName");
-			IEnumerable<ServiceDetails> result;
-			using (var uow = _factory.Create())
-			{
-				result = _repository.Where(uow, x => x.ServiceInterfaceTypeName == interfaceTypeFullName).ToList();
-				uow.Commit();
-			}
+			IEnumerable<ServiceDetails> result = null;
+			_factory.ExecuteInUnitOfWork(
+				uow => result = _repository.Where(uow, x => x.ServiceInterfaceTypeName == interfaceTypeFullName).ToList());
 			return result;
 		}
 
@@ -74,13 +69,12 @@ namespace ermeX.DAL.Commands.Services
 		{
 			Logger.DebugFormat("GetByMethodName. interfaceTypeName={0}, methodName={1}", interfaceTypeName, methodName);
 			if (string.IsNullOrEmpty(interfaceTypeName)) throw new ArgumentNullException("interfaceTypeName");
-			IEnumerable<ServiceDetails> result;
-			using (var uow = _factory.Create())
-			{
-				result = _repository.Where(uow, x => x.ServiceInterfaceTypeName == interfaceTypeName
-					&& x.ServiceImplementationMethodName == methodName).ToList();
-				uow.Commit();
-			}
+			IEnumerable<ServiceDetails> result = null;
+
+			_factory.ExecuteInUnitOfWork(
+				uow => result = _repository.Where(uow, x => x.ServiceInterfaceTypeName == interfaceTypeName
+				                                            && x.ServiceImplementationMethodName == methodName).ToList());
+			
 			return result;
 		}
 
@@ -88,26 +82,21 @@ namespace ermeX.DAL.Commands.Services
 		{
 			Logger.DebugFormat("GetByMethodName. interfaceTypeName={0}, methodName={1}, publisherComponent={2}", interfaceTypeName, methodName,publisherComponent);
 			if (string.IsNullOrEmpty(interfaceTypeName)) throw new ArgumentNullException("interfaceTypeName");
-			ServiceDetails result;
-			using (var uow = _factory.Create())
-			{
-				result = _repository.SingleOrDefault(uow, x => x.ServiceInterfaceTypeName == interfaceTypeName
-					&& x.ServiceImplementationMethodName == methodName && x.Publisher==publisherComponent);
-				uow.Commit();
-			}
+			ServiceDetails result = null;
+			_factory.ExecuteInUnitOfWork(
+				uow => result = _repository.SingleOrDefault(uow, x => x.ServiceInterfaceTypeName == interfaceTypeName
+				                                                      && x.ServiceImplementationMethodName == methodName &&
+				                                                      x.Publisher == publisherComponent));
+			
 			return result;
 		}
 
 		public IEnumerable<ServiceDetails> GetLocalCustomServices()
 		{
 			Logger.Debug("GetLocalCustomServices");
-			IEnumerable<ServiceDetails> result;
-			using (var uow = _factory.Create())
-			{
-				result = _repository.Where(uow, x => x.Publisher == _settings.ComponentId
-					&& x.IsSystemService == false).ToList();
-				uow.Commit();
-			}
+			IEnumerable<ServiceDetails> result = null;
+			_factory.ExecuteInUnitOfWork(uow => result = _repository.Where(uow, x => x.Publisher == _settings.ComponentId
+			                                                                         && x.IsSystemService == false).ToList());
 			return result;
 		}
 	}

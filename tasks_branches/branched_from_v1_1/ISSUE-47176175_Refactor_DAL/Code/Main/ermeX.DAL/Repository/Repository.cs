@@ -38,9 +38,9 @@ namespace ermeX.DAL.Repository
 		public bool Save(TEntity entity)
 		{
 			Logger.DebugFormat("Save. entity={0}, thread={1}",entity, Thread.CurrentThread.ManagedThreadId);
-			bool result;
-			using (var unitOfWork = _implicitFactory.Create(true))
-				result = Save(unitOfWork, entity);
+			bool result = false;
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork => result = Save(unitOfWork, entity));
+			
 			return result;
 		}
 		
@@ -48,46 +48,46 @@ namespace ermeX.DAL.Repository
 		public bool Save(IEnumerable<TEntity> items)
 		{
 			Logger.DebugFormat("Save entities thread={0}", Thread.CurrentThread.ManagedThreadId);
-			bool result;
-			using (var unitOfWork = _implicitFactory.Create(true))
-				result = Save(unitOfWork, items);
+			bool result = false;
+			
+				_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>result = Save(unitOfWork, items));
 			return result;
 		}
 
 		public void Remove(int id)
 		{
 			Logger.DebugFormat("Remove id:{0} Thread={1}",id, Thread.CurrentThread.ManagedThreadId);
-			using (var unitOfWork = _implicitFactory.Create(true))
-				Remove(unitOfWork, id);
+			
+				_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>Remove(unitOfWork, id));
 		}
 
 		public void Remove(TEntity entity)
 		{
 			Logger.DebugFormat("Remove by entity: {0} thread={1}", entity, Thread.CurrentThread.ManagedThreadId);
-			using (var unitOfWork = _implicitFactory.Create(true))
-				Remove(unitOfWork, entity);
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+				Remove(unitOfWork, entity));
 		}
 
 		public void Remove(IEnumerable<TEntity> entities)
 		{
 			Logger.DebugFormat("Remove entitites. Thread={0}", Thread.CurrentThread.ManagedThreadId);
-			using (var unitOfWork = _implicitFactory.Create(true))
-				Remove(unitOfWork, entities);
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+				Remove(unitOfWork, entities));
 		}
 
 		public void Remove(Expression<Func<TEntity, bool>> expression)
 		{
 			Logger.DebugFormat("Remove expression: {0}",expression.ToString());
-			using (var unitOfWork = _implicitFactory.Create(true))
-				Remove(unitOfWork, expression);
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+				Remove(unitOfWork, expression));
 		}
 
 		public int Count(Expression<Func<TEntity, bool>> expression)
 		{
 			Logger.DebugFormat("Count expression: {0}", expression.ToString());
-			int result;
-			using (var unitOfWork = _implicitFactory.Create(true))
-				result=Count(unitOfWork, expression);
+			int result = 0;
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+				result=Count(unitOfWork, expression));
 
 			return result;
 		}
@@ -107,8 +107,7 @@ namespace ermeX.DAL.Repository
 		public void RemoveAll()
 		{
 			Logger.DebugFormat("RemoveAll  Thread={0}", Thread.CurrentThread.ManagedThreadId);
-			using (var unitOfWork = _implicitFactory.Create(true))
-				RemoveAll(unitOfWork);
+			_implicitFactory.ExecuteInUnitOfWork(RemoveAll);
 		}
 
 		public bool Save(IUnitOfWork unitOfWork, TEntity entity)
@@ -204,9 +203,9 @@ namespace ermeX.DAL.Repository
 		public IQueryable<TEntity> FetchAll(bool includingOtherComponents = false)
 		{
 			Logger.DebugFormat("FetchAll, includingOtherComponents= {0}, Thread={1}", includingOtherComponents, Thread.CurrentThread.ManagedThreadId);
-			IQueryable<TEntity> result;
-			using(var unitOfWork = _implicitFactory.Create(true))
-				result = FetchAll(unitOfWork, includingOtherComponents);
+			IQueryable<TEntity> result = null;
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+				result = FetchAll(unitOfWork, includingOtherComponents));
 			return result;
 		}
 
@@ -214,63 +213,63 @@ namespace ermeX.DAL.Repository
 		{
 			Logger.DebugFormat("Where {0}", expression);
 
-			IQueryable<TEntity> result;
-			using (var unitOfWork = _implicitFactory.Create(true))
-				result = Where(unitOfWork, expression);
+			IQueryable<TEntity> result = null;
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+				result = Where(unitOfWork, expression));
 			return result;
 		}
 
 		public TEntity Single(int id)
 		{
 			Logger.DebugFormat("Single Id:{0}, thread={1}", id, Thread.CurrentThread.ManagedThreadId);
-			TEntity result;
-			using (var unitOfWork = _implicitFactory.Create(true))
-				result = Single(unitOfWork, id);
+			TEntity result = null;
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+				result = Single(unitOfWork, id));
 			return result;
 		}
 
 		public TEntity Single(Expression<Func<TEntity, bool>> expression)
 		{
 			Logger.DebugFormat("Single expression: {0}", expression);
-			TEntity result;
-			using (var unitOfWork = _implicitFactory.Create(true))
-				result = Single(unitOfWork, expression);
+			TEntity result = null;
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+				result = Single(unitOfWork, expression));
 			return result;
 		}
 
 		public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> expression)
 		{
 			Logger.DebugFormat("SingleOrDefault expression: {0}", expression);
-			TEntity result;
-			using (var unitOfWork = _implicitFactory.Create(true))
-				result = SingleOrDefault(unitOfWork, expression);
+			TEntity result = null;
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+				result = SingleOrDefault(unitOfWork, expression));
 			return result;
 		}
 
 		public TEntity SingleOrDefault(int id)
 		{
 			Logger.DebugFormat("SingleOrDefault id: {0}", id);
-			TEntity result;
-			using (var unitOfWork = _implicitFactory.Create(true))
-				result = SingleOrDefault(unitOfWork, id);
+			TEntity result = null;
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+				result = SingleOrDefault(unitOfWork, id));
 			return result;
 		}
 
 		public TResult GetMax<TResult>(string propertyName)
 		{
 			Logger.DebugFormat("GetMax<TResult> propertyName: {0}", propertyName);
-			TResult result;
-			using (var unitOfWork = _implicitFactory.Create(true))
-				result = GetMax<TResult>(unitOfWork, propertyName);
+			TResult result = default(TResult);
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+				result = GetMax<TResult>(unitOfWork, propertyName));
 			return result;
 		}
 
 		public bool Any(Expression<Func<TEntity, bool>> expression)
 		{
 			Logger.DebugFormat("Any expression: {0}", expression);
-			bool result;
-			using (var unitOfWork = _implicitFactory.Create(true))
-				result = Any(unitOfWork, expression);
+			bool result = false;
+			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+				result = Any(unitOfWork, expression));
 			return result;
 		}
 

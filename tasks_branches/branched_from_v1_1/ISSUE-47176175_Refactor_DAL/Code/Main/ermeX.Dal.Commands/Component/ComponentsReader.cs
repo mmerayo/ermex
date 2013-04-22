@@ -33,50 +33,41 @@ namespace ermeX.DAL.Commands.Component
 		public IEnumerable<AppComponent> FetchAll()
 		{
 			Logger.Debug("FetchAll");
-			List<AppComponent> result;
-			using (var uow = _factory.Create())
-			{
-				result = Repository.FetchAll(uow).ToList();
-				uow.Commit();
-			}
+			List<AppComponent> result=null;
+			_factory.ExecuteInUnitOfWork(uow => result = Repository.FetchAll(uow).ToList());
+			
 			return result;
 		}
 
 		public IEnumerable<AppComponent> FetchOtherComponents()
 		{
 			Logger.Debug("FetchOtherComponents");
-			List<AppComponent> result;
-			using (var uow = _factory.Create())
-			{
-				result = Repository.Where(uow, x => x.ComponentId != _settings.ComponentId).ToList();
-				uow.Commit();
-			}
+			List<AppComponent> result=null;
+			_factory.ExecuteInUnitOfWork(
+				uow => result = Repository.Where(uow, x => x.ComponentId != _settings.ComponentId).ToList());
+			
 			return result;
 		}
 
 		public IEnumerable<AppComponent> FetchOtherComponentsNotExchangedDefinitions(bool running = false)
 		{
 			Logger.DebugFormat("FetchOtherComponentsNotExchangedDefinitions. running={0}", running);
-			List<AppComponent> result;
-			using (var uow = _factory.Create())
-			{
+			List<AppComponent> result=null;
+			_factory.ExecuteInUnitOfWork(
+				uow =>
 				result = Repository.Where(uow, x => x.ComponentId != _settings.ComponentId
 				                                    && !x.ExchangedDefinitions
-				                                    && x.IsRunning == running).ToList();
-				uow.Commit();
-			}
+				                                    && x.IsRunning == running).ToList());
+			
 			return result;
 		}
 
 		public AppComponent Fetch(Guid componentId)
 		{
 			Logger.DebugFormat("Fetch. componentId={0}", componentId);
-			AppComponent result;
-			using (var uow = _factory.Create())
-			{
-				result = Repository.SingleOrDefault(uow, x => x.ComponentId == componentId);
-				uow.Commit();
-			}
+			AppComponent result=null;
+			_factory.ExecuteInUnitOfWork(uow => result = Repository.SingleOrDefault(uow, x => x.ComponentId == componentId));
+			
 			return result;
 		}
 	}

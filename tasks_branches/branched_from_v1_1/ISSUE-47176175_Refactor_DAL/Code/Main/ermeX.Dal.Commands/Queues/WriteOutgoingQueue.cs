@@ -29,12 +29,11 @@ namespace ermeX.DAL.Commands.Queues
 		public void RemoveExpiredMessages(TimeSpan expirationTime)
 		{
 			Logger.DebugFormat("RemoveExpiredMessages. expirationTime={0}",expirationTime);
-			using (var uow = _factory.Create())
-			{
-				DateTime dateTime = DateTime.UtcNow - expirationTime;
-				_repository.Remove(uow, x => x.CreatedTimeUtc <= dateTime);
-				uow.Commit();
-			}
+			_factory.ExecuteInUnitOfWork(uow =>
+				{
+					DateTime dateTime = DateTime.UtcNow - expirationTime;
+					_repository.Remove(uow, x => x.CreatedTimeUtc <= dateTime);
+				});
 		}
 
 		public void Save(OutgoingMessage message)
@@ -45,11 +44,8 @@ namespace ermeX.DAL.Commands.Queues
 				Logger.Fatal("Save: message status wasnt set");
 				throw new InvalidOperationException("Must set the status");
 			}
-			using (var uow = _factory.Create())
-			{
-				_repository.Save(uow, message);
-				uow.Commit();
-			}
+
+			_factory.ExecuteInUnitOfWork(uow =>_repository.Save(uow, message));
 		}
 	}
 }

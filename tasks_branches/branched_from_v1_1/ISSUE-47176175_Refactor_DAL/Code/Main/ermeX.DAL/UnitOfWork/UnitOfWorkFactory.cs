@@ -9,7 +9,7 @@ using NHibernate.Exceptions;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.Providers;
+using ermeX.DAL.DataAccess.Providers;
 
 namespace ermeX.DAL.UnitOfWork
 {
@@ -25,7 +25,7 @@ namespace ermeX.DAL.UnitOfWork
 			Logger.DebugFormat("cctor: thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_sessionFactory = sessionProvider;
 
-			const int retriesDeadlock = 15;//TODO: TO DAL SETTINGS
+			const int retriesDeadlock = 15;//TODO: TO DAL SETTINGS with default value
 			const int retriesTimeout = 3;
 			switch(settings.ConfigurationSourceType)
 			{
@@ -49,18 +49,18 @@ namespace ermeX.DAL.UnitOfWork
 			return new UnitOfWorkImplementor(this, session,autoCommitWhenDispose);
 		}
 
-		public void ExecuteInUnitOfWork(Action atomicAction)
+		public void ExecuteInUnitOfWork(Action<IUnitOfWork> atomicAction)
 		{
-			ExecuteInUnitOfWork(() =>
+			ExecuteInUnitOfWork(uow =>
 			                    	{
-			                    		atomicAction();
+			                    		atomicAction(uow);
 			                    		return new object();
 			                    	});
 		}
 
-		public TResult ExecuteInUnitOfWork<TResult>(Func<TResult> atomicFunction)
+		public TResult ExecuteInUnitOfWork<TResult>(Func<IUnitOfWork, TResult> atomicFunction)
 		{
-			const int millisecondsRetry = 500;
+			const int millisecondsRetry = 150;//TODO: TO DAL SETTINGS with default value
 
 			TResult result;
 			while (true)
@@ -69,7 +69,7 @@ namespace ermeX.DAL.UnitOfWork
 				{
 					try
 					{
-						result=atomicFunction();
+						result=atomicFunction(uow);
 						uow.Commit();
 						return result;
 					}

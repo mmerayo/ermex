@@ -4,8 +4,8 @@ using System.Threading;
 using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UnitOfWork;
+using ermeX.DAL.Repository;
+using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Entities.Entities;
 
@@ -33,12 +33,10 @@ namespace ermeX.DAL.Commands.Subscriptions
 		public IEnumerable<OutgoingMessageSuscription> GetByMessageType(string bizMessageType)
 		{
 			Logger.DebugFormat("GetByMessageType. bizMessageType={0}", bizMessageType);
-			IEnumerable<OutgoingMessageSuscription> result;
-			using (var uow = _factory.Create())
-			{
-				result = _repository.Where(uow, x => x.BizMessageFullTypeName == bizMessageType).ToList();
-				uow.Commit();
-			}
+			IEnumerable<OutgoingMessageSuscription> result = null;
+
+			_factory.ExecuteInUnitOfWork(
+				uow => result = _repository.Where(uow, x => x.BizMessageFullTypeName == bizMessageType).ToList());
 			return result;
 
 		}
@@ -46,12 +44,8 @@ namespace ermeX.DAL.Commands.Subscriptions
 		public IEnumerable<OutgoingMessageSuscription> FetchAll()
 		{
 			Logger.Debug("FetchAll");
-			IEnumerable<OutgoingMessageSuscription> result;
-			using (var uow = _factory.Create())
-			{
-				result = _repository.FetchAll(uow).ToList();
-				uow.Commit();
-			}
+			IEnumerable<OutgoingMessageSuscription> result = null;
+			_factory.ExecuteInUnitOfWork(uow => result = _repository.FetchAll(uow).ToList());
 			return result;
 		}
 	}
