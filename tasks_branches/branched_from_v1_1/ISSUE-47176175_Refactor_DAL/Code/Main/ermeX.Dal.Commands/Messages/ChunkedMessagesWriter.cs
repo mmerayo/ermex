@@ -1,8 +1,8 @@
 ﻿using Ninject;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UnitOfWork;
 using ermeX.DAL.Interfaces.Messages;
+using ermeX.DAL.Repository;
+using ermeX.DAL.UnitOfWork;
 using ermeX.Entities.Entities;
 using ermeX.Transport.Interfaces.Messages;
 
@@ -23,21 +23,12 @@ namespace ermeX.DAL.Commands.Messages
 
 		public void Save(ChunkedServiceRequestMessage chunk)
 		{
-			using (var uow = _factory.Create())
-			{
-				_repository.Save(uow,chunk);
-				uow.Commit();
-			}
+			_factory.ExecuteInUnitOfWork(uow =>_repository.Save(uow, chunk));
 		}
 
 		public void Remove(ChunkedServiceRequestMessage chunk)
 		{
-			using (var uow = _factory.Create())
-			{
-				_repository.Remove(uow, chunk);
-				uow.Commit();
-			}
-
+			_factory.ExecuteInUnitOfWork(uow => _repository.Remove(uow, chunk));
 		}
 	}
 }

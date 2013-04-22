@@ -2,8 +2,8 @@ using System;
 using System.Threading;
 using Common.Logging;
 using Ninject;
-using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UnitOfWork;
+using ermeX.DAL.Repository;
+using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Connectivity;
 using ermeX.Entities.Entities;
 
@@ -27,12 +27,8 @@ namespace ermeX.DAL.Commands.Connectivity
 		public ConnectivityDetails Fetch(Guid componentId)
 		{
 			Logger.DebugFormat("Fetch.componentId={0}", componentId);
-			ConnectivityDetails result;
-			using (var uow = _factory.Create())
-			{
-				result = _repository.SingleOrDefault(uow, x => x.ServerId == componentId);
-				uow.Commit();
-			}
+			ConnectivityDetails result=null;
+			_factory.ExecuteInUnitOfWork(uow => result = _repository.SingleOrDefault(uow, x => x.ServerId == componentId));
 			return result;
 		}
 	}

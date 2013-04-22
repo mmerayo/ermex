@@ -5,8 +5,8 @@ using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Commands.Observers;
-using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UnitOfWork;
+using ermeX.DAL.Repository;
+using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Observer;
 using ermeX.DAL.Interfaces.Observers;
 using ermeX.DAL.Interfaces.Subscriptions;
@@ -39,19 +39,19 @@ namespace ermeX.DAL.Commands.Subscriptions
 		public void ImportFromOtherComponent(IncomingMessageSuscription susbcription)
 		{
 			Logger.DebugFormat("ImportFromOtherComponent. susbcription={0}", susbcription);
-			using (var uow = _factory.Create())
-			{
-				if (!_repository.Any(uow, x => x.BizMessageFullTypeName == susbcription.BizMessageFullTypeName
-				                                && x.Component == susbcription.ComponentOwner
-				                                && x.ComponentOwner == _settings.ComponentId))
-				{
-					var subscriptionToSave = new OutgoingMessageSuscription(susbcription, susbcription.ComponentOwner,
-					                                                        _settings.ComponentId);
 
-					ImportFromOtherComponent(uow, subscriptionToSave);
-				}
-				uow.Commit();
-			}
+			_factory.ExecuteInUnitOfWork(uow =>
+				{
+					if (!_repository.Any(uow, x => x.BizMessageFullTypeName == susbcription.BizMessageFullTypeName
+					                               && x.Component == susbcription.ComponentOwner
+					                               && x.ComponentOwner == _settings.ComponentId))
+					{
+						var subscriptionToSave = new OutgoingMessageSuscription(susbcription, susbcription.ComponentOwner,
+						                                                        _settings.ComponentId);
+
+						ImportFromOtherComponent(uow, subscriptionToSave);
+					}
+				});
 		}
 
 		//TODO: THIS MUST BE REMOVED AND MADE BY THE CLIENT CODE
@@ -59,12 +59,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 		{
 			Logger.DebugFormat("ImportFromOtherComponent. susbcription={0}", susbcription);
 			bool isNew = false;
-
-			using (var uow = _factory.Create())
-			{
-				isNew = ImportFromOtherComponent(uow,susbcription );
-				uow.Commit();
-			}
+			_factory.ExecuteInUnitOfWork(uow => isNew = ImportFromOtherComponent(uow, susbcription));
 
 			//TODO: THIS AND ITS MECHANISM MUST BE REMOVED
 			_domainNotifier.Notify(isNew ? NotifiableDalAction.Add : NotifiableDalAction.Update,susbcription);

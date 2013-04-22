@@ -34,38 +34,36 @@ namespace ermeX.DAL.Commands.Queues
 			Logger.DebugFormat("GetNextDispatchableItem. maxLatency={0}",maxLatency);
 			
 			IncomingMessage result = null;
-			using (var uow = _factory.Create())
-			{
-				IOrderedQueryable<IncomingMessage> incomingMessages = _repository
-					.Where(uow,x => x.Status == Message.MessageStatus.ReceiverDispatching)
-					.OrderBy(x => x.CreatedTimeUtc);
-				foreach (var incomingMessage in incomingMessages)
+			_factory.ExecuteInUnitOfWork(uow =>
 				{
-					var timeSpan = DateTime.UtcNow.Subtract(incomingMessage.CreatedTimeUtc);
-					var milliseconds = timeSpan.TotalMilliseconds;
-					if (milliseconds >= maxLatency)
+					IOrderedQueryable<IncomingMessage> incomingMessages = _repository
+										.Where(uow, x => x.Status == Message.MessageStatus.ReceiverDispatching)
+										.OrderBy(x => x.CreatedTimeUtc);
+					foreach (var incomingMessage in incomingMessages)
 					{
-						result = incomingMessage;
-						break;
+						var timeSpan = DateTime.UtcNow.Subtract(incomingMessage.CreatedTimeUtc);
+						var milliseconds = timeSpan.TotalMilliseconds;
+						if (milliseconds >= maxLatency)
+						{
+							result = incomingMessage;
+							break;
+						}
 					}
-				}
-
-				uow.Commit();
-			}
+				});
 			return result;
 		}
 
 		public IEnumerable<IncomingMessage> GetMessagesToDispatch()
 		{
 			Logger.Debug("GetMessagesToDispatch");
-			IEnumerable<IncomingMessage> result;
-			using (var uow = _factory.Create())
+			IEnumerable<IncomingMessage> result = null;
+			_factory.ExecuteInUnitOfWork(uow =>
 			{
 				result = _repository
-					.Where(uow,x => x.Status == Message.MessageStatus.ReceiverReceived)
+					.Where(uow, x => x.Status == Message.MessageStatus.ReceiverReceived)
 					.OrderBy(x => x.CreatedTimeUtc).ToList();
-				uow.Commit();
-			}
+			});
+			
 			return result;
 		}
 
@@ -73,14 +71,10 @@ namespace ermeX.DAL.Commands.Queues
 		{
 			Logger.Debug("GetByStatus");
 
-			IEnumerable<IncomingMessage> result;
-			using (var uow = _factory.Create())
-			{
-				result = _repository
-					.Where(uow, x => status.Contains(x.Status))
-					.OrderBy(x => x.CreatedTimeUtc).ToList();
-				uow.Commit();
-			}
+			IEnumerable<IncomingMessage> result = null;
+			_factory.ExecuteInUnitOfWork(uow => result = _repository
+				                                             .Where(uow, x => status.Contains(x.Status))
+				                                             .OrderBy(x => x.CreatedTimeUtc).ToList());
 			return result;
 		}
 
@@ -91,13 +85,13 @@ namespace ermeX.DAL.Commands.Queues
 			if (messageId.IsEmpty() || destinationComponent.IsEmpty())
 				throw new ArgumentException("the arguments cannot be empty");
 
-			bool result;
-			using (var uow = _factory.Create())
-			{
-				result =
-					_repository.Any(uow, x => x.MessageId == messageId && x.SuscriptionHandlerId == destinationComponent);
-				uow.Commit();
-			}
+			bool result = false;
+			_factory.ExecuteInUnitOfWork(uow => result =
+			                                    _repository.Any(uow,
+			                                                    x =>
+			                                                    x.MessageId == messageId &&
+			                                                    x.SuscriptionHandlerId == destinationComponent));
+			
 			return result;
 		}
 
@@ -105,12 +99,14 @@ namespace ermeX.DAL.Commands.Queues
 		{
 			Logger.Debug("GetNonDistributedMessages");
 
-			IEnumerable<IncomingMessage> result;
-			using (var uow = _factory.Create())
-			{
-				result = _repository.Where(uow, x => x.Status == Message.MessageStatus.ReceiverReceived && x.SuscriptionHandlerId == Guid.Empty).ToList();
-				uow.Commit();
-			}
+			IEnumerable<IncomingMessage> result = null;
+			_factory.ExecuteInUnitOfWork(
+				uow =>
+				result =
+				_repository.Where(uow,
+				                  x => x.Status == Message.MessageStatus.ReceiverReceived && x.SuscriptionHandlerId == Guid.Empty)
+				           .ToList());
+			
 			return result;
 		}
 	}

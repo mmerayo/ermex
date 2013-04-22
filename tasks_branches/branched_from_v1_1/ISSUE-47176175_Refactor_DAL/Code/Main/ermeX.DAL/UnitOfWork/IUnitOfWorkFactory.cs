@@ -6,7 +6,7 @@ namespace ermeX.DAL.UnitOfWork
 	{
 		IUnitOfWork Create(bool autoCommitWhenDispose=false);
 
-		TResult ExecuteInUnitOfWork<TResult>(Func<TResult> atomicFunction);
-		void ExecuteInUnitOfWork(Action atomicAction);
+		TResult ExecuteInUnitOfWork<TResult>(Func<IUnitOfWork,TResult> atomicFunction);
+		void ExecuteInUnitOfWork(Action<IUnitOfWork> atomicAction);
 	}
 }

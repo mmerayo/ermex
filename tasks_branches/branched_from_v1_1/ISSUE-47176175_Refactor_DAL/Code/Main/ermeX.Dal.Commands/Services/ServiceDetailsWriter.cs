@@ -4,8 +4,8 @@ using System.Threading;
 using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UnitOfWork;
+using ermeX.DAL.Repository;
+using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.Entities.Entities;
 
@@ -39,34 +39,29 @@ namespace ermeX.DAL.Commands.Services
 			const string RemoteTypeImplementorValue = "<<REMOTE>>";
 			svc.ServiceImplementationTypeName = RemoteTypeImplementorValue;
 			svc.ComponentOwner = _settings.ComponentId;
-
-			using (var uow = _factory.Create())
-			{
-				Expression<Func<ServiceDetails, bool>> expression = x => x.OperationIdentifier == svc.OperationIdentifier && x.Publisher == svc.Publisher;
-				if (_repository.Any(uow, expression))
+			_factory.ExecuteInUnitOfWork(uow =>
 				{
-					ServiceDetails serviceDetails = _repository.Single(uow, expression);
-					svc.Id = serviceDetails.Id;
-					uow.Session.Merge(svc);
-					uow.Flush();
-				}
-				else
-				{
-					svc.Id = 0;
-				}
-				_repository.Save(uow, svc);
-				uow.Commit();
-			}
+					Expression<Func<ServiceDetails, bool>> expression = x => x.OperationIdentifier == svc.OperationIdentifier && x.Publisher == svc.Publisher;
+					if (_repository.Any(uow, expression))
+					{
+						ServiceDetails serviceDetails = _repository.Single(uow, expression);
+						svc.Id = serviceDetails.Id;
+						uow.Session.Merge(svc);
+						uow.Flush();
+					}
+					else
+					{
+						svc.Id = 0;
+					}
+					_repository.Save(uow, svc);
+				});
 		}
 
 		public void Save(ServiceDetails serviceDetails)
 		{
 			Logger.DebugFormat("Save. serviceDetails={0}",serviceDetails);
-			using (var uow = _factory.Create())
-			{
-				_repository.Save(uow, serviceDetails);
-				uow.Commit();
-			}
+
+			_factory.ExecuteInUnitOfWork(uow => _repository.Save(uow, serviceDetails));
 		}
 	}
 }

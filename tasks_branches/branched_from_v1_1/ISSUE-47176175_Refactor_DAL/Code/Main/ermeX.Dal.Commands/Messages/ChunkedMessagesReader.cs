@@ -1,8 +1,9 @@
 using System;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UnitOfWork;
+using ermeX.DAL.Repository;
+
+using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Messages;
 using ermeX.Entities.Entities;
 
@@ -23,12 +24,10 @@ namespace ermeX.DAL.Commands.Messages
 
 	    public ChunkedServiceRequestMessageData Fetch(Guid correlationId, int order)
 	    {
-		    ChunkedServiceRequestMessageData result;
-		    using (var uow = _factory.Create())
-		    {
-				result = _repository.SingleOrDefault(uow, x => x.CorrelationId == correlationId && x.Order == order);
-				uow.Commit();
-		    }
+		    ChunkedServiceRequestMessageData result = null;
+		    _factory.ExecuteInUnitOfWork(
+			    uow => result = _repository.SingleOrDefault(uow, x => x.CorrelationId == correlationId && x.Order == order));
+		    
 		    return result;
 	    }
     }

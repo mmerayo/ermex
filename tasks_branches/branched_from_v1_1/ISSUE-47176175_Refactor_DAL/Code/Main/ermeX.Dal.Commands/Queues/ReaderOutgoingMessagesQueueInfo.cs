@@ -35,15 +35,11 @@ namespace ermeX.DAL.Commands.Queues
 		public IEnumerable<OutgoingMessage> GetItemsPendingSorted()
 		{
 			Logger.Debug("GetItemsPendingSorted");
-			IEnumerable<OutgoingMessage> result;
-			using (var uow = _factory.Create())
-			{
-				result =
-					_repository.Where(uow, x => x.Status != Message.MessageStatus.SenderFailed)
-					           .OrderBy(x => x.Tries)
-					           .ThenBy(x => x.CreatedTimeUtc).ToList();
-				uow.Commit();
-			}
+			IEnumerable<OutgoingMessage> result = null;
+			_factory.ExecuteInUnitOfWork(uow => result =
+			                                    _repository.Where(uow, x => x.Status != Message.MessageStatus.SenderFailed)
+			                                               .OrderBy(x => x.Tries)
+			                                               .ThenBy(x => x.CreatedTimeUtc).ToList());
 			return result;
 		}
 
@@ -51,20 +47,18 @@ namespace ermeX.DAL.Commands.Queues
 		public IEnumerable<OutgoingMessage> GetExpiredMessages(TimeSpan expirationTime)
 		{
 			Logger.DebugFormat("GetExpiredMessages. expirationTime={0}",expirationTime);
-			IEnumerable<OutgoingMessage> result;
-			using (var uow = _factory.Create())
-			{
-				DateTime dateTime = DateTime.UtcNow - expirationTime;
+			IEnumerable<OutgoingMessage> result = null;
+			_factory.ExecuteInUnitOfWork(uow =>
+				{
+					DateTime dateTime = DateTime.UtcNow - expirationTime;
 
-				result =
-					_repository.Where(uow, x => x.CreatedTimeUtc <= dateTime)
-					           .OrderBy(x => x.CreatedTimeUtc).ToList();
-				uow.Commit();
-			}
+					result =
+						_repository.Where(uow, x => x.CreatedTimeUtc <= dateTime)
+						           .OrderBy(x => x.CreatedTimeUtc).ToList();
+				});
 			return result;
 
 		}
-
 
 		public bool ContainsMessageFor(Guid messageId, Guid destinationComponent)
 		{
@@ -73,27 +67,22 @@ namespace ermeX.DAL.Commands.Queues
 			if (messageId.IsEmpty() || destinationComponent.IsEmpty())
 				throw new ArgumentException("the arguments cannot be empty");
 
-			bool result;
-			using (var uow = _factory.Create())
-			{
-				result =
-					_repository.Any(uow, x => x.MessageId == messageId && x.PublishedTo == destinationComponent);
-				uow.Commit();
-			}
+			bool result = false;
+			_factory.ExecuteInUnitOfWork(uow => result =
+			                                    _repository.Any(uow,
+			                                                    x =>
+			                                                    x.MessageId == messageId && x.PublishedTo == destinationComponent));
 			return result;
 		}
 
 		public IEnumerable<OutgoingMessage> GetByStatus(params Message.MessageStatus[] status)
 		{
 			Logger.Debug("GetByStatus");
-			IEnumerable<OutgoingMessage> result;
-			using (var uow = _factory.Create())
-			{
-				result = status.Length == 0
+			IEnumerable<OutgoingMessage> result = null;
+			_factory.ExecuteInUnitOfWork(uow=>result = status.Length == 0
 					         ? _repository.FetchAll(uow).ToList()
-							 : _repository.Where(uow, x => status.Contains(x.Status)).ToList();
-				uow.Commit();
-			}
+							 : _repository.Where(uow, x => status.Contains(x.Status)).ToList());
+			
 			return result;
 		}
 	}

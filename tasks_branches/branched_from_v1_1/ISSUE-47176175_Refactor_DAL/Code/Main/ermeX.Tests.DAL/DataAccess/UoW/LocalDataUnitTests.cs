@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using NUnit.Framework;
-using ermeX.DAL.DataAccess.UnitOfWork;
+using ermeX.DAL.UnitOfWork;
 
 namespace ermeX.Tests.DAL.DataAccess.UoW
 {

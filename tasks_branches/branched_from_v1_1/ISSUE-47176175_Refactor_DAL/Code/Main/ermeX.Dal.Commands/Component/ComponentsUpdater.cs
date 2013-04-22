@@ -31,26 +31,20 @@ namespace ermeX.DAL.Commands.Component
 				"SetComponentRunningStatus. AppDomain: {0} - ThreadId: {1}  componentId={1}, newStatus={2}, exchangedDefinitions={3}",
 				AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId,
 				componentId, newStatus, exchangedDefinitions);
-			using (var uow = _factory.Create())
-			{
-				var localComponent = _repository.Single(uow, x => x.ComponentId == componentId);
-				localComponent.IsRunning = newStatus == ComponentStatus.Running;
-				localComponent.ExchangedDefinitions = exchangedDefinitions;
+			_factory.ExecuteInUnitOfWork(uow =>
+				{
+					var localComponent = _repository.Single(uow, x => x.ComponentId == componentId);
+					localComponent.IsRunning = newStatus == ComponentStatus.Running;
+					localComponent.ExchangedDefinitions = exchangedDefinitions;
 
-				_repository.Save(uow, localComponent);
-				uow.Commit();
-			}
-
+					_repository.Save(uow, localComponent);
+				});
 		}
 
 		public void Save(AppComponent component)
 		{
 			Logger.DebugFormat("Save. component={0}", component);
-			using (var uow = _factory.Create())
-			{
-				_repository.Save(uow, component);
-				uow.Commit();
-			}
+			_factory.ExecuteInUnitOfWork(uow => _repository.Save(uow, component));
 		}
 	}
 }

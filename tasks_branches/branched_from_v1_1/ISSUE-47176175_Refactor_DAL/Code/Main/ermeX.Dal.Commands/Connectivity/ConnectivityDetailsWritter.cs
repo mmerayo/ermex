@@ -5,8 +5,8 @@ using Common.Logging;
 using Ninject;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UnitOfWork;
+using ermeX.DAL.Repository;
+using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Connectivity;
 using ermeX.Entities.Entities;
 
@@ -33,39 +33,27 @@ namespace ermeX.DAL.Commands.Connectivity
 		public void RemoveComponentDetails(Guid componentId)
 		{
 			Logger.DebugFormat("RemoveComponentDetails. componentId={0}", componentId);
-
-			using (var uow = _factory.Create())
-			{
-				_repository.Remove(uow, x=>x.ServerId== componentId);
-				uow.Commit();
-			}
+			_factory.ExecuteInUnitOfWork(uow => _repository.Remove(uow, x => x.ServerId == componentId));
 		}
 
 		public void RemoveLocalComponentDetails()
 		{
 			Logger.Debug("RemoveLocalComponentDetails");
-			using (var uow = _factory.Create())
-			{
-				_repository.Remove(uow, x => x.ServerId == _settings.ComponentId);
-				uow.Commit();
-			}
+			_factory.ExecuteInUnitOfWork(uow => _repository.Remove(uow, x => x.ServerId == _settings.ComponentId));
 		}
 
 		public ConnectivityDetails CreateComponentConnectivityDetails(ushort port, bool asLocal = true)
 		{
-			ConnectivityDetails componentConnectivityDetails;
-			using (var uow = _factory.Create())
-			{
-				componentConnectivityDetails = CreateComponentConnectivityDetails(uow, port, asLocal);
-				uow.Commit();
-			}
+			Logger.DebugFormat("CreateComponentConnectivityDetails. port={0} - asLocal={1}", port,asLocal);
+			ConnectivityDetails componentConnectivityDetails = null;
+			_factory.ExecuteInUnitOfWork(
+				uow => componentConnectivityDetails = CreateComponentConnectivityDetails(uow, port, asLocal));
 			return componentConnectivityDetails;
 		}
 
 		public ConnectivityDetails CreateComponentConnectivityDetails(IUnitOfWork unitOfWork, ushort port, bool asLocal = true)
 		{
 			Logger.DebugFormat("CreateComponentConnectivityDetails. port={0}, asLocal={1}", port, asLocal);
-
 			var connectivityDetails = new ConnectivityDetails
 				{
 					ComponentOwner = _settings.ComponentId,
@@ -74,8 +62,7 @@ namespace ermeX.DAL.Commands.Connectivity
 					Port = port,
 					IsLocal = asLocal
 				};
-
-			_repository.Save(unitOfWork, connectivityDetails);
+			_factory.ExecuteInUnitOfWork(uow => _repository.Save(unitOfWork, connectivityDetails));
 
 			Debug.Assert(connectivityDetails.Id != 0, "The id was not populated");
 			return connectivityDetails;

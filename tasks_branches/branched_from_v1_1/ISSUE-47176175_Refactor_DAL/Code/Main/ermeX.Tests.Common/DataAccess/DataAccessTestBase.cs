@@ -35,8 +35,8 @@ using ermeX.DAL.Commands.Services;
 using ermeX.DAL.Commands.Subscriptions;
 using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.DataAccess.Providers;
-using ermeX.DAL.DataAccess.Repository;
-using ermeX.DAL.DataAccess.UnitOfWork;
+using ermeX.DAL.Repository;
+using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Messages;
 using ermeX.DAL.Interfaces.Observers;
@@ -125,7 +125,7 @@ namespace ermeX.Tests.Common.DataAccess
 					if (!_sessionProviders.ContainsKey(dalSettings.ConfigurationSourceType))
 						_sessionProviders.Add(dalSettings.ConfigurationSourceType, new SessionProvider(dalSettings));
 
-			return new UnitOfWorkFactory(_sessionProviders[dalSettings.ConfigurationSourceType]);
+			return new UnitOfWorkFactory(_sessionProviders[dalSettings.ConfigurationSourceType],dalSettings);
 		}
 		public IUnitOfWorkFactory GetUnitOfWorkFactory(DbEngineType dbEngineType)
 		{
