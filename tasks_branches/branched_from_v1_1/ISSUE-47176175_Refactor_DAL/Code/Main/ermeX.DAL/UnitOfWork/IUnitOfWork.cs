@@ -9,5 +9,7 @@ namespace ermeX.DAL.UnitOfWork
 		ISession Session { get; }
 		void Flush();
 		void Commit();
+
+		bool IsReadOnly { get; }
 	}
 }

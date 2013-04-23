@@ -43,7 +43,6 @@ namespace ermeX.DAL.Repository
 			
 			return result;
 		}
-		
 
 		public bool Save(IEnumerable<TEntity> items)
 		{
@@ -114,6 +113,9 @@ namespace ermeX.DAL.Repository
 		{
 			Logger.DebugFormat("Save: {0}  Thread={1}", Thread.CurrentThread.ManagedThreadId, entity);
 
+			if (unitOfWork.IsReadOnly)
+				throw new InvalidOperationException("The unit of work is ReadOnly");
+
 			if (entity.ComponentOwner == Guid.Empty)
 				throw new ArgumentEmptyException("entity.ComponentOwner");
 
@@ -148,6 +150,8 @@ namespace ermeX.DAL.Repository
 		public bool Save(IUnitOfWork unitOfWork, IEnumerable<TEntity> items)
 		{
 			Logger.Debug("Save entities");
+			if (unitOfWork.IsReadOnly)
+				throw new InvalidOperationException("The unit of work is ReadOnly");
 			foreach (TEntity item in items)
 				Save(unitOfWork, item);
 			return true;
@@ -156,19 +160,17 @@ namespace ermeX.DAL.Repository
 		public void RemoveAll(IUnitOfWork unitOfWork)
 		{
 			Logger.Debug("RemoveAll");
+			if (unitOfWork.IsReadOnly)
+				throw new InvalidOperationException("The unit of work is ReadOnly");
 			var fetchAll = FetchAll(unitOfWork);
 			Remove(unitOfWork, fetchAll);
 		}
-
-		public void Remove(IUnitOfWork unitOfWork)
-		{
-			Logger.Debug("Remove");
-			Remove(unitOfWork, 0);
-		}
-
+		
 		public void Remove(IUnitOfWork unitOfWork, int id)
 		{
 			Logger.DebugFormat("Remove Id:{0}",id);
+			if (unitOfWork.IsReadOnly)
+				throw new InvalidOperationException("The unit of work is ReadOnly");
 			var toRemove = Single(unitOfWork, id);
 			Remove(unitOfWork, toRemove);
 		}
@@ -176,6 +178,8 @@ namespace ermeX.DAL.Repository
 		public void Remove(IUnitOfWork unitOfWork, TEntity entity)
 		{
 			Logger.DebugFormat("Remove: Entity: {0} - ThreadId=",entity,Thread.CurrentThread.ManagedThreadId);
+			if (unitOfWork.IsReadOnly)
+				throw new InvalidOperationException("The unit of work is ReadOnly");
 			unitOfWork.Session.Delete(entity);
 			unitOfWork.Flush();
 		}
@@ -183,6 +187,8 @@ namespace ermeX.DAL.Repository
 		public void Remove(IUnitOfWork unitOfWork, IEnumerable<TEntity> entities)
 		{
 			Logger.DebugFormat("Remove entities. Thread={0}", Thread.CurrentThread.ManagedThreadId);
+			if (unitOfWork.IsReadOnly)
+				throw new InvalidOperationException("The unit of work is ReadOnly");
 			foreach (var entity in entities)
 				Remove(unitOfWork, entity);
 		}
@@ -190,6 +196,8 @@ namespace ermeX.DAL.Repository
 		public void Remove(IUnitOfWork unitOfWork,Expression<Func<TEntity, bool>> expression)
 		{
 			Logger.DebugFormat("Remove: {0}", expression);
+			if (unitOfWork.IsReadOnly)
+				throw new InvalidOperationException("The unit of work is ReadOnly");
 			IQueryable<TEntity> queryable = Where(unitOfWork,expression);
 			Remove(unitOfWork, queryable);
 		}
