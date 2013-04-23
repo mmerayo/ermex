@@ -118,7 +118,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			                      		//not relevant
 			                      		Status = Message.MessageStatus.ReceiverDispatchable,
 			                      	};
-			using (var unitOfWork = factory.Create())
+			using (var unitOfWork = factory.Create(false))
 			{
 				dataSource.Save(unitOfWork, incomingMessage);
 				unitOfWork.Commit();
@@ -134,7 +134,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			Assert.AreEqual(dummy.TheValue, _sentMessages[0].TheValue);
 
 			Assert.IsTrue(incomingMessage.Id > 0); //now check it is removed
-			using (var unitOfWork = factory.Create())
+			using (var unitOfWork = factory.Create(false))
 			{
 				var byId = dataSource.SingleOrDefault(unitOfWork, incomingMessage.Id);
 				unitOfWork.Commit();
@@ -169,7 +169,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			                      		//not relevant
 			                      		Status = Message.MessageStatus.ReceiverDispatchable,
 			                      	};
-			using (var unitOfWork = factory.Create())
+			using (var unitOfWork = factory.Create(false))
 			{
 				dataSource.Save(unitOfWork,incomingMessage);
 				unitOfWork.Commit();

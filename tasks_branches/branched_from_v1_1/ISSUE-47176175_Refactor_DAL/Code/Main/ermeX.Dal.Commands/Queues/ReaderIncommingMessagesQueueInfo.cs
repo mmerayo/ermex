@@ -34,7 +34,7 @@ namespace ermeX.DAL.Commands.Queues
 			Logger.DebugFormat("GetNextDispatchableItem. maxLatency={0}",maxLatency);
 			
 			IncomingMessage result = null;
-			_factory.ExecuteInUnitOfWork(uow =>
+			_factory.ExecuteInUnitOfWork(true, uow =>
 				{
 					IOrderedQueryable<IncomingMessage> incomingMessages = _repository
 										.Where(uow, x => x.Status == Message.MessageStatus.ReceiverDispatching)
@@ -57,7 +57,7 @@ namespace ermeX.DAL.Commands.Queues
 		{
 			Logger.Debug("GetMessagesToDispatch");
 			IEnumerable<IncomingMessage> result = null;
-			_factory.ExecuteInUnitOfWork(uow =>
+			_factory.ExecuteInUnitOfWork(true,uow =>
 			{
 				result = _repository
 					.Where(uow, x => x.Status == Message.MessageStatus.ReceiverReceived)
@@ -72,7 +72,7 @@ namespace ermeX.DAL.Commands.Queues
 			Logger.Debug("GetByStatus");
 
 			IEnumerable<IncomingMessage> result = null;
-			_factory.ExecuteInUnitOfWork(uow => result = _repository
+			_factory.ExecuteInUnitOfWork(true, uow => result = _repository
 				                                             .Where(uow, x => status.Contains(x.Status))
 				                                             .OrderBy(x => x.CreatedTimeUtc).ToList());
 			return result;
@@ -86,7 +86,7 @@ namespace ermeX.DAL.Commands.Queues
 				throw new ArgumentException("the arguments cannot be empty");
 
 			bool result = false;
-			_factory.ExecuteInUnitOfWork(uow => result =
+			_factory.ExecuteInUnitOfWork(true, uow => result =
 			                                    _repository.Any(uow,
 			                                                    x =>
 			                                                    x.MessageId == messageId &&
@@ -100,7 +100,7 @@ namespace ermeX.DAL.Commands.Queues
 			Logger.Debug("GetNonDistributedMessages");
 
 			IEnumerable<IncomingMessage> result = null;
-			_factory.ExecuteInUnitOfWork(
+			_factory.ExecuteInUnitOfWork(true,
 				uow =>
 				result =
 				_repository.Where(uow,

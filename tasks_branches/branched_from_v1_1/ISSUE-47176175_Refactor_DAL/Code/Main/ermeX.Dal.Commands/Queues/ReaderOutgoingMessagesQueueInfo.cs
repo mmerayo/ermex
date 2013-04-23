@@ -36,7 +36,7 @@ namespace ermeX.DAL.Commands.Queues
 		{
 			Logger.Debug("GetItemsPendingSorted");
 			IEnumerable<OutgoingMessage> result = null;
-			_factory.ExecuteInUnitOfWork(uow => result =
+			_factory.ExecuteInUnitOfWork(true, uow => result =
 			                                    _repository.Where(uow, x => x.Status != Message.MessageStatus.SenderFailed)
 			                                               .OrderBy(x => x.Tries)
 			                                               .ThenBy(x => x.CreatedTimeUtc).ToList());
@@ -48,7 +48,7 @@ namespace ermeX.DAL.Commands.Queues
 		{
 			Logger.DebugFormat("GetExpiredMessages. expirationTime={0}",expirationTime);
 			IEnumerable<OutgoingMessage> result = null;
-			_factory.ExecuteInUnitOfWork(uow =>
+			_factory.ExecuteInUnitOfWork(true, uow =>
 				{
 					DateTime dateTime = DateTime.UtcNow - expirationTime;
 
@@ -68,7 +68,7 @@ namespace ermeX.DAL.Commands.Queues
 				throw new ArgumentException("the arguments cannot be empty");
 
 			bool result = false;
-			_factory.ExecuteInUnitOfWork(uow => result =
+			_factory.ExecuteInUnitOfWork(true,uow => result =
 			                                    _repository.Any(uow,
 			                                                    x =>
 			                                                    x.MessageId == messageId && x.PublishedTo == destinationComponent));
@@ -79,7 +79,7 @@ namespace ermeX.DAL.Commands.Queues
 		{
 			Logger.Debug("GetByStatus");
 			IEnumerable<OutgoingMessage> result = null;
-			_factory.ExecuteInUnitOfWork(uow=>result = status.Length == 0
+			_factory.ExecuteInUnitOfWork(true, uow => result = status.Length == 0
 					         ? _repository.FetchAll(uow).ToList()
 							 : _repository.Where(uow, x => status.Contains(x.Status)).ToList());
 			

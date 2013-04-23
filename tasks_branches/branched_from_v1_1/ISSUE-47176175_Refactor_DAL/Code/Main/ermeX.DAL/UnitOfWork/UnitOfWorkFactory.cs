@@ -21,10 +21,13 @@ namespace ermeX.DAL.UnitOfWork
 		private readonly IStorageOperationRetryStrategy _retryStrategy;
 
 		[Inject]
-		public UnitOfWorkFactory(ISessionProvider sessionProvider, IDalSettings settings,ITransactionProvider transactionsProvider)
+		public UnitOfWorkFactory(ISessionProvider sessionProvider, IDalSettings settings,
+			IReadTransactionProvider readTransactionsProvider,IWriteTransactionProvider writeTransactionProvider)
 		{
-			TransactionsProvider = transactionsProvider;
 			Logger.DebugFormat("cctor: thread={0}", Thread.CurrentThread.ManagedThreadId);
+			
+			ReadOnlyTransactionsProvider = readTransactionsProvider;
+			WrittableTransactionsProvider = writeTransactionProvider;
 			_sessionFactory = sessionProvider;
 
 			const int retriesDeadlock = 15; //TODO: TO DAL SETTINGS with default value
@@ -43,28 +46,29 @@ namespace ermeX.DAL.UnitOfWork
 			}
 		}
 
-		public ITransactionProvider TransactionsProvider { get; private set; }
+		public IReadTransactionProvider ReadOnlyTransactionsProvider { get; private set; }
+		public IWriteTransactionProvider WrittableTransactionsProvider { get; private set; }
 
 
-		public IUnitOfWork Create(bool autoCommitWhenDispose = false)
+		public IUnitOfWork Create(bool readOnly, bool autoCommitWhenDispose = false)
 		{
 			Logger.DebugFormat("Create. autoCommitWhenDispose={0} Thread={1}", autoCommitWhenDispose,
 			                   Thread.CurrentThread.ManagedThreadId);
-			var session = _sessionFactory.OpenSession();
-			session.FlushMode = FlushMode.Commit;
-			return new UnitOfWorkImplementor(this, session, autoCommitWhenDispose);
+			var session = _sessionFactory.OpenSession(readOnly);
+			var transactionProvider = (readOnly ? (ITransactionProvider)ReadOnlyTransactionsProvider : (ITransactionProvider)WrittableTransactionsProvider);
+			return new UnitOfWorkImplementor(this, session, transactionProvider, autoCommitWhenDispose);
 		}
 
-		public void ExecuteInUnitOfWork(Action<IUnitOfWork> atomicAction)
+		public void ExecuteInUnitOfWork(bool readOnly, Action<IUnitOfWork> atomicAction)
 		{
-			ExecuteInUnitOfWork(uow =>
+			ExecuteInUnitOfWork(readOnly, uow =>
 				{
 					atomicAction(uow);
 					return new object();
 				});
 		}
 
-		public TResult ExecuteInUnitOfWork<TResult>(Func<IUnitOfWork, TResult> atomicFunction)
+		public TResult ExecuteInUnitOfWork<TResult>(bool readOnly, Func<IUnitOfWork, TResult> atomicFunction)
 		{
 			Logger.Debug("ExecuteInUnitOfWork - Start");
 
@@ -75,7 +79,7 @@ namespace ermeX.DAL.UnitOfWork
 			{
 				try
 				{
-					using (var uow = Create())
+					using (var uow = Create(readOnly))
 					{
 						result = atomicFunction(uow);
 						uow.Commit();

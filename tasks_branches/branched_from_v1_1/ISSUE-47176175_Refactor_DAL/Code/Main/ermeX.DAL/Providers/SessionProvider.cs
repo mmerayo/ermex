@@ -27,56 +27,59 @@ using ermeX.ConfigurationManagement.Settings;
 namespace ermeX.DAL.Providers
 {
 	//TODO: ISSUE-281 --> MAKE THIS internal and injected
-    public sealed class SessionProvider : ISessionProvider
-    {
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(SessionProvider).FullName);
+	public sealed class SessionProvider : ISessionProvider
+	{
+		private static readonly ILog Logger = LogManager.GetLogger(typeof (SessionProvider).FullName);
 
-        private readonly IDalSettings _settings;
+		private readonly IDalSettings _settings;
 
-        private volatile  ISessionFactory _sessionFactory;
-        private static SQLiteConnection _inMemoryDb;
-        //private volatile Dictionary<DbEngineType, ISessionFactory> _sessionFactories = new Dictionary<DbEngineType, ISessionFactory>(Enum.GetValues(typeof(DbEngineType)).Length); 
+		private volatile ISessionFactory _sessionFactory;
+		private static SQLiteConnection _inMemoryDb;
+		//private volatile Dictionary<DbEngineType, ISessionFactory> _sessionFactories = new Dictionary<DbEngineType, ISessionFactory>(Enum.GetValues(typeof(DbEngineType)).Length); 
 
-        [Inject]
-        internal SessionProvider(IDalSettings settings)
-        {
-            if (settings == null) throw new ArgumentNullException("settings");
-            _settings = settings;
-        }
+		[Inject]
+		internal SessionProvider(IDalSettings settings)
+		{
+			if (settings == null) throw new ArgumentNullException("settings");
+			_settings = settings;
+		}
 
-        private ISessionFactory SessionFactory
-        {
-            get
-            {
-                if (_sessionFactory == null)
-                {
-                    lock (this)
-                    {
-                        if (_sessionFactory == null)
-                        {
-                            _sessionFactory = NHibernateBootstrapper.BootStrap(_settings);
-                        }
-                    }
-                }
-                return _sessionFactory;
-            }
-        }
+		private ISessionFactory SessionFactory
+		{
+			get
+			{
+				if (_sessionFactory == null)
+				{
+					lock (this)
+					{
+						if (_sessionFactory == null)
+						{
+							_sessionFactory = NHibernateBootstrapper.BootStrap(_settings);
+						}
+					}
+				}
+				return _sessionFactory;
+			}
+		}
 
-        
-        public ISession OpenSession()
-        {
+
+		public ISession OpenSession(bool readOnly)
+		{
 			Logger.Debug("OpenSession");
-            return SessionFactory.OpenSession();
-        }
+			var result = SessionFactory.OpenSession();
 
-        public static void SetInMemoryDb(string connectionString)
-        {
-			Logger.DebugFormat("SetInMemoeryDb: {0}",connectionString);
-            if (_inMemoryDb != null && _inMemoryDb.ConnectionString == connectionString)
-                return;
-            _inMemoryDb = new SQLiteConnection(connectionString);//TODO: DIsPOSE? not yet as it is in memory
+			result.FlushMode = readOnly ? FlushMode.Never : FlushMode.Commit;
+			return result;
+		}
 
-            _inMemoryDb.Open();
-        }
-    }
+		public static void SetInMemoryDb(string connectionString)
+		{
+			Logger.DebugFormat("SetInMemoeryDb: {0}", connectionString);
+			if (_inMemoryDb != null && _inMemoryDb.ConnectionString == connectionString)
+				return;
+			_inMemoryDb = new SQLiteConnection(connectionString); //TODO: DIsPOSE? not yet as it is in memory
+
+			_inMemoryDb.Open();
+		}
+	}
 }

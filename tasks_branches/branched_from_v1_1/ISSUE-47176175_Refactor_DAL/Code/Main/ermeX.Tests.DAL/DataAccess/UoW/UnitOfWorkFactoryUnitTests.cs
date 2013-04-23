@@ -27,7 +27,7 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 			//_testContext.WithSession();
 			_testContext.WithTransactionStarted(true);
 			var factory = _testContext.Factory;
-			var implementor = factory.Create();
+			var implementor = factory.Create(false);
 
 			Assert.IsNotNull(implementor);
 			Assert.IsNotNull(implementor.Session);
@@ -45,7 +45,7 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 			public void Setup()
 			{
 				_sessionProvider=new Mock<ISessionProvider>();
-				Factory=new UnitOfWorkFactory(_sessionProvider.Object,null);
+				Factory=new UnitOfWorkFactory(_sessionProvider.Object,null,null,null);//TODO:
 			}
 
 			public void WithSession()
@@ -53,7 +53,7 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 				_mockSession = new Mock<ISession>();
 				_mockSession.SetupProperty(x => x.FlushMode, FlushMode.Commit);
 				_mockSession.Setup(x => x.IsOpen).Returns(true);
-				_sessionProvider.Setup(x => x.OpenSession()).Returns(_mockSession.Object).Verifiable();
+				_sessionProvider.Setup(x => x.OpenSession(false)).Returns(_mockSession.Object).Verifiable();
 			}
 
 			public void WithTransactionStarted(bool started)

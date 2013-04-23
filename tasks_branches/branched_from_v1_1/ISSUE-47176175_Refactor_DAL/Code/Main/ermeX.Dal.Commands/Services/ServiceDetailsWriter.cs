@@ -39,29 +39,14 @@ namespace ermeX.DAL.Commands.Services
 			const string RemoteTypeImplementorValue = "<<REMOTE>>";
 			svc.ServiceImplementationTypeName = RemoteTypeImplementorValue;
 			svc.ComponentOwner = _settings.ComponentId;
-			_factory.ExecuteInUnitOfWork(uow =>
-				{
-					Expression<Func<ServiceDetails, bool>> expression = x => x.OperationIdentifier == svc.OperationIdentifier && x.Publisher == svc.Publisher;
-					if (_repository.Any(uow, expression))
-					{
-						ServiceDetails serviceDetails = _repository.Single(uow, expression);
-						svc.Id = serviceDetails.Id;
-						uow.Session.Merge(svc);
-						uow.Flush();
-					}
-					else
-					{
-						svc.Id = 0;
-					}
-					_repository.Save(uow, svc);
-				});
+			_factory.ExecuteInUnitOfWork(false, uow => _repository.Save(uow, svc));
 		}
 
 		public void Save(ServiceDetails serviceDetails)
 		{
 			Logger.DebugFormat("Save. serviceDetails={0}",serviceDetails);
 
-			_factory.ExecuteInUnitOfWork(uow => _repository.Save(uow, serviceDetails));
+			_factory.ExecuteInUnitOfWork(false,uow => _repository.Save(uow, serviceDetails));
 		}
 	}
 }

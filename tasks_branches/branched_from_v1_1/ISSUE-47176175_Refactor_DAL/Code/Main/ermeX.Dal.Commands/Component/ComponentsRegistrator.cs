@@ -52,7 +52,7 @@ namespace ermeX.DAL.Commands.Component
 		{
 			Logger.DebugFormat("CreateRemoteComponent. remoteComponentId={0}, ip={1}, port={2}",remoteComponentId,ip,port);
 			bool result=false;
-			_factory.ExecuteInUnitOfWork(uow =>
+			_factory.ExecuteInUnitOfWork(false, uow =>
 				{
 					result = AddComponentFromRemote(uow, remoteComponentId);
 					AddConnectivityDetailsFromRemote(uow, remoteComponentId, ip, port);
@@ -66,7 +66,7 @@ namespace ermeX.DAL.Commands.Component
 		public void CreateLocalComponent(ushort port)
 		{
 			Logger.DebugFormat("CreateLocalComponent. port={0}", port);
-			_factory.ExecuteInUnitOfWork((uow) =>
+			_factory.ExecuteInUnitOfWork(false, (uow) =>
 					CreateLocalComponent(uow,port)
 				);
 		}

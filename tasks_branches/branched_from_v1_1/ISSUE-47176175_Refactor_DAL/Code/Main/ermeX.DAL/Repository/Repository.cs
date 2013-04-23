@@ -39,7 +39,7 @@ namespace ermeX.DAL.Repository
 		{
 			Logger.DebugFormat("Save. entity={0}, thread={1}",entity, Thread.CurrentThread.ManagedThreadId);
 			bool result = false;
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork => result = Save(unitOfWork, entity));
+			_implicitFactory.ExecuteInUnitOfWork(false,unitOfWork => result = Save(unitOfWork, entity));
 			
 			return result;
 		}
@@ -50,7 +50,7 @@ namespace ermeX.DAL.Repository
 			Logger.DebugFormat("Save entities thread={0}", Thread.CurrentThread.ManagedThreadId);
 			bool result = false;
 			
-				_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>result = Save(unitOfWork, items));
+				_implicitFactory.ExecuteInUnitOfWork(false,unitOfWork =>result = Save(unitOfWork, items));
 			return result;
 		}
 
@@ -58,27 +58,27 @@ namespace ermeX.DAL.Repository
 		{
 			Logger.DebugFormat("Remove id:{0} Thread={1}",id, Thread.CurrentThread.ManagedThreadId);
 			
-				_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>Remove(unitOfWork, id));
+				_implicitFactory.ExecuteInUnitOfWork(false,unitOfWork =>Remove(unitOfWork, id));
 		}
 
 		public void Remove(TEntity entity)
 		{
 			Logger.DebugFormat("Remove by entity: {0} thread={1}", entity, Thread.CurrentThread.ManagedThreadId);
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+			_implicitFactory.ExecuteInUnitOfWork(false,unitOfWork =>
 				Remove(unitOfWork, entity));
 		}
 
 		public void Remove(IEnumerable<TEntity> entities)
 		{
 			Logger.DebugFormat("Remove entitites. Thread={0}", Thread.CurrentThread.ManagedThreadId);
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+			_implicitFactory.ExecuteInUnitOfWork(false, unitOfWork =>
 				Remove(unitOfWork, entities));
 		}
 
 		public void Remove(Expression<Func<TEntity, bool>> expression)
 		{
 			Logger.DebugFormat("Remove expression: {0}",expression.ToString());
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+			_implicitFactory.ExecuteInUnitOfWork(false, unitOfWork =>
 				Remove(unitOfWork, expression));
 		}
 
@@ -86,7 +86,7 @@ namespace ermeX.DAL.Repository
 		{
 			Logger.DebugFormat("Count expression: {0}", expression.ToString());
 			int result = 0;
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+			_implicitFactory.ExecuteInUnitOfWork(true, unitOfWork =>
 				result=Count(unitOfWork, expression));
 
 			return result;
@@ -107,7 +107,7 @@ namespace ermeX.DAL.Repository
 		public void RemoveAll()
 		{
 			Logger.DebugFormat("RemoveAll  Thread={0}", Thread.CurrentThread.ManagedThreadId);
-			_implicitFactory.ExecuteInUnitOfWork(RemoveAll);
+			_implicitFactory.ExecuteInUnitOfWork(false, RemoveAll);
 		}
 
 		public bool Save(IUnitOfWork unitOfWork, TEntity entity)
@@ -198,7 +198,7 @@ namespace ermeX.DAL.Repository
 		{
 			Logger.DebugFormat("FetchAll, includingOtherComponents= {0}, Thread={1}", includingOtherComponents, Thread.CurrentThread.ManagedThreadId);
 			IQueryable<TEntity> result = null;
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+			_implicitFactory.ExecuteInUnitOfWork(true,unitOfWork =>
 				result = FetchAll(unitOfWork, includingOtherComponents));
 			return result;
 		}
@@ -208,7 +208,7 @@ namespace ermeX.DAL.Repository
 			Logger.DebugFormat("Where {0}", expression);
 
 			IQueryable<TEntity> result = null;
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+			_implicitFactory.ExecuteInUnitOfWork(true,unitOfWork =>
 				result = Where(unitOfWork, expression));
 			return result;
 		}
@@ -217,7 +217,7 @@ namespace ermeX.DAL.Repository
 		{
 			Logger.DebugFormat("Single Id:{0}, thread={1}", id, Thread.CurrentThread.ManagedThreadId);
 			TEntity result = null;
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+			_implicitFactory.ExecuteInUnitOfWork(true,unitOfWork =>
 				result = Single(unitOfWork, id));
 			return result;
 		}
@@ -226,7 +226,7 @@ namespace ermeX.DAL.Repository
 		{
 			Logger.DebugFormat("Single expression: {0}", expression);
 			TEntity result = null;
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+			_implicitFactory.ExecuteInUnitOfWork(true,unitOfWork =>
 				result = Single(unitOfWork, expression));
 			return result;
 		}
@@ -235,7 +235,7 @@ namespace ermeX.DAL.Repository
 		{
 			Logger.DebugFormat("SingleOrDefault expression: {0}", expression);
 			TEntity result = null;
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+			_implicitFactory.ExecuteInUnitOfWork(true,unitOfWork =>
 				result = SingleOrDefault(unitOfWork, expression));
 			return result;
 		}
@@ -244,7 +244,7 @@ namespace ermeX.DAL.Repository
 		{
 			Logger.DebugFormat("SingleOrDefault id: {0}", id);
 			TEntity result = null;
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+			_implicitFactory.ExecuteInUnitOfWork(true,unitOfWork =>
 				result = SingleOrDefault(unitOfWork, id));
 			return result;
 		}
@@ -253,7 +253,7 @@ namespace ermeX.DAL.Repository
 		{
 			Logger.DebugFormat("GetMax<TResult> propertyName: {0}", propertyName);
 			TResult result = default(TResult);
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+			_implicitFactory.ExecuteInUnitOfWork(true,unitOfWork =>
 				result = GetMax<TResult>(unitOfWork, propertyName));
 			return result;
 		}
@@ -262,7 +262,7 @@ namespace ermeX.DAL.Repository
 		{
 			Logger.DebugFormat("Any expression: {0}", expression);
 			bool result = false;
-			_implicitFactory.ExecuteInUnitOfWork(unitOfWork =>
+			_implicitFactory.ExecuteInUnitOfWork(true, unitOfWork =>
 				result = Any(unitOfWork, expression));
 			return result;
 		}

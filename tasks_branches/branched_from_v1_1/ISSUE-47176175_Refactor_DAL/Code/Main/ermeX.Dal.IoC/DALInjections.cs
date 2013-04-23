@@ -142,11 +142,13 @@ namespace ermeX.DAL.IoC
 		    switch(_settings.ConfigurationSourceType)
 		    {
 			    case DbEngineType.SqlServer2008:
-				    Bind<ITransactionProvider>().To<GenericTransactionProvider>().InSingletonScope();
+				    Bind<IWriteTransactionProvider>().To<GenericTransactionProvider>().InSingletonScope();
+					Bind<IReadTransactionProvider>().To<GenericTransactionProvider>().InSingletonScope();
 				    break;
 			    case DbEngineType.Sqlite:
 			    case DbEngineType.SqliteInMemory:
-					Bind<ITransactionProvider>().To<MutexedTransactionProvider>().InSingletonScope();
+					Bind<IWriteTransactionProvider>().To<MutexedTransactionProvider>().InSingletonScope();
+					Bind<IReadTransactionProvider>().To<GenericTransactionProvider>().InSingletonScope();
 				    break;
 			    default:
 				    throw new ArgumentOutOfRangeException();

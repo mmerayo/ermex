@@ -33,20 +33,20 @@ namespace ermeX.DAL.Commands.Connectivity
 		public void RemoveComponentDetails(Guid componentId)
 		{
 			Logger.DebugFormat("RemoveComponentDetails. componentId={0}", componentId);
-			_factory.ExecuteInUnitOfWork(uow => _repository.Remove(uow, x => x.ServerId == componentId));
+			_factory.ExecuteInUnitOfWork(false,uow => _repository.Remove(uow, x => x.ServerId == componentId));
 		}
 
 		public void RemoveLocalComponentDetails()
 		{
 			Logger.Debug("RemoveLocalComponentDetails");
-			_factory.ExecuteInUnitOfWork(uow => _repository.Remove(uow, x => x.ServerId == _settings.ComponentId));
+			_factory.ExecuteInUnitOfWork(false, uow => _repository.Remove(uow, x => x.ServerId == _settings.ComponentId));
 		}
 
 		public ConnectivityDetails CreateComponentConnectivityDetails(ushort port, bool asLocal = true)
 		{
 			Logger.DebugFormat("CreateComponentConnectivityDetails. port={0} - asLocal={1}", port,asLocal);
 			ConnectivityDetails componentConnectivityDetails = null;
-			_factory.ExecuteInUnitOfWork(
+			_factory.ExecuteInUnitOfWork(false,
 				uow => componentConnectivityDetails = CreateComponentConnectivityDetails(uow, port, asLocal));
 			return componentConnectivityDetails;
 		}
@@ -62,7 +62,7 @@ namespace ermeX.DAL.Commands.Connectivity
 					Port = port,
 					IsLocal = asLocal
 				};
-			_factory.ExecuteInUnitOfWork(uow => _repository.Save(unitOfWork, connectivityDetails));
+			_factory.ExecuteInUnitOfWork(false, uow => _repository.Save(unitOfWork, connectivityDetails));
 
 			Debug.Assert(connectivityDetails.Id != 0, "The id was not populated");
 			return connectivityDetails;
