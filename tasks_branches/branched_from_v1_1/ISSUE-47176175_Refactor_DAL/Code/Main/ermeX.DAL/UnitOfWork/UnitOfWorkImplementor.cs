@@ -3,6 +3,7 @@ using System.Data;
 using System.Threading;
 using Common.Logging;
 using NHibernate;
+using ermeX.DAL.Transactions;
 
 namespace ermeX.DAL.UnitOfWork
 {
@@ -13,7 +14,7 @@ namespace ermeX.DAL.UnitOfWork
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly ISession _session;
 		private readonly bool _autoCommitWhenDispose;
-		private readonly IGenericTransaction _transaction;
+		private readonly IErmexTransaction _transaction;
 
 		private readonly Guid _id = Guid.NewGuid();
 		public UnitOfWorkImplementor(IUnitOfWorkFactory factory, ISession session, bool autoCommitWhenDispose=false)
@@ -57,11 +58,11 @@ namespace ermeX.DAL.UnitOfWork
 			}
 		}
 
-		private IGenericTransaction BeginTransaction(IsolationLevel isolationLevel)
+		private IErmexTransaction BeginTransaction(IsolationLevel isolationLevel)
 		{
 			if (IsInActiveTransaction)
 				return null;
-			return new GenericTransaction(_session.BeginTransaction(isolationLevel));
+			return _factory.TransactionsProvider.BeginTransaction(_session.BeginTransaction(isolationLevel));
 		}
 
 		public void Commit(bool disposing)
@@ -79,9 +80,9 @@ namespace ermeX.DAL.UnitOfWork
 				Flush();
 				_transaction.Commit();
 			}
-			catch
+			catch(Exception ex)
 			{
-				Logger.DebugFormat("RollingBack={0}, thread={1} - Id: {2}", disposing, Thread.CurrentThread.ManagedThreadId, _id);
+				Logger.DebugFormat("RollingBack. Disposing={0}, thread={1} - Id: {2} - Exception:{3}", disposing, Thread.CurrentThread.ManagedThreadId, _id, ex.ToString());
 				_transaction.Rollback();
 				throw;
 			}

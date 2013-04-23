@@ -9,7 +9,8 @@ using NHibernate.Exceptions;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.Providers;
+using ermeX.DAL.Providers;
+using ermeX.DAL.Transactions;
 
 namespace ermeX.DAL.UnitOfWork
 {
@@ -20,13 +21,14 @@ namespace ermeX.DAL.UnitOfWork
 		private readonly IStorageOperationRetryStrategy _retryStrategy;
 
 		[Inject]
-		public UnitOfWorkFactory(ISessionProvider sessionProvider, IDalSettings settings)
+		public UnitOfWorkFactory(ISessionProvider sessionProvider, IDalSettings settings,ITransactionProvider transactionsProvider)
 		{
+			TransactionsProvider = transactionsProvider;
 			Logger.DebugFormat("cctor: thread={0}", Thread.CurrentThread.ManagedThreadId);
 			_sessionFactory = sessionProvider;
 
 			const int retriesDeadlock = 15; //TODO: TO DAL SETTINGS with default value
-			const int retriesTimeout = 3;
+			const int retriesTimeout = 15;
 			switch (settings.ConfigurationSourceType)
 			{
 				case DbEngineType.SqlServer2008:
@@ -40,6 +42,9 @@ namespace ermeX.DAL.UnitOfWork
 					throw new NotSupportedException(settings.ConfigurationSourceType.ToString());
 			}
 		}
+
+		public ITransactionProvider TransactionsProvider { get; private set; }
+
 
 		public IUnitOfWork Create(bool autoCommitWhenDispose = false)
 		{
@@ -63,7 +68,7 @@ namespace ermeX.DAL.UnitOfWork
 		{
 			Logger.Debug("ExecuteInUnitOfWork - Start");
 
-			const int millisecondsRetry = 500; //TODO: TO DAL SETTINGS with default value
+			const int millisecondsRetry = 250; //TODO: TO DAL SETTINGS with default value
 
 			TResult result;
 			while (true)
@@ -79,7 +84,7 @@ namespace ermeX.DAL.UnitOfWork
 				}
 				catch (ADOException e)
 				{
-
+					
 					var dbException = ADOExceptionHelper.ExtractDbException(e);
 
 					if (_retryStrategy.Retry(dbException))

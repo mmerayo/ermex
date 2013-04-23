@@ -16,9 +16,10 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using NHibernate;
 
-namespace ermeX.DAL.DataAccess.Providers
+namespace ermeX.DAL.Providers
 {
 
     internal interface ISessionProvider

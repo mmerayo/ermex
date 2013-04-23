@@ -16,26 +16,23 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
 using System.Threading;
 using Common.Logging;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Mapping;
 using NHibernate;
-using NHibernate.Cfg;
 using NHibernate.SqlCommand;
 using NHibernate.Tool.hbm2ddl;
-using ermeX;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.DataAccess.Mappings;
-using Config = NHibernate.Cfg.Configuration;
-namespace ermeX.DAL.DataAccess.Providers
+
+namespace ermeX.DAL.Providers
 {
 	//TODO: TO BE INJECTED
     internal static class NHibernateBootstrapper
@@ -137,7 +134,7 @@ namespace ermeX.DAL.DataAccess.Providers
                     }
         }
 
-        private static void GetOrmConfiguration(Config cfg)
+        private static void GetOrmConfiguration(NHibernate.Cfg.Configuration cfg)
         {
             //TODO: Add caching and others
             cfg.SetProperty("connection.release_mode", "on_close");

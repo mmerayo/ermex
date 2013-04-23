@@ -16,6 +16,7 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using System.Data.SQLite;
 using Common.Logging;
@@ -23,7 +24,7 @@ using NHibernate;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 
-namespace ermeX.DAL.DataAccess.Providers
+namespace ermeX.DAL.Providers
 {
 	//TODO: ISSUE-281 --> MAKE THIS internal and injected
     public sealed class SessionProvider : ISessionProvider

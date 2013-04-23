@@ -90,8 +90,12 @@
     <Compile Include="Repository\ExpressionsHelper.cs" />
     <Compile Include="Repository\IExpressionHelper.cs" />
     <Compile Include="Repository\Repository.cs" />
-    <Compile Include="UnitOfWork\GenericTransaction.cs" />
-    <Compile Include="UnitOfWork\IGenericTransaction.cs" />
+    <Compile Include="Transactions\MutexedTransactionProvider.cs" />
+    <Compile Include="Transactions\GenericTransactionProvider.cs" />
+    <Compile Include="Transactions\ITransactionProvider.cs" />
+    <Compile Include="Transactions\MutexedTransaction.cs" />
+    <Compile Include="Transactions\ErmexTransaction.cs" />
+    <Compile Include="Transactions\IErmexTransaction.cs" />
     <Compile Include="UnitOfWork\ILocalData.cs" />
     <Compile Include="UnitOfWork\IUnitOfWork.cs" />
     <Compile Include="UnitOfWork\IUnitOfWorkFactory.cs" />

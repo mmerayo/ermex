@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using Ninject.Modules;
 using ermeX.ConfigurationManagement.Settings;
+using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.Commands.Component;
 using ermeX.DAL.Commands.Connectivity;
 using ermeX.DAL.Commands.Messages;
@@ -30,8 +31,9 @@ using ermeX.DAL.Commands.Queues;
 using ermeX.DAL.Commands.Services;
 using ermeX.DAL.Commands.Subscriptions;
 using ermeX.DAL.DataAccess.Helpers;
-using ermeX.DAL.DataAccess.Providers;
+using ermeX.DAL.Providers;
 using ermeX.DAL.Repository;
+using ermeX.DAL.Transactions;
 using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
@@ -130,10 +132,28 @@ namespace ermeX.DAL.IoC
 			//Notifiers
 			//TODO: REMOVE
 			Bind<IDomainObservable>().To<DomainNotifier>().InSingletonScope();
-	        
+
+	        BindDependentOnDbServices();
+
         }
 
-		private void BindRepository<TModel>() where TModel : ModelBase
+	    private void BindDependentOnDbServices()
+	    {
+		    switch(_settings.ConfigurationSourceType)
+		    {
+			    case DbEngineType.SqlServer2008:
+				    Bind<ITransactionProvider>().To<GenericTransactionProvider>().InSingletonScope();
+				    break;
+			    case DbEngineType.Sqlite:
+			    case DbEngineType.SqliteInMemory:
+					Bind<ITransactionProvider>().To<MutexedTransactionProvider>().InSingletonScope();
+				    break;
+			    default:
+				    throw new ArgumentOutOfRangeException();
+		    }
+	    }
+
+	    private void BindRepository<TModel>() where TModel : ModelBase
 		{
 			Bind<IReadOnlyRepository<TModel>>().To<Repository<TModel>>().InSingletonScope();
 			Bind<IPersistRepository<TModel>>().To<Repository<TModel>>().InSingletonScope();
