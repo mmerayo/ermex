@@ -97,6 +97,8 @@ namespace ermeX.DAL.UnitOfWork
 			Commit(false);
 		}
 
+		public bool IsReadOnly { get { return _session.FlushMode == FlushMode.Never; } }
+
 		private bool IsInActiveTransaction
 		{
 			get { return _session.Transaction!=null && _session.Transaction.IsActive; }

@@ -147,8 +147,10 @@ namespace ermeX.DAL.IoC
 				    break;
 			    case DbEngineType.Sqlite:
 			    case DbEngineType.SqliteInMemory:
-					Bind<IWriteTransactionProvider>().To<MutexedTransactionProvider>().InSingletonScope();
+
+					//TODO: THIS IS THE VALID ONE? Bind<IWriteTransactionProvider>().To<MutexedTransactionProvider>().InSingletonScope();
 					Bind<IReadTransactionProvider>().To<GenericTransactionProvider>().InSingletonScope();
+					Bind<IWriteTransactionProvider>().To<GenericTransactionProvider>().InSingletonScope();
 				    break;
 			    default:
 				    throw new ArgumentOutOfRangeException();
