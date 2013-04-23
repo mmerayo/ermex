@@ -4,6 +4,7 @@ using System.Reflection;
 using Moq;
 using NHibernate;
 using NUnit.Framework;
+using ermeX.DAL.Transactions;
 using ermeX.DAL.UnitOfWork;
 using ermeX.Tests.Common.Reflection;
 
@@ -26,7 +27,7 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 			_testContext.WithTransactionStarted(started);
 
 			var target = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session);
-			var transaction=(IGenericTransaction)PrivateInspector.GetPrivateVariableValue(target, "_transaction");
+			var transaction=(IErmexTransaction)PrivateInspector.GetPrivateVariableValue(target, "_transaction");
 			if(!started)
 				Assert.IsNotNull(transaction);
 			else

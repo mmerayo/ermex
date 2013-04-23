@@ -3,7 +3,7 @@ using Moq;
 using NHibernate;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.DAL.DataAccess.Providers;
+using ermeX.DAL.Providers;
 using ermeX.DAL.UnitOfWork;
 
 namespace ermeX.Tests.DAL.DataAccess.UoW

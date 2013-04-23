@@ -28,6 +28,7 @@ namespace ermeX.Tests.Common.SettingsProviders
 	{
 		public const string DbInMemory = "InMemoryDb";
 		public const string DbPersistent = "SqliteDb";
+		public const string DbSqlServer = "SqlServerDb";
 
 		public static IEnumerable<DbEngineType> InMemoryDb()
 		{

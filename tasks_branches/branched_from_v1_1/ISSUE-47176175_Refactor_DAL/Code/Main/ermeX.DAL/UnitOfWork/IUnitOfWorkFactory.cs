@@ -1,4 +1,6 @@
 ﻿using System;
+using ermeX.DAL.Providers;
+using ermeX.DAL.Transactions;
 
 namespace ermeX.DAL.UnitOfWork
 {
@@ -8,5 +10,6 @@ namespace ermeX.DAL.UnitOfWork
 
 		TResult ExecuteInUnitOfWork<TResult>(Func<IUnitOfWork,TResult> atomicFunction);
 		void ExecuteInUnitOfWork(Action<IUnitOfWork> atomicAction);
+		ITransactionProvider TransactionsProvider { get; }
 	}
 }
