@@ -34,8 +34,9 @@ using ermeX.DAL.Commands.Queues;
 using ermeX.DAL.Commands.Services;
 using ermeX.DAL.Commands.Subscriptions;
 using ermeX.DAL.DataAccess.Helpers;
-using ermeX.DAL.DataAccess.Providers;
+using ermeX.DAL.Providers;
 using ermeX.DAL.Repository;
+using ermeX.DAL.Transactions;
 using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Messages;
@@ -118,14 +119,38 @@ namespace ermeX.Tests.Common.DataAccess
 		private readonly Dictionary<DbEngineType, ISessionProvider> _sessionProviders =
 			new Dictionary<DbEngineType, ISessionProvider>();
 
+		private readonly Dictionary<DbEngineType, IReadTransactionProvider> _readTransactionProviders =
+			new Dictionary<DbEngineType, IReadTransactionProvider>();
+		private readonly Dictionary<DbEngineType, IWriteTransactionProvider> _writeTransactionProviders =
+			new Dictionary<DbEngineType, IWriteTransactionProvider>();
 		public IUnitOfWorkFactory GetUnitOfWorkFactory(IDalSettings dalSettings)
 		{
 			if (!_sessionProviders.ContainsKey(dalSettings.ConfigurationSourceType))
 				lock (_sessionProviders)
 					if (!_sessionProviders.ContainsKey(dalSettings.ConfigurationSourceType))
+					{
 						_sessionProviders.Add(dalSettings.ConfigurationSourceType, new SessionProvider(dalSettings));
+						switch(dalSettings.ConfigurationSourceType)
+						{
+							case DbEngineType.SqlServer2008:
+								var genericTransactionProvider = new GenericTransactionProvider();
+								_readTransactionProviders.Add(dalSettings.ConfigurationSourceType,genericTransactionProvider);
+								_writeTransactionProviders.Add(dalSettings.ConfigurationSourceType, genericTransactionProvider);
+								break;
+							case DbEngineType.Sqlite:
+							case DbEngineType.SqliteInMemory:
+								_readTransactionProviders.Add(dalSettings.ConfigurationSourceType, new GenericTransactionProvider());
+								_writeTransactionProviders.Add(dalSettings.ConfigurationSourceType, new MutexedTransactionProvider(dalSettings));
+								break;
+							default:
+								throw new ArgumentOutOfRangeException();
+						}
+					}
 
-			return new UnitOfWorkFactory(_sessionProviders[dalSettings.ConfigurationSourceType],dalSettings);
+
+			return new UnitOfWorkFactory(_sessionProviders[dalSettings.ConfigurationSourceType], dalSettings,
+			                             _readTransactionProviders[dalSettings.ConfigurationSourceType],
+			                             _writeTransactionProviders[dalSettings.ConfigurationSourceType]);
 		}
 		public IUnitOfWorkFactory GetUnitOfWorkFactory(DbEngineType dbEngineType)
 		{

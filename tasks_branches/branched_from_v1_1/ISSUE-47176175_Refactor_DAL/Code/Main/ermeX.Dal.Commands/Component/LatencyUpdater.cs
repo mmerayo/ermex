@@ -35,7 +35,7 @@ namespace ermeX.DAL.Commands.Component
 			{
 				senderComponent.Latency = (senderComponent.Latency + requestMilliseconds) / 2;
 
-				_factory.ExecuteInUnitOfWork(uow =>
+				_factory.ExecuteInUnitOfWork(false,uow =>
 					{
 						Repository.Save(uow, senderComponent);
 					});

@@ -44,7 +44,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
 			long expVersion;
 
-			using (var uow = unitOfWorkFactory.Create())
+			using (var uow = unitOfWorkFactory.Create(false))
 			{
 				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				expected = target.Single(uow, id);
@@ -57,7 +57,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 				uow.Commit();
 			}
 			//another unit of work
-			using (var uow = unitOfWorkFactory.Create())
+			using (var uow = unitOfWorkFactory.Create(false))
 			{
 				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				expVersion = expected.Version;

@@ -28,7 +28,7 @@ namespace ermeX.DAL.Commands.Connectivity
 		{
 			Logger.DebugFormat("Fetch.componentId={0}", componentId);
 			ConnectivityDetails result=null;
-			_factory.ExecuteInUnitOfWork(uow => result = _repository.SingleOrDefault(uow, x => x.ServerId == componentId));
+			_factory.ExecuteInUnitOfWork(true,uow => result = _repository.SingleOrDefault(uow, x => x.ServerId == componentId));
 			return result;
 		}
 	}

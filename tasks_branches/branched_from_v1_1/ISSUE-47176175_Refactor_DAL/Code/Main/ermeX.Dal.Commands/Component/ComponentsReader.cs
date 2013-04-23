@@ -34,7 +34,7 @@ namespace ermeX.DAL.Commands.Component
 		{
 			Logger.Debug("FetchAll");
 			List<AppComponent> result=null;
-			_factory.ExecuteInUnitOfWork(uow => result = Repository.FetchAll(uow).ToList());
+			_factory.ExecuteInUnitOfWork(true,uow => result = Repository.FetchAll(uow).ToList());
 			
 			return result;
 		}
@@ -43,7 +43,7 @@ namespace ermeX.DAL.Commands.Component
 		{
 			Logger.Debug("FetchOtherComponents");
 			List<AppComponent> result=null;
-			_factory.ExecuteInUnitOfWork(
+			_factory.ExecuteInUnitOfWork(true,
 				uow => result = Repository.Where(uow, x => x.ComponentId != _settings.ComponentId).ToList());
 			
 			return result;
@@ -53,7 +53,7 @@ namespace ermeX.DAL.Commands.Component
 		{
 			Logger.DebugFormat("FetchOtherComponentsNotExchangedDefinitions. running={0}", running);
 			List<AppComponent> result=null;
-			_factory.ExecuteInUnitOfWork(
+			_factory.ExecuteInUnitOfWork(true,
 				uow =>
 				result = Repository.Where(uow, x => x.ComponentId != _settings.ComponentId
 				                                    && !x.ExchangedDefinitions
@@ -66,7 +66,7 @@ namespace ermeX.DAL.Commands.Component
 		{
 			Logger.DebugFormat("Fetch. componentId={0}", componentId);
 			AppComponent result=null;
-			_factory.ExecuteInUnitOfWork(uow => result = Repository.SingleOrDefault(uow, x => x.ComponentId == componentId));
+			_factory.ExecuteInUnitOfWork(true, uow => result = Repository.SingleOrDefault(uow, x => x.ComponentId == componentId));
 			
 			return result;
 		}

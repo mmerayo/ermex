@@ -109,7 +109,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			TModel expected;
 			int id = InsertRecord(engine);
 			var factory = GetUnitOfWorkFactory(engine);
-			using (var uow = factory.Create())
+			using (var uow = factory.Create(false))
 			{
 				var target = GetRepository<TDataSource>(factory);
 				item = target.Single(uow, id);
@@ -153,7 +153,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 			int id = InsertRecord(engine);
 			TModel expected;
 			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
-			using (var uow = unitOfWorkFactory.Create())
+			using (var uow = unitOfWorkFactory.Create(false))
 			{
 				var target = GetRepository<TDataSource>(unitOfWorkFactory);
 				TModel item = target.Single(uow, id);

@@ -28,9 +28,15 @@ namespace ermeX.DAL.Transactions
 			_transaction.Rollback();
 		}
 
-		public virtual void Dispose()
+		public void Dispose()
 		{
 			Logger.DebugFormat("Dispose thread={0} ", System.Threading.Thread.CurrentThread.ManagedThreadId);
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
 			_transaction.Dispose();
 		}
 	}

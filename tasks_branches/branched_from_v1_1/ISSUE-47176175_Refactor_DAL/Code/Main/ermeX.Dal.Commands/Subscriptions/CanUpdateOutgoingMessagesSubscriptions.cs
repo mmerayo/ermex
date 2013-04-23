@@ -42,7 +42,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 		{
 			Logger.DebugFormat("ImportFromOtherComponent. susbcription={0}", susbcription);
 
-			_factory.ExecuteInUnitOfWork(uow => ImportForeignIncomming(uow, susbcription));
+			_factory.ExecuteInUnitOfWork(false, uow => ImportForeignIncomming(uow, susbcription));
 		}
 
 		private void ImportForeignIncomming( IUnitOfWork uow,IncomingMessageSuscription susbcription)
@@ -63,7 +63,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 		{
 			Logger.DebugFormat("ImportFromOtherComponent. enumeration");
 
-			_factory.ExecuteInUnitOfWork(uow =>
+			_factory.ExecuteInUnitOfWork(false, uow =>
 				{
 					foreach (var s in incomingSuscriptions)
 						ImportForeignIncomming(uow, s);
@@ -74,7 +74,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 		public void ImportFromOtherComponent(OutgoingMessageSuscription susbcription)
 		{			
 			Logger.DebugFormat("ImportFromOtherComponent. susbcription={0}", susbcription);
-			_factory.ExecuteInUnitOfWork(uow => ImportFromOtherComponent(uow, susbcription));
+			_factory.ExecuteInUnitOfWork(false, uow => ImportFromOtherComponent(uow, susbcription));
 		}
 
 		private void ImportFromOtherComponent( IUnitOfWork uow, OutgoingMessageSuscription susbcription)
@@ -95,7 +95,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			//discard the local suscriptions
 			var outgoingMessageSuscriptions = remoteSuscriptions.Where(x => x.Component != _settings.ComponentId);
 			
-			_factory.ExecuteInUnitOfWork(uow =>
+			_factory.ExecuteInUnitOfWork(false,uow =>
 				{
 					foreach (var outgoingMessageSuscription in outgoingMessageSuscriptions)
 						ImportFromOtherComponent(uow,outgoingMessageSuscription);

@@ -26,7 +26,7 @@ namespace ermeX.DAL.Commands.Component
 		{
 			Logger.Debug("GetMaxLatency");
 			int result = 0;
-			_factory.ExecuteInUnitOfWork(uow => result=Repository.GetMax<int>(uow, "Latency"));
+			_factory.ExecuteInUnitOfWork(true, uow => result = Repository.GetMax<int>(uow, "Latency"));
 			
 			return result;
 		}

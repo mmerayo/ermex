@@ -17,13 +17,13 @@ namespace ermeX.DAL.UnitOfWork
 		private readonly IErmexTransaction _transaction;
 
 		private readonly Guid _id = Guid.NewGuid();
-		public UnitOfWorkImplementor(IUnitOfWorkFactory factory, ISession session, bool autoCommitWhenDispose=false)
+		public UnitOfWorkImplementor(IUnitOfWorkFactory factory, ISession session, ITransactionProvider transactionProvider, bool autoCommitWhenDispose=false)
 		{
 			Logger.DebugFormat("cctor. Thread={0} - Id: {1}", Thread.CurrentThread.ManagedThreadId,_id);
 			_factory = factory;
 			_session = session;
 			_autoCommitWhenDispose = autoCommitWhenDispose;
-			_transaction = BeginTransaction(IsolationLevel.ReadCommitted); //TODO: IsolationLevel.sERIALIZABLE THE SERIALIZABLE IS WHEN SEVERAL COMPONENTS SHARINGDB
+			_transaction = BeginTransaction(transactionProvider, IsolationLevel.ReadCommitted); //TODO: IsolationLevel.sERIALIZABLE THE SERIALIZABLE IS WHEN SEVERAL COMPONENTS SHARINGDB
 		}
 		~UnitOfWorkImplementor()
 		{
@@ -58,11 +58,11 @@ namespace ermeX.DAL.UnitOfWork
 			}
 		}
 
-		private IErmexTransaction BeginTransaction(IsolationLevel isolationLevel)
+		private IErmexTransaction BeginTransaction(ITransactionProvider transactionProvider, IsolationLevel isolationLevel)
 		{
 			if (IsInActiveTransaction)
 				return null;
-			return _factory.TransactionsProvider.BeginTransaction(_session.BeginTransaction(isolationLevel));
+			return transactionProvider.BeginTransaction(_session.BeginTransaction(isolationLevel));
 		}
 
 		public void Commit(bool disposing)

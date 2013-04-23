@@ -23,12 +23,12 @@ namespace ermeX.DAL.Commands.Messages
 
 		public void Save(ChunkedServiceRequestMessage chunk)
 		{
-			_factory.ExecuteInUnitOfWork(uow =>_repository.Save(uow, chunk));
+			_factory.ExecuteInUnitOfWork(false,uow =>_repository.Save(uow, chunk));
 		}
 
 		public void Remove(ChunkedServiceRequestMessage chunk)
 		{
-			_factory.ExecuteInUnitOfWork(uow => _repository.Remove(uow, chunk));
+			_factory.ExecuteInUnitOfWork(false, uow => _repository.Remove(uow, chunk));
 		}
 	}
 }

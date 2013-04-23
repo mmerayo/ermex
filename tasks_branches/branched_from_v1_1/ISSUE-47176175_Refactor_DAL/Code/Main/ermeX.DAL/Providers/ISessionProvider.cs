@@ -24,6 +24,6 @@ namespace ermeX.DAL.Providers
 
     internal interface ISessionProvider
     {
-        ISession OpenSession();
+        ISession OpenSession(bool readOnly);
     }
 }

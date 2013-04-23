@@ -653,7 +653,7 @@ namespace ermeX.Tests.Acceptance
 
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbSqlServer)] //TODO: INMEMORY
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)] //TODO: INMEMORY
         public void MessagesAreDeliveredFIFO(DbEngineType engineType)
         {
 			//TODO: THEY MUST BE 10

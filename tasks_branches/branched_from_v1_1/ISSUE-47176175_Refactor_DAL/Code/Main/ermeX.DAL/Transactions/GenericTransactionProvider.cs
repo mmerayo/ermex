@@ -3,7 +3,7 @@ using NHibernate;
 
 namespace ermeX.DAL.Transactions
 {
-	internal sealed class GenericTransactionProvider : ITransactionProvider
+	internal sealed class GenericTransactionProvider : IWriteTransactionProvider,IReadTransactionProvider
 	{
 		public IErmexTransaction BeginTransaction(ITransaction innerTransaction)
 		{

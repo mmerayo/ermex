@@ -90,9 +90,10 @@
     <Compile Include="Repository\ExpressionsHelper.cs" />
     <Compile Include="Repository\IExpressionHelper.cs" />
     <Compile Include="Repository\Repository.cs" />
+    <Compile Include="Transactions\IWriteTransactionProvider.cs" />
     <Compile Include="Transactions\MutexedTransactionProvider.cs" />
     <Compile Include="Transactions\GenericTransactionProvider.cs" />
-    <Compile Include="Transactions\ITransactionProvider.cs" />
+    <Compile Include="Transactions\IReadTransactionProvider.cs" />
     <Compile Include="Transactions\MutexedTransaction.cs" />
     <Compile Include="Transactions\ErmexTransaction.cs" />
     <Compile Include="Transactions\IErmexTransaction.cs" />

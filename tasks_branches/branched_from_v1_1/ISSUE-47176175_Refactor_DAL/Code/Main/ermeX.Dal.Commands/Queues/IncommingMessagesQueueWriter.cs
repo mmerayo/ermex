@@ -31,20 +31,20 @@ namespace ermeX.DAL.Commands.Queues
 		public void Save(IncomingMessage incomingMessage)
 		{
 			Logger.DebugFormat("Save. incomingMessage:{0} - ThreadId:{1}",incomingMessage,Thread.CurrentThread.ManagedThreadId);
-			_factory.ExecuteInUnitOfWork(uow => _repository.Save(uow, incomingMessage));
+			_factory.ExecuteInUnitOfWork(false, uow => _repository.Save(uow, incomingMessage));
 		}
 
 		public void Save(IEnumerable<IncomingMessage> incomingMessages)
 		{
 			Logger.DebugFormat("Save. incomingMessages");
-			_factory.ExecuteInUnitOfWork(uow => _repository.Save(uow, incomingMessages));
+			_factory.ExecuteInUnitOfWork(false, uow => _repository.Save(uow, incomingMessages));
 		}
 
 		public void Remove(IncomingMessage incomingMessage)
 		{
 			//TODO: ADD THE THREAD AS A SUFFIX FOR ALL LOGGERS
 			Logger.DebugFormat("Remove. incomingMessage:{0} - ThreadId:{1}", incomingMessage,Thread.CurrentThread.ManagedThreadId);
-			_factory.ExecuteInUnitOfWork(uow => _repository.Remove(uow, incomingMessage));
+			_factory.ExecuteInUnitOfWork(false, uow => _repository.Remove(uow, incomingMessage));
 		}
 	}
 }

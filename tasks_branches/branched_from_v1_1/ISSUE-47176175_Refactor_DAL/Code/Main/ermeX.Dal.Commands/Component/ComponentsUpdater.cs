@@ -36,7 +36,7 @@ namespace ermeX.DAL.Commands.Component
 			localComponent.IsRunning = newStatus == ComponentStatus.Running;
 			localComponent.ExchangedDefinitions = exchangedDefinitions;
 
-			_factory.ExecuteInUnitOfWork(uow =>
+			_factory.ExecuteInUnitOfWork(false, uow =>
 				{
 					_repository.Save(uow, localComponent);
 				});
@@ -45,7 +45,7 @@ namespace ermeX.DAL.Commands.Component
 		public void Save(AppComponent component)
 		{
 			Logger.DebugFormat("Save. component={0}", component);
-			_factory.ExecuteInUnitOfWork(uow => _repository.Save(uow, component));
+			_factory.ExecuteInUnitOfWork(false, uow => _repository.Save(uow, component));
 		}
 	}
 }

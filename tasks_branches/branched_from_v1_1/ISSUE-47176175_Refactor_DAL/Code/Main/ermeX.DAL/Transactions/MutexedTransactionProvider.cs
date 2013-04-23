@@ -9,7 +9,7 @@ using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 namespace ermeX.DAL.Transactions
 {
 	//due to sqlite issues when multithreading and parallel connections
-	internal sealed class MutexedTransactionProvider : ITransactionProvider
+	internal sealed class MutexedTransactionProvider : IWriteTransactionProvider
 	{
 		private string _dbName;
 
@@ -22,10 +22,10 @@ namespace ermeX.DAL.Transactions
 			{
 				case DbEngineType.Sqlite:
 				case DbEngineType.SqliteInMemory:
-					if (connStr.Contains("Data Source"))
-						ParsePersistentSqliteDb(connStr);
-					else if (connStr.Contains("FullUri"))
+					if (connStr.Contains("FullUri"))
 						ParseInMemorySqliteDb(connStr);
+					else if (connStr.Contains("Data Source"))
+						ParsePersistentSqliteDb(connStr);
 					else
 					{
 						throw new NotSupportedException();
@@ -37,19 +37,17 @@ namespace ermeX.DAL.Transactions
 
 		}
 
-		private void ParseInMemorySqliteDb(string connStr)
+		private void ParsePersistentSqliteDb(string connStr)
 		{
 			string dbPathName = connStr.Split(';').Single(x => x.Contains("Data Source")).Split('=')[1];
 
 			_dbName = Path.GetFileName(dbPathName);
 		}
 
-		private void ParsePersistentSqliteDb(string connStr)
+		private void ParseInMemorySqliteDb(string connStr)
 		{
 			var seed = connStr.Split(';').Single(x => x.Contains("FullUri")).Split('=')[1];
-			var uri = new Uri(seed.Split('?')[0]);
-
-			_dbName = Path.GetFileName(uri.LocalPath);
+			_dbName=seed.Split('?')[0].Split(':')[1];
 		}
 
 		public IErmexTransaction BeginTransaction(ITransaction innerTransaction)

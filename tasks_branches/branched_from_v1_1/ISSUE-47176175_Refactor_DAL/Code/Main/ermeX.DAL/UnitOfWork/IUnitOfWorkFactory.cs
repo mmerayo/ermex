@@ -6,10 +6,10 @@ namespace ermeX.DAL.UnitOfWork
 {
 	internal interface IUnitOfWorkFactory
 	{
-		IUnitOfWork Create(bool autoCommitWhenDispose=false);
+		IUnitOfWork Create(bool readOnly, bool autoCommitWhenDispose=false);
 
-		TResult ExecuteInUnitOfWork<TResult>(Func<IUnitOfWork,TResult> atomicFunction);
-		void ExecuteInUnitOfWork(Action<IUnitOfWork> atomicAction);
-		ITransactionProvider TransactionsProvider { get; }
+		TResult ExecuteInUnitOfWork<TResult>(bool readOnly, Func<IUnitOfWork, TResult> atomicFunction);
+		void ExecuteInUnitOfWork(bool readOnly, Action<IUnitOfWork> atomicAction);
+		 
 	}
 }

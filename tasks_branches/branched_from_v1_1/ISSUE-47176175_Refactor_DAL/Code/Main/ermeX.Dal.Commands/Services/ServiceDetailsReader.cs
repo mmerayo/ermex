@@ -43,7 +43,7 @@ namespace ermeX.DAL.Commands.Services
 
 			ServiceDetails result = null;
 
-			_factory.ExecuteInUnitOfWork(
+			_factory.ExecuteInUnitOfWork(true,
 				uow => result = _repository.SingleOrDefault(uow, x => x.OperationIdentifier == operationId
 				                                                      && x.Publisher == publisher));
 			return result;
@@ -60,7 +60,7 @@ namespace ermeX.DAL.Commands.Services
 
 			if (string.IsNullOrEmpty(interfaceTypeFullName)) throw new ArgumentNullException("interfaceTypeFullName");
 			IEnumerable<ServiceDetails> result = null;
-			_factory.ExecuteInUnitOfWork(
+			_factory.ExecuteInUnitOfWork(true,
 				uow => result = _repository.Where(uow, x => x.ServiceInterfaceTypeName == interfaceTypeFullName).ToList());
 			return result;
 		}
@@ -71,7 +71,7 @@ namespace ermeX.DAL.Commands.Services
 			if (string.IsNullOrEmpty(interfaceTypeName)) throw new ArgumentNullException("interfaceTypeName");
 			IEnumerable<ServiceDetails> result = null;
 
-			_factory.ExecuteInUnitOfWork(
+			_factory.ExecuteInUnitOfWork(true,
 				uow => result = _repository.Where(uow, x => x.ServiceInterfaceTypeName == interfaceTypeName
 				                                            && x.ServiceImplementationMethodName == methodName).ToList());
 			
@@ -83,7 +83,7 @@ namespace ermeX.DAL.Commands.Services
 			Logger.DebugFormat("GetByMethodName. interfaceTypeName={0}, methodName={1}, publisherComponent={2}", interfaceTypeName, methodName,publisherComponent);
 			if (string.IsNullOrEmpty(interfaceTypeName)) throw new ArgumentNullException("interfaceTypeName");
 			ServiceDetails result = null;
-			_factory.ExecuteInUnitOfWork(
+			_factory.ExecuteInUnitOfWork(true,
 				uow => result = _repository.SingleOrDefault(uow, x => x.ServiceInterfaceTypeName == interfaceTypeName
 				                                                      && x.ServiceImplementationMethodName == methodName &&
 				                                                      x.Publisher == publisherComponent));
@@ -95,7 +95,7 @@ namespace ermeX.DAL.Commands.Services
 		{
 			Logger.Debug("GetLocalCustomServices");
 			IEnumerable<ServiceDetails> result = null;
-			_factory.ExecuteInUnitOfWork(uow => result = _repository.Where(uow, x => x.Publisher == _settings.ComponentId
+			_factory.ExecuteInUnitOfWork(true, uow => result = _repository.Where(uow, x => x.Publisher == _settings.ComponentId
 			                                                                         && x.IsSystemService == false).ToList());
 			return result;
 		}
