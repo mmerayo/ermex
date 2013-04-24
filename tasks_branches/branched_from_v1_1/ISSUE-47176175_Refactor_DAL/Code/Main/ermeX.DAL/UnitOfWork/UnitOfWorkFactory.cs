@@ -111,6 +111,18 @@ namespace ermeX.DAL.UnitOfWork
 
 					throw;
 				}
+				catch (StaleStateException ex)
+				{
+					Logger.ErrorFormat("ExecuteInUnitOfWork: AppDomain: {0} - Thread: {1} - Exception: {2}", AppDomain.CurrentDomain.Id,
+										   Thread.CurrentThread.ManagedThreadId, ex.ToString());
+					if (_retryStrategy != null && _retryStrategy.Retry(ex))
+					{
+						Logger.DebugFormat("ExecuteInUnitOfWork: Retrying - AppDomain: {0} -Thread: {1}", AppDomain.CurrentDomain.Id,
+										   Thread.CurrentThread.ManagedThreadId);
+						Thread.Sleep(millisecondsRetry);
+						continue;
+					}
+				}
 				catch (TransactionException ex)
 				{
 					Logger.ErrorFormat("ExecuteInUnitOfWork: AppDomain: {0} - Thread: {1} - Exception: {2}", AppDomain.CurrentDomain.Id,
@@ -141,6 +153,7 @@ namespace ermeX.DAL.UnitOfWork
 		{
 			bool Retry(DbException dbException);
 			bool Retry(TransactionException dbException);
+			bool Retry(StaleStateException dbException);
 		}
 
 		private class SqlServerRetryPolicy : IStorageOperationRetryStrategy
@@ -168,6 +181,11 @@ namespace ermeX.DAL.UnitOfWork
 			}
 
 			public bool Retry(TransactionException dbException)
+			{
+				return --_triesDeadlock > 0;
+			}
+
+			public bool Retry(StaleStateException dbException)
 			{
 				return --_triesDeadlock > 0;
 			}
@@ -210,6 +228,11 @@ namespace ermeX.DAL.UnitOfWork
 			}
 
 			public bool Retry(TransactionException dbException)
+			{
+				return --_triesDeadlock > 0;
+			}
+
+			public bool Retry(StaleStateException dbException)
 			{
 				return --_triesDeadlock > 0;
 			}
