@@ -82,16 +82,16 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbPersistent)]
         public void SeveralReceiversSendMessageAndReception(DbEngineType engineType)
         {
 
             //arrange
-            ushort senderListeningPort = new TestPort(9000);
-            ushort receiver1ListeningPort = new TestPort(9000);
-            ushort receiver2ListeningPort = new TestPort(9000);
-            ushort receiver3ListeningPort = new TestPort(9000);
-            ushort receiver4ListeningPort = new TestPort(9000);
+            ushort senderListeningPort = new TestPort(22000);
+			ushort receiver1ListeningPort = new TestPort(23000);
+			ushort receiver2ListeningPort = new TestPort(24000);
+			ushort receiver3ListeningPort = new TestPort(25000);
+            ushort receiver4ListeningPort = new TestPort(26000);
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
@@ -653,7 +653,7 @@ namespace ermeX.Tests.Acceptance
 
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionAllDbs)] //TODO: INMEMORY
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)] //TODO: INMEMORY
         public void MessagesAreDeliveredFIFO(DbEngineType engineType)
         {
 			//TODO: THEY MUST BE 10

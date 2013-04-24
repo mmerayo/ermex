@@ -40,7 +40,7 @@ namespace ermeX.DAL.Repository
 		{
 			return x => x.ComponentOwner == e.ComponentOwner
 			            && x.SuscriptionHandlerId == e.SuscriptionHandlerId
-			            && x.Status == e.Status
+			          //  && x.Status == e.Status
 			            && x.MessageId == e.MessageId
 			            && x.PublishedBy == e.PublishedBy
 			            && x.PublishedTo == e.PublishedTo;

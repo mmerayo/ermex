@@ -150,7 +150,7 @@ namespace ermeX.DAL.IoC
 
 					//TODO: THIS IS THE VALID ONE? Bind<IWriteTransactionProvider>().To<MutexedTransactionProvider>().InSingletonScope();
 					Bind<IReadTransactionProvider>().To<GenericTransactionProvider>().InSingletonScope();
-					Bind<IWriteTransactionProvider>().To<GenericTransactionProvider>().InSingletonScope();
+					Bind<IWriteTransactionProvider>().To<MutexedTransactionProvider>().InSingletonScope();
 				    break;
 			    default:
 				    throw new ArgumentOutOfRangeException();

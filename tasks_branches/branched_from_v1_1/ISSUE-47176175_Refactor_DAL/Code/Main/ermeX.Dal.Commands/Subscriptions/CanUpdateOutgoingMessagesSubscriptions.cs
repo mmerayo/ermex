@@ -73,7 +73,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 		//TODO: THIS MUST BE REMOVED AND MADE BY THE CLIENT CODE
 		public void ImportFromOtherComponent(OutgoingMessageSuscription susbcription)
 		{
-			Logger.TraceFormat("ImportFromOtherComponent. susbcription={0} AppDomain={1} - Thread={2}", susbcription, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId;
+			Logger.TraceFormat("ImportFromOtherComponent. susbcription={0} AppDomain={1} - Thread={2}", susbcription, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			_factory.ExecuteInUnitOfWork(false, uow => ImportFromOtherComponent(uow, susbcription));
 		}
 
@@ -82,9 +82,9 @@ namespace ermeX.DAL.Commands.Subscriptions
 			susbcription.Id = 0;
 			susbcription.ComponentOwner = _settings.ComponentId;
 			_repository.Save(uow, susbcription);
+			
 			//TODO: THIS AND ITS MECHANISM MUST BE REMOVED when state machine is in place
-
-			//_domainNotifier.Notify(isNew ? NotifiableDalAction.Add : NotifiableDalAction.Update,susbcription);
+			_domainNotifier.Notify(NotifiableDalAction.Add,susbcription);
 		}
 
 
