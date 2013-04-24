@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -32,7 +33,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public IEnumerable<OutgoingMessageSuscription> GetByMessageType(string bizMessageType)
 		{
-			Logger.DebugFormat("GetByMessageType. bizMessageType={0}", bizMessageType);
+			Logger.TraceFormat("GetByMessageType. bizMessageType={0} AppDomain={1} - Thread={2}", bizMessageType, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			IEnumerable<OutgoingMessageSuscription> result = null;
 
 			_factory.ExecuteInUnitOfWork(true,
@@ -43,7 +44,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public IEnumerable<OutgoingMessageSuscription> FetchAll()
 		{
-			Logger.Debug("FetchAll");
+			Logger.TraceFormat("FetchAll.AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			IEnumerable<OutgoingMessageSuscription> result = null;
 			_factory.ExecuteInUnitOfWork(true,uow => result = _repository.FetchAll(uow).ToList());
 			return result;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Common.Logging;
 using Ninject;
@@ -30,20 +31,20 @@ namespace ermeX.DAL.Commands.Queues
 
 		public void Save(IncomingMessage incomingMessage)
 		{
-			Logger.DebugFormat("Save. incomingMessage:{0} - ThreadId:{1}",incomingMessage,Thread.CurrentThread.ManagedThreadId);
+			Logger.TraceFormat("Save. AppDomain={0} - Thread={1} - incomingMessage:{2}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId, incomingMessage);
 			_factory.ExecuteInUnitOfWork(false, uow => _repository.Save(uow, incomingMessage));
 		}
 
 		public void Save(IEnumerable<IncomingMessage> incomingMessages)
 		{
-			Logger.DebugFormat("Save. incomingMessages");
+			Logger.TraceFormat("Save. AppDomain={0} - Thread={1} - incomingMessages",AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			_factory.ExecuteInUnitOfWork(false, uow => _repository.Save(uow, incomingMessages));
 		}
 
 		public void Remove(IncomingMessage incomingMessage)
 		{
 			//TODO: ADD THE THREAD AS A SUFFIX FOR ALL LOGGERS
-			Logger.DebugFormat("Remove. incomingMessage:{0} - ThreadId:{1}", incomingMessage,Thread.CurrentThread.ManagedThreadId);
+			Logger.TraceFormat("Remove. AppDomain={0} - Thread={1} - incomingMessage:{2}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId, incomingMessage);
 			_factory.ExecuteInUnitOfWork(false, uow => _repository.Remove(uow, incomingMessage));
 		}
 	}

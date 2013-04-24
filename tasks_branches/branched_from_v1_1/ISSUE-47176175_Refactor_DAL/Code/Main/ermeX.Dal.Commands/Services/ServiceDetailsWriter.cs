@@ -32,7 +32,7 @@ namespace ermeX.DAL.Commands.Services
 
 		public void ImportFromOtherComponent(ServiceDetails svc)
 		{
-			Logger.DebugFormat("ImportFromOtherComponent, svc={0}",svc);
+			Logger.TraceFormat("ImportFromOtherComponent, svc={0}-AppDomain={1} - Thread={2}", svc, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 
 			if(svc.ComponentOwner==_settings.ComponentId)
 				throw new InvalidOperationException("Cannot import one service from the same component");
@@ -63,7 +63,7 @@ namespace ermeX.DAL.Commands.Services
 
 		public void Save(ServiceDetails serviceDetails)
 		{
-			Logger.DebugFormat("Save. serviceDetails={0}",serviceDetails);
+			Logger.TraceFormat("Save. serviceDetails={0} AppDomain={1} - Thread={2}", serviceDetails, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 
 			_factory.ExecuteInUnitOfWork(false,uow => _repository.Save(uow, serviceDetails));
 		}

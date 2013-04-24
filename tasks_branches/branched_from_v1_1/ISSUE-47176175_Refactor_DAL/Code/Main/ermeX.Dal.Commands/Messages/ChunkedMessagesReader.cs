@@ -23,7 +23,7 @@ namespace ermeX.DAL.Commands.Messages
         }
 
 	    public ChunkedServiceRequestMessageData Fetch(Guid correlationId, int order)
-	    {
+	    {			
 		    ChunkedServiceRequestMessageData result = null;
 			_factory.ExecuteInUnitOfWork(true,
 			    uow => result = _repository.SingleOrDefault(uow, x => x.CorrelationId == correlationId && x.Order == order));

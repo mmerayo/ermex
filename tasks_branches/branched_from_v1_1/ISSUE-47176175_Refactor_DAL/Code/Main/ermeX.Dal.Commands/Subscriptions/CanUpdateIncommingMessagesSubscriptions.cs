@@ -35,14 +35,14 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public void RemoveByHandlerId(Guid suscriptionId)
 		{
-			Logger.DebugFormat("RemoveByHandlerId. suscriptionId={0}", suscriptionId);
+			Logger.TraceFormat("RemoveByHandlerId. suscriptionId={0} AppDomain={1} - Thread={2}", suscriptionId, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			_factory.ExecuteInUnitOfWork(false, uow => _incomingRepository.Remove(uow, x => x.SuscriptionHandlerId == suscriptionId));
 		}
 
 		public void SaveIncommingSubscription(Guid suscriptionHandlerId, Type handlerType, Type messageType)
 		{
-			Logger.DebugFormat("SaveIncommingSubscription. suscriptionHandlerId={0} handlerType={1} messageType={2}",
-			                   suscriptionHandlerId, handlerType, messageType);
+			Logger.TraceFormat("SaveIncommingSubscription. suscriptionHandlerId={0} handlerType={1} messageType={2} AppDomain={3} - Thread={4}",
+							   suscriptionHandlerId, handlerType, messageType, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 
 			_factory.ExecuteInUnitOfWork(false, uow =>
 				{
@@ -71,6 +71,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public void Remove(IEnumerable<IncomingMessageSuscription> toRemove)
 		{
+			Logger.TraceFormat("Remove. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			_factory.ExecuteInUnitOfWork(false, uow => _incomingRepository.Remove(uow, toRemove));
 		}
 	}

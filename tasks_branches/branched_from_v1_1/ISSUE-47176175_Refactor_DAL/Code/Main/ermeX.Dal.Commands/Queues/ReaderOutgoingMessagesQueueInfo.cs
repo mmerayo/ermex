@@ -34,7 +34,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public IEnumerable<OutgoingMessage> GetItemsPendingSorted()
 		{
-			Logger.Debug("GetItemsPendingSorted");
+			Logger.TraceFormat("GetItemsPendingSorted. AppDomain={0} - Thread={1}",AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId);
 			IEnumerable<OutgoingMessage> result = null;
 			_factory.ExecuteInUnitOfWork(true, uow => result =
 			                                    _repository.Where(uow, x => x.Status != Message.MessageStatus.SenderFailed)
@@ -46,7 +46,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public IEnumerable<OutgoingMessage> GetExpiredMessages(TimeSpan expirationTime)
 		{
-			Logger.DebugFormat("GetExpiredMessages. expirationTime={0}",expirationTime);
+			Logger.TraceFormat("GetExpiredMessages. expirationTime={0} - AppDomain={1} - Thread={2}", expirationTime,AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId);
 			IEnumerable<OutgoingMessage> result = null;
 			_factory.ExecuteInUnitOfWork(true, uow =>
 				{
@@ -62,7 +62,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public bool ContainsMessageFor(Guid messageId, Guid destinationComponent)
 		{
-			Logger.DebugFormat("ContainsMessageFor. messageId={0} destinationComponent={1}", messageId,destinationComponent);
+			Logger.TraceFormat("ContainsMessageFor. messageId={0} destinationComponent={1} - AppDomain={2} - Thread={3}", messageId, destinationComponent, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 
 			if (messageId.IsEmpty() || destinationComponent.IsEmpty())
 				throw new ArgumentException("the arguments cannot be empty");
@@ -77,7 +77,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public IEnumerable<OutgoingMessage> GetByStatus(params Message.MessageStatus[] status)
 		{
-			Logger.Debug("GetByStatus");
+			Logger.TraceFormat("GetByStatus.AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			IEnumerable<OutgoingMessage> result = null;
 			_factory.ExecuteInUnitOfWork(true, uow => result = status.Length == 0
 					         ? _repository.FetchAll(uow).ToList()

@@ -33,7 +33,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public IEnumerable<IncomingMessageSuscription> GetByMessageType(string bizMessageType)
 		{
-			Logger.DebugFormat("GetByMessageType. bizMessageType={0}", bizMessageType);
+			Logger.TraceFormat("GetByMessageType. bizMessageType={0} AppDomain={1} - Thread={2}", bizMessageType, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			IEnumerable<IncomingMessageSuscription> result = null;
 			_factory.ExecuteInUnitOfWork(true,
 				uow => result = _repository.Where(uow, x => x.BizMessageFullTypeName == bizMessageType).ToList());
@@ -42,7 +42,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public IncomingMessageSuscription GetByHandlerId(Guid suscriptionHandlerId)
 		{
-			Logger.DebugFormat("GetByHandlerId. suscriptionHandlerId={0}", suscriptionHandlerId);
+			Logger.TraceFormat("GetByHandlerId. suscriptionHandlerId={0} AppDomain={1} - Thread={2}", suscriptionHandlerId, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			IncomingMessageSuscription result = null;
 			_factory.ExecuteInUnitOfWork(true,
 				uow => result = _repository.SingleOrDefault(uow, x => x.SuscriptionHandlerId == suscriptionHandlerId));
@@ -52,7 +52,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public IncomingMessageSuscription GetByHandlerAndMessageType(Type handlerType, Type messageType)
 		{
-			Logger.DebugFormat("GetByHandlerAndMessageType. handlerType={0}, messageType={1}", handlerType,messageType);
+			Logger.TraceFormat("GetByHandlerAndMessageType. handlerType={0}, messageType={1} AppDomain={2} - Thread={3}", handlerType, messageType, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			IncomingMessageSuscription result = null;
 			_factory.ExecuteInUnitOfWork(true,
 				uow =>
@@ -67,7 +67,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public IEnumerable<IncomingMessageSuscription> FetchAll()
 		{
-			Logger.DebugFormat("FetchAll");
+			Logger.TraceFormat("FetchAll.AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			IEnumerable<IncomingMessageSuscription> result = null;
 
 			_factory.ExecuteInUnitOfWork(true, uow => result = _repository.FetchAll(uow).ToList());

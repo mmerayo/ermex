@@ -40,7 +40,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 		//TODO: THIS MUST BE REMOVED AND MADE BY THE CLIENT CODE
 		public void ImportFromOtherComponent(IncomingMessageSuscription susbcription)
 		{
-			Logger.DebugFormat("ImportFromOtherComponent. susbcription={0}", susbcription);
+			Logger.TraceFormat("ImportFromOtherComponent. susbcription={0} AppDomain={1} - Thread={2}", susbcription, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 
 			_factory.ExecuteInUnitOfWork(false, uow => ImportForeignIncomming(uow, susbcription));
 		}
@@ -61,7 +61,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public void ImportFromOtherComponent(IEnumerable<IncomingMessageSuscription> incomingSuscriptions)
 		{
-			Logger.DebugFormat("ImportFromOtherComponent. enumeration");
+			Logger.TraceFormat("ImportFromOtherComponent. enumeration AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 
 			_factory.ExecuteInUnitOfWork(false, uow =>
 				{
@@ -72,8 +72,8 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		//TODO: THIS MUST BE REMOVED AND MADE BY THE CLIENT CODE
 		public void ImportFromOtherComponent(OutgoingMessageSuscription susbcription)
-		{			
-			Logger.DebugFormat("ImportFromOtherComponent. susbcription={0}", susbcription);
+		{
+			Logger.TraceFormat("ImportFromOtherComponent. susbcription={0} AppDomain={1} - Thread={2}", susbcription, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId;
 			_factory.ExecuteInUnitOfWork(false, uow => ImportFromOtherComponent(uow, susbcription));
 		}
 
@@ -90,6 +90,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 
 		public void ImportFromOtherComponent(IEnumerable<OutgoingMessageSuscription> remoteSuscriptions)
 		{
+			Logger.TraceFormat("ImportFromOtherComponent. several AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			if (remoteSuscriptions == null) throw new ArgumentNullException("remoteSuscriptions");
 			
 			//discard the local suscriptions
