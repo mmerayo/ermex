@@ -130,7 +130,7 @@ namespace ermeX.DAL.Repository
 				unitOfWork.Session.Save(entity);
 			else
 				unitOfWork.Session.Merge(entity);
-			unitOfWork.Flush();
+			//unitOfWork.Flush();
 
 			return true;
 		}
@@ -181,7 +181,7 @@ namespace ermeX.DAL.Repository
 			if (unitOfWork.IsReadOnly)
 				throw new InvalidOperationException("The unit of work is ReadOnly");
 			unitOfWork.Session.Delete(entity);
-			unitOfWork.Flush();
+			//unitOfWork.Flush();
 		}
 
 		public void Remove(IUnitOfWork unitOfWork, IEnumerable<TEntity> entities)

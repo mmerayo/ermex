@@ -39,7 +39,7 @@ namespace ermeX.Tests.Acceptance
 
 		#region Local
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_LocalCustomService_EmptyMethod(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -64,7 +64,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_LocalCustomService_OneParamMethod(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -92,7 +92,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_LocalCustomService_SeveralParamsMethod(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -123,7 +123,7 @@ namespace ermeX.Tests.Acceptance
 		}
 
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_LocalCustomService_EmptyMethod_ReturnValue(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -149,7 +149,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_LocalCustomService_OneParamMethod_ReturnValue(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -178,7 +178,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_LocalCustomService_SeveralParamsMethod_ReturnValue(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -210,7 +210,7 @@ namespace ermeX.Tests.Acceptance
 		}
 
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_LocalCustomService_ArrayParamsMethod_Returns(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -241,7 +241,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_LocalCustomService_ReturnsArray(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -272,7 +272,7 @@ namespace ermeX.Tests.Acceptance
 		#region remote
 
 		//[Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.SqliteDb)]
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_RemoteCustomService_EmptyMethod(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -300,7 +300,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_RemoteCustomService_OneParamMethod(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -331,7 +331,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_RemoteCustomService_SeveralParamsMethod(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -365,7 +365,7 @@ namespace ermeX.Tests.Acceptance
 		}
 
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_RemoteCustomService_EmptyMethod_ReturnValue(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -394,7 +394,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_RemoteCustomService_OneParamMethod_ReturnValue(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -426,7 +426,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_RemoteCustomService_SeveralParamsMethod_ReturnValue(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -460,7 +460,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_RemoteCustomService_ArrayParamsMethod_Returns(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -494,7 +494,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvoke_RemoteCustomService_ReturnsArray(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -527,7 +527,7 @@ namespace ermeX.Tests.Acceptance
 		#endregion
 
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void When_Service_NotDefined_Returns_Null(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -543,7 +543,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void When_CannotInvoke_ThrowsException(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -572,7 +572,7 @@ namespace ermeX.Tests.Acceptance
 
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void TwoComponents_CannotRegister_TheSameService_IfReturnValues(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -597,7 +597,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void TwoComponents_CanRegister_TheSameService_If_Dont_ReturnValues(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -621,7 +621,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void Components_CanPublish_Several_Services(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);
@@ -665,7 +665,7 @@ namespace ermeX.Tests.Acceptance
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void SeveralComponents_Can_Serve_Same_Service_NoReturnValues(DbEngineType engineType)
 		{
 			string dbConnString = TestSettingsProvider.GetConnString(engineType);

@@ -40,20 +40,20 @@ namespace ermeX.Tests.WorldGateTests
 
    
 
-        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Can_Register_Message_Suscription_To_Object(
             DbEngineType dbEngine)
         {
             DoTestRegisterMessage(dbEngine, true);
         }
 
-        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Can_Register_Message_Suscription_To_Type(DbEngineType dbEngine)
         {
             DoTestRegisterMessage(dbEngine, false);
         }
 
-        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Can_Register_Message_Suscription_To_SeveralTypes(
             DbEngineType dbEngine)
         {
@@ -66,7 +66,7 @@ namespace ermeX.Tests.WorldGateTests
             AssertIsSubscribed(typeof (MessageB), dbEngine,1);
         }
 
-        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Can_Register_Several_Message_Suscriptions_To_SameType(
             DbEngineType dbEngine)
         {
@@ -82,7 +82,7 @@ namespace ermeX.Tests.WorldGateTests
         }
 
 
-        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Cant_Register_Message_Suscription_To_WrongType(
             DbEngineType dbEngine)
         {
@@ -135,7 +135,7 @@ namespace ermeX.Tests.WorldGateTests
             Assert.IsTrue(outgoingSubscription.BizMessageFullTypeName == messageType.FullName);
 
         }
-        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Can_RegisterSuscription(DbEngineType dbEngine)
         {
             var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);

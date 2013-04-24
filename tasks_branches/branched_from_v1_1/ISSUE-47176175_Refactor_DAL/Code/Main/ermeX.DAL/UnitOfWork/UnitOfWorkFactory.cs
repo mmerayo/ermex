@@ -17,8 +17,8 @@ namespace ermeX.DAL.UnitOfWork
 	internal class UnitOfWorkFactory : IUnitOfWorkFactory
 	{
 		private static readonly ILog Logger = LogManager.GetLogger(typeof (UnitOfWorkFactory).FullName);
-		private readonly ISessionProvider _sessionFactory;
-		private readonly IStorageOperationRetryStrategy _retryStrategy;
+		private ISessionProvider _sessionFactory;
+		private IStorageOperationRetryStrategy _retryStrategy;
 
 		[Inject]
 		public UnitOfWorkFactory(ISessionProvider sessionProvider, IDalSettings settings,
@@ -29,6 +29,14 @@ namespace ermeX.DAL.UnitOfWork
 			ReadOnlyTransactionsProvider = readTransactionsProvider;
 			WrittableTransactionsProvider = writeTransactionProvider;
 			_sessionFactory = sessionProvider;
+
+			SetRetryStrategy(settings);
+		}
+
+		private void SetRetryStrategy(IDalSettings settings)
+		{
+			if (settings == null)
+				return;
 
 			const int retriesDeadlock = 15; //TODO: TO DAL SETTINGS with default value
 			const int retriesTimeout = 15;
@@ -88,10 +96,10 @@ namespace ermeX.DAL.UnitOfWork
 				}
 				catch (ADOException e)
 				{
-					
+
 					var dbException = ADOExceptionHelper.ExtractDbException(e);
 
-					if (_retryStrategy.Retry(dbException))
+					if (_retryStrategy != null && _retryStrategy.Retry(dbException))
 					{
 						Logger.DebugFormat("ExecuteInUnitOfWork: Retrying - AppDomain: {0} -Thread: {1}", AppDomain.CurrentDomain.Id,
 						                   Thread.CurrentThread.ManagedThreadId);
@@ -102,6 +110,23 @@ namespace ermeX.DAL.UnitOfWork
 					Logger.Error("ExecuteInUnitOfWork: wont be retried");
 
 					throw;
+				}
+				catch (TransactionException ex)
+				{
+					Logger.ErrorFormat("ExecuteInUnitOfWork: AppDomain: {0} - Thread: {1} - Exception: {2}", AppDomain.CurrentDomain.Id,
+						                   Thread.CurrentThread.ManagedThreadId,ex.ToString());
+					
+					//TODO: HANDLE OR REMOVE
+					//if (_retryStrategy != null && _retryStrategy.Retry(ex))
+					//{
+					//    Logger.DebugFormat("ExecuteInUnitOfWork: Retrying - AppDomain: {0} -Thread: {1}", AppDomain.CurrentDomain.Id,
+					//                       Thread.CurrentThread.ManagedThreadId);
+					//    Thread.Sleep(millisecondsRetry*4);
+					//    continue;
+					//}
+
+					//Logger.Error("ExecuteInUnitOfWork: wont be retried");
+
 				}
 				catch (Exception ex)
 				{
@@ -115,6 +140,7 @@ namespace ermeX.DAL.UnitOfWork
 		private interface IStorageOperationRetryStrategy
 		{
 			bool Retry(DbException dbException);
+			bool Retry(TransactionException dbException);
 		}
 
 		private class SqlServerRetryPolicy : IStorageOperationRetryStrategy
@@ -139,6 +165,11 @@ namespace ermeX.DAL.UnitOfWork
 					throw new ArgumentException("dbException must be a not null SqlException");
 
 				return NeedRetry(sqlException);
+			}
+
+			public bool Retry(TransactionException dbException)
+			{
+				return --_triesDeadlock > 0;
 			}
 
 			private bool NeedRetry(SqlException ex)
@@ -176,6 +207,11 @@ namespace ermeX.DAL.UnitOfWork
 					throw dbException;
 				
 				return NeedRetry(dbException);
+			}
+
+			public bool Retry(TransactionException dbException)
+			{
+				return --_triesDeadlock > 0;
 			}
 
 			private bool NeedRetry(DbException ex)

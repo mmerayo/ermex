@@ -55,7 +55,7 @@ namespace ermeX.Tests.WorldGateTests
         }
         #endregion
         
-        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void RegistersSystemSuscriptionsStartUp(DbEngineType dbEngine)
         { 
 

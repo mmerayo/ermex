@@ -27,7 +27,7 @@ namespace ermeX.DAL.Commands.Component
 
 		public void SetComponentRunningStatus(Guid componentId, ComponentStatus newStatus, bool exchangedDefinitions = false)
 		{
-			Logger.DebugFormat(
+			Logger.TraceFormat(
 				"SetComponentRunningStatus. AppDomain: {0} - ThreadId: {1}  componentId={2}, newStatus={3}, exchangedDefinitions={4}",
 				AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId,
 				componentId, newStatus, exchangedDefinitions);
@@ -44,7 +44,7 @@ namespace ermeX.DAL.Commands.Component
 
 		public void Save(AppComponent component)
 		{
-			Logger.DebugFormat("Save. component={0}", component);
+			Logger.TraceFormat("Save. AppDomain={0} - Thread={1} - component={2}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId, component);
 			_factory.ExecuteInUnitOfWork(false, uow => _repository.Save(uow, component));
 		}
 	}

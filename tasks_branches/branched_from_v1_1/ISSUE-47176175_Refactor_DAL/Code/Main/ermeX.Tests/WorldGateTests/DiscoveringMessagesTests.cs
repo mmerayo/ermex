@@ -81,7 +81,7 @@ namespace ermeX.Tests.WorldGateTests
 
         #region Basic
 
-        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Can_Subscribe_To_Messages_In_Assembly(DbEngineType dbEngine)
         {
             var actual = DoCanSubscribeTest(dbEngine, new[]
@@ -112,7 +112,7 @@ namespace ermeX.Tests.WorldGateTests
         }
 
 
-        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Can_Subscribe_To_Messages_In_Assembly_WithoutExcludingTypes(
             DbEngineType dbEngine)
         {
@@ -121,7 +121,7 @@ namespace ermeX.Tests.WorldGateTests
         }
 
 
-        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Can_Subscribe_To_Messages_In_Assembly_When_HandlerHasSeveralInterfaces(
             DbEngineType dbEngine)
         {
@@ -137,7 +137,7 @@ namespace ermeX.Tests.WorldGateTests
             Assert.AreEqual(actual[1].HandlerType, typeof (ComposedMessageHandler).FullName);
         }
 
-        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Can_Subscribe_To_Messages_In_Assembly_When_HandlerHasNonHandlerInterfaces(
             DbEngineType dbEngine)
         {
@@ -153,7 +153,7 @@ namespace ermeX.Tests.WorldGateTests
             Assert.AreEqual(incomingMessageSuscription.HandlerType, typeof (AnotherMessageHandlerA).FullName);
         }
 
-        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.DbInMemory)]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Can_Late_Subscribe_To_Messages_When_Handler_In_Other_Assemblies(DbEngineType dbEngine)
         {
             

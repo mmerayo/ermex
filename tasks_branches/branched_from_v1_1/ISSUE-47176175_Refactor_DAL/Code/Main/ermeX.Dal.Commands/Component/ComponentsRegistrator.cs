@@ -50,7 +50,8 @@ namespace ermeX.DAL.Commands.Component
 
 		public bool CreateRemoteComponent(Guid remoteComponentId, string ip, int port)
 		{
-			Logger.DebugFormat("CreateRemoteComponent. remoteComponentId={0}, ip={1}, port={2}",remoteComponentId,ip,port);
+			Logger.TraceFormat("CreateRemoteComponent. AppDomain={0} - Thread={1} - remoteComponentId={2}, ip={3}, port={4}",
+			                   AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId, remoteComponentId, ip, port);
 			bool result=false;
 			_factory.ExecuteInUnitOfWork(false, uow =>
 				{
@@ -65,7 +66,7 @@ namespace ermeX.DAL.Commands.Component
 
 		public void CreateLocalComponent(ushort port)
 		{
-			Logger.DebugFormat("CreateLocalComponent. port={0}", port);
+			Logger.TraceFormat("CreateLocalComponent. AppDomain={0} - Thread={1} - port={2}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId, port);
 			_factory.ExecuteInUnitOfWork(false, (uow) =>
 					CreateLocalComponent(uow,port)
 				);
