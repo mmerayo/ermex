@@ -32,19 +32,19 @@ namespace ermeX.DAL.Commands.Connectivity
 
 		public void RemoveComponentDetails(Guid componentId)
 		{
-			Logger.DebugFormat("RemoveComponentDetails. componentId={0}", componentId);
+			Logger.TraceFormat("RemoveComponentDetails. AppDomain={0} - Thread={1} -componentId={2}",AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId, componentId);
 			_factory.ExecuteInUnitOfWork(false,uow => _repository.Remove(uow, x => x.ServerId == componentId));
 		}
 
 		public void RemoveLocalComponentDetails()
 		{
-			Logger.Debug("RemoveLocalComponentDetails");
+			Logger.TraceFormat("RemoveLocalComponentDetails. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			_factory.ExecuteInUnitOfWork(false, uow => _repository.Remove(uow, x => x.ServerId == _settings.ComponentId));
 		}
 
 		public ConnectivityDetails CreateComponentConnectivityDetails(ushort port, bool asLocal = true)
 		{
-			Logger.DebugFormat("CreateComponentConnectivityDetails. port={0} - asLocal={1}", port,asLocal);
+			Logger.TraceFormat("CreateComponentConnectivityDetails.AppDomain={0} - Thread={1} - port={2} - asLocal={3}",AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId, port, asLocal);
 			ConnectivityDetails componentConnectivityDetails = null;
 			_factory.ExecuteInUnitOfWork(false,
 				uow => componentConnectivityDetails = CreateComponentConnectivityDetails(uow, port, asLocal));
@@ -53,7 +53,7 @@ namespace ermeX.DAL.Commands.Connectivity
 
 		public ConnectivityDetails CreateComponentConnectivityDetails(IUnitOfWork unitOfWork, ushort port, bool asLocal = true)
 		{
-			Logger.DebugFormat("CreateComponentConnectivityDetails. port={0}, asLocal={1}", port, asLocal);
+			Logger.DebugFormat("CreateComponentConnectivityDetails.AppDomain={0} - Thread={1} - port={2}, asLocal={3}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId,port, asLocal);
 			var connectivityDetails = new ConnectivityDetails
 				{
 					ComponentOwner = _settings.ComponentId,

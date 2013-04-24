@@ -26,9 +26,11 @@ namespace ermeX.Tests.Common.SettingsProviders
 {
 	internal class TestCaseSources
 	{
-		public const string DbInMemory = "InMemoryDb";
-		public const string DbPersistent = "SqliteDb";
-		public const string DbSqlServer = "SqlServerDb";
+		public const string OptionDbInMemory = "InMemoryDb";
+		public const string OptionDbPersistent = "SqliteDb";
+		public const string OptionDbSqlServer = "SqlServerDb";
+		public const string OptionAllDbs = "AllDbs";
+		
 
 		public static IEnumerable<DbEngineType> InMemoryDb()
 		{
@@ -47,6 +49,7 @@ namespace ermeX.Tests.Common.SettingsProviders
 
 		public static IEnumerable<DbEngineType> AllDbs()
 		{
+			yield return DbEngineType.SqlServer2008;
 			yield return DbEngineType.Sqlite;
 			yield return DbEngineType.SqliteInMemory;
 			//Array enumValues = typeof (DbEngineType).GetEnumValues();

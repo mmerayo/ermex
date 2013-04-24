@@ -76,7 +76,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			_messageReceived.Set();
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void SendsEnqueued_Items(DbEngineType dbEngine)
 		{
 			IServiceProxy mockedService;
@@ -105,7 +105,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void AfterSend_Items_MarksThemAsSent(DbEngineType dbEngine)
 		{
 			IServiceProxy mockedService;
@@ -135,7 +135,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void DontSend_Expired_Items(DbEngineType dbEngine)
 		{
 			IServiceProxy mockedService;
@@ -166,7 +166,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			Assert.AreEqual(Message.MessageStatus.SenderFailed, actual.Status);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void WhenSend_Fails_Increases_Tries_And_ReEnqueuesItem(DbEngineType dbEngine)
 		{
 			IServiceProxy mockedService;
@@ -201,7 +201,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 		}
 
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void RestoresPending_MessagesFrom_PreviousSessions_OnStartUp(DbEngineType dbEngine)
 		{
 			IServiceProxy mockedService;

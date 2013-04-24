@@ -72,7 +72,7 @@ namespace ermeX.Tests.Services.Sending.Client
 		}
 
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanInvokeSend(DbEngineType engineType)
 		{
 			using (ServiceProxy target = GetTarget())
@@ -88,7 +88,7 @@ namespace ermeX.Tests.Services.Sending.Client
 
 
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void WhenAllEndPointsFailed_CanBeReInvoked(DbEngineType engineType)
 		{
 			MockConnectivityProvider connMgr;
@@ -115,7 +115,7 @@ namespace ermeX.Tests.Services.Sending.Client
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void WhenAllEndPointsFailed__ServiceResultError(DbEngineType engineType)
 		{
 			MockConnectivityProvider connMgr;
@@ -136,7 +136,7 @@ namespace ermeX.Tests.Services.Sending.Client
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void WhenEndpointFailedTry_WithAllTheRestOfEndpoints(DbEngineType engineType)
 		{
 			MockConnectivityProvider connMgr;
@@ -159,7 +159,7 @@ namespace ermeX.Tests.Services.Sending.Client
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void WhenEndpointRaisesExceptionTry_WithAllTheRestOfEndpoints(DbEngineType engineType)
 		{
 			MockConnectivityProvider connMgr;
@@ -173,7 +173,7 @@ namespace ermeX.Tests.Services.Sending.Client
 			}
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void WhenThereAreNotEndpointsItReturns_ServiceResultError(DbEngineType engineType)
 		{
 			using (ServiceProxy target = GetTarget(false))

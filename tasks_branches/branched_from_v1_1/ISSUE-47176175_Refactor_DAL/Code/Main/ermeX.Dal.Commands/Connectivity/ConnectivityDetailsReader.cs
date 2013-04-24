@@ -26,7 +26,7 @@ namespace ermeX.DAL.Commands.Connectivity
 
 		public ConnectivityDetails Fetch(Guid componentId)
 		{
-			Logger.DebugFormat("Fetch.componentId={0}", componentId);
+			Logger.TraceFormat("Fetch. AppDomain={0} - Thread={1} - componentId={2}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId, componentId);
 			ConnectivityDetails result=null;
 			_factory.ExecuteInUnitOfWork(true,uow => result = _repository.SingleOrDefault(uow, x => x.ServerId == componentId));
 			return result;

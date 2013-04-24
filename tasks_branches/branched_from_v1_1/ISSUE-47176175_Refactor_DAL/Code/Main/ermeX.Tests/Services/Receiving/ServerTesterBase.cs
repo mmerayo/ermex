@@ -214,7 +214,7 @@ namespace ermeX.Tests.Services
 		protected abstract IServer GetServerInstance(ServerInfo serverInfo);
 		protected abstract IMockTestClient GetTestClientInstance(ServerInfo serverInfo);
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanReceiveChunkedMessage(DbEngineType dbEngine)
 			//TODO: CHECK THIS DBENGINES
 		{
@@ -222,7 +222,7 @@ namespace ermeX.Tests.Services
 			DoCanReceiveMessageTest(true);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanReceiveMessage(DbEngineType dbEngine)
 			//TODO: CHECK THIS DBENGINES
 		{
@@ -230,7 +230,7 @@ namespace ermeX.Tests.Services
 			DoCanReceiveMessageTest(false);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanReceiveMessageCollection(DbEngineType dbEngine)
 		{
 			const int messagesNum = 5000;
@@ -239,7 +239,7 @@ namespace ermeX.Tests.Services
 			DoCanReceiveCollectionMessageTest(false, messagesNum);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanReceiveSeveralMessages(DbEngineType dbEngine)
 		{
 			const int messagesNum = 600;

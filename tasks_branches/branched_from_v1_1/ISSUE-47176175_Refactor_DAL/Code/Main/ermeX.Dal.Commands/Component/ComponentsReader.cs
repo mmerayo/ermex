@@ -23,7 +23,7 @@ namespace ermeX.DAL.Commands.Component
 		public ComponentsReader(IReadOnlyRepository<AppComponent> repository, IUnitOfWorkFactory factory,
 		                        IComponentSettings settings)
 		{
-			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
+			Logger.DebugFormat("cctor. AppDomain={0} - Thread={1}",AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			
 			_factory = factory;
 			_settings = settings;
@@ -32,7 +32,7 @@ namespace ermeX.DAL.Commands.Component
 
 		public IEnumerable<AppComponent> FetchAll()
 		{
-			Logger.Debug("FetchAll");
+			Logger.TraceFormat("FetchAll. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			List<AppComponent> result=null;
 			_factory.ExecuteInUnitOfWork(true,uow => result = Repository.FetchAll(uow).ToList());
 			
@@ -41,7 +41,7 @@ namespace ermeX.DAL.Commands.Component
 
 		public IEnumerable<AppComponent> FetchOtherComponents()
 		{
-			Logger.Debug("FetchOtherComponents");
+			Logger.TraceFormat("FetchOtherComponents. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			List<AppComponent> result=null;
 			_factory.ExecuteInUnitOfWork(true,
 				uow => result = Repository.Where(uow, x => x.ComponentId != _settings.ComponentId).ToList());
@@ -51,7 +51,7 @@ namespace ermeX.DAL.Commands.Component
 
 		public IEnumerable<AppComponent> FetchOtherComponentsNotExchangedDefinitions(bool running = false)
 		{
-			Logger.DebugFormat("FetchOtherComponentsNotExchangedDefinitions. running={0}", running);
+			Logger.TraceFormat("FetchOtherComponentsNotExchangedDefinitions. AppDomain={0} - Thread={1} - running={2}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId,running);
 			List<AppComponent> result=null;
 			_factory.ExecuteInUnitOfWork(true,
 				uow =>
@@ -64,7 +64,7 @@ namespace ermeX.DAL.Commands.Component
 
 		public AppComponent Fetch(Guid componentId)
 		{
-			Logger.DebugFormat("Fetch. componentId={0}", componentId);
+			Logger.TraceFormat("FetchAll. AppDomain={0} - Thread={1} - componentId={2}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId,componentId);
 			AppComponent result=null;
 			_factory.ExecuteInUnitOfWork(true, uow => result = Repository.SingleOrDefault(uow, x => x.ComponentId == componentId));
 			

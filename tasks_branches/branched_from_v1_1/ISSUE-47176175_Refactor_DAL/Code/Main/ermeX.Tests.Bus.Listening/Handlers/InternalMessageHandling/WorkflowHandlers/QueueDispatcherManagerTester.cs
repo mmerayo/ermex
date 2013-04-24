@@ -97,7 +97,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 
 
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void Can_Dispatch_Messages(DbEngineType dbEngineType)
 		{
 			IUnitOfWorkFactory factory = GetUnitOfWorkFactory(dbEngineType);
@@ -143,13 +143,13 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 		}
 
 		[Ignore("Its covered implicitly in other test cases")]
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void Removes_Dispatched_Messages(DbEngineType dbEngineType)
 		{
 			throw new NotImplementedException();
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void Retries_Failed_Messages(DbEngineType dbEngineType)
 		{
 			IUnitOfWorkFactory factory = GetUnitOfWorkFactory(dbEngineType);
@@ -191,7 +191,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 			Assert.IsNull(byId);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void Can_DeliverMany_Messages_OrderedByGeneration(DbEngineType dbEngineType)
 		{
 			IUnitOfWorkFactory factory = GetUnitOfWorkFactory(dbEngineType);
@@ -250,14 +250,14 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 		}
 
 		[Ignore("This class will be upgraded ASAP. Its not worth to test more with the current resources")]
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void Can_DeliverRespecting_Latency(DbEngineType dbEngineType)
 		{
 			throw new NotImplementedException();
 		}
 
 		[Ignore("This class will be upgraded ASAP. Its not worth to test more with the current resources")]
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void When_Disposed_Removes_ScheduledJobs(DbEngineType dbEngineType)
 		{
 			throw new NotImplementedException();

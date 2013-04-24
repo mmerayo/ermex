@@ -19,14 +19,14 @@ namespace ermeX.DAL.Commands.Component
 		[Inject]
 		public LatencyUpdater(IPersistRepository<AppComponent> repository, IUnitOfWorkFactory factory)
 		{
-			Logger.DebugFormat("cctor. Thread={0}", Thread.CurrentThread.ManagedThreadId);
+			Logger.TraceFormat("cctor. Thread={0}", Thread.CurrentThread.ManagedThreadId);
 			_factory = factory;
 			Repository = repository;
 		}
 
 		public void RegisterComponentRequestLatency(Guid remoteComponentId, int requestMilliseconds)
 		{
-			Logger.DebugFormat("RegisterComponentRequestLatency. AppDomain:{0} - threadId={1} - remoteComponentId:{2}, requestMilliseconds:{3}",
+			Logger.TraceFormat("RegisterComponentRequestLatency. AppDomain:{0} - threadId={1} - remoteComponentId:{2}, requestMilliseconds:{3}",
 				AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId,
 			                   remoteComponentId, requestMilliseconds);
 			var senderComponent = Repository.SingleOrDefault(x => x.ComponentId == remoteComponentId);

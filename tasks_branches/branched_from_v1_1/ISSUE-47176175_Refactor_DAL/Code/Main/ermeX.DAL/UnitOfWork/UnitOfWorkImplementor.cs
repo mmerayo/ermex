@@ -47,6 +47,7 @@ namespace ermeX.DAL.UnitOfWork
 					if (_transaction != null)
 						_transaction.Dispose();
 				}
+				_session.Connection.Close();
 				_session.Dispose();
 			}
 			else

@@ -3,8 +3,11 @@ using Moq;
 using NHibernate;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings;
+using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.Providers;
+using ermeX.DAL.Transactions;
 using ermeX.DAL.UnitOfWork;
+using ermeX.Tests.Common.SettingsProviders;
 
 namespace ermeX.Tests.DAL.DataAccess.UoW
 {
@@ -45,7 +48,10 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 			public void Setup()
 			{
 				_sessionProvider=new Mock<ISessionProvider>();
-				Factory=new UnitOfWorkFactory(_sessionProvider.Object,null,null,null);//TODO:
+				var genericTransactionProvider = new GenericTransactionProvider();
+				Factory = new UnitOfWorkFactory(_sessionProvider.Object,
+				                                null,
+				                                genericTransactionProvider, genericTransactionProvider);
 			}
 
 			public void WithSession()

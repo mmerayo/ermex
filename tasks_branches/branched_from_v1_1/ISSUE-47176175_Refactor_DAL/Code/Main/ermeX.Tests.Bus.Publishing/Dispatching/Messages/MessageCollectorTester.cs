@@ -74,7 +74,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			_messageReceived.Set();
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void ComponentStopsOnDisposal(DbEngineType dbEngine)
 		{
 			IMessageDistributor mockedDistributor;
@@ -85,7 +85,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			Assert.AreEqual(DispatcherStatus.Stopped, target.Status);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanDispatchMessage(DbEngineType dbEngine)
 		{
 			IMessageDistributor mockedDistributor;
@@ -112,7 +112,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			Assert.AreEqual(expected, outgoingMessage.ToBusMessage()); //asserts is the same pushed one
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void RemovesExpiredItems(DbEngineType dbEngine)
 		{
 
@@ -142,7 +142,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			Assert.IsTrue(!outgoingMessagesDataSource.Any()); //asserts it was removed
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void SendsExistingItemsOnStart(DbEngineType dbEngine)
 		{
 
@@ -184,7 +184,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			public string TheData { get; set; }
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void SendsExistingItemsOnSubscriptionReceived(DbEngineType dbEngine)
 		{
 

@@ -26,7 +26,7 @@ namespace ermeX.Tests.DAL.DataAccess.UoW
 		{
 			_testContext.WithTransactionStarted(started);
 
-			var target = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session,null);//TODO:
+			var target = new UnitOfWorkImplementor(_testContext.Factory, _testContext.Session,new GenericTransactionProvider());//TODO:
 			var transaction=(IErmexTransaction)PrivateInspector.GetPrivateVariableValue(target, "_transaction");
 			if(!started)
 				Assert.IsNotNull(transaction);

@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Common.Logging;
 using Ninject;
@@ -24,6 +25,7 @@ namespace ermeX.DAL.Commands.Component
 
 		public int GetMaxLatency()
 		{
+			Logger.TraceFormat("GetMaxLatency. AppDomain={0} - Thread={1} ", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			Logger.Debug("GetMaxLatency");
 			int result = 0;
 			_factory.ExecuteInUnitOfWork(true, uow => result = Repository.GetMax<int>(uow, "Latency"));

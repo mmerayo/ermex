@@ -66,7 +66,7 @@ namespace ermeX.Tests.WorldGateTests
 
 		
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void Can_Receive_PublishedMessage(DbEngineType dbEngine)
 		{
 			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
@@ -87,7 +87,7 @@ namespace ermeX.Tests.WorldGateTests
 			Assert.IsTrue(lastEntityReceived.Id == dummyDomainEntity.Id);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void Can_Receive_Several_Messages(DbEngineType dbEngine)
 		{
 			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
@@ -121,7 +121,7 @@ namespace ermeX.Tests.WorldGateTests
 			Assert.IsTrue(lastEntityReceived2.Data == dummyDomainEntity2.Data);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void BaseTypeHandler_Receives_Inherited_Message(DbEngineType dbEngine)
 		{
 			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
@@ -147,7 +147,7 @@ namespace ermeX.Tests.WorldGateTests
 			Assert.IsTrue(lastEntityReceived.DateTime == dummyDomainEntity.DateTime);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void BaseTypeHandler_And_ConcreteHandlerType_Receives_Inherited_Message(DbEngineType dbEngine)
 		{
 			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
@@ -183,7 +183,7 @@ namespace ermeX.Tests.WorldGateTests
 			Assert.IsTrue(first.DateTime == second.DateTime);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.DbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void InterfaceTypeHandler_And_ConcreteHandlerType_Receives_Inherited_Message(DbEngineType dbEngine)
 		{
 			var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine);
