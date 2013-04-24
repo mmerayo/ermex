@@ -37,27 +37,28 @@ namespace ermeX.DAL.Commands.Services
 			if(svc.ComponentOwner==_settings.ComponentId)
 				throw new InvalidOperationException("Cannot import one service from the same component");
 			const string RemoteTypeImplementorValue = "<<REMOTE>>";
+			svc.Id = 0;
 			svc.ServiceImplementationTypeName = RemoteTypeImplementorValue;
 			svc.ComponentOwner = _settings.ComponentId;
 			//TODO: FIX LOGICAL EXPRESSIONHELPER FOR THIS ENTITY_factory.ExecuteInUnitOfWork(false, uow => _repository.Save(uow, svc));
-
-			using (var uow = _factory.Create(false))
-			{
-				Expression<Func<ServiceDetails, bool>> expression = x => x.OperationIdentifier == svc.OperationIdentifier && x.Publisher == svc.Publisher;
-				if (_repository.Any(uow, expression))
-				{
-					ServiceDetails serviceDetails = _repository.Single(uow, expression);
-					svc.Id = serviceDetails.Id;
-					uow.Session.Merge(svc);
-					uow.Flush();
-				}
-				else
-				{
-					svc.Id = 0;
-				}
-				_repository.Save(uow, svc);
-				uow.Commit();
-			}
+			_factory.ExecuteInUnitOfWork(false, uow=> _repository.Save(uow,svc));
+			//using (var uow = _factory.Create(false))
+			//{
+			//    Expression<Func<ServiceDetails, bool>> expression = x => x.OperationIdentifier == svc.OperationIdentifier && x.Publisher == svc.Publisher;
+			//    if (_repository.Any(uow, expression))
+			//    {
+			//        ServiceDetails serviceDetails = _repository.Single(uow, expression);
+			//        svc.Id = serviceDetails.Id;
+			//        uow.Session.Merge(svc);
+			//        uow.Flush();
+			//    }
+			//    else
+			//    {
+			//        svc.Id = 0;
+			//    }
+			//    _repository.Save(uow, svc);
+			//    uow.Commit();
+			//}
 		}
 
 		public void Save(ServiceDetails serviceDetails)
