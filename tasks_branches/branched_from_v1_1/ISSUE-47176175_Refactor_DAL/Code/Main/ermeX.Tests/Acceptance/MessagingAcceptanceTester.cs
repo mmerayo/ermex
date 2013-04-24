@@ -683,7 +683,7 @@ namespace ermeX.Tests.Acceptance
                         Thread.Sleep(1);
                     }
 
-                    TimeSpan fromSeconds = TimeSpan.FromSeconds(60+ AppComponent.DefaultLatencyMilliseconds/1000 + numberOfMessages*3);
+                    TimeSpan fromSeconds = TimeSpan.FromSeconds( AppComponent.DefaultLatencyMilliseconds/1000 + numberOfMessages*3);
                     finishedEvent.WaitOne(fromSeconds);
 
 					//finishedEvent.WaitOne(TimeSpan.FromMinutes(60));

@@ -73,8 +73,8 @@ namespace ermeX.DAL.Repository
 		{
 			return x => x.ComponentOwner == e.ComponentOwner
 			            && x.OperationIdentifier == e.OperationIdentifier
-			            && x.ServiceInterfaceTypeName == e.ServiceInterfaceTypeName
-			            && x.ServiceImplementationMethodName == e.ServiceImplementationMethodName
+						//&& x.ServiceInterfaceTypeName == e.ServiceInterfaceTypeName
+						//&& x.ServiceImplementationMethodName == e.ServiceImplementationMethodName
 			            && x.Publisher == e.Publisher;
 		}
 	}
