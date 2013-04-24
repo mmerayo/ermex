@@ -28,7 +28,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public void RemoveExpiredMessages(TimeSpan expirationTime)
 		{
-			Logger.DebugFormat("RemoveExpiredMessages. expirationTime={0}",expirationTime);
+			Logger.TraceFormat("RemoveExpiredMessages. expirationTime={0} - AppDomain={1} - Thread={2}", expirationTime,AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId);
 			_factory.ExecuteInUnitOfWork(false, uow =>
 				{
 					DateTime dateTime = DateTime.UtcNow - expirationTime;
@@ -38,7 +38,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public void Save(OutgoingMessage message)
 		{
-			Logger.DebugFormat("Save. message={0}", message);
+			Logger.TraceFormat("Save.AppDomain={0} - Thread={1} -  message={2}",AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId, message);
 			if (message.Status == Message.MessageStatus.NotSet)
 			{
 				Logger.Fatal("Save: message status wasnt set");

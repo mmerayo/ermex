@@ -39,7 +39,7 @@ namespace ermeX.DAL.Commands.Services
 
 		public ServiceDetails GetByOperationId(Guid publisher, Guid operationId)
 		{
-			Logger.DebugFormat("GetByOperationId. publisher={0}, operationId={1}",publisher,operationId);
+			Logger.TraceFormat("GetByOperationId. publisher={0}, operationId={1} - AppDomain={2} - Thread={3}",publisher,operationId,AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId);
 
 			ServiceDetails result = null;
 
@@ -56,7 +56,7 @@ namespace ermeX.DAL.Commands.Services
 
 		public IEnumerable<ServiceDetails> GetByInterfaceType(string interfaceTypeFullName)
 		{
-			Logger.DebugFormat("GetByInterfaceType. interfaceTypeFullName={0}", interfaceTypeFullName);
+			Logger.TraceFormat("GetByInterfaceType. interfaceTypeFullName={0}- AppDomain={1} - Thread={2}", interfaceTypeFullName, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 
 			if (string.IsNullOrEmpty(interfaceTypeFullName)) throw new ArgumentNullException("interfaceTypeFullName");
 			IEnumerable<ServiceDetails> result = null;
@@ -67,7 +67,7 @@ namespace ermeX.DAL.Commands.Services
 
 		public IEnumerable<ServiceDetails> GetByMethodName(string interfaceTypeName, string methodName)
 		{
-			Logger.DebugFormat("GetByMethodName. interfaceTypeName={0}, methodName={1}", interfaceTypeName, methodName);
+			Logger.TraceFormat("GetByMethodName. interfaceTypeName={0}, methodName={1} -AppDomain={2} - Thread={3} ", interfaceTypeName, methodName, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			if (string.IsNullOrEmpty(interfaceTypeName)) throw new ArgumentNullException("interfaceTypeName");
 			IEnumerable<ServiceDetails> result = null;
 
@@ -80,7 +80,7 @@ namespace ermeX.DAL.Commands.Services
 
 		public ServiceDetails GetByMethodName(string interfaceTypeName, string methodName, Guid publisherComponent)
 		{
-			Logger.DebugFormat("GetByMethodName. interfaceTypeName={0}, methodName={1}, publisherComponent={2}", interfaceTypeName, methodName,publisherComponent);
+			Logger.TraceFormat("GetByMethodName. interfaceTypeName={0}, methodName={1}, publisherComponent={2} - AppDomain={3} - Thread={4}", interfaceTypeName, methodName, publisherComponent, AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			if (string.IsNullOrEmpty(interfaceTypeName)) throw new ArgumentNullException("interfaceTypeName");
 			ServiceDetails result = null;
 			_factory.ExecuteInUnitOfWork(true,
@@ -93,7 +93,7 @@ namespace ermeX.DAL.Commands.Services
 
 		public IEnumerable<ServiceDetails> GetLocalCustomServices()
 		{
-			Logger.Debug("GetLocalCustomServices");
+			Logger.TraceFormat("GetLocalCustomServices. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 			IEnumerable<ServiceDetails> result = null;
 			_factory.ExecuteInUnitOfWork(true, uow => result = _repository.Where(uow, x => x.Publisher == _settings.ComponentId
 			                                                                         && x.IsSystemService == false).ToList());
