@@ -41,9 +41,9 @@ namespace ermeX.Tests.Acceptance
 	[TestFixture]
 	internal sealed class HandshakeTester : AcceptanceTester
 	{
-		private const int BottomPort = 9000;
+		private const int BottomPort = 51245;
 
-		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbPersistent)]
 		public void SeveralComponents_Using_SameFriend_CanStart_AtSameTime(DbEngineType engineType)
 		{
 			//arrange

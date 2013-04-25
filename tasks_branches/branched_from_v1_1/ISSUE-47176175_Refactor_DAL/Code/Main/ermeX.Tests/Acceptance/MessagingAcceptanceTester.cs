@@ -194,7 +194,7 @@ namespace ermeX.Tests.Acceptance
         {
             //arrange
             var senderListeningPort = new TestPort(9000);
-            var receiverListeningPort = new TestPort(9000); 
+            var receiverListeningPort = new TestPort(21000); 
 
             string dbConnString = TestSettingsProvider.GetConnString(engineType);
 
