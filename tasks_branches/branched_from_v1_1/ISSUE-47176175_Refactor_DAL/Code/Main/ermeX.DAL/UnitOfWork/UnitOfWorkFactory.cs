@@ -122,6 +122,8 @@ namespace ermeX.DAL.UnitOfWork
 						Thread.Sleep(millisecondsRetry);
 						continue;
 					}
+					Logger.Error("ExecuteInUnitOfWork: wont be retried");
+					throw;
 				}
 				catch (TransactionException ex)
 				{
@@ -129,15 +131,15 @@ namespace ermeX.DAL.UnitOfWork
 						                   Thread.CurrentThread.ManagedThreadId,ex.ToString());
 					
 					//TODO: HANDLE OR REMOVE
-					//if (_retryStrategy != null && _retryStrategy.Retry(ex))
-					//{
-					//    Logger.DebugFormat("ExecuteInUnitOfWork: Retrying - AppDomain: {0} -Thread: {1}", AppDomain.CurrentDomain.Id,
-					//                       Thread.CurrentThread.ManagedThreadId);
-					//    Thread.Sleep(millisecondsRetry*4);
-					//    continue;
-					//}
-
-					//Logger.Error("ExecuteInUnitOfWork: wont be retried");
+					if (_retryStrategy != null && _retryStrategy.Retry(ex))
+					{
+						Logger.DebugFormat("ExecuteInUnitOfWork: Retrying - AppDomain: {0} -Thread: {1}", AppDomain.CurrentDomain.Id,
+										   Thread.CurrentThread.ManagedThreadId);
+						Thread.Sleep(millisecondsRetry * 4);
+						continue;
+					}
+					Logger.Error("ExecuteInUnitOfWork: wont be retried");
+					throw;
 
 				}
 				catch (Exception ex)

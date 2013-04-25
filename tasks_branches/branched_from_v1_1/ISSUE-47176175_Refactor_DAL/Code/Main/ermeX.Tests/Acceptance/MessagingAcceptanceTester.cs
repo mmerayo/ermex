@@ -82,10 +82,9 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbPersistent)]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionAllDbs)]
         public void SeveralReceiversSendMessageAndReception(DbEngineType engineType)
         {
-
             //arrange
             ushort senderListeningPort = new TestPort(22000);
 			ushort receiver1ListeningPort = new TestPort(23000);
