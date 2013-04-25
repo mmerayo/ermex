@@ -82,7 +82,7 @@ namespace ermeX.Tests.Acceptance
             }
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionAllDbs)]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void SeveralReceiversSendMessageAndReception(DbEngineType engineType)
         {
             //arrange
