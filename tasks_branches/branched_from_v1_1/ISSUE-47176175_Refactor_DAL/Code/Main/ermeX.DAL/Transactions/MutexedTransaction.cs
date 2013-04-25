@@ -11,12 +11,14 @@ namespace ermeX.DAL.Transactions
 	{
 		private static readonly ILog Logger = LogManager.GetLogger(typeof(MutexedTransaction).FullName);
 		private Mutex _mutex;
+		private static readonly TimeSpan WaitForMutexTimeSpan= TimeSpan.FromSeconds(10);
 
 		public MutexedTransaction(string namedMutexName, ITransaction transaction):base(transaction)
 		{
 			_mutex = new Mutex(false, namedMutexName);
 			Logger.DebugFormat("cctor. Waiting for mutex={2}. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId, namedMutexName);
-			_mutex.WaitOne();
+			if(!_mutex.WaitOne(WaitForMutexTimeSpan))
+				throw new TransactionException("Could not obtain mutex on time"); //TODO: THROW custom transaction
 			Logger.DebugFormat("cctor. Start critical section mutex={2}. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId,namedMutexName);
 		}
 
