@@ -282,7 +282,7 @@ namespace ermeX.Tests.Common.DataAccess
 			var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>(factory);
 		    var componentSettings = GetComponentSettings();
 
-		    return new CanUpdateOutgoingMessagesSubscriptions(dataSource,factory,componentSettings,GetDomainNotifier());
+		    return new CanUpdateOutgoingMessagesSubscriptions(dataSource,factory,componentSettings,GetDomainNotifier(),new ExpressionsHelper());
 		}
 
 		protected IDomainObservable GetDomainNotifier()

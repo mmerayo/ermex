@@ -22,18 +22,21 @@ namespace ermeX.DAL.Commands.Subscriptions
 		private readonly IPersistRepository<OutgoingMessageSuscription> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;
+		private readonly IExpressionHelper<OutgoingMessageSuscription> _findByBizKeyExpression;
 		private readonly DomainNotifier _domainNotifier; //TODO: REMOVE THIS MECHANISM
 
 		[Inject]
 		public CanUpdateOutgoingMessagesSubscriptions(
 			IPersistRepository<OutgoingMessageSuscription> repository,
 			IUnitOfWorkFactory factory,
-			IComponentSettings settings, IDomainObservable domainNotifier )
+			IComponentSettings settings, IDomainObservable domainNotifier,
+			IExpressionHelper<OutgoingMessageSuscription> findByBizKeyExpression)
 		{
 			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_repository = repository;
 			_factory = factory;
 			_settings = settings;
+			_findByBizKeyExpression = findByBizKeyExpression;
 			_domainNotifier =(DomainNotifier) domainNotifier;
 		}
 
@@ -81,10 +84,15 @@ namespace ermeX.DAL.Commands.Subscriptions
 		{
 			susbcription.Id = 0;
 			susbcription.ComponentOwner = _settings.ComponentId;
+
+			var findByBizKey = _findByBizKeyExpression.GetFindByBizKey(susbcription);
+
+			var isNew = _repository.SingleOrDefault(uow,findByBizKey)==null;
+
 			_repository.Save(uow, susbcription);
 			
 			//TODO: THIS AND ITS MECHANISM MUST BE REMOVED when state machine is in place
-			_domainNotifier.Notify(NotifiableDalAction.Add,susbcription);
+			_domainNotifier.Notify(isNew? NotifiableDalAction.Add:NotifiableDalAction.Update,susbcription);
 		}
 
 

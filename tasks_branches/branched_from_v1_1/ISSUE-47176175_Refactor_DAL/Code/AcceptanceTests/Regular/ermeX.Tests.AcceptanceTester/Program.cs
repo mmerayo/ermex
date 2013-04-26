@@ -21,7 +21,7 @@ namespace ermeX.Tests.AcceptanceTester
             var testLoader = CreateTestLoader(args, out testParameters);
 
             bool watcherOn = testLoader.StartTest(isDirector, testParameters);
-
+	        Console.ReadKey();
 #if DEBUG
             if (isDirector &&  watcherOn)
                 Console.ReadKey();
