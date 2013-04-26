@@ -106,7 +106,22 @@ namespace ermeX.ConfigurationManagement
 
     	private static void EnsureIocAssembliesAreInDomain()
     	{
-    		TypesHelper.GetAssemblyFromDomain("ermeX.Dal.IoC");//TODO: ADD ALL or define the injections using another mechanism
+#if !DEBUG
+    		try
+    		{
+#endif
+    			TypesHelper.GetAssemblyFromDomain("ermeX.Dal.IoC");
+    			//TODO: ADD ALL or define the injections using another mechanism
+
+#if !DEBUG
+    		}
+    		catch
+    		{
+    			//swallow as could be merged
+    		}
+#endif
+
+
     	}
 
 
