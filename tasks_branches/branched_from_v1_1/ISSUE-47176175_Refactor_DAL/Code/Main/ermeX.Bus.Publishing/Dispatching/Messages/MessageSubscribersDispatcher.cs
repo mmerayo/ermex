@@ -113,7 +113,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 					if (SendData(messageToSend))
 					{
 						messageToSend.Status = Message.MessageStatus.SenderSent;
-						SystemTaskQueue.Instance.EnqueueItem(() => _outgoingQueueWritter.Save(messageToSend));
+						_outgoingQueueWritter.Save(messageToSend);
 						Logger.Info(
 							x => x("SUCCESS {0} Sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo));
 					}
@@ -121,7 +121,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 					{
 						messageToSend.Tries += 1;
 
-						SystemTaskQueue.Instance.EnqueueItem(() => _outgoingQueueWritter.Save(messageToSend));
+						_outgoingQueueWritter.Save(messageToSend);
 						SystemTaskQueue.Instance.EnqueueItem(() => ReEnqueueItem(messageToSend));
 						Logger.Warn(
 							x =>
