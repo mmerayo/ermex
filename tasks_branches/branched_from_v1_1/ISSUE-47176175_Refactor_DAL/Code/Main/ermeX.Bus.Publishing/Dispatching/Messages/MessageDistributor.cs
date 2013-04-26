@@ -117,6 +117,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 						var messageToSend = outGoingMessage.GetClone(); //creates a copy for the subscriber
 						messageToSend.Status = Message.MessageStatus.SenderDispatchPending; //ready to be dispatched
 						messageToSend.PublishedTo = destinationComponent; //assigns the receiver
+						
 						Dispatcher.EnqueueItem(
 							new MessageSubscribersDispatcher.SubscribersDispatcherMessage(messageToSend)); //pushes it
 
