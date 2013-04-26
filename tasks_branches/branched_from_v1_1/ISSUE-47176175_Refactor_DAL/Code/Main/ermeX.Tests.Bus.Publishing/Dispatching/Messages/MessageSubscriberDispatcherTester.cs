@@ -130,6 +130,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 				target.EnqueueItem(new MessageSubscribersDispatcher.SubscribersDispatcherMessage(outgoingMessage));
 				_messageReceived.WaitOne(TimeSpan.FromSeconds(20));
 			}
+			Thread.Sleep(250);
 			OutgoingMessage actual = outgoingMessagesDataSource.Single(outgoingMessage.Id);
 			Assert.AreEqual(Message.MessageStatus.SenderSent, actual.Status);
 
