@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -169,6 +170,7 @@ namespace ermeX.DAL.Repository
 		public void Remove(IUnitOfWork unitOfWork, int id)
 		{
 			Logger.DebugFormat("Remove Id:{0}",id);
+			Debug.Assert(id > 0, "The entity must have been saved previously");
 			if (unitOfWork.IsReadOnly)
 				throw new InvalidOperationException("The unit of work is ReadOnly");
 			var toRemove = Single(unitOfWork, id);
@@ -177,11 +179,12 @@ namespace ermeX.DAL.Repository
 
 		public void Remove(IUnitOfWork unitOfWork, TEntity entity)
 		{
-			Logger.DebugFormat("Remove: Entity: {0} - ThreadId=",entity,Thread.CurrentThread.ManagedThreadId);
+			Logger.DebugFormat("Remove: Entity: {0} - ThreadId=", entity, Thread.CurrentThread.ManagedThreadId);
+
 			if (unitOfWork.IsReadOnly)
 				throw new InvalidOperationException("The unit of work is ReadOnly");
 			unitOfWork.Session.Delete(entity);
-			//unitOfWork.Flush();
+			unitOfWork.Flush();
 		}
 
 		public void Remove(IUnitOfWork unitOfWork, IEnumerable<TEntity> entities)

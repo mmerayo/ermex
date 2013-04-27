@@ -115,7 +115,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                             continue;
 
                         var messageToDeliver = incomingMessage.GetClone(); //creates a copy for the subscriber
-
+						messageToDeliver.MessageId=incomingMessage.MessageId;
                         messageToDeliver.Status = Message.MessageStatus.ReceiverDispatchable; //ready to be dispatched
                         messageToDeliver.SuscriptionHandlerId = destination;
 

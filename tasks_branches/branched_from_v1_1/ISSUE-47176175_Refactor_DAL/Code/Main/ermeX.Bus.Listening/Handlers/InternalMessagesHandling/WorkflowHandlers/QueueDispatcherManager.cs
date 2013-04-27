@@ -112,7 +112,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 
 		private bool DoDeliver(QueueDispatcherManagerMessage message)
 		{
-			Logger.TraceFormat("DoDeliver -Domain:{0} - ThreadId: {1} - Message:{2} ",AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId,message.ToString());
+			Logger.Trace(x=>x("DoDeliver - Component:{0} - Domain:{1} - ThreadId: {2} - MessageId:{3} ",Settings.ComponentId, AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId,message.IncomingMessage.MessageId));
 
 			bool result;
 			DateTime receivedHere = DateTime.UtcNow;
@@ -135,11 +135,18 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 				incomingMessage.Status = Message.MessageStatus.ReceiverDispatching;
 				IncommingQueueWriter.Save(incomingMessage);
 
-				Logger.Trace(x => x(" DoDeliver.Component:{1} - MessageId:{0} Start Handling", incomingMessage.MessageId));
+				Logger.Trace(x => x("DoDeliver.Component:{1} - MessageId:{0} Start Handling", incomingMessage.MessageId,Settings.ComponentId));
 				OnDispatchMessage(incomingMessage.SuscriptionHandlerId, incomingMessage.ToBusMessage());
 
-				IncommingQueueWriter.Remove(incomingMessage);
-				Logger.Trace(x => x("DoDeliver.Component:{1} - MessageId:{0} Handled finally", incomingMessage.MessageId));
+				try
+				{
+					IncommingQueueWriter.Remove(incomingMessage);
+				}
+				catch (Exception ex)
+				{
+					Logger.WarnFormat("DoDeliver. Swallowing - Could not remove message id:{0} MessageId:{1} Exception:{2}",incomingMessage.Id,incomingMessage.MessageId,ex.ToString());
+				}
+				Logger.Trace(x => x("DoDeliver.Component:{1} - MessageId:{0} Handled finally", incomingMessage.MessageId, Settings.ComponentId));
 				result = true;
 			}
 			return result;
