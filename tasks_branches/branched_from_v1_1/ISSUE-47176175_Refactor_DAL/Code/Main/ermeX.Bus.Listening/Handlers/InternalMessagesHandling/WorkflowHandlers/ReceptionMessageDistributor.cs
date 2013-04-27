@@ -118,10 +118,11 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 
                         messageToDeliver.Status = Message.MessageStatus.ReceiverDispatchable; //ready to be dispatched
                         messageToDeliver.SuscriptionHandlerId = destination;
-						//TODO: REMOVE
-						Console.WriteLine("--->BOORRARRRR{2} -dISTRIBUTING messageid:{0} to {1}", incomingMessage.MessageId, destination,message.IncomingMessage.PublishedTo);
+
+						Logger.TraceFormat("OnDequeue. component:{2} -distributing messageid:{0} to {1}", incomingMessage.MessageId, destination, message.IncomingMessage.PublishedTo);
                         _queueWritter.Save(messageToDeliver); //update the db ? could this be done async?
                         Dispatcher.EnqueueItem(new QueueDispatcherManager.QueueDispatcherManagerMessage(messageToDeliver, true));//pushes it
+						Logger.TraceFormat("OnDequeue. component:{2} -distributed messageid:{0} to {1}", incomingMessage.MessageId, destination, message.IncomingMessage.PublishedTo);
                     }
                 }
 

@@ -35,13 +35,13 @@ namespace ermeX.Tests.NonMerged
 		[TestFixtureSetUp]
 		public void OnFixtureSetUp()
 		{
-			PathUtils.CopyFolder(PathUtils.GetApplicationFolderPath(),UnmergedAssembliesTestHelper.TestFilesFolder);
+			PathUtils.CopyFolder(PathUtils.GetApplicationFolderPath(),UnmergedAssembliesTestContext.TestFilesFolder);
 		}
 
 		[TestFixtureTearDown]
 		public void OnFixtureTearDown()
 		{
-			Directory.Delete(UnmergedAssembliesTestHelper.TestFilesFolder,true);
+			Directory.Delete(UnmergedAssembliesTestContext.TestFilesFolder,true);
 		}
 
 		[SetUp]
@@ -53,7 +53,7 @@ namespace ermeX.Tests.NonMerged
 		[TearDown]
 		public void OnTearDown()
 		{
-			UnmergedAssembliesTestHelper.DisposeDomains();
+			UnmergedAssembliesTestContext.DisposeDomains();
 		}
 
 		private void RemoveAssemblies()
@@ -61,7 +61,7 @@ namespace ermeX.Tests.NonMerged
 			var lst = new List<String> {"Common.Logging.dll", "log4net.dll", "System.Data.SQLite.dll", "SQLite.Interop.dll"};
 			foreach (var targetName in lst)
 			{
-				string path = Path.Combine(UnmergedAssembliesTestHelper.TestFilesFolder, targetName);
+				string path = Path.Combine(UnmergedAssembliesTestContext.TestFilesFolder, targetName);
 				if (File.Exists(path))
 					File.Delete(path);
 			}
@@ -70,10 +70,10 @@ namespace ermeX.Tests.NonMerged
 		[Test]
 		public void CanResolveAssembly([Values("Common.Logging", "log4net", "System.Data.SQLite")] string assemblyName,[Values (1,2,5)]int numberOfDomains)
 		{
-			var helpers = new UnmergedAssembliesTestHelper[numberOfDomains];
+			var helpers = new UnmergedAssembliesTestContext[numberOfDomains];
 			for (int i = 0; i < numberOfDomains; i++)
 			{
-				helpers[i] = UnmergedAssembliesTestHelper.GetHelper();
+				helpers[i] = UnmergedAssembliesTestContext.GetHelper();
 				helpers[i].Init();
 			}
 			for (int i = 0; i < numberOfDomains; i++)
@@ -84,14 +84,14 @@ namespace ermeX.Tests.NonMerged
 				if (assemblyName == "System.Data.SQLite")
 				{
 					const string targetName = "SQLite.Interop.dll";
-					string path = Path.Combine(UnmergedAssembliesTestHelper.TestFilesFolder, targetName);
+					string path = Path.Combine(UnmergedAssembliesTestContext.TestFilesFolder, targetName);
 					bool exists = File.Exists(path);
 					Assert.IsTrue(exists);
 				}
 			}
 		}
 
-		private class UnmergedAssembliesTestHelper : MarshalByRefObject
+		private class UnmergedAssembliesTestContext : MarshalByRefObject
 		{
 			public static string TestFilesFolder
 			{
@@ -103,7 +103,7 @@ namespace ermeX.Tests.NonMerged
 
 			private static readonly List<AppDomain> LoadedDomains = new List<AppDomain>();
 
-			public static UnmergedAssembliesTestHelper GetHelper()
+			public static UnmergedAssembliesTestContext GetHelper()
 			{
 				Assembly executingAssembly = Assembly.GetExecutingAssembly();
 				string pathToTheDll = Path.Combine(TestFilesFolder,executingAssembly.GetName().Name+".dll");
@@ -114,9 +114,9 @@ namespace ermeX.Tests.NonMerged
 					                                            });
 				LoadedDomains.Add(myDomain);
 
-				var wrappedResult = myDomain.CreateInstanceFrom(pathToTheDll, typeof (UnmergedAssembliesTestHelper).FullName);
+				var wrappedResult = myDomain.CreateInstanceFrom(pathToTheDll, typeof (UnmergedAssembliesTestContext).FullName);
 
-				var result = (UnmergedAssembliesTestHelper) wrappedResult.Unwrap();
+				var result = (UnmergedAssembliesTestContext) wrappedResult.Unwrap();
 
 				return result;
 			}

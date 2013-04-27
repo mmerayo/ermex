@@ -67,8 +67,10 @@ namespace ermeX.NonMerged
             sqlIte.NonManagedToCopy.Add(new UnmergedAssemblyInfo { Name = "SQLite.Interop", Type = DataType.Unmanaged, Version = new Version(1, 0, 83,0) });
 
             RemoveResolvableAssemblies(); //this forces to update exiting to use the embedded version
-
-            AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
+        	foreach (var unmergedAssemblyInfo in UnmergedAssemblies)
+        		LoadUnmergedAssembly(unmergedAssemblyInfo.Name);
+            
+			AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
         }
 
@@ -98,6 +100,7 @@ namespace ermeX.NonMerged
 
         private static void RemoveAssembly(UnmergedAssemblyInfo value, string applicationFolderPath)
         {
+
             var assembly = TypesHelper.GetAssemblyFromDomain(value.Name,false);
             if (assembly == null || value.Type==DataType.Unmanaged)
             {
@@ -106,7 +109,11 @@ namespace ermeX.NonMerged
                 {
                     try
                     {
-                        File.Delete(filename);
+                    	var fileVersionInfo = FileVersionInfo.GetVersionInfo(filename);
+						if(fileVersionInfo.FileVersion!=value.Version.ToString())
+						{
+							File.Delete(filename);
+						}
                     }
                     catch (UnauthorizedAccessException ex)
                     {
@@ -126,38 +133,42 @@ namespace ermeX.NonMerged
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            string dllName = args.Name.Contains(',')
+        	string dllName = args.Name.Contains(',')
                                  ? args.Name.Substring(0, args.Name.IndexOf(','))
                                  : args.Name.Replace(".dll", "");
 
-            UnmergedAssemblyInfo info = UnmergedAssemblies.SingleOrDefault(x=>x.Name==dllName);
-            if (info==null) return null;
-
-            string ns = "ermeX.NonMerged.Resources";
-            if (info.Type == DataType.Specialized)
-            {
-                ns += Is64Bit ? ".x64" : ".x86";
-            }
-            //copy files if needed
-            string applicationFolderPath;
-            foreach (var curr in info.NonManagedToCopy)
-            {
-
-                applicationFolderPath = PathUtils.GetApplicationFolderPath();
-
-                string filename = Path.Combine(applicationFolderPath, curr.Name + ".dll");
-                var o = ReadResourceBytes(string.Format("{0}.{1}.dll", ns, curr.Name));
-                if (!File.Exists(filename))
-                    using (var fs = new FileStream(filename, FileMode.Create))
-                        fs.Write(o, 0, o.Length);
-            }
-            //load assembly
-            var resName = string.Format("{0}.{1}.dll", ns, dllName);
-            byte[] bytes = ReadResourceBytes(resName);
-            return Assembly.Load(bytes);
+        	return LoadUnmergedAssembly(dllName);
         }
 
-        private static byte[] ReadResourceBytes(string resName)
+    	private static Assembly LoadUnmergedAssembly(string dllName)
+    	{
+    		UnmergedAssemblyInfo info = UnmergedAssemblies.SingleOrDefault(x => x.Name == dllName);
+    		if (info == null) return null;
+
+    		string ns = "ermeX.NonMerged.Resources";
+    		if (info.Type == DataType.Specialized)
+    		{
+    			ns += Is64Bit ? ".x64" : ".x86";
+    		}
+    		//copy files if needed
+    		string applicationFolderPath;
+    		foreach (var curr in info.NonManagedToCopy)
+    		{
+    			applicationFolderPath = PathUtils.GetApplicationFolderPath();
+
+    			string filename = Path.Combine(applicationFolderPath, curr.Name + ".dll");
+    			var o = ReadResourceBytes(string.Format("{0}.{1}.dll", ns, curr.Name));
+    			if (!File.Exists(filename))
+    				using (var fs = new FileStream(filename, FileMode.Create))
+    					fs.Write(o, 0, o.Length);
+    		}
+    		//load assembly
+    		var resName = string.Format("{0}.{1}.dll", ns, dllName);
+    		byte[] bytes = ReadResourceBytes(resName);
+    		return Assembly.Load(bytes);
+    	}
+
+    	private static byte[] ReadResourceBytes(string resName)
         {
             byte[] bytes;
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resName))

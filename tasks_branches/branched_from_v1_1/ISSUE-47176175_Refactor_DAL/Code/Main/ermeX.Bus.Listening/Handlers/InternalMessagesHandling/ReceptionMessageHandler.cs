@@ -118,7 +118,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
 			//this must be done on-line in case of errors so it returns an exception to the caller
 			_queueWritter.Save(incomingMessage);
 			ReceptionMessageDistributor.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage));
-			Logger.Trace(x => x("{0} - Message received ", message.Data.MessageId));
+			Logger.Trace(x => x("Handle.{0} - Message received ", message.Data.MessageId));
 			return null; //Check the correctness of this null
 		}
 

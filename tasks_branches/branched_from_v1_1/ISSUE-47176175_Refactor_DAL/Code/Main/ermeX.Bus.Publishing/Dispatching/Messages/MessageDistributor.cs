@@ -121,8 +121,8 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 						Dispatcher.EnqueueItem(
 							new MessageSubscribersDispatcher.SubscribersDispatcherMessage(messageToSend)); //pushes it
 
+						Logger.TraceFormat("Ondequeue.Enqueued for dispatching message:{0}", messageToSend.MessageId);
 						_outgoingQueueWritter.Save(messageToSend); //update the db
-
 					}
 				}
 				result = true;

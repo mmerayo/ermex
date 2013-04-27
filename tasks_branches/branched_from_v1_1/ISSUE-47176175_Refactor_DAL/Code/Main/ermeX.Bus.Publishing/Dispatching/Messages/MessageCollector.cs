@@ -121,9 +121,9 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
 			OutgoingMessage outGoingMessage = CreateRootOutgoingMessage(message);
 			MessageDistributor.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outGoingMessage));
-
+			Logger.TraceFormat("Dispatch.Enqueued for distribution message:{0}",outGoingMessage.MessageId);
 			//every CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched removes expired items
-			if (++_dispatchedItems%CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched == 0)
+			if (++_dispatchedItems % CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched == 0)
 				SystemTaskQueue.Instance.EnqueueItem(RemoveExpiredMessages);
 
 			Logger.Trace(x => x("MessageCollector: Dispatched message num: {0}", _dispatchedItems));
