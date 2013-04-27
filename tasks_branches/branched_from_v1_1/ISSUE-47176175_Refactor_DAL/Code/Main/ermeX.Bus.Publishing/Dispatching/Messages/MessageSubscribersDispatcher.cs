@@ -114,8 +114,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 					{
 						messageToSend.Status = Message.MessageStatus.SenderSent;
 						_outgoingQueueWritter.Save(messageToSend);
-						Logger.Info(
-							x => x("SUCCESS {0} Sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo));
+						Logger.TraceFormat("SUCCESS {0} Sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo);
 					}
 					else
 					{

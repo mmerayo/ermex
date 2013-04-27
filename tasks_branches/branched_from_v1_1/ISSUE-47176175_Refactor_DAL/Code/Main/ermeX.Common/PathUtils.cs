@@ -57,10 +57,13 @@ namespace ermeX.Common
 		}
 
 
-		public static void CopyFolder(string sourceFolder, string destFolder)
+		public static void CopyFolder(string sourceFolder, string destFolder,bool deleteIfExists=true)
 		{
 			string[] files = Directory.GetFiles(sourceFolder);
 			string[] folders = Directory.GetDirectories(sourceFolder);
+
+			if (deleteIfExists && Directory.Exists(destFolder))
+				Directory.Delete(destFolder, true);
 
 			if (!Directory.Exists(destFolder))
 				Directory.CreateDirectory(destFolder);
