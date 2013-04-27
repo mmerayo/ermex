@@ -135,11 +135,11 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 				incomingMessage.Status = Message.MessageStatus.ReceiverDispatching;
 				IncommingQueueWriter.Save(incomingMessage);
 
-				Logger.Trace(x => x("DoDeliver.{0} Start Handling", incomingMessage.MessageId));
+				Logger.Trace(x => x(" DoDeliver.Component:{1} - MessageId:{0} Start Handling", incomingMessage.MessageId));
 				OnDispatchMessage(incomingMessage.SuscriptionHandlerId, incomingMessage.ToBusMessage());
 
 				IncommingQueueWriter.Remove(incomingMessage);
-				Logger.Trace(x => x("DoDeliver.{0} Handled finally", incomingMessage.MessageId));
+				Logger.Trace(x => x("DoDeliver.Component:{1} - MessageId:{0} Handled finally", incomingMessage.MessageId));
 				result = true;
 			}
 			return result;

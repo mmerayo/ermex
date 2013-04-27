@@ -58,7 +58,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 				OutGoingMessage = outGoingMessage;
 			}
 		}
-
+		
 		[Inject]
 		public MessageSubscribersDispatcher(IBusSettings settings,
 		                                    IReadOutgoingQueue outgoingQueueReader,
@@ -114,7 +114,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 					{
 						messageToSend.Status = Message.MessageStatus.SenderSent;
 						_outgoingQueueWritter.Save(messageToSend);
-						Logger.TraceFormat("SUCCESS {0} Sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo);
+						Logger.TraceFormat("Component:{2} - MessageId: {0} Sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo,Settings.ComponentId);
 					}
 					else
 					{
