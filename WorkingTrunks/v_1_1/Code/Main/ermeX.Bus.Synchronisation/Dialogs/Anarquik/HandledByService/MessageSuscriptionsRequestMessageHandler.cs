@@ -28,7 +28,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Subscriptions;
+using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Entities.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
@@ -61,7 +61,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		private IMessageListener Listener { get; set; }
 		private IComponentSettings Settings { get; set; }
-		private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(MessageSuscriptionsRequestMessageHandler).FullName);
 		private IStatusManager StatusManager { get; set; }
 
 		#region IMessageSuscriptionsService Members
@@ -93,7 +93,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 			}
 		}
 
-		public void AddSuscriptions(IList<IncomingMessageSuscription> request)
+		public void AddSuscriptions(IEnumerable<IncomingMessageSuscription> request)
 		{
 			try
 			{

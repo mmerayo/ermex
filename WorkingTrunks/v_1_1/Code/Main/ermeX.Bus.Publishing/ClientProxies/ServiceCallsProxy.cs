@@ -30,8 +30,8 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Component;
-using ermeX.Domain.Services;
+using ermeX.DAL.Interfaces.Component;
+using ermeX.DAL.Interfaces.Services;
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
 using ermeX.Transport.Interfaces;
@@ -65,7 +65,7 @@ namespace ermeX.Bus.Publishing.ClientProxies
         private IBusSettings Settings { get; set; }
 	    private ICanReadComponents ComponentReader { get; set; }
 	    private ICanReadServiceDetails ServiceDetailsReader { get; set; }
-	    private readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ServiceCallsProxy).FullName);
         private IStatusManager StatusManager { get; set; }
 
         private Guid DestinationComponent { get; set; }
@@ -140,9 +140,9 @@ namespace ermeX.Bus.Publishing.ClientProxies
             if (DestinationComponent.IsEmpty()) //TODO: REFACTOR BOTH
             {
                 var methods = ServiceDetailsReader.GetByMethodName(interfaceTypeName, methodName);
-                if (methods.Count == 0)
+                if (!methods.Any())
                     throw new ermeXUndefinedServiceException(interfaceTypeName, methodName);
-                if(methods.Count>1 && invocation.Method.ReturnType !=typeof(void))
+                if(methods.Count()>1 && invocation.Method.ReturnType !=typeof(void))
                     throw new InvalidOperationException("There are several services that return values, the system only supports one service definition if returns values");
 
                 foreach (var method in methods)

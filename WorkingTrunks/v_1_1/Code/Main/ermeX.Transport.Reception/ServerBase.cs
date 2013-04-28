@@ -27,8 +27,8 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Messages;
-using ermeX.Domain.Services;
+using ermeX.DAL.Interfaces.Messages;
+using ermeX.DAL.Interfaces.Services;
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
 
@@ -65,7 +65,7 @@ namespace ermeX.Transport.Reception
         }
 
         public ServerInfo ServerInfo { get; set; }
-        protected readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		protected static readonly ILog Logger = LogManager.GetLogger(typeof(ServerBase).FullName);
 
         #region IDisposable
 

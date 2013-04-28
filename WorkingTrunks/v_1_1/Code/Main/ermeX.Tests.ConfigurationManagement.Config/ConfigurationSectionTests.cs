@@ -26,168 +26,168 @@ using Common.Logging.Simple;
 using NUnit.Framework;
 using ermeX.Configuration;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.Domain.IoC;
 using ermeX.Tests.Common.Networking;
 
 namespace ermeX.Tests.ConfigurationManagement.Config
 {
-    [TestFixture]
-    public class ConfigurationSectionTests
-    {
-        private bool _mustResetWorldGate = false;
-        [TestFixtureSetUp]
-        public void OnStartUp()
-        {
-            //if (LogManager.Adapter is NoOpLoggerFactoryAdapter)
-            //    LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
-        }
+	[TestFixture]
+	public class ConfigurationSectionTests
+	{
+		private bool _mustResetWorldGate = false;
 
-        [SetUp]
-        public void OnSetUp()
-        {
-            _mustResetWorldGate = false;
-        }
+		[TestFixtureSetUp]
+		public void OnStartUp()
+		{
+			if (LogManager.Adapter is NoOpLoggerFactoryAdapter)
+				LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
+		}
 
-        [TearDown]
-        public void OnTearDown()
-        {
-            if(_mustResetWorldGate)
-                WorldGate.Reset();
-        }
+		[SetUp]
+		public void OnSetUp()
+		{
+			_mustResetWorldGate = false;
+		}
+
+		[TearDown]
+		public void OnTearDown()
+		{
+			if (_mustResetWorldGate)
+				WorldGate.Reset();
+		}
 
 
-        [Test]
-        public void Validates_NormalSettings()
-        {
-            ermeXConfiguration target;
-            var config = GetConfiguration(out target);
-            Assert.IsNotNull(target, "Could not load the section from the test.config");
+		[Test]
+		public void Validates_NormalSettings()
+		{
+			ermeXConfiguration target;
+			var config = GetConfiguration(out target);
+			Assert.IsNotNull(target, "Could not load the section from the test.config");
 
-            Database db = null;
-            var componentDefinition = new LocalComponent();
+			Database db = null;
+			var componentDefinition = new LocalComponent();
 
-            componentDefinition.TcpPort = 6666;
-            componentDefinition.ComponentId = Guid.NewGuid();
-            componentDefinition.MessagesExpirationDays = 1;
-        
-            target.ComponentDefinition = componentDefinition;
-            foreach (var value in Enum.GetValues(typeof (DbEngineType)))
-            {
-                switch ((DbEngineType) value)
-                {
-                    case DbEngineType.SqlServer2008:
-                        db = new SqlServerDatabase() {ConnectionString = "thisistheconnstr"};
-                        break;
-                    case DbEngineType.Sqlite:
-                        db = new SqliteDatabase() {ConnectionString = "thisistheconnstr"};
-                        break;
-                    case DbEngineType.SqliteInMemory:
-                        db = new InMemoryDatabase();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-                target.ComponentDefinition.Database = db;
-                config.Save(ConfigurationSaveMode.Modified);
-            }
-        }
+			componentDefinition.TcpPort = 6666;
+			componentDefinition.ComponentId = Guid.NewGuid();
+			componentDefinition.MessagesExpirationDays = 1;
 
-        
+			target.ComponentDefinition = componentDefinition;
+			foreach (var value in Enum.GetValues(typeof (DbEngineType)))
+			{
+				switch ((DbEngineType) value)
+				{
+					case DbEngineType.SqlServer2008:
+						db = new SqlServerDatabase() {ConnectionString = "thisistheconnstr"};
+						break;
+					case DbEngineType.Sqlite:
+						db = new SqliteDatabase() {ConnectionString = "thisistheconnstr"};
+						break;
+					case DbEngineType.SqliteInMemory:
+						db = new InMemoryDatabase();
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+				target.ComponentDefinition.Database = db;
+				config.Save(ConfigurationSaveMode.Modified);
+			}
+		}
 
-        [Test]
-        public void ValidatesDatabase()
-        {
-            ermeXConfiguration target;
-            var config = GetConfiguration(out target);
-            Assert.IsNotNull(target, "Could not load the section from the test.config");
 
-            Database db = null;
-            target.ComponentDefinition = new LocalComponent()
-            {
-                ComponentId = Guid.NewGuid(),
-                TcpPort = 6666,
-                MessagesExpirationDays = 1,
 
-            };
-            foreach (var value in Enum.GetValues(typeof(DbEngineType)))
-            {
-                switch ((DbEngineType)value)
-                {
-                    case DbEngineType.SqlServer2008:
-                        db = new SqlServerDatabase() ; //no connstr
-                        break;
-                    case DbEngineType.Sqlite:
-                        db = new SqliteDatabase() ; //no connstr
-                        break;
-                    case DbEngineType.SqliteInMemory:
-                       // db = new InMemoryDatabase();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-                Assert.Throws<ConfigurationErrorsException>(()=>target.ComponentDefinition.Database = db);
-                config.Save(ConfigurationSaveMode.Modified);
-                
-            }
-        }
+		[Test]
+		public void ValidatesDatabase()
+		{
+			ermeXConfiguration target;
+			var config = GetConfiguration(out target);
+			Assert.IsNotNull(target, "Could not load the section from the test.config");
 
-        [Test]
-        public void ValidatesLocalComponent_HasDb()
-        {
-            ermeXConfiguration target;
-            var config = GetConfiguration(out target);
+			Database db = null;
+			target.ComponentDefinition = new LocalComponent()
+			                             	{
+			                             		ComponentId = Guid.NewGuid(),
+			                             		TcpPort = 6666,
+			                             		MessagesExpirationDays = 1,
 
-            Database db = null;
-            target.ComponentDefinition = new LocalComponent()
-            {
-                ComponentId = Guid.NewGuid(),
-                TcpPort = 6666,
-                MessagesExpirationDays = 1,
-            };
-            Assert.IsNotNull(target.ComponentDefinition.Database);
+			                             	};
+			foreach (var value in Enum.GetValues(typeof (DbEngineType)))
+			{
+				switch ((DbEngineType) value)
+				{
+					case DbEngineType.SqlServer2008:
+						db = new SqlServerDatabase(); //no connstr
+						break;
+					case DbEngineType.Sqlite:
+						db = new SqliteDatabase(); //no connstr
+						break;
+					case DbEngineType.SqliteInMemory:
+						// db = new InMemoryDatabase();
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+				Assert.Throws<ConfigurationErrorsException>(() => target.ComponentDefinition.Database = db);
+				config.Save(ConfigurationSaveMode.Modified);
 
-            Assert.DoesNotThrow(()=>config.Save(ConfigurationSaveMode.Modified));
+			}
+		}
 
-            Assert.IsTrue(target.ComponentDefinition.Database.DbType==DbType.InMemory);
-        }
+		[Test]
+		public void ValidatesLocalComponent_HasDb()
+		{
+			ermeXConfiguration target;
+			var config = GetConfiguration(out target);
 
-       
+			Database db = null;
+			target.ComponentDefinition = new LocalComponent()
+			                             	{
+			                             		ComponentId = Guid.NewGuid(),
+			                             		TcpPort = 6666,
+			                             		MessagesExpirationDays = 1,
+			                             	};
+			Assert.IsNotNull(target.ComponentDefinition.Database);
 
-        [Test]
-        public void Can_Start_Lonely_Component()
-        {
-            ermeXConfiguration target;
-            
-            var config = GetConfiguration(out target);
+			Assert.DoesNotThrow(() => config.Save(ConfigurationSaveMode.Modified));
 
-            target.ComponentDefinition = new LocalComponent()
-                {
-                    ComponentId = Guid.NewGuid(),
-                    TcpPort = new TestPort(6666)
-                };
-            config.Save(ConfigurationSaveMode.Minimal);
+			Assert.IsTrue(target.ComponentDefinition.Database.DbType == DbType.InMemory);
+		}
 
-            _mustResetWorldGate = true;
-            Assert.DoesNotThrow(WorldGate.ConfigureAndStart);
-            
-        }
 
-        [Ignore("TODO")]
-        [Test]
-        public void Can_Start_Joined_To_Friend_Component()
-        {
-            
-        }
 
-        private static System.Configuration.Configuration GetConfiguration(out ermeXConfiguration target)
-        {
-            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            //target = (ermeXConfiguration) config.GetSection("ermeXConfiguration");
-            config.Sections.Remove("ermeXConfiguration");
-            target = new ermeXConfiguration();
-            config.Sections.Add("ermeXConfiguration", target);
-            return config;
-        }
+		[Test]
+		public void Can_Start_Lonely_Component()
+		{
+			ermeXConfiguration target;
 
-    }
+			var config = GetConfiguration(out target);
+
+			target.ComponentDefinition = new LocalComponent()
+			                             	{
+			                             		ComponentId = Guid.NewGuid(),
+			                             		TcpPort = new TestPort(6666)
+			                             	};
+			config.Save(ConfigurationSaveMode.Minimal);
+
+			_mustResetWorldGate = true;
+			Assert.DoesNotThrow(WorldGate.ConfigureAndStart);
+
+		}
+
+		[Ignore("TODO")]
+		[Test]
+		public void Can_Start_Joined_To_Friend_Component()
+		{
+
+		}
+
+		private static System.Configuration.Configuration GetConfiguration(out ermeXConfiguration target)
+		{
+			var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+			//target = (ermeXConfiguration) config.GetSection("ermeXConfiguration");
+			config.Sections.Remove("ermeXConfiguration");
+			target = new ermeXConfiguration();
+			config.Sections.Add("ermeXConfiguration", target);
+			return config;
+		}
+
+	}
 }

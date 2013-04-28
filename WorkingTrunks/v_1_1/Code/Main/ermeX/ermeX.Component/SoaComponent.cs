@@ -46,7 +46,7 @@ namespace ermeX.ermeX.Component
 #endif
         }
 
-        protected static readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName); 
+		protected static readonly ILog Logger = LogManager.GetLogger(typeof(SoaComponent).FullName); 
 
         [Inject]
         internal IStatusManager StatusManager { get; set; }

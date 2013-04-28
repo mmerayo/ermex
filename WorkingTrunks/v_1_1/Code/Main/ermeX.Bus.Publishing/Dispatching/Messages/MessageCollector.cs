@@ -29,9 +29,8 @@ using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Observer;
-using ermeX.Domain.Observers;
-using ermeX.Domain.Queues;
-using ermeX.Domain.Subscriptions;
+using ermeX.DAL.Interfaces.Observers;
+using ermeX.DAL.Interfaces.Queues;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Threading.Queues;
@@ -99,7 +98,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
 		private IBusSettings Settings { get; set; }
 		private IMessageDistributor MessageDistributor { get; set; }
-		private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(MessageCollector).FullName);
 		private int _dispatchedItems = 0;
 
 		#region IMessagePublisherDispatcherStrategy Members
@@ -122,9 +121,9 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
 			OutgoingMessage outGoingMessage = CreateRootOutgoingMessage(message);
 			MessageDistributor.EnqueueItem(new MessageDistributor.MessageDistributorMessage(outGoingMessage));
-
+			Logger.TraceFormat("Dispatch.Enqueued for distribution message:{0}",outGoingMessage.MessageId);
 			//every CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched removes expired items
-			if (++_dispatchedItems%CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched == 0)
+			if (++_dispatchedItems % CheckExpiredItemsWhenThisNumberOfMessagesWasDispatched == 0)
 				SystemTaskQueue.Instance.EnqueueItem(RemoveExpiredMessages);
 
 			Logger.Trace(x => x("MessageCollector: Dispatched message num: {0}", _dispatchedItems));
@@ -205,6 +204,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 			}
 		}
 
+		//TODO: THIS NEEDS TO BE CHANGED WHEN REFACTORING THE STATE MACHINE
 		private void SendMessagesPublishedBeforeSubscriptionWasReceived(OutgoingMessageSuscription newSubscription)
 		{
 			var outgoingMessages = _outgoingReader.GetByStatus(Message.MessageStatus.SenderCollected);

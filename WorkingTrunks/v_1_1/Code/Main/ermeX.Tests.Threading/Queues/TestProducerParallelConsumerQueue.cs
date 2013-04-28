@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Common.Logging;
 using NUnit.Framework;
 using ermeX.Threading.Queues;
 
@@ -32,7 +33,8 @@ namespace ermeX.Tests.Threading.Queues
 
         protected class DummyQueue : ProducerParallelConsumerQueue<DummyQueueItem>, ITestQueue
         {
-            public bool FailWhenHandling { get; set; }
+	       
+	        public bool FailWhenHandling { get; set; }
             private readonly List<DummyQueueItem> _itemsRead = new List<DummyQueueItem>();
 
             private readonly object _locker = new object();

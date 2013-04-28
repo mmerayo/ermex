@@ -31,10 +31,10 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Component;
-using ermeX.Domain.Connectivity;
-using ermeX.Domain.Services;
-using ermeX.Domain.Subscriptions;
+using ermeX.DAL.Interfaces.Component;
+using ermeX.DAL.Interfaces.Connectivity;
+using ermeX.DAL.Interfaces.Services;
+using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
 
@@ -136,7 +136,7 @@ namespace ermeX.Bus.Synchronisation
 
 		private IMessagePublisher Publisher { get; set; }
 
-		private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(DialogsManager).FullName);
 
 		/// <summary>
 		///   Indicates if the component has already joined the rest of components
@@ -447,8 +447,9 @@ namespace ermeX.Bus.Synchronisation
 						continue;
 
 					//TODO: ISSUE-281: move logic
-					var isNew = ComponentsWritter.ImportFromOtherComponent(componentData.Item1,
-					                                                       componentData.Item2);
+					var isNew = ComponentsRegistrator.CreateRemoteComponent(componentData.Item2.ServerId,
+																		   componentData.Item2.Ip, 
+																		   componentData.Item2.Port);
 					if (isNew)
 						pendingJoinRequests.Add(componentData.Item1.ComponentId);
 
@@ -488,21 +489,14 @@ namespace ermeX.Bus.Synchronisation
 
 			//remote incomming is local outgoing
 			if (remoteSuscriptions.MyIncomingSuscriptions != null)
-				foreach (var suscription in remoteSuscriptions.MyIncomingSuscriptions)
-				{
-					//TODO: THE FOLLOWING USE CASE SHOULD BE DETECTED AUTOMATICALLY WHEN SAVING 1
-					OutgoingMessagesSubscriptionsWritter.ImportFromOtherComponent(suscription);
-				}
+					OutgoingMessagesSubscriptionsWritter.ImportFromOtherComponent(remoteSuscriptions.MyIncomingSuscriptions);
 
 			//remote outgoing is local outgoing but local subscriptions
 			if (remoteSuscriptions.MyOutgoingSuscriptions != null)
-				foreach (var suscription in remoteSuscriptions.MyOutgoingSuscriptions)
-				{
-					if (suscription.Component == Settings.ComponentId)
-						continue;
-					OutgoingMessagesSubscriptionsWritter.ImportFromOtherComponent(suscription);
-
-				}
+			{
+				var outgoingMessageSuscriptions = remoteSuscriptions.MyOutgoingSuscriptions.Where(x => x.Component != Settings.ComponentId);
+				OutgoingMessagesSubscriptionsWritter.ImportFromOtherComponent(outgoingMessageSuscriptions);
+			}
 		}
 
 		private void NotifyMySubscriptions(Guid componentId)
@@ -511,7 +505,7 @@ namespace ermeX.Bus.Synchronisation
 			//get my subscriptions that are not from componentId
 
 			var proxy = Publisher.GetServiceProxy<IMessageSuscriptionsService>(componentId);
-			if (myIncomingSubscriptions != null && myIncomingSubscriptions.Count > 0)
+			if (myIncomingSubscriptions != null && myIncomingSubscriptions.Any())
 				proxy.AddSuscriptions(myIncomingSubscriptions);
 		}
 
@@ -520,7 +514,7 @@ namespace ermeX.Bus.Synchronisation
 			var myServices = ServiceDetailsReader.GetLocalCustomServices();
 
 			var proxy = Publisher.GetServiceProxy<IPublishedServicesDefinitionsService>(componentId);
-			if (myServices != null && myServices.Count > 0)
+			if (myServices != null && myServices.Any())
 				foreach (var svc in myServices)
 				{
 					proxy.AddService(svc);

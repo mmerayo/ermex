@@ -32,7 +32,7 @@ using ermeX.Tests.WorldGateTests.Mock;
 
 namespace ermeX.Tests.WorldGateTests
 {
-    [Category(TestCategories.CoreFunctionalTest)]
+    [Category(TestCategories.CoreSystemTest)]
     //[TestFixture]
     internal class DiscoveringServicesTests :DataAccessTestBase
     {
@@ -49,7 +49,7 @@ namespace ermeX.Tests.WorldGateTests
             base.OnTearDown();
         }
 
-        [Test,TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test,TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Can_Register_Services_In_Assembly(DbEngineType dbEngine)
         {
             var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine)
@@ -79,7 +79,7 @@ namespace ermeX.Tests.WorldGateTests
             throw new NotImplementedException();
         }
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Can_Late_Register_Services_In_Other_Assemblies( DbEngineType dbEngine)
         {
             var cfg = TestSettingsProvider.GetServiceLayerSettingsSource(LocalComponentId, dbEngine)

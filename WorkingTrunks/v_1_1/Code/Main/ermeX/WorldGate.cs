@@ -26,9 +26,8 @@ using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.Providers;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.QueryDatabase;
+using ermeX.DAL.Providers;
 using ermeX.Entities.Entities;
 
 using ermeX.LayerMessages;
@@ -147,7 +146,7 @@ namespace ermeX
 			catch (Exception ex)
 			{
 				Logger.Error(x => x("Unhandled ermeX exception: {0}", ex));
-				throw ex;
+				throw;
 			}
 		}
 

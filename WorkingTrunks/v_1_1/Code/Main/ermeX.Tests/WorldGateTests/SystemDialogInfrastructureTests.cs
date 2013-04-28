@@ -34,7 +34,7 @@ using ermeX.Tests.WorldGateTests.Mock;
 namespace ermeX.Tests.WorldGateTests
 {
 
-    [Category(TestCategories.CoreFunctionalTest)]
+    [Category(TestCategories.CoreSystemTest)]
    // [TestFixture]
     class SystemDialogInfrastructureTests :DataAccessTestBase
     {
@@ -55,7 +55,7 @@ namespace ermeX.Tests.WorldGateTests
         }
         #endregion
         
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void RegistersSystemSuscriptionsStartUp(DbEngineType dbEngine)
         { 
 

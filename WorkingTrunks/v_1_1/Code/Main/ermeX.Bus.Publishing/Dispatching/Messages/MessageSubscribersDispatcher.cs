@@ -19,10 +19,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common.Logging;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Queues;
+using ermeX.DAL.Interfaces.Queues;
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
 using ermeX.LayerMessages;
@@ -57,7 +58,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 				OutGoingMessage = outGoingMessage;
 			}
 		}
-
+		
 		[Inject]
 		public MessageSubscribersDispatcher(IBusSettings settings,
 		                                    IReadOutgoingQueue outgoingQueueReader,
@@ -66,6 +67,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 		                                    IServiceProxy service)
 			: base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
 		{
+			Logger = LogManager.GetLogger<MessageSubscribersDispatcher>();
 			_outgoingQueueReader = outgoingQueueReader;
 			_outgoingQueueWritter = outgoingQueueWritter;
 			if (settings == null) throw new ArgumentNullException("settings");
@@ -111,15 +113,14 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 					if (SendData(messageToSend))
 					{
 						messageToSend.Status = Message.MessageStatus.SenderSent;
-						SystemTaskQueue.Instance.EnqueueItem(() => _outgoingQueueWritter.Save(messageToSend));
-						Logger.Info(
-							x => x("SUCCESS {0} Sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo));
+						_outgoingQueueWritter.Save(messageToSend);
+						Logger.TraceFormat("Component:{2} - MessageId: {0} Sent to {1}", messageToSend.MessageId, messageToSend.PublishedTo,Settings.ComponentId);
 					}
 					else
 					{
 						messageToSend.Tries += 1;
 
-						SystemTaskQueue.Instance.EnqueueItem(() => _outgoingQueueWritter.Save(messageToSend));
+						_outgoingQueueWritter.Save(messageToSend);
 						SystemTaskQueue.Instance.EnqueueItem(() => ReEnqueueItem(messageToSend));
 						Logger.Warn(
 							x =>

@@ -21,8 +21,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.DataSources;
-using ermeX.DAL.DataAccess.Helpers;
+using ermeX.DAL.Repository;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.RandomValues;
@@ -34,7 +33,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 
     
     internal class ChunkedServiceRequestMessageDataSourceTester :
-        DataSourceTesterBase<ChunkedServiceRequestMessageDataSource, ChunkedServiceRequestMessageData>
+		DataSourceTesterBase<Repository<ChunkedServiceRequestMessageData>, ChunkedServiceRequestMessageData>
     {
         private readonly DateTime VersionUtc = DateTime.UtcNow;
         private readonly Guid Operation = Guid.NewGuid();

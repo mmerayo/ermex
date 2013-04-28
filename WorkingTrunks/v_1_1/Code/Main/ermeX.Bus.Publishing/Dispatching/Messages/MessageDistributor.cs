@@ -20,14 +20,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Common.Logging;
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Queues;
-using ermeX.Domain.Subscriptions;
+using ermeX.DAL.Interfaces.Queues;
+using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Threading.Queues;
@@ -66,6 +67,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 		                          IMessageSubscribersDispatcher dispatcher)
 			: base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
 		{
+			Logger = LogManager.GetLogger<MessageDistributor>();
 			_outgoingMessagesSubscriptionsReader = outgoingMessagesSubscriptionsReader;
 			_outgoingQueueReader = outgoingQueueReader;
 			_outgoingQueueWritter = outgoingQueueWritter;
@@ -115,18 +117,19 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 						var messageToSend = outGoingMessage.GetClone(); //creates a copy for the subscriber
 						messageToSend.Status = Message.MessageStatus.SenderDispatchPending; //ready to be dispatched
 						messageToSend.PublishedTo = destinationComponent; //assigns the receiver
+						
 						Dispatcher.EnqueueItem(
 							new MessageSubscribersDispatcher.SubscribersDispatcherMessage(messageToSend)); //pushes it
 
+						Logger.TraceFormat("Ondequeue.Enqueued for dispatching message:{0}", messageToSend.MessageId);
 						_outgoingQueueWritter.Save(messageToSend); //update the db
-
 					}
 				}
 				result = true;
 			}
 			catch (Exception ex)
 			{
-				Logger.Error(x => x("There was an error while distributing an otugoing message. {0}", ex));
+				Logger.Error(x => x("Thread:{1} There was an error while distributing an outgoing message. {0}", ex,Thread.CurrentThread.ManagedThreadId));
 				result = false;
 			}
 			return result;

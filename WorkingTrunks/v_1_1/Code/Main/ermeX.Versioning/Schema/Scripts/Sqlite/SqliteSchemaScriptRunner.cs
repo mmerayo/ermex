@@ -19,7 +19,7 @@
 using System.Collections.Generic;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-using ermeX.Domain.QueryDatabase;
+using ermeX.DAL.Interfaces.QueryDatabase;
 
 namespace ermeX.Versioning.Schema.Scripts.SqlServer
 {

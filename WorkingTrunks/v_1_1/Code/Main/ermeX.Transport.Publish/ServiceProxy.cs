@@ -60,12 +60,14 @@ namespace ermeX.Transport.Publish
         private ICacheProvider CacheProvider { get; set; }
         private IConnectivityManager ConnectivityManager { get; set; }
         private ITransportSettings Settings { get; set; }
-        private readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
+	    private static readonly ILog Logger = LogManager.GetLogger(typeof (ServiceProxy).FullName);
 
         #region IServiceProxy Members
 
         public ServiceResult Send(TransportMessage message)
         {
+			Logger.TraceFormat("Send. message: {0}",message.Data.Data.JsonMessage);
+
             var realMsg =
                 ServiceRequestMessage.GetForMessagePublishing(message);
 

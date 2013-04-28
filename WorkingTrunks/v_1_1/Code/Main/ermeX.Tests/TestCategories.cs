@@ -21,6 +21,6 @@ namespace ermeX.Tests
     internal class TestCategories
     {
         public const string CoreUnitTest = "Core:UnitTest";
-        public const string CoreFunctionalTest = "Core:FunctionalTest";
+        public const string CoreSystemTest = "Core:SystemTest";
     }
 }
