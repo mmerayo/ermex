@@ -128,6 +128,62 @@
             </layer>
           </childLayers>
         </layer>
+        <layer Id="9951ca3d-1b66-4e4d-925b-e1a31eeaf31e" name="Transport Services">
+          <childLayers>
+            <layer Id="940a6fb9-ec6c-4e31-9970-16ff840262cb" name="ermeX.Transport.Interfaces">
+              <references>
+                <reference Id="e19ea854-0e62-4b39-a3cd-19f9c298cc9b" name="ermeX.Transport.Interfaces">
+                  <ArtifactNode Label="ermeX.Transport.Interfaces" Category="CodeSchema_Project" Id="(Assembly=../ermeX.Transport.Interfaces/ermeX.Transport.Interfaces.csproj)">
+                    <Category Ref="CodeSchema_SourceFile" />
+                  </ArtifactNode>
+                  <ExpandedNode Id="(Assembly=ermeX.Transport.Interfaces)" Label="ermeX.Transport.Interfaces.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+              </references>
+            </layer>
+            <layer Id="140580b9-1562-4f23-a81a-41da1c9a9dc0" name="Reception">
+              <references>
+                <reference Id="29dca849-c798-4035-8652-3917792c6cbe" name="ermeX.Transport.Reception">
+                  <ArtifactNode Label="ermeX.Transport.Reception" Category="CodeSchema_Project" Id="(Assembly=../ermeX.Transport.Reception/ermeX.Transport.Reception.csproj)">
+                    <Category Ref="CodeSchema_SourceFile" />
+                  </ArtifactNode>
+                  <ExpandedNode Id="(Assembly=ermeX.Transport.Reception)" Label="ermeX.Transport.Reception.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+              </references>
+            </layer>
+            <layer Id="cc08fd7a-c18d-4338-bef6-5f8e3527c8dd" name="Publish">
+              <references>
+                <reference Id="30a0b2a9-02c3-44c3-a4fe-7e924154d2f5" name="ermeX.Transport.Publish">
+                  <ArtifactNode Label="ermeX.Transport.Publish" Category="CodeSchema_Project" Id="(Assembly=../ermeX.Transport.Publish/ermeX.Transport.Publish.csproj)">
+                    <Category Ref="CodeSchema_SourceFile" />
+                  </ArtifactNode>
+                  <ExpandedNode Id="(Assembly=ermeX.Transport.Publish)" Label="ermeX.Transport.Publish.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+              </references>
+            </layer>
+            <layer Id="4ad3eba3-653b-4377-b9e4-bbbf20fd937c" name="ermeX.Transport.BuiltIn.SuperSocket">
+              <references>
+                <reference Id="85bbea1f-1708-4139-8a91-6994c0dc4b06" name="ermeX.Transport.BuiltIn.SuperSocket">
+                  <ArtifactNode Label="ermeX.Transport.BuiltIn.SuperSocket" Category="CodeSchema_Project" Id="(Assembly=../ermeX.Transport.BuiltIn.SuperSocket/ermeX.Transport.BuiltIn.SuperSocket.csproj)">
+                    <Category Ref="CodeSchema_SourceFile" />
+                  </ArtifactNode>
+                  <ExpandedNode Id="(Assembly=ermeX.Transport.BuiltIn.SuperSocket)" Label="ermeX.Transport.BuiltIn.SuperSocket.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+              </references>
+            </layer>
+          </childLayers>
+        </layer>
       </childLayers>
     </layer>
   </layers>
