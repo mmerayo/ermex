@@ -32,7 +32,6 @@ using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.Entities.Entities;
-using ermeX.Threading.Queues;
 
 namespace ermeX.Biz
 {

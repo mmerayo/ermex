@@ -33,8 +33,8 @@ using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.SettingsProviders;
-using ermeX.Threading.Queues;
-using ermeX.Threading.Scheduling;
+using ermeX.Parallel.Queues;
+using ermeX.Parallel.Scheduling;
 
 namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHandlers
 {
