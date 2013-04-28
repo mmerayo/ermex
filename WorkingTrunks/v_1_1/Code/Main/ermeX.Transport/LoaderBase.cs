@@ -24,7 +24,7 @@ using ermeX.Common;
 using ermeX.Common.Caching;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Connectivity;
+using ermeX.DAL.Interfaces.Connectivity;
 using ermeX.Entities.Entities;
 using ermeX.Transport.Interfaces.Entities;
 using ermeX.Transport.Interfaces.Receiving.Server;
@@ -54,7 +54,7 @@ namespace ermeX.Transport
 		protected ICanReadConnectivityDetails ConnectivityDetailsReader { get; set; }
 		private ICanWriteConnectivityDetails ConnectivityDetailsWritter { get; set; }
 		protected ICacheProvider CacheProvider { get; set; }
-		protected readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		protected static readonly ILog Logger = LogManager.GetLogger(typeof(LoaderBase).FullName);
 
 		#region IConcreteServiceLoader Members
 
@@ -106,7 +106,7 @@ namespace ermeX.Transport
 			// CreateConnectivityDetails(IPAddress.Loopback.ToString(),true);
 
 			//IP4
-			ConnectivityDetailsWritter.CreateLocalComponentConnectivityDetails(Settings.TcpPort, false);
+			ConnectivityDetailsWritter.CreateComponentConnectivityDetails(Settings.TcpPort, asLocal: false);
 		}
 
 		protected abstract IServer GetServer(ConnectivityDetails item);

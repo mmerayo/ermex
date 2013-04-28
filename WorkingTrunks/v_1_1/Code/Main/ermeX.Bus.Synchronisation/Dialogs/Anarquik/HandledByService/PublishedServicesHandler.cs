@@ -28,7 +28,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Services;
+using ermeX.DAL.Interfaces.Services;
 using ermeX.Entities.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
@@ -62,7 +62,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		private IMessageListener Listener { get; set; }
 		private IComponentSettings Settings { get; set; }
-		private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(PublishedServicesHandler).FullName);
 		private IStatusManager StatusManager { get; set; }
 
 		#region IPublishedServicesDefinitionsService Members
@@ -72,7 +72,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 			if (request == null) throw new ArgumentNullException("request");
 
 			StatusManager.WaitIsRunning();
-			IList<ServiceDetails> localServiceDefinitions;
+			IEnumerable<ServiceDetails> localServiceDefinitions;
 			if (request.IsSingleResult)
 			{
 				localServiceDefinitions = new List<ServiceDetails>
@@ -83,7 +83,6 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 			else
 			{
 				localServiceDefinitions = _serviceDetailsReader.GetLocalCustomServices();
-				//GetAll().Where(x => x.Publisher == Settings.ComponentId && !x.IsSystemService).ToList();
 			}
 			var result = new PublishedServicesResponseMessage(Settings.ComponentId, request.CorrelationId)
 				{

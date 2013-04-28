@@ -50,7 +50,7 @@ namespace ermeX.Bus.Listening
 
         private ReceptionMessageHandler InternalMessageHandler { get; set; }
         private IConnectivityManager ConnectivityManager { get; set; }
-        private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ListeningStrategyProvider).FullName);
         #region IListeningStrategyProvider Members
 
         public void Initialize()

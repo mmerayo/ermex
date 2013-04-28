@@ -18,128 +18,130 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Data;
+using System.Linq.Expressions;
 using ermeX.LayerMessages;
 
 namespace ermeX.Entities.Entities
 {
-    [Serializable]
-    internal class OutgoingMessage : Message, IEquatable<OutgoingMessage>
-    {
-        public const string FinalTableName = "OutgoingMessages";
+	[Serializable]
+	internal class OutgoingMessage : Message, IEquatable<OutgoingMessage>
+	{
+		public const string FinalTableName = "OutgoingMessages";
 
-        public OutgoingMessage()
-        {
-        }
+		public OutgoingMessage()
+		{
+		}
 
-//for testing
+		//for testing
 
-        public OutgoingMessage(BusMessage message)
-            : base(message)
-        {
-            Tries = 0;
-        }
+		public OutgoingMessage(BusMessage message)
+			: base(message)
+		{
+			Tries = 0;
+		}
 
 
-        public virtual int Tries { get; set; }
+		public virtual int Tries { get; set; }
 
-        protected override string TableName
-        {
-            get { return FinalTableName; }
-        }
+		protected override string TableName
+		{
+			get { return FinalTableName; }
+		}
 
-        protected internal static string GetDbFieldName(string fieldName) //TODO: REFACTOR
-        {
-            return String.Format("{0}_{1}", FinalTableName, fieldName);
-        }
+		protected internal static string GetDbFieldName(string fieldName) //TODO: REFACTOR
+		{
+			return String.Format("{0}_{1}", FinalTableName, fieldName);
+		}
 
-        public virtual OutgoingMessage GetClone()
-        {
-            var result = new OutgoingMessage()
-                             {
-                                 Version = Version,
-                                 ComponentOwner = ComponentOwner,
-                                 MessageId = MessageId,
-                                 CreatedTimeUtc = CreatedTimeUtc,
-                                 Status = Status,
-                                 JsonMessage = JsonMessage,
-                                 PublishedBy = PublishedBy,
-                                 PublishedTo = PublishedTo,
+		public virtual OutgoingMessage GetClone()
+		{
+			var result = new OutgoingMessage()
+				{
+					Version = Version,
+					ComponentOwner = ComponentOwner,
+					MessageId = MessageId,
+					CreatedTimeUtc = CreatedTimeUtc,
+					Status = Status,
+					JsonMessage = JsonMessage,
+					PublishedBy = PublishedBy,
+					PublishedTo = PublishedTo,
 
-                             };
+				};
 
-            return result;
-        }
+			return result;
+		}
 
-        public static OutgoingMessage FromDataRow(DataRow dataRow)
-        {
-            var result = new OutgoingMessage
-                             {
-                                 Id = Convert.ToInt32(dataRow[GetDbFieldName("Id")]), //TODO: SET SQL SERVER TO LONG AND RECAST, CREATE TEST WITH INT32 OVERFLOW
-                                 //BusMessageId = Convert.ToInt32(dataRow[GetDbFieldName("BusMessageId")]),
-                                 CreatedTimeUtc = new DateTime((long)dataRow[GetDbFieldName("CreatedTimeUtc")]),
-                                 Status = (MessageStatus)Convert.ToInt32(dataRow[GetDbFieldName("Status")]),
-                                 JsonMessage = dataRow[GetDbFieldName("JsonMessage")].ToString(),
-                                 MessageId = (Guid)dataRow[GetDbFieldName("MessageId")],
-                                 PublishedBy = (Guid) dataRow[GetDbFieldName("PublishedBy")],
-                                 PublishedTo = (Guid) dataRow[GetDbFieldName("PublishedTo")],
-                                 ComponentOwner = (Guid) dataRow[GetDbFieldName("ComponentOwner")],
-                                 Tries = Convert.ToInt32( dataRow[GetDbFieldName("Tries")]),
-                                 Version = (long) dataRow[GetDbFieldName("Version")],
-                                 //TODO: TO BASE CLASS
-                             };
-            return result;
-        }
+		public static OutgoingMessage FromDataRow(DataRow dataRow)
+		{
+			var result = new OutgoingMessage
+				{
+					Id = Convert.ToInt32(dataRow[GetDbFieldName("Id")]),
+					//TODO: SET SQL SERVER TO LONG AND RECAST, CREATE TEST WITH INT32 OVERFLOW
+					//BusMessageId = Convert.ToInt32(dataRow[GetDbFieldName("BusMessageId")]),
+					CreatedTimeUtc = new DateTime((long) dataRow[GetDbFieldName("CreatedTimeUtc")]),
+					Status = (MessageStatus) Convert.ToInt32(dataRow[GetDbFieldName("Status")]),
+					JsonMessage = dataRow[GetDbFieldName("JsonMessage")].ToString(),
+					MessageId = (Guid) dataRow[GetDbFieldName("MessageId")],
+					PublishedBy = (Guid) dataRow[GetDbFieldName("PublishedBy")],
+					PublishedTo = (Guid) dataRow[GetDbFieldName("PublishedTo")],
+					ComponentOwner = (Guid) dataRow[GetDbFieldName("ComponentOwner")],
+					Tries = Convert.ToInt32(dataRow[GetDbFieldName("Tries")]),
+					Version = (long) dataRow[GetDbFieldName("Version")],
+					//TODO: TO BASE CLASS
+				};
+			return result;
+		}
 
-        #region Equatable
+		#region Equatable
 
-        //TODO: refactor to base
+		//TODO: refactor to base
 
-        public virtual bool Equals(OutgoingMessage other)
-        {
-            if (other == null)
-                return false;
+		public virtual bool Equals(OutgoingMessage other)
+		{
+			if (other == null)
+				return false;
 
-            return
-                ComponentOwner == other.ComponentOwner  && Version == other.Version &&
-                Status == other.Status && CreatedTimeUtc == other.CreatedTimeUtc && JsonMessage == other.JsonMessage &&
-                MessageId == other.MessageId;
-            //TODO: FINISH
-        }
+			return
+				ComponentOwner == other.ComponentOwner && Version == other.Version &&
+				Status == other.Status && CreatedTimeUtc == other.CreatedTimeUtc && JsonMessage == other.JsonMessage &&
+				MessageId == other.MessageId;
+			//TODO: FINISH
+		}
 
-        public static bool operator ==(OutgoingMessage a, OutgoingMessage b)
-        {
-            if ((object) a == null || ((object) b) == null)
-                return Equals(a, b);
+		public static bool operator ==(OutgoingMessage a, OutgoingMessage b)
+		{
+			if ((object) a == null || ((object) b) == null)
+				return Equals(a, b);
 
-            return a.Equals(b);
-        }
+			return a.Equals(b);
+		}
 
-        public static bool operator !=(OutgoingMessage a, OutgoingMessage b)
-        {
-            if (a == null || b == null)
-                return !Equals(a, b);
+		public static bool operator !=(OutgoingMessage a, OutgoingMessage b)
+		{
+			if (a == null || b == null)
+				return !Equals(a, b);
 
-            return !(a.Equals(b));
-        }
+			return !(a.Equals(b));
+		}
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (OutgoingMessage)) return false;
-            return Equals((OutgoingMessage) obj);
-        }
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != typeof (OutgoingMessage)) return false;
+			return Equals((OutgoingMessage) obj);
+		}
 
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return Id.GetHashCode();
+		}
 
-        #endregion
+		#endregion
 
-        public virtual bool Expired(TimeSpan sendExpiringTime)
-        {
-            return DateTime.UtcNow.Subtract(CreatedTimeUtc) > sendExpiringTime;
-        }
-    }
+		public virtual bool Expired(TimeSpan sendExpiringTime)
+		{
+			return DateTime.UtcNow.Subtract(CreatedTimeUtc) > sendExpiringTime;
+		}
+	}
 }

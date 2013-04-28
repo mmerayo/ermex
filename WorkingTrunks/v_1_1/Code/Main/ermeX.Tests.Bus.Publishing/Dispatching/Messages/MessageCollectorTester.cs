@@ -26,9 +26,10 @@ using NUnit.Framework;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.DataSources;
+using ermeX.DAL.Repository;
+using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Observer;
-using ermeX.Domain.Observers;
+using ermeX.DAL.Interfaces.Observers;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
@@ -44,7 +45,7 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
 		private readonly ManualResetEvent _messageReceived = new ManualResetEvent(false);
 
-		private MessageCollector GetInstance(DbEngineType dbEngine,
+		private MessageCollector GetInstance(IUnitOfWorkFactory factory,
 		                                     Action<MessageDistributor.MessageDistributorMessage> messageReceived,
 		                                     out IMessageDistributor mockedDistributor)
 		{
@@ -53,9 +54,9 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			mock.Setup(x => x.EnqueueItem(It.IsAny<MessageDistributor.MessageDistributorMessage>())).Callback(messageReceived);
 			mockedDistributor = mock.Object;
 			return new MessageCollector(settings, mockedDistributor,
-			                            base.GetOutgoingQueueReader(dbEngine),
-			                            base.GetOutgoingMessageSubscriptionsWritter(dbEngine),
-			                            base.GetDomainNotifier(dbEngine));
+			                            GetOutgoingQueueReader(factory),
+			                            GetOutgoingQueueWritter(factory),
+			                            GetDomainNotifier());
 
 		}
 
@@ -73,23 +74,25 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			_messageReceived.Set();
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void ComponentStopsOnDisposal(DbEngineType dbEngine)
 		{
 			IMessageDistributor mockedDistributor;
-			var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor);
+			IUnitOfWorkFactory factory = GetUnitOfWorkFactory(dbEngine);
+			var target = GetInstance(factory, DealWithMessage, out mockedDistributor);
 			target.Start();
 			target.Dispose();
 			Assert.AreEqual(DispatcherStatus.Stopped, target.Status);
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void CanDispatchMessage(DbEngineType dbEngine)
 		{
 			IMessageDistributor mockedDistributor;
 			var expected = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId,
 			                              new BizMessage("theData"));
-			using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
+			IUnitOfWorkFactory factory = GetUnitOfWorkFactory(dbEngine);
+			using (var target = GetInstance(factory, DealWithMessage, out mockedDistributor))
 			{
 				target.Start();
 				target.Dispatch(expected);
@@ -100,15 +103,16 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			Assert.IsTrue(_sentMessages.Count == 1);
 			BusMessage busMessage = _sentMessages[0].OutGoingMessage.ToBusMessage();
 			Assert.AreEqual(expected, busMessage); //asserts is the same that was pushed
-			var messagesInDb = GetDataSource<OutgoingMessagesDataSource>(dbEngine).GetAll();
-			Assert.IsTrue(messagesInDb.Count == 1); //asserts the message was created
+			List<OutgoingMessage> messagesInDb;
+			messagesInDb = GetRepository<Repository<OutgoingMessage>>(factory).FetchAll().ToList();
+			Assert.IsTrue(messagesInDb.Count() == 1); //asserts the message was created
 
-			OutgoingMessage outgoingMessage = messagesInDb[0];
+			OutgoingMessage outgoingMessage = messagesInDb.First();
 			Assert.IsTrue(outgoingMessage.Status == Message.MessageStatus.SenderCollected);
 			Assert.AreEqual(expected, outgoingMessage.ToBusMessage()); //asserts is the same pushed one
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void RemovesExpiredItems(DbEngineType dbEngine)
 		{
 
@@ -116,28 +120,29 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
 			//the default test set them for one day
 			var outgoingMessage = new OutgoingMessage(busMessage)
-				{
-					CreatedTimeUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
-					ComponentOwner = LocalComponentId,
-					PublishedBy = LocalComponentId,
-					Status = Message.MessageStatus.SenderCollected
-				};
-			var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+			                      	{
+			                      		CreatedTimeUtc = DateTime.UtcNow.Subtract(TimeSpan.FromDays(2)),
+			                      		ComponentOwner = LocalComponentId,
+			                      		PublishedBy = LocalComponentId,
+			                      		Status = Message.MessageStatus.SenderCollected
+			                      	};
+			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
+			var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(unitOfWorkFactory);
 			outgoingMessagesDataSource.Save(outgoingMessage);
 
-			Assert.IsTrue(outgoingMessagesDataSource.GetAll().Count == 1); //assert it was saved
-
+			int count = outgoingMessagesDataSource.Count();
+			Assert.IsTrue(count == 1); //assert it was saved
 			IMessageDistributor mockedDistributor;
-			using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
+			using (var target = GetInstance(unitOfWorkFactory, DealWithMessage, out mockedDistributor))
 			{
 				target.Start();
 				Thread.Sleep(250);
 			}
 
-			Assert.IsTrue(outgoingMessagesDataSource.GetAll().Count == 0); //asserts it was removed
+			Assert.IsTrue(!outgoingMessagesDataSource.Any()); //asserts it was removed
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void SendsExistingItemsOnStart(DbEngineType dbEngine)
 		{
 
@@ -145,17 +150,20 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 
 			//the default test set them for one day
 			var outgoingMessage = new OutgoingMessage(busMessage) //creates this message as a pending one
-				{
-					CreatedTimeUtc = DateTime.UtcNow,
-					ComponentOwner = LocalComponentId,
-					PublishedBy = LocalComponentId,
-					Status = Message.MessageStatus.SenderCollected
-				};
-			var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+			                      	{
+			                      		CreatedTimeUtc = DateTime.UtcNow,
+			                      		ComponentOwner = LocalComponentId,
+			                      		PublishedBy = LocalComponentId,
+			                      		Status = Message.MessageStatus.SenderCollected
+			                      	};
+			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
+			var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(unitOfWorkFactory);
+
 			outgoingMessagesDataSource.Save(outgoingMessage);
 
+
 			IMessageDistributor mockedDistributor;
-			using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
+			using (var target = GetInstance(unitOfWorkFactory, DealWithMessage, out mockedDistributor))
 			{
 				target.Start();
 				_messageReceived.WaitOne(TimeSpan.FromSeconds(10));
@@ -176,35 +184,35 @@ namespace ermeX.Tests.Bus.Publishing.Dispatching.Messages
 			public string TheData { get; set; }
 		}
 
-		[Test, TestCaseSource(typeof (TestCaseSources), "InMemoryDb")]
+		[Test, TestCaseSource(typeof (TestCaseSources), TestCaseSources.OptionDbInMemory)]
 		public void SendsExistingItemsOnSubscriptionReceived(DbEngineType dbEngine)
 		{
 
 			var busMessage = new BusMessage(Guid.NewGuid(), DateTime.UtcNow, LocalComponentId,
 			                                new BizMessage(new SomeData() {TheData = "theData"}));
 			IMessageDistributor mockedDistributor;
-
-			using (var target = GetInstance(dbEngine, DealWithMessage, out mockedDistributor))
+			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(dbEngine);
+			using (var target = GetInstance(unitOfWorkFactory, DealWithMessage, out mockedDistributor))
 			{
 				target.Start();
 				//the default test set them for one day
 				var outgoingMessage = new OutgoingMessage(busMessage) //creates this message as a pending one
-					{
-						CreatedTimeUtc = DateTime.UtcNow,
-						ComponentOwner = LocalComponentId,
-						PublishedBy = LocalComponentId,
-						Status = Message.MessageStatus.SenderCollected
-					};
-				var outgoingMessagesDataSource = GetDataSource<OutgoingMessagesDataSource>(dbEngine);
+				                      	{
+				                      		CreatedTimeUtc = DateTime.UtcNow,
+				                      		ComponentOwner = LocalComponentId,
+				                      		PublishedBy = LocalComponentId,
+				                      		Status = Message.MessageStatus.SenderCollected
+				                      	};
+				var outgoingMessagesDataSource = GetRepository<Repository<OutgoingMessage>>(unitOfWorkFactory);
 				outgoingMessagesDataSource.Save(outgoingMessage);
 
 				target.Notify(ObservableAction.Add, new OutgoingMessageSuscription()
-					{
-						BizMessageFullTypeName = typeof (SomeData).FullName,
-						Component = LocalComponentId,
-						ComponentOwner = LocalComponentId,
-						DateLastUpdateUtc = DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
-					});
+				                                    	{
+				                                    		BizMessageFullTypeName = typeof (SomeData).FullName,
+				                                    		Component = LocalComponentId,
+				                                    		ComponentOwner = LocalComponentId,
+				                                    		DateLastUpdateUtc = DateTime.UtcNow.Subtract(TimeSpan.FromHours(1))
+				                                    	});
 
 				_messageReceived.WaitOne(TimeSpan.FromSeconds(10));
 

@@ -16,20 +16,24 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-	<ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\Release\</OutputPath>
-	<ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel>
-	<Optimize>true</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL" />
+    <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\Build\Packages\nUnit\NUnit-2.5.6.10205\nunitbin\nunit.framework.dll</HintPath>
     </Reference>
@@ -50,6 +54,9 @@
     </Compile>
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
+      <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
     <Compile Include="DataAccess\DataAccessTestBase.cs" />
     <Compile Include="DataAccess\DataAccessTestHelper.cs" />
@@ -72,6 +79,7 @@
     <Compile Include="Networking\TestPort.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomValues\RandomHelper.cs" />
+    <Compile Include="Reflection\PrivateInspector.cs" />
     <Compile Include="SettingsProviders\TestCaseSources.cs" />
     <Compile Include="SettingsProviders\ITestSettings.cs" />
     <Compile Include="SettingsProviders\TestSettingsProvider.cs" />
@@ -101,6 +109,10 @@
     <ProjectReference Include="..\ermeX.ConfigurationManagement\ermeX.ConfigurationManagement.csproj">
       <Project>{C4536E30-DC91-4AA4-8860-ECBDAF1AE4DE}</Project>
       <Name>ermeX.ConfigurationManagement</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Dal.Commands\ermeX.Dal.Commands.csproj">
+      <Project>{4CB1C5B5-6883-4FBE-80CC-97B2EDC2F5DE}</Project>
+      <Name>ermeX.Dal.Commands</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.DAL.Interfaces\ermeX.DAL.Interfaces.csproj">
       <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>

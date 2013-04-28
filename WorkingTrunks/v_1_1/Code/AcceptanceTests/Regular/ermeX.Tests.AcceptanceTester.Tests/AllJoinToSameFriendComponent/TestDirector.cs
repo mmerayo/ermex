@@ -88,7 +88,7 @@ namespace ermeX.Tests.AcceptanceTester.Tests.AllJoinToSameFriendComponent
                 Ports.RemoveAt(0);
             }
 
-            if (!_watcherOn)
+            if (_watcherOn)
                 SqlDbHelper.DropDatabase(_currentComponentId,prefix);
         }
         public void PerformTasks()

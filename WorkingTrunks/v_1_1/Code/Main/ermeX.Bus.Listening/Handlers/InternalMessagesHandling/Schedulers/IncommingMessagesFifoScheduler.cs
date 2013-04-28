@@ -20,8 +20,8 @@ using System;
 using System.Linq;
 using Ninject;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Component;
-using ermeX.Domain.Queues;
+using ermeX.DAL.Interfaces.Component;
+using ermeX.DAL.Interfaces.Queues;
 using ermeX.Entities.Entities;
 
 namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers

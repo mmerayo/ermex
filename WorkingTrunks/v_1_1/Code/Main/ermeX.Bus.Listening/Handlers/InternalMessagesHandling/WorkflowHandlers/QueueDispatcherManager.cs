@@ -18,6 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -26,8 +27,8 @@ using Ninject;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Component;
-using ermeX.Domain.Queues;
+using ermeX.DAL.Interfaces.Component;
+using ermeX.DAL.Interfaces.Queues;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Threading.Queues;
@@ -35,165 +36,185 @@ using ermeX.Threading.Scheduling;
 
 namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 {
-    //THIS CLASS IS CRAP WE NEED TO IMPROVE
-    //TODO: IT MUST BE IN PARALLEL, THIS IS TEMPORAL UNTIL iSSUE-244 is developed
-    //TODO: THE WHOLE CLAS LOGIC SHOULD BE REWRITTEN
-    internal sealed class QueueDispatcherManager : ProducerSequentialConsumerPriorityQueue<QueueDispatcherManager.QueueDispatcherManagerMessage>, IQueueDispatcherManager
-    {
-        public class QueueDispatcherManagerMessage
-        {
-            public IncomingMessage IncomingMessage { get; private set; }
-            public bool MustCalculateLatency { get; set; }
+	//THIS CLASS IS CRAP WE NEED TO IMPROVE
+	//TODO: IT MUST BE IN PARALLEL, THIS IS TEMPORAL UNTIL iSSUE-244 is developed
+	//TODO: THE WHOLE CLAS LOGIC SHOULD BE REWRITTEN
+	internal sealed class QueueDispatcherManager :
+		ProducerSequentialConsumerPriorityQueue<QueueDispatcherManager.QueueDispatcherManagerMessage>, IQueueDispatcherManager
+	{
+		public class QueueDispatcherManagerMessage
+		{
+			public IncomingMessage IncomingMessage { get; private set; }
+			public bool MustCalculateLatency { get; set; }
 
-            public QueueDispatcherManagerMessage(IncomingMessage message, bool mustCalculateLatency=true)
-            {
+			public QueueDispatcherManagerMessage(IncomingMessage message, bool mustCalculateLatency = true)
+			{
 
-                if (message == null) throw new ArgumentNullException("message");
-                IncomingMessage = message;
-                MustCalculateLatency = mustCalculateLatency;
-            }
-        }
+				if (message == null) throw new ArgumentNullException("message");
+				IncomingMessage = message;
+				MustCalculateLatency = mustCalculateLatency;
+			}
 
-        private class QueueComparer:IComparer<QueueDispatcherManagerMessage>
-        {
-            public int Compare(QueueDispatcherManagerMessage x, QueueDispatcherManagerMessage y)
-            {
-                if (x == null && y == null)
-                    return 0;
-                if (x == null)
-                    return -1;
-                if (y == null)
-                    return 1;
+			public override string ToString()
+			{
+				return IncomingMessage.ToString();
+			}
+		}
 
-                var xi = x.IncomingMessage;
-                var yi = y.IncomingMessage;
-                 if (xi == null && yi == null)
-                    return 0;
-                if (xi == null)
-                    return -1;
-                if (yi == null)
-                    return 1;
+		private class QueueComparer : IComparer<QueueDispatcherManagerMessage>
+		{
+			public int Compare(QueueDispatcherManagerMessage x, QueueDispatcherManagerMessage y)
+			{
+				if (x == null && y == null)
+					return 0;
+				if (x == null)
+					return -1;
+				if (y == null)
+					return 1;
 
-                return xi.CreatedTimeUtc.CompareTo(yi.CreatedTimeUtc);
-            }
-        }
+				var xi = x.IncomingMessage;
+				var yi = y.IncomingMessage;
+				if (xi == null && yi == null)
+					return 0;
+				if (xi == null)
+					return -1;
+				if (yi == null)
+					return 1;
 
-        [Inject]
-        public QueueDispatcherManager(IBusSettings settings,
-			IWriteIncommingQueue incommingQueueWriter,
-			ICanReadLatency latenciesReader,
-			ICanUpdateLatency latenciesUpdater)
-			:base(new QueueComparer())
-        {
-            if (settings == null) throw new ArgumentNullException("settings");
-            Settings = settings;
-	        IncommingQueueWriter = incommingQueueWriter;
-	        LatenciesReader = latenciesReader;
-	        LatenciesUpdater = latenciesUpdater;
-        }
-        private IBusSettings Settings { get; set; }
-	    private IWriteIncommingQueue IncommingQueueWriter { get; set; }
-	    private ICanReadLatency LatenciesReader { get; set; }
-	    private ICanUpdateLatency LatenciesUpdater { get; set; }
+				return xi.CreatedTimeUtc.CompareTo(yi.CreatedTimeUtc);
+			}
+		}
 
-	    protected override Func<QueueDispatcherManagerMessage,bool> RunActionOnDequeue
-        {
-            get { return DoDeliver; }
-        }
+		[Inject]
+		public QueueDispatcherManager(IBusSettings settings,
+		                              IWriteIncommingQueue incommingQueueWriter,
+		                              ICanReadLatency latenciesReader,
+		                              ICanUpdateLatency latenciesUpdater)
+			: base(new QueueComparer())
+		{
+			Logger = LogManager.GetLogger<QueueDispatcherManager>();
+			if (settings == null) throw new ArgumentNullException("settings");
+			Settings = settings;
+			IncommingQueueWriter = incommingQueueWriter;
+			LatenciesReader = latenciesReader;
+			LatenciesUpdater = latenciesUpdater;
+		}
 
-        private bool DoDeliver(QueueDispatcherManagerMessage message)
-        {
-            bool result;
-            DateTime receivedHere = DateTime.UtcNow;
+		private IBusSettings Settings { get; set; }
+		private IWriteIncommingQueue IncommingQueueWriter { get; set; }
+		private ICanReadLatency LatenciesReader { get; set; }
+		private ICanUpdateLatency LatenciesUpdater { get; set; }
 
-            IncomingMessage incomingMessage = message.IncomingMessage;
+		protected override Func<QueueDispatcherManagerMessage, bool> RunActionOnDequeue
+		{
+			get { return DoDeliver; }
+		}
 
-            if (message.MustCalculateLatency)
-            {
-                UpdateComponentLatency(incomingMessage.ToBusMessage(), receivedHere);
-                message.MustCalculateLatency = false; //this will ensure that its only calculated once
-            }
+		private bool DoDeliver(QueueDispatcherManagerMessage message)
+		{
+			Logger.Trace(x=>x("DoDeliver - Component:{0} - Domain:{1} - ThreadId: {2} - MessageId:{3} ",Settings.ComponentId, AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId,message.IncomingMessage.MessageId));
 
-            if (MustWaitDueToQueueLatency(receivedHere, incomingMessage))
-            {
-                result = false;
-            }
-            else
-            {
-                incomingMessage.Status = Message.MessageStatus.ReceiverDispatching;
-                IncommingQueueWriter.Save(incomingMessage);
+			bool result;
+			DateTime receivedHere = DateTime.UtcNow;
 
-                Logger.Trace(x => x("{0} Start Handling", incomingMessage.MessageId));
-                OnDispatchMessage(incomingMessage.SuscriptionHandlerId, incomingMessage.ToBusMessage());
+			IncomingMessage incomingMessage = message.IncomingMessage;
+			//Debug.Assert(incomingMessage.MessageId!=Guid.Empty,"Incomming message, MessageId cannot be empty");
+			
+			if (message.MustCalculateLatency)
+			{
+				UpdateComponentLatency(incomingMessage.ToBusMessage(), receivedHere);
+				message.MustCalculateLatency = false; //this will ensure that its only calculated once
+			}
 
-				IncommingQueueWriter.Remove(incomingMessage);
-                Logger.Trace(x => x("{0} Handled finally", incomingMessage.MessageId));
-                result= true;
-            }
-            return result;
-        }
+			if (MustWaitDueToQueueLatency(receivedHere, incomingMessage))
+			{
+				result = false;
+			}
+			else
+			{
+				incomingMessage.Status = Message.MessageStatus.ReceiverDispatching;
+				IncommingQueueWriter.Save(incomingMessage);
 
-        /// <summary>
-        ///  checks if it must wait because the latency barrier wasnt reached.
-        /// </summary>
-        /// <param name="receivedHere"></param>
-        /// <param name="incomingMessage"></param>
-        /// <returns></returns>
-        /// <remarks>It does the wait</remarks>
-        private bool MustWaitDueToQueueLatency(DateTime receivedHere, IncomingMessage incomingMessage)
-        {
-            bool result;
-            int maxLatency = LatenciesReader.GetMaxLatency();
-                //get the latency of all the components involved in the queue
+				Logger.Trace(x => x("DoDeliver.Component:{1} - MessageId:{0} Start Handling", incomingMessage.MessageId,Settings.ComponentId));
+				OnDispatchMessage(incomingMessage.SuscriptionHandlerId, incomingMessage.ToBusMessage());
 
-            //we equal the latency
-            TimeSpan timeSpan = receivedHere.Subtract(incomingMessage.CreatedTimeUtc);
-            var millisecondsLatency = (int) timeSpan.TotalMilliseconds;
-            if (millisecondsLatency < maxLatency) //checks the components latency IF IT WAS DELIVERED TO SOON
-            {
-                //lets wait the expected latency
-                Thread.Sleep(maxLatency - millisecondsLatency);
-                result = true; //if will reenqueue it, and as is sorted it will go to the beggining
-            }
-            else
-            {
-                result = false;
-            }
-            return result;
-        }
+				try
+				{
+					IncommingQueueWriter.Remove(incomingMessage);
+				}
+				catch (Exception ex)
+				{
+					Logger.WarnFormat("DoDeliver. Swallowing - Could not remove message id:{0} MessageId:{1} Exception:{2}",incomingMessage.Id,incomingMessage.MessageId,ex.ToString());
+				}
+				Logger.Trace(x => x("DoDeliver.Component:{1} - MessageId:{0} Handled finally", incomingMessage.MessageId, Settings.ComponentId));
+				result = true;
+			}
+			return result;
+		}
 
-        private void UpdateComponentLatency(BusMessage receivedMessage, DateTime receivedTimeUtc)
-        {
-            var milliseconds = receivedTimeUtc.Subtract(receivedMessage.CreatedTimeUtc).Milliseconds;
-            if (milliseconds <= (Settings.MaxDelayDueToLatencySeconds * 1000))
-            {
-                LatenciesUpdater.RegisterComponentRequestLatency(receivedMessage.Publisher, milliseconds);
-            }
-        }
+		/// <summary>
+		///  checks if it must wait because the latency barrier wasnt reached.
+		/// </summary>
+		/// <param name="receivedHere"></param>
+		/// <param name="incomingMessage"></param>
+		/// <returns></returns>
+		/// <remarks>It does the wait</remarks>
+		private bool MustWaitDueToQueueLatency(DateTime receivedHere, IncomingMessage incomingMessage)
+		{
+			bool result;
+			int maxLatency = LatenciesReader.GetMaxLatency();
+			//get the latency of all the components involved in the queue
 
-        public event Action<Guid, object> DispatchMessage;
+			//we equal the latency
+			TimeSpan timeSpan = receivedHere.Subtract(incomingMessage.CreatedTimeUtc);
+			var millisecondsLatency = (int) timeSpan.TotalMilliseconds;
+			if (millisecondsLatency < maxLatency) //checks the components latency IF IT WAS DELIVERED TO SOON
+			{
+				//lets wait the expected latency
+				Thread.Sleep(maxLatency - millisecondsLatency);
+				result = true; //if will reenqueue it, and as is sorted it will go to the beggining
+			}
+			else
+			{
+				result = false;
+			}
+			return result;
+		}
 
-        //TODO: invocation must be done on the biz layer
-        private void OnDispatchMessage(Guid suscriptionHandlerId, BusMessage message)
-        {
-            try
-            {
-                Action<Guid, object> handler = DispatchMessage;
-                if (handler != null)
-                {
-                    handler(suscriptionHandlerId, message.Data.RawData);
-                    Logger.Trace(x=>x("Receiver: Dispatched message with id: {0}", message.MessageId));
-                }
-                else
-                {
-                    Logger.Trace(x=>x("Receiver: The message with id: {0} didnt have receivers configured", message.MessageId));
-                }
+		private void UpdateComponentLatency(BusMessage receivedMessage, DateTime receivedTimeUtc)
+		{
+			var milliseconds = receivedTimeUtc.Subtract(receivedMessage.CreatedTimeUtc).Milliseconds;
+			if (milliseconds <= (Settings.MaxDelayDueToLatencySeconds*1000))
+			{
+				LatenciesUpdater.RegisterComponentRequestLatency(receivedMessage.Publisher, milliseconds);
+			}
+		}
 
-            }catch(Exception ex)
-            {
-                Logger.Error(x=>x("Error handling message {0} by subscriptionHandler {1}", message.MessageId, suscriptionHandlerId),ex);
-                throw;
-            }
-        }
-    }
+		public event Action<Guid, object> DispatchMessage;
+
+		//TODO: invocation must be done on the biz layer
+		private void OnDispatchMessage(Guid suscriptionHandlerId, BusMessage message)
+		{
+			try
+			{
+				Action<Guid, object> handler = DispatchMessage;
+				if (handler != null)
+				{
+					handler(suscriptionHandlerId, message.Data.RawData);
+					Logger.Trace(x => x("Receiver: Dispatched message with id: {0}", message.MessageId));
+				}
+				else
+				{
+					Logger.Trace(x => x("Receiver: The message with id: {0} didnt have receivers configured", message.MessageId));
+				}
+
+			}
+			catch (Exception ex)
+			{
+				Logger.Error(
+					x => x("Error handling message {0} by subscriptionHandler {1}", message.MessageId, suscriptionHandlerId), ex);
+				throw;
+			}
+		}
+	}
 }

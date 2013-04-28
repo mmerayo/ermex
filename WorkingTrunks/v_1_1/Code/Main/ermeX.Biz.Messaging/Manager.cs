@@ -44,7 +44,7 @@ namespace ermeX.Biz.Messaging
         private IBusSettings Settings { get; set; }
         private IMessagePublisher Publisher { get; set; }
         private IMessageListener Listener { get; set; }
-        private readonly ILog Logger=LogManager.GetLogger(StaticSettings.LoggerName);
+        private static readonly ILog Logger=LogManager.GetLogger(typeof(Manager).FullName);
 
         #region IMessagingManager Members
 

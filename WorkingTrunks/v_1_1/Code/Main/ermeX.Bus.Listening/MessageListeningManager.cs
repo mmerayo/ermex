@@ -30,8 +30,8 @@ using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Services;
-using ermeX.Domain.Subscriptions;
+using ermeX.DAL.Interfaces.Services;
+using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Entities.Entities;
 
 
@@ -70,7 +70,7 @@ namespace ermeX.Bus.Listening
 
 		private IComponentSettings ComponentSettings { get; set; }
 		private IListeningManager ListeningManager { get; set; }
-		private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(MessageListeningManager).FullName);
 
 		#region IMessageListener Members
 
@@ -251,19 +251,22 @@ namespace ermeX.Bus.Listening
 
 			#region todo in single transaction
 
-			IList<ServiceDetails> svcList = _serviceDetailsReader.GetByInterfaceType(interfaceType);
+			var svcList = _serviceDetailsReader.GetByInterfaceType(interfaceType);
 			//SYSTEM SERVICES CAN BE DUPLICATED, BUSINESS SERVICES NO while there are return values, THE NEXT LINES ARE FINE WITH SMALL CHANGES
-			if (svcList.Count > 0 && !svcList[0].IsSystemService &&
-			    svcList[0].Publisher != ComponentSettings.ComponentId &&
-			    svcList[0].ComponentOwner == ComponentSettings.ComponentId &&
-			    TypesHelper.GetPublicInstanceMethods(interfaceType).Any(x => x.ReturnType != typeof (void))
-				)
-				throw new InvalidOperationException(
-					string.Format("The service is already published by the component with Id:{0}." +
-					              "{1}Only the services whose methods dont return values can be published by several components.",
-					              svcList[0].Publisher, Environment.NewLine));
-
-			MethodInfo[] methods = TypesHelper.GetPublicInstanceMethods(interfaceType);
+			if (svcList.Any())
+			{
+				var details = svcList.First();
+				if (!details.IsSystemService &&
+				    details.Publisher != ComponentSettings.ComponentId &&
+				    details.ComponentOwner == ComponentSettings.ComponentId &&
+				    TypesHelper.GetPublicInstanceMethods(interfaceType).Any(x => x.ReturnType != typeof (void))
+					)
+					throw new InvalidOperationException(
+						string.Format("The service is already published by the component with Id:{0}." +
+						              "{1}Only the services whose methods dont return values can be published by several components.",
+						              details.Publisher, Environment.NewLine));
+			}
+			var methods = TypesHelper.GetPublicInstanceMethods(interfaceType);
 
 			foreach (MethodInfo method in methods) //join with next when overloaded
 			{

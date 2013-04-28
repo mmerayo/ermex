@@ -46,7 +46,7 @@ namespace ermeX.Threading.Scheduling
         
         private const int MaxJobsToSchedulePerCheck = 128;
 
-        private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(JobScheduler).FullName);
 
         public int Length
         {

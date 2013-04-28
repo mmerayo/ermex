@@ -29,7 +29,7 @@ using ermeX.Versioning;
 
 namespace ermeX.Tests.VersionUpgrade
 {
-    [Category(TestCategories.CoreFunctionalTest)]
+    [Category(TestCategories.CoreSystemTest)]
     //[TestFixture]
     internal sealed class VersionUpgradeHelperTests :DataAccessTestBase
     {

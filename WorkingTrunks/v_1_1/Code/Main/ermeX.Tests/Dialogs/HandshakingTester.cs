@@ -63,7 +63,7 @@ namespace ermeX.Tests.Dialogs
             throw new NotImplementedException();
         }
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void Sends_JoinRequestMessage_OnStartUp(DbEngineType dbEngine)
 
         {
@@ -94,7 +94,7 @@ namespace ermeX.Tests.Dialogs
         }
 
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void WhenRequest_JoinRequestMessage_UpdatesRequesterComponents(DbEngineType dbEngine)
         {
 
@@ -126,7 +126,7 @@ namespace ermeX.Tests.Dialogs
         }
 
 
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void WhenReceived_JoinRequestMessage_Sends_MyComponentsMessage_To_The_Caller(DbEngineType dbEngine)
         {
             //Arrange
@@ -159,7 +159,7 @@ namespace ermeX.Tests.Dialogs
 
 
         //TODO: refactor dialogs
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void WhenRequest_JoinRequestMessage_SendsJoinRequestMesage_To_ReceivedComponents(DbEngineType dbEngine)
         {
             //create new FriendComponent
@@ -242,7 +242,7 @@ namespace ermeX.Tests.Dialogs
 
         //the initial component that was requested to be joined to is not requested twice
         [Ignore("TODO")]
-        [Test, TestCaseSource(typeof(TestCaseSources), "InMemoryDb")]
+        [Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionDbInMemory)]
         public void WhenRequest_JoinRequestMessage_Does_Not_SendJoinRequestMesage_Twice_To_SameComponent(DbEngineType dbEngine)
         {
             //similar than previous checking that the calls

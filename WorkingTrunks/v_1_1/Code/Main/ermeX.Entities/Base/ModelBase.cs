@@ -17,17 +17,23 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using System.Linq.Expressions;
 
 namespace ermeX.Entities.Base
 {
-    [Serializable]
-    public abstract class ModelBase
-    {
-        public virtual int Id { get; set; }
+	[Serializable]
+	public abstract class ModelBase
+	{
+		public virtual int Id { get; set; }
 
-        //prevents several compoenents using same db
-        public virtual Guid ComponentOwner { get; set; }
+		//prevents several compoenents using same db
+		public virtual Guid ComponentOwner { get; set; }
 
-        public virtual long Version { get; set; }
-    }
+		public virtual long Version { get; set; }
+
+		public override string ToString()
+		{
+			return string.Format("{0} - Id: {1} - ComponentOwner: {2}", GetType().FullName, Id, ComponentOwner);
+		}
+	}
 }

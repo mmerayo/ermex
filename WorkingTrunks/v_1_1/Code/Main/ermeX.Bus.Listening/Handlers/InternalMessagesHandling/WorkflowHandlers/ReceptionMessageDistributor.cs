@@ -20,11 +20,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Common.Logging;
 using Ninject;
 using ermeX.Common;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Queues;
-using ermeX.Domain.Subscriptions;
+using ermeX.DAL.Interfaces.Queues;
+using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Threading.Queues;
@@ -57,6 +58,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                                    IQueueDispatcherManager dispatcher)
             : base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
         {
+			Logger = LogManager.GetLogger<ReceptionMessageDistributor>();
 	        _incommingSubscriptionsReader = incommingSubscriptionsReader;
 	        _queueReader = queueReader;
 	        _queueWritter = queueWritter;
@@ -113,11 +115,14 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
                             continue;
 
                         var messageToDeliver = incomingMessage.GetClone(); //creates a copy for the subscriber
+						messageToDeliver.MessageId=incomingMessage.MessageId;
                         messageToDeliver.Status = Message.MessageStatus.ReceiverDispatchable; //ready to be dispatched
                         messageToDeliver.SuscriptionHandlerId = destination;
 
+						Logger.TraceFormat("OnDequeue. component:{2} -distributing messageid:{0} to {1}", incomingMessage.MessageId, destination, message.IncomingMessage.PublishedTo);
                         _queueWritter.Save(messageToDeliver); //update the db ? could this be done async?
                         Dispatcher.EnqueueItem(new QueueDispatcherManager.QueueDispatcherManagerMessage(messageToDeliver, true));//pushes it
+						Logger.TraceFormat("OnDequeue. component:{2} -distributed messageid:{0} to {1}", incomingMessage.MessageId, destination, message.IncomingMessage.PublishedTo);
                     }
                 }
 

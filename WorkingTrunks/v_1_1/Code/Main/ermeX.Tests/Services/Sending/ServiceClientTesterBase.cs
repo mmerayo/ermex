@@ -176,7 +176,7 @@ namespace ermeX.Tests.Services.Sending
         {
             Guid s = Guid.NewGuid();
 
-            int freePort = new TestPort(9000);
+            int freePort = new TestPort(29000);
             using (
                 var server = GetDummyTestServer<ServiceRequestMessage>(false, null, freePort, s))
             {
@@ -196,7 +196,7 @@ namespace ermeX.Tests.Services.Sending
                 Assert.Inconclusive("protobuf to support this or workaround boxing valuetypes");
             Guid s = Guid.NewGuid();
 
-            int freePort = new TestPort(9000);
+            int freePort = new TestPort(19000);
             AutoResetEvent eventDone = new AutoResetEvent(false);
 
             var response = new DummyDomainEntity() { Id = OperationIdentifiers.InternalMessagesOperationIdentifier, Dummies = new List<DummyDomainEntity>(items) };
@@ -239,7 +239,7 @@ namespace ermeX.Tests.Services.Sending
         public void Can_Send_Chunked_Message([Values(5)] int mBytes)
         {
             if (mBytes > 20)
-                Assert.Inconclusive("TODO: extablish a limit where the data must be a BLOB");
+                Assert.Inconclusive("TODO: establish a limit where the data must be a BLOB");
             //Assert.Fail("Need to pass a memory profiler and optimize as this test is not working for " + mBytes);
 
             Guid s = Guid.NewGuid();

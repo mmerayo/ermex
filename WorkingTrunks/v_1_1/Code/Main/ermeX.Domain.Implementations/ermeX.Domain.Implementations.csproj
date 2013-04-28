@@ -19,17 +19,21 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel>
-    
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NHibernate">
+      <HintPath>..\ermeX.Tests.DAL\bin\Debug\NHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
     </Reference>
@@ -51,28 +55,10 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
-    <Compile Include="Observers\ChangesInOutgoingSubscriptionsNotifier.cs" />
-    <Compile Include="Component\ComponentsReader.cs" />
-    <Compile Include="Component\ComponentsRegistrator.cs" />
-    <Compile Include="Component\ComponentsUpdater.cs" />
-    <Compile Include="Component\LatencyReader.cs" />
-    <Compile Include="Component\LatencyUpdater.cs" />
-    <Compile Include="Connectivity\ConnectivityDetailsReader.cs" />
-    <Compile Include="Connectivity\ConnectivityDetailsWritter.cs" />
-    <Compile Include="Messages\ChunkedMessagesWriter.cs" />
-    <Compile Include="Messages\ChunkedMessagesReader.cs" />
+    <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
+      <Link>Properties\TestVisibilityInfo.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueryDatabase\QueryHelperFactory.cs" />
-    <Compile Include="Queues\CanUpdateOutgoingMessagesQueueInfo.cs" />
-    <Compile Include="Queues\IncommingMessagesQueueWriter.cs" />
-    <Compile Include="Queues\ReaderIncommingMessagesQueueInfo.cs" />
-    <Compile Include="Queues\ReaderOutgoingMessagesQueueInfo.cs" />
-    <Compile Include="Services\ServiceDetailsReader.cs" />
-    <Compile Include="Services\ServiceDetailsWriter.cs" />
-    <Compile Include="Subscriptions\CanReadIncommingMessagesSubscriptions.cs" />
-    <Compile Include="Subscriptions\CanReadOutgoingMessagesSubscriptions.cs" />
-    <Compile Include="Subscriptions\CanUpdateIncommingMessagesSubscriptions.cs" />
-    <Compile Include="Subscriptions\CanUpdateOutgoingMessagesSubscriptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ermeX\KeyFile.snk">
@@ -82,6 +68,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\ermeX.Bus.Interfaces\ermeX.Bus.Interfaces.csproj">
+      <Project>{9E3D8616-BD44-4E0A-A67C-182473CE2453}</Project>
+      <Name>ermeX.Bus.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Common\ermeX.Common.csproj">
       <Project>{49D6179A-5489-4CB0-A4AE-F40DB88B78B7}</Project>
       <Name>ermeX.Common</Name>

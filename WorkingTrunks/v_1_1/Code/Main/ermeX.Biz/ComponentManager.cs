@@ -30,7 +30,7 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Component;
+using ermeX.DAL.Interfaces.Component;
 using ermeX.Entities.Entities;
 using ermeX.Threading.Queues;
 
@@ -90,7 +90,7 @@ namespace ermeX.Biz
         private IDialogsManager DialogsManager { get; set; }
         private ICanReadComponents ComponentReader { get; set; }
         private ICanWriteComponents ComponentWriter { get; set; }
-        private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ComponentManager).FullName);
         private IStatusManager _statusManager;
 
         private IStatusManager StatusManager

@@ -26,7 +26,7 @@ using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-using ermeX.Domain.Queues;
+using ermeX.DAL.Interfaces.Queues;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Threading.Queues;
@@ -97,10 +97,11 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
 		private IReceptionMessageDistributor ReceptionMessageDistributor { get; set; }
 		private IBusSettings Settings { get; set; }
 		private IQueueDispatcherManager QueueDispatcherManager { get; set; }
-		private readonly ILog Logger = LogManager.GetLogger(StaticSettings.LoggerName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(ReceptionMessageHandler).FullName);
 
 		public override object Handle(TransportMessage message)
 		{
+			Logger.DebugFormat("Handle: Start MessageId: {0}",message.MessageId);
 			BusMessage busMessage = message.Data;
 
 			var incomingMessage = new IncomingMessage(BusMessage.Clone(busMessage))
@@ -111,12 +112,14 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
 					TimeReceivedUtc = DateTime.UtcNow,
 					SuscriptionHandlerId = Guid.Empty,
 					Status = Message.MessageStatus.ReceiverReceived,
+					MessageId = message.Data.MessageId
 				};
+
 
 			//this must be done on-line in case of errors so it returns an exception to the caller
 			_queueWritter.Save(incomingMessage);
 			ReceptionMessageDistributor.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage));
-			Logger.Trace(x => x("{0} - Message received ", message.Data.MessageId));
+			Logger.Trace(x => x("Handle.{0} - Message received ", incomingMessage.MessageId));
 			return null; //Check the correctness of this null
 		}
 

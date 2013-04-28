@@ -19,43 +19,57 @@
 using System;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.DataSources;
+using ermeX.DAL.Repository;
+using ermeX.DAL.UnitOfWork;
 using ermeX.Entities.Base;
 using ermeX.Tests.Common.SettingsProviders;
 
 namespace ermeX.Tests.DAL.Integration.DataSources
 {
-    /// <summary>
-    /// inherit from this if the entity can be updated by external components
-    /// </summary>
-    /// <typeparam name="TDataSource"></typeparam>
-    /// <typeparam name="TModel"></typeparam>
-    internal abstract class UpdatableByExternalComponentsTester<TDataSource, TModel> :
-        DataSourceTesterBase<TDataSource, TModel>
-        where TDataSource : DataSource<TModel>
-        where TModel : ModelBase, new()
-    {
-        [Test, TestCaseSource(typeof(TestCaseSources), "AllDbs")]
-        public void Doesnt_Update_When_Version_Is_Older_Than_Current(DbEngineType engine)
-        {
-            int id = InsertRecord(engine);
-            TDataSource target = GetDataSource<TDataSource>(engine);
-            TModel expected = target.GetById(id);
-            Assert.IsTrue(expected.Version != DateTime.MinValue.Ticks);
+	/// <summary>
+	/// inherit from this if the entity can be updated by external components
+	/// </summary>
+	/// <typeparam name="TDataSource"></typeparam>
+	/// <typeparam name="TModel"></typeparam>
+	internal abstract class UpdatableByExternalComponentsTester<TDataSource, TModel> :
+		DataSourceTesterBase<TDataSource, TModel>
+		where TDataSource : Repository<TModel>
+		where TModel : ModelBase, new()
+	{
+		[Test, TestCaseSource(typeof (TestCaseSources), "AllDbs")]
+		public void Doesnt_Update_When_Version_Is_Older_Than_Current(DbEngineType engine)
+		{
+			int id = InsertRecord(engine);
+			TModel expected;
+			IUnitOfWorkFactory unitOfWorkFactory = GetUnitOfWorkFactory(engine);
+			long expVersion;
 
-            expected = GetExpectedWithChanges(expected);
+			using (var uow = unitOfWorkFactory.Create(false))
+			{
+				var target = GetRepository<TDataSource>(unitOfWorkFactory);
+				expected = target.Single(uow, id);
 
-            target.Save(expected);
+				Assert.IsTrue(expected.Version != DateTime.MinValue.Ticks);
 
-            long expVersion = expected.Version;
-            expected.Version--;
+				expected = GetExpectedWithChanges(expected);
 
-            target.Save(expected);
-            var actual = GetDataHelper(engine).QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
+				target.Save(uow, expected);
+				uow.Commit();
+			}
+			//another unit of work
+			using (var uow = unitOfWorkFactory.Create(false))
+			{
+				var target = GetRepository<TDataSource>(unitOfWorkFactory);
+				expVersion = expected.Version;
+				expected.Version--;
 
-            Assert.AreEqual(expVersion.ToString(), actual.Version.ToString());
-        }
+				target.Save(uow, expected);
+				uow.Commit();
+			}
+			
+			var actual = GetDataHelper(engine).QueryTestHelper.GetObjectFromRow<TModel>(GetByIdSqlQuery(expected));
 
-       
-    }
+			Assert.AreEqual(expVersion.ToString(), actual.Version.ToString());
+		}
+	}
 }

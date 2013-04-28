@@ -18,6 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Data;
+using System.Linq.Expressions;
 using ermeX.LayerMessages;
 
 namespace ermeX.Entities.Entities
@@ -138,5 +139,7 @@ namespace ermeX.Entities.Entities
         }
 
         #endregion
+
+		
     }
 }

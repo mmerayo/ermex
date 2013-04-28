@@ -13,23 +13,25 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <OutputPath>bin\Debug\</OutputPath>    <DocumentationFile>bin\Debug\ermeX.Bus.Interfaces.XML</DocumentationFile>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>bin\Debug\ermeX.Bus.Interfaces.XML</DocumentationFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-	<ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\Release\</OutputPath>
-	<ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel>
-	<Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType><DocumentationFile>bin\Release\ermeX.Bus.Interfaces.XML</DocumentationFile>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <DocumentationFile>bin\Release\ermeX.Bus.Interfaces.XML</DocumentationFile>
   </PropertyGroup>
- 
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -43,6 +45,9 @@
     </Compile>
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
+      <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
     <Compile Include="Attributes\ServiceContractAttribute.cs" />
     <Compile Include="Attributes\ServiceOperationAttribute.cs" />

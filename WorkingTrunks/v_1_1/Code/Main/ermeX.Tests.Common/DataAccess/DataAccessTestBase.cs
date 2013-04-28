@@ -23,20 +23,29 @@ using Common.Logging.Simple;
 using NUnit.Framework;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
+using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-using ermeX.DAL.DataAccess.DataSources;
+using ermeX.DAL.Commands.Component;
+using ermeX.DAL.Commands.Messages;
+using ermeX.DAL.Commands.Observers;
+using ermeX.DAL.Commands.QueryDatabase;
+using ermeX.DAL.Commands.Queues;
+using ermeX.DAL.Commands.Services;
+using ermeX.DAL.Commands.Subscriptions;
 using ermeX.DAL.DataAccess.Helpers;
-using ermeX.Domain.Component;
-using ermeX.Domain.Implementations.Component;
-using ermeX.Domain.Implementations.Observers;
-using ermeX.Domain.Implementations.QueryDatabase;
-using ermeX.Domain.Implementations.Queues;
-using ermeX.Domain.Implementations.Subscriptions;
-using ermeX.Domain.Observers;
-using ermeX.Domain.QueryDatabase;
-using ermeX.Domain.Queues;
-using ermeX.Domain.Subscriptions;
+using ermeX.DAL.Providers;
+using ermeX.DAL.Repository;
+using ermeX.DAL.Transactions;
+using ermeX.DAL.UnitOfWork;
+using ermeX.DAL.Interfaces.Component;
+using ermeX.DAL.Interfaces.Messages;
+using ermeX.DAL.Interfaces.Observers;
+using ermeX.DAL.Interfaces.QueryDatabase;
+using ermeX.DAL.Interfaces.Queues;
+using ermeX.DAL.Interfaces.Services;
+using ermeX.DAL.Interfaces.Subscriptions;
+using ermeX.Entities.Entities;
 using ermeX.NonMerged;
 
 namespace ermeX.Tests.Common.DataAccess
@@ -55,7 +64,7 @@ namespace ermeX.Tests.Common.DataAccess
 		private readonly object _syncLock = new object();
 
 		private readonly Dictionary<DbEngineType, DataAccessTestHelper> _dataHelpers =
-			new Dictionary<DbEngineType, DataAccessTestHelper>(Enum.GetValues(typeof (DbEngineType)).Length);
+			new Dictionary<DbEngineType, DataAccessTestHelper>(Enum.GetValues(typeof(DbEngineType)).Length);
 
 		protected DataAccessTestHelper GetDataHelper(DbEngineType engineType)
 		{
@@ -63,17 +72,33 @@ namespace ermeX.Tests.Common.DataAccess
 				lock (_syncLock)
 					if (!_dataHelpers.ContainsKey(engineType))
 						_dataHelpers.Add(engineType,
-						                 new DataAccessTestHelper(engineType, CreateDatabase, SchemaName, LocalComponentId,
-						                                          RemoteComponentId));
+										 new DataAccessTestHelper(engineType, CreateDatabase, SchemaName, LocalComponentId,
+																  RemoteComponentId));
 
 			return _dataHelpers[engineType];
 		}
+
+
 
 		#endregion
 
 		#endregion
 
 		private bool _createDatabase = true;
+
+		//TODO: MOVE FROM HERE, CLEAN,...
+		public class CompSettings:IComponentSettings
+		{
+			public Guid ComponentId { get; set; }
+			public int CacheExpirationSeconds { get; private set; }
+			public Type ConfigurationManagerType { get; private set; }
+			public bool DevLoggingActive { get; private set; }
+		}
+
+		protected IComponentSettings GetComponentSettings()
+		{
+				return new CompSettings{ComponentId = LocalComponentId};
+		}
 
 		protected IQueryHelperFactory QueryHelperFactory
 		{
@@ -85,10 +110,78 @@ namespace ermeX.Tests.Common.DataAccess
 			get
 			{
 				return new List<DataSchemaType>
-					{
-						DataSchemaType.ClientComponent
-					};
+                    {
+                        DataSchemaType.ClientComponent
+                    };
 			}
+		}
+
+		private readonly Dictionary<DbEngineType, ISessionProvider> _sessionProviders =
+			new Dictionary<DbEngineType, ISessionProvider>();
+
+		private readonly Dictionary<DbEngineType, IReadTransactionProvider> _readTransactionProviders =
+			new Dictionary<DbEngineType, IReadTransactionProvider>();
+		private readonly Dictionary<DbEngineType, IWriteTransactionProvider> _writeTransactionProviders =
+			new Dictionary<DbEngineType, IWriteTransactionProvider>();
+		public IUnitOfWorkFactory GetUnitOfWorkFactory(IDalSettings dalSettings)
+		{
+			if (!_sessionProviders.ContainsKey(dalSettings.ConfigurationSourceType))
+				lock (_sessionProviders)
+					if (!_sessionProviders.ContainsKey(dalSettings.ConfigurationSourceType))
+					{
+						_sessionProviders.Add(dalSettings.ConfigurationSourceType, new SessionProvider(dalSettings));
+						switch(dalSettings.ConfigurationSourceType)
+						{
+							case DbEngineType.SqlServer2008:
+								var genericTransactionProvider = new GenericTransactionProvider();
+								_readTransactionProviders.Add(dalSettings.ConfigurationSourceType,genericTransactionProvider);
+								_writeTransactionProviders.Add(dalSettings.ConfigurationSourceType, genericTransactionProvider);
+								break;
+							case DbEngineType.Sqlite:
+							case DbEngineType.SqliteInMemory:
+								_readTransactionProviders.Add(dalSettings.ConfigurationSourceType, new GenericTransactionProvider());
+								_writeTransactionProviders.Add(dalSettings.ConfigurationSourceType, new MutexedTransactionProvider(dalSettings));
+								break;
+							default:
+								throw new ArgumentOutOfRangeException();
+						}
+					}
+
+
+			return new UnitOfWorkFactory(_sessionProviders[dalSettings.ConfigurationSourceType], dalSettings,
+			                             _readTransactionProviders[dalSettings.ConfigurationSourceType],
+			                             _writeTransactionProviders[dalSettings.ConfigurationSourceType]);
+		}
+		public IUnitOfWorkFactory GetUnitOfWorkFactory(DbEngineType dbEngineType)
+		{
+			var dataAccessSettings = GetDataHelper(dbEngineType).DataAccessSettings;
+			return GetUnitOfWorkFactory(dataAccessSettings);
+		}
+
+		/// <summary>
+		/// Repository for complex operations
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="factory"></param>
+		/// <returns></returns>
+		public TResult GetRepository<TResult>(IUnitOfWorkFactory factory)
+		{
+			if (factory == null) throw new ArgumentNullException("factory");
+			var result = ObjectBuilder.FromType<TResult>(typeof(TResult), GetComponentSettings(), new ExpressionsHelper(),factory);
+			return result;
+		}
+
+		/// <summary>
+		/// Repository for single db operations  
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="engineType"></param>
+		/// <returns></returns>
+		public TResult GetRepository<TResult>(DbEngineType engineType)
+		{
+			var unitOfWorkFactory = GetUnitOfWorkFactory(engineType);
+			var result = GetRepository<TResult>(unitOfWorkFactory);
+			return result;
 		}
 
 		/// <summary>
@@ -118,7 +211,6 @@ namespace ermeX.Tests.Common.DataAccess
 			}
 		}
 
-		private DataSourcesFactory _dataSourcesFactory = null;
 
 		[SetUp]
 		public virtual void OnStartUp()
@@ -131,99 +223,113 @@ namespace ermeX.Tests.Common.DataAccess
 		public virtual void OnFixtureSetup()
 		{
 			ResolveUnmerged.Init();
-			_dataSourcesFactory = new DataSourcesFactory();
 		}
 
-		private readonly Dictionary<DbEngineType, DataAccessExecutor> _dataAccessExecutors =
-			new Dictionary<DbEngineType, DataAccessExecutor>();
-
-		protected DataAccessExecutor GetdataAccessExecutor(DbEngineType engineType)
+		protected IDalSettings GetDalSettings(DbEngineType engineType)
 		{
-			if (!_dataAccessExecutors.ContainsKey(engineType))
-			{
-				var dataAccessExecutor = new DataAccessExecutor(GetDataHelper(engineType).DataAccessSettings);
-				_dataAccessExecutors.Add(engineType, dataAccessExecutor);
-			}
-			return _dataAccessExecutors[engineType];
+			return GetDataHelper(engineType).DataAccessSettings;
 		}
 
-		protected TResult GetDataSource<TResult>(DbEngineType engineType)
+		//TODO: REMOVE THIS AS IT NEEDS THE FACTORY CREATED AND USE THE OVERLOAD, SEE TEST BASE
+		//protected TResult GetRepository<TResult>(DbEngineType engineType)
+		//{
+		//    return GetRepository<TResult>(GetDataHelper(engineType).DataAccessSettings);
+		//}
+
+		protected IWriteIncommingQueue GetIncommingQueueWritter(IUnitOfWorkFactory factory)
 		{
-			return _dataSourcesFactory.GetDataSource<TResult>(engineType, GetdataAccessExecutor(engineType),
-			                                                  LocalComponentId);
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
+			var componentSettings = GetComponentSettings();
+			return new IncommingQueueWriter(dataSource,factory,componentSettings);
 		}
 
-		private class DataSourcesFactory
+		protected IReadIncommingQueue GetIncommingQueueReader(IUnitOfWorkFactory factory)
 		{
-			private readonly Dictionary<DbEngineType, Dictionary<Type, object>> _dataSourcesCache =
-				new Dictionary<DbEngineType, Dictionary<Type, object>>();
-
-			public TResult GetDataSource<TResult>(DbEngineType engineType, DataAccessExecutor executor, Guid componentOwner)
-			{
-				if (!_dataSourcesCache.ContainsKey(engineType))
-					_dataSourcesCache.Add(engineType, new Dictionary<Type, object>());
-
-				var dictionary = _dataSourcesCache[engineType];
-
-				if (!dictionary.ContainsKey(typeof (TResult)))
-				{
-					var fromType = ObjectBuilder.FromType<TResult>(typeof (TResult), executor.DalSettings, componentOwner, executor);
-					dictionary.Add(typeof (TResult), fromType);
-				}
-				return (TResult) dictionary[typeof (TResult)];
-			}
+			var dataSource = GetRepository<Repository<IncomingMessage>>(factory);
+			var componentSettings = GetComponentSettings();
+			return new ReaderIncommingQueue(dataSource, factory, componentSettings);
 		}
 
-		protected IWriteIncommingQueue GetIncommingQueueWritter(DbEngineType dbEngine)
+		protected ICanUpdateLatency GetLatenciesWritter(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngine);
-			return new IncommingQueueWriter(dataSource);
+			var dataSource = GetRepository<Repository<AppComponent>>(factory);
+			return new LatencyUpdater(dataSource, factory);
 		}
 
-		protected IReadIncommingQueue GetIncommingQueueReader(DbEngineType dbEngine)
+		protected ICanReadLatency GetLatenciesReader(IUnitOfWorkFactory factory)
 		{
-			var dataSource = GetDataSource<IncomingMessagesDataSource>(dbEngine);
-			return new ReaderIncommingQueue(dataSource);
+			var dataSource = GetRepository<Repository<AppComponent>>(factory);
+			return new LatencyReader(dataSource,factory);
 		}
 
-		protected ICanUpdateLatency GetLatenciesWritter(DbEngineType dbEngine)
+		protected ICanReadIncommingMessagesSubscriptions GetIncommingMessageSubscriptionsReader(IUnitOfWorkFactory factory)
 		{
-			return new LatencyUpdater(GetDataSource<AppComponentDataSource>(dbEngine));
+			var dataSource = GetRepository<Repository<IncomingMessageSuscription>>(factory);
+			var componentSettings = GetComponentSettings();
+
+			return new CanReadIncommingMessagesSubscriptions(dataSource,factory,componentSettings);
 		}
 
-		protected ICanReadLatency GetLatenciesReader(DbEngineType dbEngine)
+		protected ICanReadOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsReader(IUnitOfWorkFactory factory)
 		{
-			return new LatencyReader(GetDataSource<AppComponentDataSource>(dbEngine));
+			var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>(factory);
+			var componentSettings = GetComponentSettings();
+			return new CanReadOutgoingMessagesSubscriptions(dataSource,factory,componentSettings);
 		}
 
-		protected ICanReadIncommingMessagesSubscriptions GetIncommingMessageSubscriptionsReader(DbEngineType dbEngine)
+		protected ICanUpdateOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsWritter(IUnitOfWorkFactory factory)
 		{
-			return new CanReadIncommingMessagesSubscriptions(GetDataSource<IncomingMessageSuscriptionsDataSource>(dbEngine));
+			var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>(factory);
+		    var componentSettings = GetComponentSettings();
+
+		    return new CanUpdateOutgoingMessagesSubscriptions(dataSource,factory,componentSettings,GetDomainNotifier(),new ExpressionsHelper());
 		}
 
-		protected ICanReadOutgoingMessagesSubscriptions GetOutgoingMessageSubscriptionsReader(DbEngineType dbEngine)
+		protected IDomainObservable GetDomainNotifier()
 		{
-			return new CanReadOutgoingMessagesSubscriptions(GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine));
+			//var dataSource = GetRepository<Repository<OutgoingMessageSuscription>>();
+			return new DomainNotifier();
 		}
 
-		protected IWriteOutgoingQueue GetOutgoingMessageSubscriptionsWritter(DbEngineType dbEngine)
+		protected IWriteOutgoingQueue GetOutgoingQueueWritter(IUnitOfWorkFactory factory)
 		{
-			return new WriteOutgoingQueue(GetDataSource<OutgoingMessagesDataSource>(dbEngine));
+			var dataSource = GetRepository<Repository<OutgoingMessage>>(factory);
+			var componentSettings = GetComponentSettings();
+
+			return new WriteOutgoingQueue(dataSource, factory, componentSettings);
 		}
 
-		protected IDomainObservable GetDomainNotifier(DbEngineType dbEngine)
+		protected IReadOutgoingQueue GetOutgoingQueueReader(IUnitOfWorkFactory factory)
 		{
-			return new DomainNotifier(GetDataSource<OutgoingMessageSuscriptionsDataSource>(dbEngine));
+			var dataSource = GetRepository<Repository<OutgoingMessage>>(factory);
+			var componentSettings = GetComponentSettings();
+
+			return new ReaderOutgoingQueue(dataSource, factory, componentSettings);
 		}
 
-		protected IWriteOutgoingQueue GetOutgoingQueueWritter(DbEngineType dbEngine)
+		protected ICanReadChunkedMessages  GetChunkedMessagesReader(IUnitOfWorkFactory factory)
 		{
-			return new WriteOutgoingQueue(GetDataSource<OutgoingMessagesDataSource>(dbEngine));
+			var dataSource = GetRepository<Repository<ChunkedServiceRequestMessageData>>(factory);
+			var componentSettings = GetComponentSettings();
+
+			return new ChunkedMessagesReader(dataSource, factory, componentSettings);
 		}
 
-		protected IReadOutgoingQueue GetOutgoingQueueReader(DbEngineType dbEngine)
+		protected ICanWriteChunkedMessages GetChunkedMessagesWritter(IUnitOfWorkFactory factory)
 		{
-			return new ReaderOutgoingQueue(GetDataSource<OutgoingMessagesDataSource>(dbEngine));
+			var dataSource = GetRepository<Repository<ChunkedServiceRequestMessageData>>(factory);
+			var componentSettings = GetComponentSettings();
+
+			return new ChunkedMessagesWriter(dataSource, factory, componentSettings);
 		}
+
+		protected ICanReadServiceDetails GetServiceDetailsReader(IUnitOfWorkFactory factory)
+		{
+			var dataSource = GetRepository<Repository<ServiceDetails>>(factory);
+			var componentSettings = GetComponentSettings();
+
+			return new ServiceDetailsReader(dataSource, factory, componentSettings);
+		}
+
 	}
 }

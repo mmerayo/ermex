@@ -1,5 +1,5 @@
 REM PARAMS taskid & revision number
-::TaskId:[Compile | UnitTests | Pack] 
+::TaskId:[CompileTask | UnitTests | Pack] 
 
 SET CI_FRAMEWORK=4.0
 SET CI_Configuration=Debug
