@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="3957ccef-c108-478b-bf50-70d2e7f97293" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/LayerDesigner">
+  <layers>
+    <layer Id="7f847071-3f2d-490b-9ec0-4e5655bd22be" name="ermeX">
+      <childLayers>
+        <layer Id="3c8b10c5-46be-4d29-ab7a-1000e4911e54" name="(TODO)Services Layer">
+          <childLayers>
+            <layer Id="98da9003-441b-4411-b289-0f418a5a85ed" name="Service Interfaces" />
+            <layer Id="05e77f2b-5c5b-4fc0-8654-67d0bd66e06b" name="Message Types" />
+          </childLayers>
+        </layer>
+        <layer Id="0e2e4cf3-106f-456b-ab2a-5d521239b4fb" name="(TODO)Business Layer">
+          <childLayers>
+            <layer Id="2002bcc6-1c7d-44c2-9335-cd97839c06cb" name="Application Facade" />
+            <layer Id="8dfe47ac-b3af-4cc7-bb9a-b3464bde4414" name="Business Workflow" />
+            <layer Id="c767b5ad-d956-4211-8534-117c9f91ff2e" name="Business Components" />
+            <layer Id="2618f5f8-4f77-482c-afa0-80fffb10a3ed" name="Business Entities" />
+          </childLayers>
+        </layer>
+        <layer Id="9022b2a7-efab-4d20-8cec-6e82d8cc2214" name="Cross Cutting">
+          <childLayers>
+            <layer Id="b472d80f-1670-4a83-a998-1b3faf2d3efb" name="Configuration">
+              <references>
+                <reference Id="ec039648-9f80-4ee5-aee3-99ff6895ef17" name="ermeX.ConfigurationManagement">
+                  <ArtifactNode Label="ermeX.ConfigurationManagement" Category="CodeSchema_Project" Id="(Assembly=../ermeX.ConfigurationManagement/ermeX.ConfigurationManagement.csproj)">
+                    <Category Ref="CodeSchema_SourceFile" />
+                  </ArtifactNode>
+                  <ExpandedNode Id="(Assembly=ermeX.ConfigurationManagement)" Label="ermeX.ConfigurationManagement.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+                <reference Id="146d59d6-a159-4d16-aeb1-470fe2fa156e" name="ermeX.ConfigurationManagement.Settings">
+                  <ArtifactNode Label="ermeX.ConfigurationManagement.Settings" Category="CodeSchema_Project" Id="(Assembly=../ermeX.ConfigurationManagement.Settings/ermeX.ConfigurationManagement.Settings.csproj)">
+                    <Category Ref="CodeSchema_SourceFile" />
+                  </ArtifactNode>
+                  <ExpandedNode Id="(Assembly=ermeX.ConfigurationManagement.Settings)" Label="ermeX.ConfigurationManagement.Settings.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+                <reference Id="331b04bd-6033-4481-b32d-d87d6dc49501" name="ermeX.ConfigurationManagement.Config">
+                  <ArtifactNode Label="ermeX.ConfigurationManagement.Config" Category="CodeSchema_Project" Id="(Assembly=../ermeX.ConfigurationManagement.Config/ermeX.ConfigurationManagement.Config.csproj)">
+                    <Category Ref="CodeSchema_SourceFile" />
+                  </ArtifactNode>
+                  <ExpandedNode Id="(Assembly=ermeX.ConfigurationManagement.Config)" Label="ermeX.ConfigurationManagement.Config.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+                <reference Id="73c6f732-72a6-4a3c-87ad-62550b48f8e9" name="ermeX.Versioning">
+                  <ArtifactNode Label="ermeX.Versioning" Category="CodeSchema_Project" Id="(Assembly=../ermeX.Versioning/ermeX.Versioning.csproj)">
+                    <Category Ref="CodeSchema_SourceFile" />
+                  </ArtifactNode>
+                  <ExpandedNode Id="(Assembly=ermeX.Versioning)" Label="ermeX.Versioning.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+              </references>
+            </layer>
+            <layer Id="91cef8a8-902e-45c7-af09-a4ca109da38d" name="Parallel">
+              <references>
+                <reference Id="6688706a-c9ca-4c08-ae15-b0b254c9454f" name="ermeX.Parallel">
+                  <ArtifactNode Label="ermeX.Parallel" Category="CodeSchema_Project" Id="(Assembly=../ermeX.Parallel/ermeX.Parallel.csproj)">
+                    <Category Ref="CodeSchema_SourceFile" />
+                  </ArtifactNode>
+                  <ExpandedNode Id="(Assembly=ermeX.Parallel)" Label="ermeX.Parallel.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+              </references>
+            </layer>
+          </childLayers>
+        </layer>
+        <layer Id="837178be-2951-4b37-83ca-f2c8c0663698" name="Data &#xD;&#xA;Services">
+          <childLayers>
+            <layer Id="99302801-e4ed-4f87-8437-37971554c520" name="ermeX.DAL.Interfaces">
+              <references>
+                <reference Id="5157d0de-c7f5-4161-b432-192fa4aa21c4" name="ermeX.DAL.Interfaces">
+                  <ArtifactNode Label="ermeX.DAL.Interfaces" Category="CodeSchema_Project" Id="(Assembly=../ermeX.DAL.Interfaces/ermeX.DAL.Interfaces.csproj)">
+                    <Category Ref="CodeSchema_SourceFile" />
+                  </ArtifactNode>
+                  <ExpandedNode Id="(Assembly=ermeX.DAL.Interfaces)" Label="ermeX.DAL.Interfaces.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+              </references>
+            </layer>
+            <layer Id="3db53b8a-13f5-425c-a5ea-9078b4353f74" name="ermeX.Dal.Commands">
+              <references>
+                <reference Id="56335591-4f1d-4a3a-9074-6e73310e49f5" name="ermeX.Dal.Commands">
+                  <ArtifactNode Label="ermeX.Dal.Commands" Category="CodeSchema_Project" Id="(Assembly=../ermeX.Dal.Commands/ermeX.Dal.Commands.csproj)">
+                    <Category Ref="CodeSchema_SourceFile" />
+                  </ArtifactNode>
+                  <ExpandedNode Id="(Assembly=ermeX.Dal.Commands)" Label="ermeX.Dal.Commands.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+              </references>
+            </layer>
+            <layer Id="92d4e305-4de3-4abc-ba5d-d10eb5eb3e5b" name="ermeX.Dal.&#xD;&#xA;UnitOfWork">
+              <references>
+                <reference Id="bc6740ee-8b6a-4979-bfd4-c89071229510" name="ermeX.DAL">
+                  <ArtifactNode Label="ermeX.DAL" Category="CodeSchema_Project" Id="(Assembly=../ermeX.DAL/ermeX.DAL.csproj)">
+                    <Category Ref="CodeSchema_SourceFile" />
+                  </ArtifactNode>
+                  <ExpandedNode Id="(Assembly=ermeX.DAL)" Label="ermeX.DAL.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+              </references>
+            </layer>
+            <layer Id="42ab2d9d-f582-43d0-8603-e96a8141ffee" name="ermeX.Dal.&#xD;&#xA;Repository">
+              <references>
+                <reference Id="8c2e5dd1-447f-42bc-8010-933701a77a7e" name="ermeX.DAL">
+                  <ArtifactNode Label="ermeX.DAL" Category="CodeSchema_Project" Id="(Assembly=../ermeX.DAL/ermeX.DAL.csproj)" />
+                  <ExpandedNode Id="(Assembly=ermeX.DAL)" Label="ermeX.DAL.dll" Category="FileSystem.Category.FileOfType.dll">
+                    <LinkCategory Ref="Produces" />
+                    <LinkCategory Ref="Represents" />
+                  </ExpandedNode>
+                </reference>
+              </references>
+            </layer>
+          </childLayers>
+        </layer>
+      </childLayers>
+    </layer>
+  </layers>
+</layerModel>
