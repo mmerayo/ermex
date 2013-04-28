@@ -31,8 +31,8 @@ using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
-using ermeX.Threading.Queues;
-using ermeX.Threading.Scheduling;
+using ermeX.Parallel.Queues;
+using ermeX.Parallel.Scheduling;
 
 namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 {

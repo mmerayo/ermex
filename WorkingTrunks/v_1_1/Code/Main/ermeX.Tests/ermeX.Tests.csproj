@@ -268,18 +268,6 @@
       <Project>{588A3C5F-C021-480E-B413-AEF2DEC4F97F}</Project>
       <Name>ermeX.DAL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ermeX.Domain.Implementations\ermeX.Domain.Implementations.csproj">
-      <Project>{80AAC188-E512-43AF-9975-F26362EFE599}</Project>
-      <Name>ermeX.Domain.Implementations</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ermeX.Domain.IoC\ermeX.Domain.IoC.csproj">
-      <Project>{6FADEEBA-C266-4055-87F2-526E61A14C82}</Project>
-      <Name>ermeX.Domain.IoC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ermeX.Domain\ermeX.Domain.csproj">
-      <Project>{7D2E8DB9-101A-4A70-B122-799212FBB860}</Project>
-      <Name>ermeX.Domain</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
       <Name>ermeX.Entities</Name>
@@ -303,10 +291,6 @@
     <ProjectReference Include="..\ermeX.Tests.SupportTypes\ermeX.Tests.SupportTypes.csproj">
       <Project>{B26507AE-B7E4-4E3B-8643-1F3A7B8F8224}</Project>
       <Name>ermeX.Tests.SupportTypes</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ermeX.Threading\ermeX.Threading.csproj">
-      <Project>{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}</Project>
-      <Name>ermeX.Threading</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Transport.BuiltIn.SuperSocket\ermeX.Transport.BuiltIn.SuperSocket.csproj">
       <Project>{91BAFA98-AFBA-4CD0-BC04-AD1030C4E0F8}</Project>

@@ -29,8 +29,8 @@ using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
-using ermeX.Threading.Queues;
-using ermeX.Threading.Scheduling;
+using ermeX.Parallel.Queues;
+using ermeX.Parallel.Scheduling;
 using ermeX.Transport.Interfaces;
 
 namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling

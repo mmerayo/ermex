@@ -17,7 +17,6 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using ermeX.Threading.Queues;
 
 namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 {

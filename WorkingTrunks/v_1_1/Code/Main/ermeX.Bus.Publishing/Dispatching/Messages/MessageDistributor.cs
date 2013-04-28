@@ -31,7 +31,7 @@ using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
-using ermeX.Threading.Queues;
+using ermeX.Parallel.Queues;
 
 namespace ermeX.Bus.Publishing.Dispatching.Messages
 {

@@ -32,7 +32,7 @@ using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.SettingsProviders;
-using ermeX.Threading.Queues;
+using ermeX.Parallel.Queues;
 
 namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling
 {

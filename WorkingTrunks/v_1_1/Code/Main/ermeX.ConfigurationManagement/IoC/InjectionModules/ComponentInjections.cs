@@ -25,8 +25,7 @@ using ermeX.Common.Caching;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.ConfigurationManagement.Status;
-using ermeX.Threading.Queues;
-using ermeX.Threading.Scheduling;
+using ermeX.Parallel.Scheduling;
 
 
 namespace ermeX.ConfigurationManagement.IoC.InjectionModules
