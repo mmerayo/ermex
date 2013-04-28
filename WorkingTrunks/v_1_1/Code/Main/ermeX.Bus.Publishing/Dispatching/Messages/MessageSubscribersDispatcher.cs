@@ -27,8 +27,8 @@ using ermeX.DAL.Interfaces.Queues;
 using ermeX.Entities.Entities;
 using ermeX.Exceptions;
 using ermeX.LayerMessages;
-using ermeX.Threading.Queues;
-using ermeX.Threading.Scheduling;
+using ermeX.Parallel.Queues;
+using ermeX.Parallel.Scheduling;
 using ermeX.Transport.Interfaces.Messages;
 using ermeX.Transport.Interfaces.Sending.Client;
 
