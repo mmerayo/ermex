@@ -51,6 +51,30 @@
       <Name>ermeX.Parallel</Name>
       <Project>{ae19cf24-90cf-4ba2-9336-374dc8ae7ae4}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.BuiltIn.SuperSocket\ermeX.Transport.BuiltIn.SuperSocket.csproj">
+      <Name>ermeX.Transport.BuiltIn.SuperSocket</Name>
+      <Project>{91bafa98-afba-4cd0-bc04-ad1030c4e0f8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Interfaces\ermeX.Transport.Interfaces.csproj">
+      <Name>ermeX.Transport.Interfaces</Name>
+      <Project>{991296bf-95d5-4462-a7ef-574e56c679f3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.IoC\ermeX.Transport.IoC.csproj">
+      <Name>ermeX.Transport.IoC</Name>
+      <Project>{1cefd1b8-e842-4bbb-b965-72e1dd6d4de6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Publish\ermeX.Transport.Publish.csproj">
+      <Name>ermeX.Transport.Publish</Name>
+      <Project>{214c51ee-b099-4288-ad16-e423f35d1870}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Reception\ermeX.Transport.Reception.csproj">
+      <Name>ermeX.Transport.Reception</Name>
+      <Project>{37df8b7e-e52c-4b91-b439-f65611bda121}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport\ermeX.Transport.csproj">
+      <Name>ermeX.Transport</Name>
+      <Project>{e7698635-4781-4a53-a16f-1800f8177a4b}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Versioning\ermeX.Versioning.csproj">
       <Name>ermeX.Versioning</Name>
       <Project>{01a43626-806a-4657-beac-52e0effcd068}</Project>
