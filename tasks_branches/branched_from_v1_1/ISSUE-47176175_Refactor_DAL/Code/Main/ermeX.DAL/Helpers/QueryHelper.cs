@@ -31,6 +31,7 @@ using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.QueryDatabase;
 using ermeX.Entities.Base;
+using ModelBase = ermeX.DAL.Models.ModelBase;
 
 namespace ermeX.DAL.DataAccess.Helpers
 {

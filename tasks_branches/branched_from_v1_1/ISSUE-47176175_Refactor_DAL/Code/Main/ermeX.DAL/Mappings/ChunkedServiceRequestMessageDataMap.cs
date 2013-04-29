@@ -22,6 +22,7 @@ using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.DataAccess.Mappings.UserMappingTypes;
 using ermeX.Entities.Entities;
+using ChunkedServiceRequestMessageData = ermeX.DAL.Models.ChunkedServiceRequestMessageData;
 
 namespace ermeX.DAL.DataAccess.Mappings
 {

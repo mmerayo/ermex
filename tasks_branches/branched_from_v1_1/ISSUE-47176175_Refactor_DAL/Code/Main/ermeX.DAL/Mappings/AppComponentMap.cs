@@ -21,6 +21,7 @@ using FluentNHibernate.Mapping;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.Entities.Entities;
+using AppComponent = ermeX.DAL.Models.AppComponent;
 
 namespace ermeX.DAL.DataAccess.Mappings
 {

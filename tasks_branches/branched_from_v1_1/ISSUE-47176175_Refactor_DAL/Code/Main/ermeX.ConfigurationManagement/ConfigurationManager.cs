@@ -110,7 +110,7 @@ namespace ermeX.ConfigurationManagement
     		try
     		{
 #endif
-    			TypesHelper.GetAssemblyFromDomain("ermeX.Dal.IoC");
+    			TypesHelper.GetAssemblyFromDomain("ermeX.Dal.Settings");
     			//TODO: ADD ALL or define the injections using another mechanism
 
 #if !DEBUG
