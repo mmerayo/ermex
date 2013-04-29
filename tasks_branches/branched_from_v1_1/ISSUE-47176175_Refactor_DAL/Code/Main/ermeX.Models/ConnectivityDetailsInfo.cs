@@ -23,48 +23,25 @@ using System.Data;
 namespace ermeX.Models
 {
     //TODO: MODELBASE AND THIS CASES SHOULD BE MUCH LIGHTER
-    internal class ConnectivityDetails : ModelBase, IEquatable<ConnectivityDetails>
+    internal class ConnectivityDetailsInfo : ModelBase, IEquatable<ConnectivityDetailsInfo>
     {
-        public static string TableName
-        {
-            get { return "ConnectivityDetails"; }
-        }
+      
 
-        public virtual string Ip { get; set; }
+        public  string Ip { get; set; }
 
-        public virtual bool IsLocal //TODO: REMOVE THIS FIELD
+        public  bool IsLocal //TODO: REMOVE THIS FIELD
         { get; set; }
 
 
-        public virtual int Port { get; set; }
+        public  int Port { get; set; }
         //TODO: rename to RemoteComponentId
-        public virtual Guid ServerId { get; set; }
-
-        public static ConnectivityDetails FromDataRow(DataRow dataRow)
-        {
-            var result = new ConnectivityDetails
-                             {
-                                 Id = Convert.ToInt32( dataRow[GetDbFieldName("Id")]),
-                                 ComponentOwner = (Guid) dataRow[GetDbFieldName("ComponentOwner")],
-                                 Ip = dataRow[GetDbFieldName("Ip")].ToString(),
-                                 Version = (long) dataRow[GetDbFieldName("Version")],
-                                 Port = Convert.ToInt32( dataRow[GetDbFieldName("Port")]),
-                                 IsLocal = (bool) dataRow[GetDbFieldName("IsLocal")],
-                                 ServerId = (Guid) dataRow[GetDbFieldName("ServerId")],
-                             };
-            return result;
-        }
-
-        protected internal static string GetDbFieldName(string fieldName) //TODO: REFACTOR
-        {
-            return String.Format("{0}_{1}", TableName, fieldName);
-        }
+        public  Guid ServerId { get; set; }
 
         #region Equatable
 
         //TODO: refactor to base
 
-        public virtual bool Equals(ConnectivityDetails other)
+        public  bool Equals(ConnectivityDetailsInfo other)
         {
             if (other == null)
                 return false;
@@ -72,7 +49,7 @@ namespace ermeX.Models
             return Ip == other.Ip && Port == other.Port && Version == other.Version;
         }
 
-        public static bool operator ==(ConnectivityDetails a, ConnectivityDetails b)
+        public static bool operator ==(ConnectivityDetailsInfo a, ConnectivityDetailsInfo b)
         {
             if ((object) a == null || ((object) b) == null)
                 return Equals(a, b);
@@ -80,7 +57,7 @@ namespace ermeX.Models
             return a.Equals(b);
         }
 
-        public static bool operator !=(ConnectivityDetails a, ConnectivityDetails b)
+        public static bool operator !=(ConnectivityDetailsInfo a, ConnectivityDetailsInfo b)
         {
             if (a == null || b == null)
                 return !Equals(a, b);
@@ -92,8 +69,8 @@ namespace ermeX.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (ConnectivityDetails)) return false;
-            return Equals((ConnectivityDetails) obj);
+            if (obj.GetType() != typeof (ConnectivityDetailsInfo)) return false;
+            return Equals((ConnectivityDetailsInfo) obj);
         }
 
         public override int GetHashCode()

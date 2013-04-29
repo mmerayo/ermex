@@ -19,77 +19,72 @@
 
 using System;
 using System.Data;
-using ermeX.LayerMessages;
 
 namespace ermeX.Models
 {
-	[Serializable]
-	internal class IncomingMessageInfoInfo : MessageInfo, IEquatable<IncomingMessageInfoInfo>
+	internal sealed class AppComponentInfo : ModelBase,IEquatable<AppComponentInfo>
 	{
-		public const string FinalTableName = "IncomingMessages";
+		internal const int DefaultLatencyMilliseconds = 5000;
 
-		public IncomingMessageInfoInfo()
+		public AppComponentInfo() : this(DefaultLatencyMilliseconds)
 		{
 		}
 
-		//for testing
-
-		public IncomingMessageInfoInfo(BusMessage message)
-			: base(message)
+		public AppComponentInfo(int latencyMilliseconds = DefaultLatencyMilliseconds)
 		{
+			Latency = latencyMilliseconds;
 		}
 
-		public DateTime TimeReceivedUtc { get; set; }
 
-		protected override string TableName
+		public Guid ComponentId { get; set; }
+
+		public int Latency { get; set; }
+
+		public bool IsRunning { get; set; }
+
+		public bool ExchangedDefinitions { get; set; }
+
+		/// <summary>
+		/// Only one component exchanges the definitions, this is done by the one holded here
+		/// </summary>
+		public Guid? ComponentExchanges { get; set; }
+
+		public static AppComponentInfo NewFromExisting(AppComponentInfo componentInfo)
 		{
-			get { return FinalTableName; }
-		}
-
-		public Guid SuscriptionHandlerId { get; set; }
-
-		public IncomingMessageInfoInfo GetClone()
-		{
-			var result = new IncomingMessageInfoInfo()
+			var result = new AppComponentInfo(componentInfo.Latency)
 				{
-					OwnedBy = OwnedBy,
-					CreatedTimeUtc = CreatedTimeUtc,
-					Status = Status,
-					JsonMessage = JsonMessage,
-					PublishedBy = PublishedBy,
-					PublishedTo = PublishedTo,
-					TimeReceivedUtc = TimeReceivedUtc,
-					SuscriptionHandlerId = SuscriptionHandlerId
+					ComponentId = componentInfo.ComponentId,
+					OwnedBy = componentInfo.OwnedBy,
+					IsRunning = componentInfo.IsRunning,
+					Latency = componentInfo.Latency,
+					ExchangedDefinitions = componentInfo.ExchangedDefinitions
 				};
-
 			return result;
 		}
 
 		#region Equatable
 
-		//TODO: refactor to base
-
-		public bool Equals(IncomingMessageInfoInfo other)
+		public bool Equals(AppComponentInfo other)
 		{
 			if (other == null)
 				return false;
 
-			return
-				OwnedBy == other.OwnedBy && SuscriptionHandlerId == other.SuscriptionHandlerId &&
-				Status == other.Status && CreatedTimeUtc == other.CreatedTimeUtc &&
-				JsonMessage == other.JsonMessage &&
-				MessageId == other.MessageId; //TODO: FINISH
+			return ComponentId == other.ComponentId
+				   && Latency == other.Latency
+				   && OwnedBy == other.OwnedBy
+				   && IsRunning == other.IsRunning
+				   && ExchangedDefinitions == other.ExchangedDefinitions;
 		}
 
-		public static bool operator ==(IncomingMessageInfoInfo a, IncomingMessageInfoInfo b)
+		public static bool operator ==(AppComponentInfo a, AppComponentInfo b)
 		{
-			if ((object) a == null || ((object) b) == null)
+			if ((object)a == null || ((object)b) == null)
 				return Equals(a, b);
 
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(IncomingMessageInfoInfo a, IncomingMessageInfoInfo b)
+		public static bool operator !=(AppComponentInfo a, AppComponentInfo b)
 		{
 			if (a == null || b == null)
 				return !Equals(a, b);
@@ -101,15 +96,16 @@ namespace ermeX.Models
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != typeof (IncomingMessageInfoInfo)) return false;
-			return Equals((IncomingMessageInfoInfo) obj);
+			if (obj.GetType() != typeof(AppComponentInfo)) return false;
+			return Equals((AppComponentInfo)obj);
 		}
 
 		public override int GetHashCode()
 		{
-			return MessageId.GetHashCode();
+			return ComponentId.GetHashCode();
 		}
 
 		#endregion
+		
 	}
 }

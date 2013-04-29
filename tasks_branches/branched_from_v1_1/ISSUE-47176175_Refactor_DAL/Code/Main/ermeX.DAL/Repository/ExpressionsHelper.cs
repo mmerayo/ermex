@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using AppComponent = ermeX.DAL.Models.AppComponent;
 using ChunkedServiceRequestMessageData = ermeX.DAL.Models.ChunkedServiceRequestMessageData;
 using ConnectivityDetails = ermeX.DAL.Models.ConnectivityDetails;

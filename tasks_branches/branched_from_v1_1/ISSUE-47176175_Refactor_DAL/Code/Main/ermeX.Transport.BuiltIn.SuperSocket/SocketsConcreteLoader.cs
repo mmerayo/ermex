@@ -25,7 +25,7 @@ using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Connectivity;
 using ermeX.DAL.Interfaces.Messages;
 using ermeX.DAL.Interfaces.Services;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.Transport.BuiltIn.SuperSocket.Client;
 using ermeX.Transport.BuiltIn.SuperSocket.Server;
 using ermeX.Transport.Interfaces.Entities;

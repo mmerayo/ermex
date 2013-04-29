@@ -23,7 +23,7 @@ using System.Threading;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.Dummies;
 using ermeX.Tests.Common.SettingsProviders;

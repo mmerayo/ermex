@@ -17,7 +17,7 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.LayerMessages;
 using ermeX.Transport.Interfaces.Messages;
 using ermeX.Transport.Interfaces.Messages.ServiceOperations;

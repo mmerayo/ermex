@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using ProtoBuf;
 using ermeX.Common;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 namespace ermeX.Transport.Interfaces.Messages
 {

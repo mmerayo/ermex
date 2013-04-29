@@ -23,48 +23,27 @@ using System.Data;
 namespace ermeX.Models
 {
     //listener suscriptions
-    internal class IncomingMessageSuscription : ModelBase, IEquatable<IncomingMessageSuscription>
+    internal class IncomingMessageSuscriptionInfo : ModelBase, IEquatable<IncomingMessageSuscriptionInfo>
     {
         internal const string TableName = "IncomingMessageSuscriptions";
 
-        public virtual string BizMessageFullTypeName { get; set; }
+        public  string BizMessageFullTypeName { get; set; }
 
-        public virtual Guid SuscriptionHandlerId { get; set; }
+        public  Guid SuscriptionHandlerId { get; set; }
 
-        public virtual DateTime DateLastUpdateUtc { get; set; }
+        public  DateTime DateLastUpdateUtc { get; set; }
 
-        public virtual string HandlerType { get; set; }
-
-        internal static string GetDbFieldName(string fieldName)
-        {
-            return string.Format("{0}_{1}", TableName, fieldName);
-        }
-
-        public static IncomingMessageSuscription FromDataRow(DataRow dataRow)
-        {
-            var result = new IncomingMessageSuscription
-                             {
-                                 Id = Convert.ToInt32( dataRow[GetDbFieldName("Id")]),
-                                 Version = (long) dataRow[GetDbFieldName("Version")],
-                                 ComponentOwner = (Guid) dataRow[GetDbFieldName("ComponentOwner")],
-                                 SuscriptionHandlerId = (Guid) dataRow[GetDbFieldName("SuscriptionHandlerId")],
-                                 BizMessageFullTypeName = dataRow[GetDbFieldName("BizMessageFullTypeName")].ToString(),
-                                 DateLastUpdateUtc = new DateTime((long) dataRow[GetDbFieldName("DateLastUpdateUtc")]),
-                                 HandlerType = (string) dataRow[GetDbFieldName("HandlerType")]
-                             };
-            return result;
-        }
-
+        public  string HandlerType { get; set; }
 
         #region Equatable
 
-        public virtual bool Equals(IncomingMessageSuscription other)
+        public  bool Equals(IncomingMessageSuscriptionInfo other)
         {
             if (other == null)
                 return false;
 
             var result = BizMessageFullTypeName == other.BizMessageFullTypeName &&
-                         SuscriptionHandlerId == other.SuscriptionHandlerId && Version == other.Version &&
+                         SuscriptionHandlerId == other.SuscriptionHandlerId &&
                          HandlerType == other.HandlerType;
 
 #if !NEED_FIX_MILLISECONDS
@@ -73,7 +52,7 @@ namespace ermeX.Models
             return result;
         }
 
-        public static bool operator ==(IncomingMessageSuscription a, IncomingMessageSuscription b)
+        public static bool operator ==(IncomingMessageSuscriptionInfo a, IncomingMessageSuscriptionInfo b)
         {
             if ((object) a == null || ((object) b) == null)
                 return Equals(a, b);
@@ -81,7 +60,7 @@ namespace ermeX.Models
             return a.Equals(b);
         }
 
-        public static bool operator !=(IncomingMessageSuscription a, IncomingMessageSuscription b)
+        public static bool operator !=(IncomingMessageSuscriptionInfo a, IncomingMessageSuscriptionInfo b)
         {
             if (a == null || b == null)
                 return !Equals(a, b);
@@ -93,8 +72,8 @@ namespace ermeX.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (IncomingMessageSuscription)) return false;
-            return Equals((IncomingMessageSuscription) obj);
+            if (obj.GetType() != typeof (IncomingMessageSuscriptionInfo)) return false;
+            return Equals((IncomingMessageSuscriptionInfo) obj);
         }
 
         public override int GetHashCode()

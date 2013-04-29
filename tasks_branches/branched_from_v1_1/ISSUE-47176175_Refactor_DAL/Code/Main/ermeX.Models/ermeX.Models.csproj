@@ -45,13 +45,14 @@
     <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
-    <Compile Include="AppComponent.cs" />
-    <Compile Include="ChunkedServiceRequestMessageData.cs" />
-    <Compile Include="ConnectivityDetails.cs" />
+    <Compile Include="AppComponentInfo.cs" />
+    <Compile Include="ChunkedServiceRequestMessageDataInfo.cs" />
+    <Compile Include="ConnectivityDetailsInfo.cs" />
     <Compile Include="IncomingMessage.cs" />
     <Compile Include="IncomingMessageSuscription.cs" />
     <Compile Include="Message.cs" />
-    <Compile Include="OutgoingMessage.cs" />
+    <Compile Include="ModelBase.cs" />
+    <Compile Include="OutgoingMessageInfo.cs" />
     <Compile Include="OutgoingMessageSuscription.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceDetails.cs" />

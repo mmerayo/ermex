@@ -29,7 +29,7 @@ using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Messages;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.DAL.UnitOfWork;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.Dummies;

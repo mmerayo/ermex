@@ -20,7 +20,7 @@ using System;
 using FluentNHibernate.Mapping;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ConnectivityDetails = ermeX.DAL.Models.ConnectivityDetails;
 
 namespace ermeX.DAL.DataAccess.Mappings

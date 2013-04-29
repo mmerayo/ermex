@@ -23,41 +23,36 @@ using System.Data;
 
 namespace ermeX.Models
 {
-    internal class ChunkedServiceRequestMessageData:ModelBase,IEquatable<ChunkedServiceRequestMessageData>
+    internal class ChunkedServiceRequestMessageDataInfo:ModelBase,IEquatable<ChunkedServiceRequestMessageDataInfo>
     {
 
-        public ChunkedServiceRequestMessageData()
+        public ChunkedServiceRequestMessageDataInfo()
         {
         }
        
-        public virtual Guid Operation { get; set; }
+        public  Guid Operation { get; set; }
 
+		//TODO:
         #region Crap due to the serializer was not supporting it, fix when supported
 
-        public virtual List<byte> Data
+        public  List<byte> Data
         {
             get { return new List<byte>(DataBytes); }
             set { DataBytes = value.ToArray(); }
         }
 
-        public virtual byte[] DataBytes { get; set; } 
+        public  byte[] DataBytes { get; set; } 
         #endregion
 
-        public virtual Guid CorrelationId { get; set; }
+        public  Guid CorrelationId { get; set; }
 
-        public virtual int Order { get; set; }
+        public  int Order { get; set; }
 
-        public virtual bool Eof { get; set; }
-
-        public static string TableName
-        {
-            get { return "ChunkedServiceRequestMessages"; }
-        }
-
+        public  bool Eof { get; set; }
 
         #region Equatable
 
-        public virtual bool Equals(ChunkedServiceRequestMessageData other)
+        public  bool Equals(ChunkedServiceRequestMessageDataInfo other)
         {
             if (other == null)
                 return false;
@@ -69,7 +64,7 @@ namespace ermeX.Models
                 && Eof == other.Eof;
         }
 
-        public static bool operator ==(ChunkedServiceRequestMessageData a, ChunkedServiceRequestMessageData b)
+        public static bool operator ==(ChunkedServiceRequestMessageDataInfo a, ChunkedServiceRequestMessageDataInfo b)
         {
             if ((object)a == null || ((object)b) == null)
                 return Equals(a, b);
@@ -77,7 +72,7 @@ namespace ermeX.Models
             return a.Equals(b);
         }
 
-        public static bool operator !=(ChunkedServiceRequestMessageData a, ChunkedServiceRequestMessageData b)
+        public static bool operator !=(ChunkedServiceRequestMessageDataInfo a, ChunkedServiceRequestMessageDataInfo b)
         {
             if (a == null || b == null)
                 return !Equals(a, b);
@@ -89,8 +84,8 @@ namespace ermeX.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(ChunkedServiceRequestMessageData)) return false;
-            return Equals((ChunkedServiceRequestMessageData)obj);
+            if (obj.GetType() != typeof(ChunkedServiceRequestMessageDataInfo)) return false;
+            return Equals((ChunkedServiceRequestMessageDataInfo)obj);
         }
 
         public override int GetHashCode()
@@ -100,41 +95,16 @@ namespace ermeX.Models
 
         #endregion
 
-        public static ChunkedServiceRequestMessageData FromDataRow(DataRow dataRow)
+        public static ChunkedServiceRequestMessageDataInfo NewFromExisting(ChunkedServiceRequestMessageDataInfo source)
         {
-            var result = new ChunkedServiceRequestMessageData
+            var result = new ChunkedServiceRequestMessageDataInfo()
             {
-                Id = Convert.ToInt32(dataRow[GetDbFieldName("Id")]),
-                ComponentOwner = (Guid)dataRow[GetDbFieldName("ComponentOwner")],
-                Version = (long)dataRow[GetDbFieldName("Version")],
-                Operation = (Guid)dataRow[GetDbFieldName("Operation")],
-                Data = new List<byte>((byte[])dataRow[GetDbFieldName("Data")]),
-                CorrelationId = (Guid)dataRow[GetDbFieldName("CorrelationId")],
-                Order = Convert.ToInt32(dataRow[GetDbFieldName("Order")]),
-                Eof = (bool)dataRow[GetDbFieldName("Eof")]
-            };
-            return result;
-        }
-
-        protected internal static string GetDbFieldName(string fieldName)
-        {
-            return String.Format("{0}_{1}", TableName, fieldName);
-        }
-
-
-        public static ChunkedServiceRequestMessageData NewFromExisting(ChunkedServiceRequestMessageData source)
-        {
-            var result = new ChunkedServiceRequestMessageData()
-            {
-                ComponentOwner = source.ComponentOwner,
-                Version = source.Version,
+                OwnedBy = source.OwnedBy,
                 CorrelationId=source.CorrelationId,
                 Data = source.Data,
                 Eof=source.Eof,
                 Operation = source.Operation,
                 Order=source.Order
-
-                
             };
             return result;
         }

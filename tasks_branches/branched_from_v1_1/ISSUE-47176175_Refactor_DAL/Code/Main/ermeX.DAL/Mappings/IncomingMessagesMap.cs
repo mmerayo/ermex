@@ -21,7 +21,7 @@ using FluentNHibernate.Mapping;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.DataAccess.Mappings.UserMappingTypes;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using IncomingMessage = ermeX.DAL.Models.IncomingMessage;
 using Message = ermeX.DAL.Models.Message;
 

@@ -44,8 +44,8 @@ using ermeX.DAL.Interfaces.QueryDatabase;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.DAL.Interfaces.Subscriptions;
-using ermeX.Entities.Base;
-using ermeX.Entities.Entities;
+using ermeX.Models.Base;
+using ermeX.Models.Entities;
 
 namespace ermeX.Dal.Settings
 {

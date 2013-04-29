@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Interfaces.Component
 {
