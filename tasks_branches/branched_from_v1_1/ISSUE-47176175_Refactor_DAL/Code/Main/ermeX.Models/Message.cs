@@ -16,12 +16,11 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
-using ermeX.Common;
-using ermeX.Entities.Base;
 using ermeX.LayerMessages;
 
-namespace ermeX.Entities.Entities
+namespace ermeX.Models
 {
     //TODO: THERES LOTS OF CRAP HERE THAT need to be refactored
     [Serializable]

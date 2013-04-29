@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.2.2.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
     </Reference>
@@ -77,10 +80,6 @@
     <ProjectReference Include="..\ermeX.DAL\ermeX.DAL.csproj">
       <Project>{588A3C5F-C021-480E-B413-AEF2DEC4F97F}</Project>
       <Name>ermeX.DAL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
-      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
-      <Name>ermeX.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

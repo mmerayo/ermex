@@ -92,10 +92,6 @@
       <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>
       <Name>ermeX.DAL.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
-      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
-      <Name>ermeX.Entities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ermeX.Transport.Interfaces\ermeX.Transport.Interfaces.csproj">
       <Project>{991296BF-95D5-4462-A7EF-574E56C679F3}</Project>
       <Name>ermeX.Transport.Interfaces</Name>
