@@ -16,12 +16,12 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using System.Data;
-using System.Linq.Expressions;
 using ermeX.LayerMessages;
 
-namespace ermeX.Entities.Entities
+namespace ermeX.Models
 {
 	[Serializable]
 	internal class OutgoingMessage : Message, IEquatable<OutgoingMessage>

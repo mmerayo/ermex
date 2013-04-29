@@ -94,10 +94,6 @@
       <Project>{588A3C5F-C021-480E-B413-AEF2DEC4F97F}</Project>
       <Name>ermeX.DAL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
-      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
-      <Name>ermeX.Entities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ermeX.LayerMessages\ermeX.LayerMessages.csproj">
       <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
       <Name>ermeX.LayerMessages</Name>

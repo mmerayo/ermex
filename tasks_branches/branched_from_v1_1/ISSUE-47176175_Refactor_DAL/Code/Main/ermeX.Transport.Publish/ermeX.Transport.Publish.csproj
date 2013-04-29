@@ -76,10 +76,6 @@
       <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>
       <Name>ermeX.DAL.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
-      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
-      <Name>ermeX.Entities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ermeX.Exceptions\ermeX.Exceptions.csproj">
       <Project>{6A23DFD5-8894-4ABA-BA81-7AB2A7DAD552}</Project>
       <Name>ermeX.Exceptions</Name>

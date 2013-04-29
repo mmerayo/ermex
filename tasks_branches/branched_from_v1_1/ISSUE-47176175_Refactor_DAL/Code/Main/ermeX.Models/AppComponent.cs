@@ -16,12 +16,11 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using System.Data;
-using System.Linq.Expressions;
-using ermeX.Entities.Base;
 
-namespace ermeX.Entities.Entities
+namespace ermeX.Models
 {
 	internal class AppComponent : ModelBase, IEquatable<AppComponent>
 	{

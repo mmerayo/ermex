@@ -90,10 +90,6 @@
       <Project>{C4536E30-DC91-4AA4-8860-ECBDAF1AE4DE}</Project>
       <Name>ermeX.ConfigurationManagement</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
-      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
-      <Name>ermeX.Entities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ermeX.LayerMessages\ermeX.LayerMessages.csproj">
       <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
       <Name>ermeX.LayerMessages</Name>
