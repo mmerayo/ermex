@@ -120,8 +120,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Dal.IoC", "ermeX.Dal.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Design", "Design", "{9FFA0653-B01A-4A93-B5A0-C98A8799B2FC}"
 EndProject
-Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "ermeX.Modelling", "ermeX.Modelling\ermeX.Modelling.modelproj", "{2651108F-6EDB-4F32-AFE6-480CA8AFD10A}"
-EndProject
+
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Parallel", "ermeX.Parallel\ermeX.Parallel.csproj", "{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Tests.Parallel", "ermeX.Tests.Parallel\ermeX.Tests.Parallel.csproj", "{31643F2E-F354-48F3-9610-BCCEB4808AD1}"
