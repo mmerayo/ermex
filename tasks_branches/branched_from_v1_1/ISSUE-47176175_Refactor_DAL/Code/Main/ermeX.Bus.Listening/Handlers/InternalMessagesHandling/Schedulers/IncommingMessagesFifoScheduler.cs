@@ -22,7 +22,7 @@ using Ninject;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Queues;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.Schedulers
 {

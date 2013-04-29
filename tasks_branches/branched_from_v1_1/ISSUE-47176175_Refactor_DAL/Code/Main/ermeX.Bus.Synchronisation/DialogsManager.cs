@@ -35,7 +35,7 @@ using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Connectivity;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.DAL.Interfaces.Subscriptions;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.Exceptions;
 
 

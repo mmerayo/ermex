@@ -1,5 +1,5 @@
 ﻿using System;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Interfaces.Connectivity
 {

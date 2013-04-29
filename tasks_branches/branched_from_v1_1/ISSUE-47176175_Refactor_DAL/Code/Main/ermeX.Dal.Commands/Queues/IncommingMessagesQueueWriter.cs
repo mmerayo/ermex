@@ -8,7 +8,7 @@ using ermeX.DAL.Commands.Connectivity;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Queues
 {

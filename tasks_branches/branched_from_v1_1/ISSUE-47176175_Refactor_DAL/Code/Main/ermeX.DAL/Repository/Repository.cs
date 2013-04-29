@@ -11,7 +11,7 @@ using NHibernate.Linq;
 using Remotion.Linq.Utilities;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.UnitOfWork;
-using ermeX.Entities.Base;
+using ermeX.Models.Base;
 using Ninject;
 using ModelBase = ermeX.DAL.Models.ModelBase;
 

@@ -24,24 +24,22 @@ namespace ermeX.Models
 {
     internal class ServiceDetails : ModelBase, IEquatable<ServiceDetails>
     {
-        internal const string TableName = "ServicesDetails"; 
+        public  Guid OperationIdentifier { get; set; }
 
-        public virtual Guid OperationIdentifier { get; set; }
+        public  string ServiceImplementationTypeName { get; set; }
 
-        public virtual string ServiceImplementationTypeName { get; set; }
+        public  string ServiceImplementationMethodName { get; set; }
 
-        public virtual string ServiceImplementationMethodName { get; set; }
+        public  string ServiceInterfaceTypeName { get; set; }
 
-        public virtual string ServiceInterfaceTypeName { get; set; }
-
-        public virtual bool IsSystemService { get; set; }
+        public  bool IsSystemService { get; set; }
 
 
-        public virtual Guid Publisher { get; set; }
+        public  Guid Publisher { get; set; }
 
         #region IEquatable
 
-        public virtual bool Equals(ServiceDetails other)
+        public  bool Equals(ServiceDetails other)
         {
             if (other == null)
                 return false;
@@ -83,29 +81,7 @@ namespace ermeX.Models
 
         #endregion
 
-        protected internal static string GetDbFieldName(string fieldName)
-        {
-            return String.Format("{0}_{1}", TableName, fieldName);
-        }
-
-        public static ServiceDetails FromDataRow(DataRow dataRow)
-        {
-            var result = new ServiceDetails
-                             {
-                                 Id = Convert.ToInt32( dataRow[GetDbFieldName("Id")]),
-                                 ComponentOwner = (Guid) dataRow[GetDbFieldName("ComponentOwner")],
-                                 Publisher = (Guid) dataRow[GetDbFieldName("Publisher")],
-                                 OperationIdentifier = (Guid) dataRow[GetDbFieldName("OperationIdentifier")],
-                                 ServiceImplementationMethodName =
-                                     (string) dataRow[GetDbFieldName("ServiceImplementationMethodName")],
-                                 ServiceImplementationTypeName =
-                                     (string) dataRow[GetDbFieldName("ServiceImplementationTypeName")],
-                                 ServiceInterfaceTypeName = (string) dataRow[GetDbFieldName("ServiceInterfaceTypeName")],
-                                 IsSystemService = (bool) dataRow[GetDbFieldName("IsSystemService")],
-                                 Version = (long) dataRow[GetDbFieldName("Version")],
-                             };
-            return result;
-        }
+      
 
     }
 }

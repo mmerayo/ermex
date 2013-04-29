@@ -30,7 +30,7 @@ using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Observer;
 using ermeX.DAL.Interfaces.Observers;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.SettingsProviders;

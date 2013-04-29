@@ -28,7 +28,7 @@ using ermeX.ConfigurationManagement.Settings.Data;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Providers;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 using ermeX.LayerMessages;
 using ermeX.Versioning;

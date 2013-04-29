@@ -32,7 +32,7 @@ using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Connectivity;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 {

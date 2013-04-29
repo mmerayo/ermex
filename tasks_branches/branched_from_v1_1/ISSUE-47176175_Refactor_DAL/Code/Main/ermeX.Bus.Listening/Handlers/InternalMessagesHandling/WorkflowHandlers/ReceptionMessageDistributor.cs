@@ -26,7 +26,7 @@ using ermeX.Common;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Interfaces.Subscriptions;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.LayerMessages;
 using ermeX.Parallel.Queues;
 

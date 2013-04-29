@@ -31,7 +31,7 @@ using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Observer;
 using ermeX.DAL.Interfaces.Observers;
 using ermeX.DAL.Interfaces.Queues;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.LayerMessages;
 using ermeX.Parallel.Queues;
 

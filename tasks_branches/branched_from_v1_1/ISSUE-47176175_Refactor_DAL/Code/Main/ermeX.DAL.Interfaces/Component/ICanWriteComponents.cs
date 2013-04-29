@@ -1,6 +1,6 @@
 ﻿using System;
 using ermeX.ConfigurationManagement.Status;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Interfaces.Component
 {

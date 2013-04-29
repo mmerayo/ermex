@@ -22,7 +22,7 @@ using ermeX.Bus.Interfaces;
 using ermeX.Bus.Interfaces.Dispatching;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 namespace ermeX.Tests.Common.Dummies
 {

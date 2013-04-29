@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using ermeX.DAL.UnitOfWork;
-using ermeX.Entities.Base;
+using ermeX.Models.Base;
 using ModelBase = ermeX.DAL.Models.ModelBase;
 
 namespace ermeX.DAL.Repository

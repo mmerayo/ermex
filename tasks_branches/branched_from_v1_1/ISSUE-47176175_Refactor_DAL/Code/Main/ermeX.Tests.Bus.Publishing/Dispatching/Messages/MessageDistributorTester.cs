@@ -29,7 +29,7 @@ using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.LayerMessages;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.SettingsProviders;

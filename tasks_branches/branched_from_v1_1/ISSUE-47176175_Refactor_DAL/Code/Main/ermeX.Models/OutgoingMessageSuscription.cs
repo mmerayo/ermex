@@ -24,51 +24,31 @@ namespace ermeX.Models
 {
     internal class OutgoingMessageSuscription : ModelBase, IEquatable<OutgoingMessageSuscription>
     {
-        internal const string TableName = "OutgoingMessageSuscriptions";
 
-        public OutgoingMessageSuscription(IncomingMessageSuscription suscription, Guid suscriberComponentId,
-                                          Guid localComponentId)
+        public OutgoingMessageSuscription(IncomingMessageSuscriptionInfo suscriptionInfo, AppComponentInfo suscriberComponentId,
+                                          AppComponentInfo localComponentId)
         {
-            Id = 0;
             Component = suscriberComponentId;
-            ComponentOwner = localComponentId;
-            BizMessageFullTypeName = suscription.BizMessageFullTypeName;
-            DateLastUpdateUtc = suscription.DateLastUpdateUtc;
-            Version = suscription.Version;
+            OwnedBy = localComponentId;
+            BizMessageFullTypeName = suscriptionInfo.BizMessageFullTypeName;
+            DateLastUpdateUtc = suscriptionInfo.DateLastUpdateUtc;
         }
 
         public OutgoingMessageSuscription()
         {
         }
 
-        public virtual string BizMessageFullTypeName { get; set; }
+        public  string BizMessageFullTypeName { get; set; }
 
-        public virtual Guid Component { get; set; }
+        public  AppComponentInfo Component { get; set; }
 
-        public virtual DateTime DateLastUpdateUtc { get; set; }
+        public  DateTime DateLastUpdateUtc { get; set; }
 
-        internal static string GetDbFieldName(string fieldName)
-        {
-            return string.Format("{0}_{1}", TableName, fieldName);
-        }
-
-        public static OutgoingMessageSuscription FromDataRow(DataRow dataRow)
-        {
-            var result = new OutgoingMessageSuscription
-                             {
-                                 Id = Convert.ToInt32( dataRow[GetDbFieldName("Id")]),
-                                 ComponentOwner = new Guid(dataRow[GetDbFieldName("ComponentOwner")].ToString()),
-                                 Version = (long) dataRow[GetDbFieldName("Version")],
-                                 Component = new Guid(dataRow[GetDbFieldName("ComponentId")].ToString()),
-                                 BizMessageFullTypeName = dataRow[GetDbFieldName("BizMessageFullTypeName")].ToString(),
-                                 DateLastUpdateUtc = new DateTime((long) dataRow[GetDbFieldName("DateLastUpdateUtc")]),
-                             };
-            return result;
-        }
+       
 
         #region Equatable
 
-        public virtual bool Equals(OutgoingMessageSuscription other)
+        public  bool Equals(OutgoingMessageSuscription other)
         {
             if (other == null)
                 return false;

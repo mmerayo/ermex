@@ -32,7 +32,7 @@ using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Services;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.Exceptions;
 using ermeX.Transport.Interfaces;
 using ermeX.Transport.Interfaces.ServiceOperations;

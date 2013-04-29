@@ -24,41 +24,31 @@ using ermeX.LayerMessages;
 namespace ermeX.Models
 {
 	[Serializable]
-	internal class OutgoingMessage : Message, IEquatable<OutgoingMessage>
+	internal class OutgoingMessageInfo : MessageInfo, IEquatable<OutgoingMessageInfo>
 	{
 		public const string FinalTableName = "OutgoingMessages";
 
-		public OutgoingMessage()
+		public OutgoingMessageInfo()
 		{
 		}
 
 		//for testing
 
-		public OutgoingMessage(BusMessage message)
+		public OutgoingMessageInfo(BusMessage message)
 			: base(message)
 		{
 			Tries = 0;
 		}
 
 
-		public virtual int Tries { get; set; }
+		public  int Tries { get; set; }
 
-		protected override string TableName
-		{
-			get { return FinalTableName; }
-		}
 
-		protected internal static string GetDbFieldName(string fieldName) //TODO: REFACTOR
+		public  OutgoingMessageInfo GetClone()
 		{
-			return String.Format("{0}_{1}", FinalTableName, fieldName);
-		}
-
-		public virtual OutgoingMessage GetClone()
-		{
-			var result = new OutgoingMessage()
+			var result = new OutgoingMessageInfo()
 				{
-					Version = Version,
-					ComponentOwner = ComponentOwner,
+					OwnedBy = OwnedBy,
 					MessageId = MessageId,
 					CreatedTimeUtc = CreatedTimeUtc,
 					Status = Status,
@@ -71,44 +61,23 @@ namespace ermeX.Models
 			return result;
 		}
 
-		public static OutgoingMessage FromDataRow(DataRow dataRow)
-		{
-			var result = new OutgoingMessage
-				{
-					Id = Convert.ToInt32(dataRow[GetDbFieldName("Id")]),
-					//TODO: SET SQL SERVER TO LONG AND RECAST, CREATE TEST WITH INT32 OVERFLOW
-					//BusMessageId = Convert.ToInt32(dataRow[GetDbFieldName("BusMessageId")]),
-					CreatedTimeUtc = new DateTime((long) dataRow[GetDbFieldName("CreatedTimeUtc")]),
-					Status = (MessageStatus) Convert.ToInt32(dataRow[GetDbFieldName("Status")]),
-					JsonMessage = dataRow[GetDbFieldName("JsonMessage")].ToString(),
-					MessageId = (Guid) dataRow[GetDbFieldName("MessageId")],
-					PublishedBy = (Guid) dataRow[GetDbFieldName("PublishedBy")],
-					PublishedTo = (Guid) dataRow[GetDbFieldName("PublishedTo")],
-					ComponentOwner = (Guid) dataRow[GetDbFieldName("ComponentOwner")],
-					Tries = Convert.ToInt32(dataRow[GetDbFieldName("Tries")]),
-					Version = (long) dataRow[GetDbFieldName("Version")],
-					//TODO: TO BASE CLASS
-				};
-			return result;
-		}
-
 		#region Equatable
 
 		//TODO: refactor to base
 
-		public virtual bool Equals(OutgoingMessage other)
+		public  bool Equals(OutgoingMessageInfo other)
 		{
 			if (other == null)
 				return false;
 
 			return
-				ComponentOwner == other.ComponentOwner && Version == other.Version &&
+				OwnedBy == other.OwnedBy && Version == other.Version &&
 				Status == other.Status && CreatedTimeUtc == other.CreatedTimeUtc && JsonMessage == other.JsonMessage &&
 				MessageId == other.MessageId;
 			//TODO: FINISH
 		}
 
-		public static bool operator ==(OutgoingMessage a, OutgoingMessage b)
+		public static bool operator ==(OutgoingMessageInfo a, OutgoingMessageInfo b)
 		{
 			if ((object) a == null || ((object) b) == null)
 				return Equals(a, b);
@@ -116,7 +85,7 @@ namespace ermeX.Models
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(OutgoingMessage a, OutgoingMessage b)
+		public static bool operator !=(OutgoingMessageInfo a, OutgoingMessageInfo b)
 		{
 			if (a == null || b == null)
 				return !Equals(a, b);
@@ -128,8 +97,8 @@ namespace ermeX.Models
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != typeof (OutgoingMessage)) return false;
-			return Equals((OutgoingMessage) obj);
+			if (obj.GetType() != typeof (OutgoingMessageInfo)) return false;
+			return Equals((OutgoingMessageInfo) obj);
 		}
 
 		public override int GetHashCode()
@@ -139,9 +108,11 @@ namespace ermeX.Models
 
 		#endregion
 
-		public virtual bool Expired(TimeSpan sendExpiringTime)
+		public  bool Expired(TimeSpan sendExpiringTime)
 		{
 			return DateTime.UtcNow.Subtract(CreatedTimeUtc) > sendExpiringTime;
 		}
+
+		
 	}
 }
