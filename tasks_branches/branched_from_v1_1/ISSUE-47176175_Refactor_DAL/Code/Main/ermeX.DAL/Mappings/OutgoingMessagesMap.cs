@@ -22,6 +22,8 @@ using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.DAL.DataAccess.Mappings.UserMappingTypes;
 using ermeX.Entities.Entities;
+using Message = ermeX.DAL.Models.Message;
+using OutgoingMessage = ermeX.DAL.Models.OutgoingMessage;
 
 namespace ermeX.DAL.DataAccess.Mappings
 {

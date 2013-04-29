@@ -8,8 +8,8 @@
     <ProjectGuid>{6F22B8E5-46EB-4E78-A312-08467876BBB4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ermeX.Dal.IoC</RootNamespace>
-    <AssemblyName>ermeX.Dal.IoC</AssemblyName>
+    <RootNamespace>ermeX.Dal.Settings</RootNamespace>
+    <AssemblyName>ermeX.Dal.Settings</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

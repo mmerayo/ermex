@@ -13,6 +13,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.UnitOfWork;
 using ermeX.Entities.Base;
 using Ninject;
+using ModelBase = ermeX.DAL.Models.ModelBase;
 
 namespace ermeX.DAL.Repository
 {

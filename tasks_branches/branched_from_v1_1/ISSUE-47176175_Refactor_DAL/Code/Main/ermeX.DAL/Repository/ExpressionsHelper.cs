@@ -1,6 +1,14 @@
 ﻿using System;
 using System.Linq.Expressions;
 using ermeX.Entities.Entities;
+using AppComponent = ermeX.DAL.Models.AppComponent;
+using ChunkedServiceRequestMessageData = ermeX.DAL.Models.ChunkedServiceRequestMessageData;
+using ConnectivityDetails = ermeX.DAL.Models.ConnectivityDetails;
+using IncomingMessage = ermeX.DAL.Models.IncomingMessage;
+using IncomingMessageSuscription = ermeX.DAL.Models.IncomingMessageSuscription;
+using OutgoingMessage = ermeX.DAL.Models.OutgoingMessage;
+using OutgoingMessageSuscription = ermeX.DAL.Models.OutgoingMessageSuscription;
+using ServiceDetails = ermeX.DAL.Models.ServiceDetails;
 
 namespace ermeX.DAL.Repository
 {
