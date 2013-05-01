@@ -22,7 +22,6 @@ using System.Linq;
 using System.Reflection;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.Interfaces.QueryDatabase;
 using ermeX.Versioning.Schema.Scripts.SqlServer;
 

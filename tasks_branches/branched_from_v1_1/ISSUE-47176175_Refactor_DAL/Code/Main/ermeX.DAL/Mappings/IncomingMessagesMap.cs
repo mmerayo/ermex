@@ -16,16 +16,15 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using FluentNHibernate.Mapping;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-using ermeX.DAL.DataAccess.Mappings.UserMappingTypes;
+using ermeX.DAL.Mappings.UserMappingTypes;
 using ermeX.Models.Entities;
-using IncomingMessage = ermeX.DAL.Models.IncomingMessage;
-using Message = ermeX.DAL.Models.Message;
 
-namespace ermeX.DAL.DataAccess.Mappings
+namespace ermeX.DAL.Mappings
 {
     internal abstract class IncomingMessagesMap : ClassMap<IncomingMessage>
     {

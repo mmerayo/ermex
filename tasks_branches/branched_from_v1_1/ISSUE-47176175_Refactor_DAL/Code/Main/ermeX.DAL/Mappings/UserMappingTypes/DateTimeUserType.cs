@@ -16,13 +16,14 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using System.Data;
 using NHibernate;
 using NHibernate.SqlTypes;
 using NHibernate.UserTypes;
 
-namespace ermeX.DAL.DataAccess.Mappings.UserMappingTypes
+namespace ermeX.DAL.Mappings.UserMappingTypes
 {
     public class DateTimeUserType : IUserType
     {

@@ -140,6 +140,10 @@
       <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>
       <Name>ermeX.DAL.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Dal.IoC\ermeX.Dal.IoC.csproj">
+      <Project>{6F22B8E5-46EB-4E78-A312-08467876BBB4}</Project>
+      <Name>ermeX.Dal.IoC</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.DAL\ermeX.DAL.csproj">
       <Project>{588A3C5F-C021-480E-B413-AEF2DEC4F97F}</Project>
       <Name>ermeX.DAL</Name>

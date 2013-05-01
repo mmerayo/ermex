@@ -30,7 +30,6 @@ using ermeX.DAL.Commands.QueryDatabase;
 using ermeX.DAL.Commands.Queues;
 using ermeX.DAL.Commands.Services;
 using ermeX.DAL.Commands.Subscriptions;
-using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.Providers;
 using ermeX.DAL.Repository;
 using ermeX.DAL.Transactions;
@@ -47,7 +46,7 @@ using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Models.Base;
 using ermeX.Models.Entities;
 
-namespace ermeX.Dal.Settings
+namespace ermeX.DAL.IoC
 {
 	//TODO: TO BE MOVED TO ANOTHER ASSEMBLY
     internal class DALInjections : NinjectModule

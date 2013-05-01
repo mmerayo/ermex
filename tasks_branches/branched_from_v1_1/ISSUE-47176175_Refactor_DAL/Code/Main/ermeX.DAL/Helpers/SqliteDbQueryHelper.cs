@@ -5,7 +5,7 @@ using System.Data.Common;
 using System.Data.SQLite;
 using System.Text.RegularExpressions;
 
-namespace ermeX.DAL.DataAccess.Helpers
+namespace ermeX.DAL.Helpers
 {
 	internal class SqliteDbQueryHelper : Sql2008DbQueryHelper
 	{

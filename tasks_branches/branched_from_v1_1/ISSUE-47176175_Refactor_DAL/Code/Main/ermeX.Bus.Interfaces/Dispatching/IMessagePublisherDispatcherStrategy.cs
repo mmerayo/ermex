@@ -17,7 +17,6 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using ermeX.Models.Entities;
 using ermeX.LayerMessages;
 
 namespace ermeX.Bus.Interfaces.Dispatching

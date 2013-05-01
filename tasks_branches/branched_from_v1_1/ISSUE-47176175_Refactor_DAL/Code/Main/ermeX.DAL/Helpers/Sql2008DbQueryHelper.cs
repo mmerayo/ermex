@@ -3,7 +3,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 
-namespace ermeX.DAL.DataAccess.Helpers
+namespace ermeX.DAL.Helpers
 {
 	//TODO: REMOVE SUPPORT TO SQL SERVER
 	internal class Sql2008DbQueryHelper : QueryHelper

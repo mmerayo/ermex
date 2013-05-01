@@ -26,8 +26,6 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Services;
-using ermeX.Models.Entities;
-
 using ermeX.LayerMessages;
 
 namespace ermeX.Bus.Publishing

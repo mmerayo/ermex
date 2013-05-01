@@ -16,13 +16,10 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-using System;
-using FluentNHibernate.Mapping;
-using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-using ermeX.Models.Entities;
 
-namespace ermeX.DAL.DataAccess.Mappings.Sqlite
+using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
+
+namespace ermeX.DAL.Mappings.Sqlite
 {
     internal class ServiceDetailsMap : Mappings.ServiceDetailsMap
     {

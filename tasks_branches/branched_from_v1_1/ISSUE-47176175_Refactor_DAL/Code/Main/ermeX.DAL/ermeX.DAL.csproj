@@ -85,16 +85,6 @@
     <Compile Include="Mappings\SqlServer\OutgoingMessagesMap.cs" />
     <Compile Include="Mappings\SqlServer\OutgoingMessageSuscriptionsMap.cs" />
     <Compile Include="Mappings\SqlServer\ServiceDetailsMap.cs" />
-    <Compile Include="Models\AppComponent.cs" />
-    <Compile Include="Models\ChunkedServiceRequestMessageData.cs" />
-    <Compile Include="Models\ConnectivityDetails.cs" />
-    <Compile Include="Models\IncomingMessage.cs" />
-    <Compile Include="Models\IncomingMessageSuscription.cs" />
-    <Compile Include="Models\Message.cs" />
-    <Compile Include="Models\ModelBase.cs" />
-    <Compile Include="Models\OutgoingMessage.cs" />
-    <Compile Include="Models\OutgoingMessageSuscription.cs" />
-    <Compile Include="Models\ServiceDetails.cs" />
     <Compile Include="Providers\ISessionProvider.cs" />
     <Compile Include="Repository\ExpressionsHelper.cs" />
     <Compile Include="Repository\IExpressionHelper.cs" />
@@ -153,6 +143,10 @@
     <ProjectReference Include="..\ermeX.LayerMessages\ermeX.LayerMessages.csproj">
       <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
       <Name>ermeX.LayerMessages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Models\ermeX.Models.csproj">
+      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
+      <Name>ermeX.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Transport.Interfaces\ermeX.Transport.Interfaces.csproj">
       <Project>{991296BF-95D5-4462-A7EF-574E56C679F3}</Project>

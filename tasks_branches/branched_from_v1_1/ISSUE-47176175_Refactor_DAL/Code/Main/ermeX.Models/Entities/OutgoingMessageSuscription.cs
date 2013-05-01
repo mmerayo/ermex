@@ -19,8 +19,9 @@
 
 using System;
 using System.Data;
+using ermeX.Models.Base;
 
-namespace ermeX.DAL.Models
+namespace ermeX.Models.Entities
 {
     internal class OutgoingMessageSuscription : ModelBase, IEquatable<OutgoingMessageSuscription>
     {
