@@ -16,9 +16,10 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 
-namespace ermeX.DAL.DataAccess.Mappings.Sqlite
+namespace ermeX.DAL.Mappings.Sqlite
 
 {
     internal class ChunkedServiceRequestMessageDataMap : Mappings.ChunkedServiceRequestMessageDataMap

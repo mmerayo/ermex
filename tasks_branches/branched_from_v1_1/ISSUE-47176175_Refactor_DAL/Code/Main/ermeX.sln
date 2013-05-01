@@ -114,13 +114,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Tests.DAL", "ermeX.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Dal.Commands", "ermeX.Dal.Commands\ermeX.Dal.Commands.csproj", "{4CB1C5B5-6883-4FBE-80CC-97B2EDC2F5DE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Dal.IoC", "ermeX.Dal.IoC\ermeX.Dal.IoC.csproj", "{6F22B8E5-46EB-4E78-A312-08467876BBB4}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Design", "Design", "{9FFA0653-B01A-4A93-B5A0-C98A8799B2FC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Parallel", "ermeX.Parallel\ermeX.Parallel.csproj", "{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Tests.Parallel", "ermeX.Tests.Parallel\ermeX.Tests.Parallel.csproj", "{31643F2E-F354-48F3-9610-BCCEB4808AD1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Dal.Settings", "ermeX.Dal.Settings\ermeX.Dal.Settings.csproj", "{6F22B8E5-46EB-4E78-A312-08467876BBB4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Models", "ermeX.Models\ermeX.Models.csproj", "{A32D1859-83FC-43B8-A66D-E7F8A80772B1}"
 EndProject
@@ -294,6 +294,10 @@ Global
 		{4CB1C5B5-6883-4FBE-80CC-97B2EDC2F5DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CB1C5B5-6883-4FBE-80CC-97B2EDC2F5DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CB1C5B5-6883-4FBE-80CC-97B2EDC2F5DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F22B8E5-46EB-4E78-A312-08467876BBB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F22B8E5-46EB-4E78-A312-08467876BBB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F22B8E5-46EB-4E78-A312-08467876BBB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F22B8E5-46EB-4E78-A312-08467876BBB4}.Release|Any CPU.Build.0 = Release|Any CPU		
 		{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -302,10 +306,6 @@ Global
 		{31643F2E-F354-48F3-9610-BCCEB4808AD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31643F2E-F354-48F3-9610-BCCEB4808AD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31643F2E-F354-48F3-9610-BCCEB4808AD1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F22B8E5-46EB-4E78-A312-08467876BBB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F22B8E5-46EB-4E78-A312-08467876BBB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F22B8E5-46EB-4E78-A312-08467876BBB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F22B8E5-46EB-4E78-A312-08467876BBB4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A32D1859-83FC-43B8-A66D-E7F8A80772B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A32D1859-83FC-43B8-A66D-E7F8A80772B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A32D1859-83FC-43B8-A66D-E7F8A80772B1}.Release|Any CPU.ActiveCfg = Release|Any CPU

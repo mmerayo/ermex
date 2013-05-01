@@ -21,7 +21,7 @@ using System;
 using System.Data;
 using ermeX.LayerMessages;
 
-namespace ermeX.DAL.Models
+namespace ermeX.Models.Entities
 {
     [Serializable]
     internal class IncomingMessage : Message, IEquatable<IncomingMessage>

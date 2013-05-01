@@ -19,12 +19,13 @@
 
 using System;
 using ermeX.LayerMessages;
+using ermeX.Models.Base;
 
-namespace ermeX.Models
+namespace ermeX.Models.Entities
 {
     //TODO: THERES LOTS OF CRAP HERE THAT need to be refactored
     [Serializable]
-    internal abstract class MessageInfo : ModelBase
+    internal abstract class Message : ModelBase
     {
         public enum MessageStatus : int
         {
@@ -65,11 +66,11 @@ namespace ermeX.Models
             ReceiverDispatching=128
         }
 
-        protected MessageInfo()
+        protected Message()
         {
         }
 
-        protected MessageInfo(BusMessage message)
+        protected Message(BusMessage message)
         {
             if (message == null) throw new ArgumentNullException("message");
             //TODO: REMOVE, AS the biz message should be handled only by the bizlayer
@@ -79,30 +80,37 @@ namespace ermeX.Models
             CreatedTimeUtc = message.CreatedTimeUtc;
         }
 
+        protected abstract string TableName { get; }
 
-        public  MessageStatus Status { get; set; }
+        public virtual MessageStatus Status { get; set; }
 
-        public  string JsonMessage { get; set; }
+        public virtual string JsonMessage { get; set; }
 
-        public  Guid MessageId { get; set; }
+        public virtual Guid MessageId { get; set; }
 
-        public  DateTime CreatedTimeUtc { get; set; }
+        public virtual DateTime CreatedTimeUtc { get; set; }
 
-        public  AppComponentInfo PublishedBy
+        public virtual Guid PublishedBy
         {
-            get { return OwnedBy; }
-            set { OwnedBy = value; }
+            get { return ComponentOwner; }
+            set { ComponentOwner = value; }
         }
 
-        public  BusMessage ToBusMessage()
+        public virtual BusMessage ToBusMessage()
         {
             BizMessage bizMessage = BizMessage.FromJson(JsonMessage);
-            return new BusMessage(MessageId,CreatedTimeUtc,PublishedBy.ComponentId,bizMessage);
+            return new BusMessage(MessageId,CreatedTimeUtc,PublishedBy,bizMessage);
         }
 
         //TODO: to compenentData object when provider specified
 
-        public  AppComponentInfo PublishedTo { get; set; } //TODO: to compenentData object when provider specified
+        public virtual Guid PublishedTo { get; set; } //TODO: to compenentData object when provider specified
+
+
+        protected string GetDbFieldName(string fieldName)
+        {
+            return String.Format("{0}_{1}", TableName, fieldName);
+        }
 
         
     }

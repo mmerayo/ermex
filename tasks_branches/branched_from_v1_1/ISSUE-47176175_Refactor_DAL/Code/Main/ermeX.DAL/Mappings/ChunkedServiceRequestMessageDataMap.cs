@@ -16,15 +16,14 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using FluentNHibernate.Mapping;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-using ermeX.DAL.DataAccess.Mappings.UserMappingTypes;
 using ermeX.Models.Entities;
-using ChunkedServiceRequestMessageData = ermeX.DAL.Models.ChunkedServiceRequestMessageData;
 
-namespace ermeX.DAL.DataAccess.Mappings
+namespace ermeX.DAL.Mappings
 {
     internal abstract class ChunkedServiceRequestMessageDataMap : ClassMap<ChunkedServiceRequestMessageData>
     {

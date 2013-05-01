@@ -16,14 +16,14 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using FluentNHibernate.Mapping;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.Models.Entities;
-using AppComponent = ermeX.DAL.Models.AppComponent;
 
-namespace ermeX.DAL.DataAccess.Mappings
+namespace ermeX.DAL.Mappings
 {
     internal abstract class AppComponentMap : ClassMap<AppComponent>
     {

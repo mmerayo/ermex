@@ -33,7 +33,6 @@ using ermeX.DAL.Commands.QueryDatabase;
 using ermeX.DAL.Commands.Queues;
 using ermeX.DAL.Commands.Services;
 using ermeX.DAL.Commands.Subscriptions;
-using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.Providers;
 using ermeX.DAL.Repository;
 using ermeX.DAL.Transactions;

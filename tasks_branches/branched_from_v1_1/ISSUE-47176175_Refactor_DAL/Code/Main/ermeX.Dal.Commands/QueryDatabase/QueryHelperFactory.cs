@@ -1,6 +1,6 @@
 ﻿using System;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.Helpers;
+using ermeX.DAL.Helpers;
 using ermeX.DAL.Interfaces.QueryDatabase;
 
 namespace ermeX.DAL.Commands.QueryDatabase

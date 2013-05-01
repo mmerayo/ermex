@@ -24,9 +24,6 @@ using Ninject;
 using ermeX.Common.Caching;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
-
-
-using ermeX.Models.Entities;
 using ermeX.Exceptions;
 using ermeX.LayerMessages;
 using ermeX.Transport.Interfaces;

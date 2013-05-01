@@ -25,7 +25,6 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Services;
-using ermeX.Models.Entities;
 using ermeX.LayerMessages;
 using ermeX.Transport.Interfaces.Messages;
 using ermeX.Transport.Interfaces.ServiceOperations;

@@ -19,7 +19,7 @@
 
 using System;
 
-namespace ermeX.DAL.Models
+namespace ermeX.Models.Base
 {
 	[Serializable]
 	public abstract class ModelBase

@@ -21,34 +21,44 @@ using System;
 using System.Data;
 using ermeX.LayerMessages;
 
-namespace ermeX.Models
+namespace ermeX.Models.Entities
 {
 	[Serializable]
-	internal class OutgoingMessageInfo : MessageInfo, IEquatable<OutgoingMessageInfo>
+	internal class OutgoingMessage : Message, IEquatable<OutgoingMessage>
 	{
 		public const string FinalTableName = "OutgoingMessages";
 
-		public OutgoingMessageInfo()
+		public OutgoingMessage()
 		{
 		}
 
 		//for testing
 
-		public OutgoingMessageInfo(BusMessage message)
+		public OutgoingMessage(BusMessage message)
 			: base(message)
 		{
 			Tries = 0;
 		}
 
 
-		public  int Tries { get; set; }
+		public virtual int Tries { get; set; }
 
-
-		public  OutgoingMessageInfo GetClone()
+		protected override string TableName
 		{
-			var result = new OutgoingMessageInfo()
+			get { return FinalTableName; }
+		}
+
+		protected internal static string GetDbFieldName(string fieldName) //TODO: REFACTOR
+		{
+			return String.Format("{0}_{1}", FinalTableName, fieldName);
+		}
+
+		public virtual OutgoingMessage GetClone()
+		{
+			var result = new OutgoingMessage()
 				{
-					OwnedBy = OwnedBy,
+					Version = Version,
+					ComponentOwner = ComponentOwner,
 					MessageId = MessageId,
 					CreatedTimeUtc = CreatedTimeUtc,
 					Status = Status,
@@ -61,23 +71,44 @@ namespace ermeX.Models
 			return result;
 		}
 
+		public static OutgoingMessage FromDataRow(DataRow dataRow)
+		{
+			var result = new OutgoingMessage
+				{
+					Id = Convert.ToInt32(dataRow[GetDbFieldName("Id")]),
+					//TODO: SET SQL SERVER TO LONG AND RECAST, CREATE TEST WITH INT32 OVERFLOW
+					//BusMessageId = Convert.ToInt32(dataRow[GetDbFieldName("BusMessageId")]),
+					CreatedTimeUtc = new DateTime((long) dataRow[GetDbFieldName("CreatedTimeUtc")]),
+					Status = (MessageStatus) Convert.ToInt32(dataRow[GetDbFieldName("Status")]),
+					JsonMessage = dataRow[GetDbFieldName("JsonMessage")].ToString(),
+					MessageId = (Guid) dataRow[GetDbFieldName("MessageId")],
+					PublishedBy = (Guid) dataRow[GetDbFieldName("PublishedBy")],
+					PublishedTo = (Guid) dataRow[GetDbFieldName("PublishedTo")],
+					ComponentOwner = (Guid) dataRow[GetDbFieldName("ComponentOwner")],
+					Tries = Convert.ToInt32(dataRow[GetDbFieldName("Tries")]),
+					Version = (long) dataRow[GetDbFieldName("Version")],
+					//TODO: TO BASE CLASS
+				};
+			return result;
+		}
+
 		#region Equatable
 
 		//TODO: refactor to base
 
-		public  bool Equals(OutgoingMessageInfo other)
+		public virtual bool Equals(OutgoingMessage other)
 		{
 			if (other == null)
 				return false;
 
 			return
-				OwnedBy == other.OwnedBy && Version == other.Version &&
+				ComponentOwner == other.ComponentOwner && Version == other.Version &&
 				Status == other.Status && CreatedTimeUtc == other.CreatedTimeUtc && JsonMessage == other.JsonMessage &&
 				MessageId == other.MessageId;
 			//TODO: FINISH
 		}
 
-		public static bool operator ==(OutgoingMessageInfo a, OutgoingMessageInfo b)
+		public static bool operator ==(OutgoingMessage a, OutgoingMessage b)
 		{
 			if ((object) a == null || ((object) b) == null)
 				return Equals(a, b);
@@ -85,7 +116,7 @@ namespace ermeX.Models
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(OutgoingMessageInfo a, OutgoingMessageInfo b)
+		public static bool operator !=(OutgoingMessage a, OutgoingMessage b)
 		{
 			if (a == null || b == null)
 				return !Equals(a, b);
@@ -97,8 +128,8 @@ namespace ermeX.Models
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != typeof (OutgoingMessageInfo)) return false;
-			return Equals((OutgoingMessageInfo) obj);
+			if (obj.GetType() != typeof (OutgoingMessage)) return false;
+			return Equals((OutgoingMessage) obj);
 		}
 
 		public override int GetHashCode()
@@ -108,11 +139,9 @@ namespace ermeX.Models
 
 		#endregion
 
-		public  bool Expired(TimeSpan sendExpiringTime)
+		public virtual bool Expired(TimeSpan sendExpiringTime)
 		{
 			return DateTime.UtcNow.Subtract(CreatedTimeUtc) > sendExpiringTime;
 		}
-
-		
 	}
 }

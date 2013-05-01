@@ -86,6 +86,10 @@
       <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
       <Name>ermeX.LayerMessages</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Models\ermeX.Models.csproj">
+      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
+      <Name>ermeX.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

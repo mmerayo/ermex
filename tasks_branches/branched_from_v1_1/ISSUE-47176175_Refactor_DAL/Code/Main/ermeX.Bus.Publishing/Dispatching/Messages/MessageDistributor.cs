@@ -29,8 +29,8 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Interfaces.Subscriptions;
-using ermeX.Models.Entities;
 using ermeX.LayerMessages;
+using ermeX.Models.Entities;
 using ermeX.Parallel.Queues;
 
 namespace ermeX.Bus.Publishing.Dispatching.Messages
