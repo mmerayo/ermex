@@ -11,8 +11,8 @@ using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Connectivity;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
-using ermeX.Entities.Entities;
 using ermeX.ConfigurationManagement.IoC;
+using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Component
 {

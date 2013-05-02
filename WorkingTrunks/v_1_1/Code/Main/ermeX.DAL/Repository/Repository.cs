@@ -11,8 +11,8 @@ using NHibernate.Linq;
 using Remotion.Linq.Utilities;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.UnitOfWork;
-using ermeX.Entities.Base;
 using Ninject;
+using ermeX.Models.Base;
 
 namespace ermeX.DAL.Repository
 {

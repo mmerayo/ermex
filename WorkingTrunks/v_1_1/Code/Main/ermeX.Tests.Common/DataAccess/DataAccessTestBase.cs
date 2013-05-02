@@ -33,7 +33,6 @@ using ermeX.DAL.Commands.QueryDatabase;
 using ermeX.DAL.Commands.Queues;
 using ermeX.DAL.Commands.Services;
 using ermeX.DAL.Commands.Subscriptions;
-using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.Providers;
 using ermeX.DAL.Repository;
 using ermeX.DAL.Transactions;
@@ -45,7 +44,7 @@ using ermeX.DAL.Interfaces.QueryDatabase;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.DAL.Interfaces.Subscriptions;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.NonMerged;
 
 namespace ermeX.Tests.Common.DataAccess

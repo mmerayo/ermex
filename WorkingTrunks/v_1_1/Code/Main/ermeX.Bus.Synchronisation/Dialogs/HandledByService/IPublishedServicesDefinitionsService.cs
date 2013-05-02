@@ -19,7 +19,7 @@
 using System.Collections.Generic;
 using ermeX;
 using ermeX.Bus.Synchronisation.Messages;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 
 namespace ermeX.Bus.Synchronisation.Dialogs.HandledByService

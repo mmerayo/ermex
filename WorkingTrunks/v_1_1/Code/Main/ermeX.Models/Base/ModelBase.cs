@@ -16,10 +16,10 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
-using System;
-using System.Linq.Expressions;
 
-namespace ermeX.Entities.Base
+using System;
+
+namespace ermeX.Models.Base
 {
 	[Serializable]
 	public abstract class ModelBase

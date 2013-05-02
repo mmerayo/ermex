@@ -16,6 +16,7 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -25,14 +26,11 @@ using System.Reflection;
 using Common.Logging;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.ConfigurationManagement.Settings.Data;
-using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.QueryDatabase;
-using ermeX.Entities.Base;
+using ermeX.Models.Base;
 
-namespace ermeX.DAL.DataAccess.Helpers
+namespace ermeX.DAL.Helpers
 {
 	/// <summary>
 	/// Use this only for the versioning and the tests

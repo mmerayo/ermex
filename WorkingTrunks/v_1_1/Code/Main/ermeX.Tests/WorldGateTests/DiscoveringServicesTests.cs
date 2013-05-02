@@ -22,7 +22,7 @@ using System.Linq;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.SettingsProviders;
 using ermeX.Tests.SupportTypes.Messages;

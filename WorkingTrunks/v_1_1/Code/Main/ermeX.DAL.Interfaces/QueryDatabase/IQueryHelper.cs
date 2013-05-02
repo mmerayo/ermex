@@ -1,7 +1,7 @@
 using System;
 using System.Data;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.Entities.Base;
+using ermeX.Models.Base;
 
 namespace ermeX.DAL.Interfaces.QueryDatabase
 {

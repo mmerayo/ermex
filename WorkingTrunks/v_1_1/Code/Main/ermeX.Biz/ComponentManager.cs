@@ -31,7 +31,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Status;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 namespace ermeX.Biz
 {

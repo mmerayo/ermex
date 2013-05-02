@@ -82,13 +82,13 @@
       <Project>{49D6179A-5489-4CB0-A4AE-F40DB88B78B7}</Project>
       <Name>ermeX.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ermeX.Entities\ermeX.Entities.csproj">
-      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
-      <Name>ermeX.Entities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ermeX.LayerMessages\ermeX.LayerMessages.csproj">
       <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
       <Name>ermeX.LayerMessages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Models\ermeX.Models.csproj">
+      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
+      <Name>ermeX.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

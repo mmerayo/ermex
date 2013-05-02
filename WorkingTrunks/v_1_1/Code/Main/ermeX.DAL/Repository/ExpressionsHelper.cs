@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Repository
 {

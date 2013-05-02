@@ -29,8 +29,8 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Queues;
-using ermeX.Entities.Entities;
 using ermeX.LayerMessages;
+using ermeX.Models.Entities;
 using ermeX.Parallel.Queues;
 using ermeX.Parallel.Scheduling;
 

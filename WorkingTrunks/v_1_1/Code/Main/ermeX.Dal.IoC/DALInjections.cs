@@ -30,7 +30,6 @@ using ermeX.DAL.Commands.QueryDatabase;
 using ermeX.DAL.Commands.Queues;
 using ermeX.DAL.Commands.Services;
 using ermeX.DAL.Commands.Subscriptions;
-using ermeX.DAL.DataAccess.Helpers;
 using ermeX.DAL.Providers;
 using ermeX.DAL.Repository;
 using ermeX.DAL.Transactions;
@@ -44,8 +43,8 @@ using ermeX.DAL.Interfaces.QueryDatabase;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.DAL.Interfaces.Subscriptions;
-using ermeX.Entities.Base;
-using ermeX.Entities.Entities;
+using ermeX.Models.Base;
+using ermeX.Models.Entities;
 
 namespace ermeX.DAL.IoC
 {

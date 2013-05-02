@@ -25,7 +25,7 @@ using ermeX.Common.Caching;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Connectivity;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.Transport.Interfaces.Entities;
 using ermeX.Transport.Interfaces.Receiving.Server;
 using ermeX.Transport.Interfaces.Sending.Client;

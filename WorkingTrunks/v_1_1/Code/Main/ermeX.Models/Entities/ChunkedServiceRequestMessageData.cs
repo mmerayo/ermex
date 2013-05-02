@@ -16,15 +16,13 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using ermeX.Entities.Base;
+using ermeX.Models.Base;
 
-namespace ermeX.Entities.Entities
+namespace ermeX.Models.Entities
 {
     internal class ChunkedServiceRequestMessageData:ModelBase,IEquatable<ChunkedServiceRequestMessageData>
     {

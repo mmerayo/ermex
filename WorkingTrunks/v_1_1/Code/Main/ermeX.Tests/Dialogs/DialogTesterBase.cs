@@ -31,7 +31,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
 using ermeX.ConfigurationManagement.Status;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.Networking;
 using ermeX.Tests.Services.Builtin.SuperSockets;
