@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2651108f-6edb-4f32-afe6-480ca8afd10a}</ProjectGuid>
+    <ArchitectureToolsVersion>1.0.0.0</ArchitectureToolsVersion>
+    <Name>ermeX.Modelling</Name>
+    <RootNamespace>ermeX.Modelling</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\ArchitectureTools\Microsoft.VisualStudio.TeamArchitect.ModelingProject.targets" />
+  <ItemGroup>
+    <Folder Include="ModelDefinition\" />
+    <Content Include="ModelDefinition\ermeX.Modelling.uml">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement.Config\ermeX.ConfigurationManagement.Config.csproj">
+      <Name>ermeX.ConfigurationManagement.Config</Name>
+      <Project>{18d50277-2166-45e2-96cb-8f40e5494a87}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement.Settings\ermeX.ConfigurationManagement.Settings.csproj">
+      <Name>ermeX.ConfigurationManagement.Settings</Name>
+      <Project>{a6c2d141-25f0-4bff-93bc-f9ef0cbdb3b1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement\ermeX.ConfigurationManagement.csproj">
+      <Name>ermeX.ConfigurationManagement</Name>
+      <Project>{c4536e30-dc91-4aa4-8860-ecbdaf1ae4de}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Dal.Commands\ermeX.Dal.Commands.csproj">
+      <Name>ermeX.Dal.Commands</Name>
+      <Project>{4cb1c5b5-6883-4fbe-80cc-97b2edc2f5de}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.DAL.Interfaces\ermeX.DAL.Interfaces.csproj">
+      <Name>ermeX.DAL.Interfaces</Name>
+      <Project>{54018aee-9ed4-4d55-adbd-ea8f44601f97}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.DAL\ermeX.DAL.csproj">
+      <Name>ermeX.DAL</Name>
+      <Project>{588a3c5f-c021-480e-b413-aef2dec4f97f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Parallel\ermeX.Parallel.csproj">
+      <Name>ermeX.Parallel</Name>
+      <Project>{ae19cf24-90cf-4ba2-9336-374dc8ae7ae4}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.BuiltIn.SuperSocket\ermeX.Transport.BuiltIn.SuperSocket.csproj">
+      <Name>ermeX.Transport.BuiltIn.SuperSocket</Name>
+      <Project>{91bafa98-afba-4cd0-bc04-ad1030c4e0f8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Interfaces\ermeX.Transport.Interfaces.csproj">
+      <Name>ermeX.Transport.Interfaces</Name>
+      <Project>{991296bf-95d5-4462-a7ef-574e56c679f3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.IoC\ermeX.Transport.IoC.csproj">
+      <Name>ermeX.Transport.IoC</Name>
+      <Project>{1cefd1b8-e842-4bbb-b965-72e1dd6d4de6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Publish\ermeX.Transport.Publish.csproj">
+      <Name>ermeX.Transport.Publish</Name>
+      <Project>{214c51ee-b099-4288-ad16-e423f35d1870}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport.Reception\ermeX.Transport.Reception.csproj">
+      <Name>ermeX.Transport.Reception</Name>
+      <Project>{37df8b7e-e52c-4b91-b439-f65611bda121}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Transport\ermeX.Transport.csproj">
+      <Name>ermeX.Transport</Name>
+      <Project>{e7698635-4781-4a53-a16f-1800f8177a4b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Versioning\ermeX.Versioning.csproj">
+      <Name>ermeX.Versioning</Name>
+      <Project>{01a43626-806a-4657-beac-52e0effcd068}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Validate Include="Layers.layerdiagram">
+      <SubType>Content</SubType>
+    </Validate>
+    <Validate Include="Layers.layerdiagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Layers.layerdiagram</DependentUpon>
+    </Validate>
+    <Validate Include="Layers.layerdiagram.suppressions">
+      <SubType>Content</SubType>
+      <DependentUpon>Layers.layerdiagram</DependentUpon>
+    </Validate>
+  </ItemGroup>
+</Project>
