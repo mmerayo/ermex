@@ -16,73 +16,65 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
 using System;
 using System.Data;
-using System.Linq.Expressions;
-using ermeX.Entities.Base;
+using ermeX.Models.Base;
 
-namespace ermeX.Entities.Entities
+namespace ermeX.Models.Entities
 {
-    internal class OutgoingMessageSuscription : ModelBase, IEquatable<OutgoingMessageSuscription>
+    //listener suscriptions
+    internal class IncomingMessageSuscription : ModelBase, IEquatable<IncomingMessageSuscription>
     {
-        internal const string TableName = "OutgoingMessageSuscriptions";
-
-        public OutgoingMessageSuscription(IncomingMessageSuscription suscription, Guid suscriberComponentId,
-                                          Guid localComponentId)
-        {
-            Id = 0;
-            Component = suscriberComponentId;
-            ComponentOwner = localComponentId;
-            BizMessageFullTypeName = suscription.BizMessageFullTypeName;
-            DateLastUpdateUtc = suscription.DateLastUpdateUtc;
-            Version = suscription.Version;
-        }
-
-        public OutgoingMessageSuscription()
-        {
-        }
+        internal const string TableName = "IncomingMessageSuscriptions";
 
         public virtual string BizMessageFullTypeName { get; set; }
 
-        public virtual Guid Component { get; set; }
+        public virtual Guid SuscriptionHandlerId { get; set; }
 
         public virtual DateTime DateLastUpdateUtc { get; set; }
+
+        public virtual string HandlerType { get; set; }
 
         internal static string GetDbFieldName(string fieldName)
         {
             return string.Format("{0}_{1}", TableName, fieldName);
         }
 
-        public static OutgoingMessageSuscription FromDataRow(DataRow dataRow)
+        public static IncomingMessageSuscription FromDataRow(DataRow dataRow)
         {
-            var result = new OutgoingMessageSuscription
+            var result = new IncomingMessageSuscription
                              {
                                  Id = Convert.ToInt32( dataRow[GetDbFieldName("Id")]),
-                                 ComponentOwner = new Guid(dataRow[GetDbFieldName("ComponentOwner")].ToString()),
                                  Version = (long) dataRow[GetDbFieldName("Version")],
-                                 Component = new Guid(dataRow[GetDbFieldName("ComponentId")].ToString()),
+                                 ComponentOwner = (Guid) dataRow[GetDbFieldName("ComponentOwner")],
+                                 SuscriptionHandlerId = (Guid) dataRow[GetDbFieldName("SuscriptionHandlerId")],
                                  BizMessageFullTypeName = dataRow[GetDbFieldName("BizMessageFullTypeName")].ToString(),
                                  DateLastUpdateUtc = new DateTime((long) dataRow[GetDbFieldName("DateLastUpdateUtc")]),
+                                 HandlerType = (string) dataRow[GetDbFieldName("HandlerType")]
                              };
             return result;
         }
 
+
         #region Equatable
 
-        public virtual bool Equals(OutgoingMessageSuscription other)
+        public virtual bool Equals(IncomingMessageSuscription other)
         {
             if (other == null)
                 return false;
 
-            var result = Component.ToString() == other.Component.ToString() &&
-                         BizMessageFullTypeName == other.BizMessageFullTypeName && Version == other.Version;
+            var result = BizMessageFullTypeName == other.BizMessageFullTypeName &&
+                         SuscriptionHandlerId == other.SuscriptionHandlerId && Version == other.Version &&
+                         HandlerType == other.HandlerType;
+
 #if !NEED_FIX_MILLISECONDS
             result = result && DateLastUpdateUtc == other.DateLastUpdateUtc;
 #endif
             return result;
         }
 
-        public static bool operator ==(OutgoingMessageSuscription a, OutgoingMessageSuscription b)
+        public static bool operator ==(IncomingMessageSuscription a, IncomingMessageSuscription b)
         {
             if ((object) a == null || ((object) b) == null)
                 return Equals(a, b);
@@ -90,7 +82,7 @@ namespace ermeX.Entities.Entities
             return a.Equals(b);
         }
 
-        public static bool operator !=(OutgoingMessageSuscription a, OutgoingMessageSuscription b)
+        public static bool operator !=(IncomingMessageSuscription a, IncomingMessageSuscription b)
         {
             if (a == null || b == null)
                 return !Equals(a, b);
@@ -102,16 +94,15 @@ namespace ermeX.Entities.Entities
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (OutgoingMessageSuscription)) return false;
-            return Equals((OutgoingMessageSuscription) obj);
+            if (obj.GetType() != typeof (IncomingMessageSuscription)) return false;
+            return Equals((IncomingMessageSuscription) obj);
         }
 
         public override int GetHashCode()
         {
-            return Component.GetHashCode();
+            return BizMessageFullTypeName.GetHashCode();
         }
 
         #endregion
-
     }
 }

@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.Entities.Entities;
 using ermeX.Tests.Acceptance.Dummy;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.SettingsProviders;

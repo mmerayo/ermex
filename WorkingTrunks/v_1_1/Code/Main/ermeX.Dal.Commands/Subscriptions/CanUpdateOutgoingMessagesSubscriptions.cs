@@ -12,7 +12,7 @@ using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Observer;
 using ermeX.DAL.Interfaces.Observers;
 using ermeX.DAL.Interfaces.Subscriptions;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Subscriptions
 {

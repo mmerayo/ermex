@@ -30,7 +30,7 @@ using NHibernate.Tool.hbm2ddl;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.DAL.DataAccess.Mappings;
+using ermeX.DAL.Mappings;
 
 namespace ermeX.DAL.Providers
 {
@@ -111,27 +111,26 @@ namespace ermeX.DAL.Providers
         {
             if (!Mappings.ContainsKey(_currentSettings.ConfigurationSourceType))
                 lock (SyncLock)
-                    if (!Mappings.ContainsKey(_currentSettings.ConfigurationSourceType))
-                    {
-                        string namespaceStarstWith;
-                        switch(_currentSettings.ConfigurationSourceType)
-                        {
-                            case DbEngineType.SqlServer2008:
-                                namespaceStarstWith = "ermeX.DAL.DataAccess.Mappings.SqlServer";
-                                break;
-                            case DbEngineType.Sqlite:
-                            case DbEngineType.SqliteInMemory:
-                                namespaceStarstWith = "ermeX.DAL.DataAccess.Mappings.Sqlite";
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                        Mappings.Add(_currentSettings.ConfigurationSourceType,new List<Type>(
-                            TypesHelper.GetConcreteTypesImplementingGenericType(typeof (ClassMap<>),
-                                                                                new[]
-                                                                                    {typeof (AppComponentMap).Assembly},
-                                                                                namespaceStarstWith)));
-                    }
+	                if (!Mappings.ContainsKey(_currentSettings.ConfigurationSourceType))
+	                {
+		                string namespaceStarstWith;
+		                switch (_currentSettings.ConfigurationSourceType)
+		                {
+			                case DbEngineType.SqlServer2008:
+				                namespaceStarstWith = "ermeX.DAL.Mappings.SqlServer";
+				                break;
+			                case DbEngineType.Sqlite:
+			                case DbEngineType.SqliteInMemory:
+				                namespaceStarstWith = "ermeX.DAL.Mappings.Sqlite";
+				                break;
+			                default:
+				                throw new ArgumentOutOfRangeException();
+		                }
+		                var value = new List<Type>(TypesHelper.GetConcreteTypesImplementingGenericType(typeof (ClassMap<>), new[]
+			                {typeof (AppComponentMap).Assembly}, namespaceStarstWith));
+		                Mappings.Add(_currentSettings.ConfigurationSourceType,
+		                             value);
+	                }
         }
 
         private static void GetOrmConfiguration(NHibernate.Cfg.Configuration cfg)

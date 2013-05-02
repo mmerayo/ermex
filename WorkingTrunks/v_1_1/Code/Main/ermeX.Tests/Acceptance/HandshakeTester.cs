@@ -29,7 +29,7 @@ using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.Tests.Acceptance.Dummy;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.Networking;

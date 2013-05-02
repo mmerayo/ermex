@@ -26,8 +26,7 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-using ermeX.Entities.Entities;
-
+using ermeX.Models.Entities;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.SettingsProviders;
 using ermeX.Tests.SupportTypes.Handlers;

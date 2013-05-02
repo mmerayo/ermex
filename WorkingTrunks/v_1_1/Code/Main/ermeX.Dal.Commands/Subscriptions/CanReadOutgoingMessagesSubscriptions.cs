@@ -8,7 +8,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Subscriptions;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Subscriptions
 {

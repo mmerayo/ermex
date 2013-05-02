@@ -29,7 +29,7 @@ using ermeX.Common;
 using ermeX.Configuration;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.Networking;
 using ermeX.Tests.Common.SettingsProviders;

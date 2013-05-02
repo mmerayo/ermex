@@ -35,8 +35,8 @@ using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Connectivity;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.DAL.Interfaces.Subscriptions;
-using ermeX.Entities.Entities;
 using ermeX.Exceptions;
+using ermeX.Models.Entities;
 
 
 namespace ermeX.Bus.Synchronisation

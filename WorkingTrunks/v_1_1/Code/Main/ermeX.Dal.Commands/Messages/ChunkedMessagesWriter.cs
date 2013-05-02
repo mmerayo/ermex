@@ -3,7 +3,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Messages;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.Transport.Interfaces.Messages;
 
 namespace ermeX.DAL.Commands.Messages

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ermeX.DAL.Interfaces.Observer;
 using ermeX.DAL.Interfaces.Observers;
-using ermeX.Entities.Entities;
+using ermeX.Models.Entities;
 using ermeX.Parallel.Queues;
 
 namespace ermeX.DAL.Commands.Observers

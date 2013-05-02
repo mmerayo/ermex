@@ -21,7 +21,7 @@ using NUnit.Framework;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
-using ermeX.Entities.Base;
+using ermeX.Models.Base;
 using ermeX.Tests.Common.SettingsProviders;
 
 namespace ermeX.Tests.DAL.Integration.DataSources
