@@ -1,0 +1,8 @@
+*General component status
+	http://yuml.me/edit/26919777
+
+	*Subworkflow of Starting
+		http://yuml.me/edit/c2a56830
+
+*LocalComponent
+	http://yuml.me/edit/681095f0
