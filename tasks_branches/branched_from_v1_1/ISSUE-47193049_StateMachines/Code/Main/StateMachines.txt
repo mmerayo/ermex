@@ -1,3 +1,9 @@
 *LocalComponent
-	Main: http://yuml.me/edit/580a1540
-	substates of Starting:http://yuml.me/edit/8d1288ff
+	+Main: http://yuml.me/edit/931a0d1a
+	+Substates of Starting:http://yuml.me/edit/37b67a4d
+
+*Remote components
+	+Main:http://yuml.me/edit/6bec7906
+	+Substates of Joined:
+		-Services: http://yuml.me/edit/96167d46
+		-Messages: http://yuml.me/edit/5ba190db
