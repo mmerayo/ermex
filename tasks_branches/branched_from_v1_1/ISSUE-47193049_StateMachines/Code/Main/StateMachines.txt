@@ -1,6 +1,9 @@
+
+*ComponentStarter
+	+Main:http://yuml.me/edit/37b67a4d
+	
 *LocalComponent
 	+Main: http://yuml.me/edit/931a0d1a
-	+Substates of Starting:http://yuml.me/edit/37b67a4d
 
 *Remote components
 	+Main:http://yuml.me/edit/6bec7906
