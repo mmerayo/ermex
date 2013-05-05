@@ -118,7 +118,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Dal.IoC", "ermeX.Dal.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Design", "Design", "{9FFA0653-B01A-4A93-B5A0-C98A8799B2FC}"
 	ProjectSection(SolutionItems) = preProject
-		Workflows.txt = Workflows.txt
+		StateMachines.txt = StateMachines.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Parallel", "ermeX.Parallel\ermeX.Parallel.csproj", "{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}"
