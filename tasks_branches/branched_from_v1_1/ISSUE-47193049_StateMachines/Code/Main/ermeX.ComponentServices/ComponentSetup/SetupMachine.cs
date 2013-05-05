@@ -10,7 +10,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 	{
 		private readonly ISetupPayloader _payloader;
 
-		private enum SetupProcessState
+		public enum SetupProcessState
 		{
 			NotStarted = 0,
 			InjectingServices,
@@ -20,7 +20,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 			Error
 		}
 
-		private enum SetupEvent
+		public enum SetupEvent
 		{
 			Inject,
 			Injected,
@@ -35,6 +35,12 @@ namespace ermeX.ComponentServices.ComponentSetup
 		{
 			if (payloader == null) throw new ArgumentNullException("payloader");
 			_payloader = payloader;
+			_payloader.SetMachine(_machine);
+		}
+
+		public SetupProcessState State
+		{
+			get { return _machine.State; }
 		}
 
 		public void Setup()
@@ -47,6 +53,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 		private void DefineStateMachineTransitions()
 		{
 			_machine.Configure(SetupProcessState.NotStarted)
+				.OnEntry((e)=>_payloader.TryFire(SetupEvent.Inject))
 				.Permit(SetupEvent.Inject, SetupProcessState.InjectingServices);
 
 			_machine.Configure(SetupProcessState.InjectingServices)
@@ -55,6 +62,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 				.Permit(SetupEvent.Error, SetupProcessState.Error);
 
 			_machine.Configure(SetupProcessState.ServicesInjected)
+				.OnEntry((a)=> _payloader.TryFire(SetupEvent.Upgrade))
 				.Permit(SetupEvent.Upgrade, SetupProcessState.Upgrading);
 
 			_machine.Configure(SetupProcessState.Upgrading)
@@ -63,7 +71,17 @@ namespace ermeX.ComponentServices.ComponentSetup
 				.Permit(SetupEvent.Error, SetupProcessState.Error);
 
 			_machine.Configure(SetupProcessState.Error)
-				.OnEntry(_payloader.HandleError);
+				.OnEntryFrom(_errorTrigger, ex => _payloader.HandleError(ex))
+				.OnEntry(a=>_payloader.HandleError(null));
+
+			_errorTrigger = _machine.SetTriggerParameters<Exception>(SetupEvent.Error);
+		}
+
+		private StateMachine<SetupMachine.SetupProcessState, SetupMachine.SetupEvent>.TriggerWithParameters<Exception> _errorTrigger;
+
+		public void FireError(Exception ex) // TODO: REFACTOR THIS
+		{
+			_machine.Fire(_errorTrigger, ex);
 		}
 	}
 }
