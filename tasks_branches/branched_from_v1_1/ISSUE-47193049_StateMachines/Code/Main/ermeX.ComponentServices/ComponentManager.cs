@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Stateless;
+using ermeX.ComponentServices.ComponentSetup;
 
 namespace ermeX.ComponentServices
 {
-	public class ComponentManager
+	internal sealed class ComponentManager
 	{
-		//singleton
-		private static readonly ComponentManager Default=new ComponentManager();
+		private readonly SetupMachine _setupMachine;
+		public static readonly ComponentManager Default=new ComponentManager();
 		private ComponentManager()
-		{}
-
-
-
+		{
+			_setupMachine=new SetupMachine(null);
+			_setupMachine.Setup();
+		}
 	}
 }

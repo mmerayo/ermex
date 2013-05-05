@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4259822D-D109-4A26-998C-6454BF3A1EF1}</ProjectGuid>
+    <ProjectGuid>{D2530EF1-5B8A-48E2-AD93-8EAD6944066F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ermeX.ComponentServices</RootNamespace>
-    <AssemblyName>ermeX.ComponentServices</AssemblyName>
+    <RootNamespace>ermeX.Tests.ComponentServices</RootNamespace>
+    <AssemblyName>ermeX.Tests.ComponentServices</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,9 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Stateless">
-      <HintPath>..\packages\Stateless.2.4.0\lib\Stateless.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -49,21 +46,14 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
-    <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
-      <Link>Properties\TestVisibilityInfo.cs</Link>
-    </Compile>
-    <Compile Include="ComponentManager.cs" />
-    <Compile Include="ComponentSetup\ISetupPayloader.cs" />
-    <Compile Include="ComponentSetup\SetupMachine.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ermeX\KeyFile.snk">
       <Link>KeyFile.snk</Link>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
