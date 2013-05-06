@@ -6,7 +6,10 @@ namespace ermeX.ComponentServices.ComponentSetup
 {
 	internal sealed class SetupMachine
 	{
-		public enum SetupEvent
+		private readonly ISetupServiceInjector _serviceInjector;
+		private readonly ISetupVersionUpgradeRunner _versionUpgrader;
+
+		private enum SetupEvent
 		{
 			Inject,
 			Injected,
@@ -15,7 +18,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 			Error
 		}
 
-		public enum SetupProcessState
+		private enum SetupProcessState
 		{
 			NotStarted = 0,
 			InjectingServices,
@@ -28,20 +31,14 @@ namespace ermeX.ComponentServices.ComponentSetup
 		private readonly StateMachine<SetupProcessState, SetupEvent> _machine =
 			new StateMachine<SetupProcessState, SetupEvent>(SetupProcessState.NotStarted);
 
-		private readonly ISetupPayloader _payloader;
 
 		private StateMachine<SetupProcessState, SetupEvent>.TriggerWithParameters<Exception>
 			_errorTrigger;
 
-		public SetupMachine(ISetupPayloader payloader)
+		public SetupMachine(ISetupServiceInjector serviceInjector,ISetupVersionUpgradeRunner versionUpgrader)
 		{
-			if (payloader == null) throw new ArgumentNullException("payloader");
-			_payloader = payloader;
-		}
-
-		public SetupProcessState State
-		{
-			get { return _machine.State; }
+			_serviceInjector = serviceInjector;
+			_versionUpgrader = versionUpgrader;
 		}
 
 		public void Setup()
@@ -105,7 +102,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 		{
 			try
 			{
-				_payloader.InjectServices();
+				_serviceInjector.InjectServices();
 			}
 			catch (Exception ex)
 			{
@@ -123,7 +120,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 		{
 			try
 			{
-				_payloader.RunUpgrades();
+				_versionUpgrader.RunUpgrades();
 			}
 			catch (Exception ex)
 			{
@@ -138,6 +135,16 @@ namespace ermeX.ComponentServices.ComponentSetup
 
 			//TODO: LOG??
 			throw new ermeXSetupException(ex);
+		}
+
+		public bool IsReady()
+		{
+			return _machine.State == SetupProcessState.Ready;
+		}
+
+		public bool SetupFailed()
+		{
+			return _machine.State == SetupProcessState.Error;
 		}
 	}
 }

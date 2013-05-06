@@ -4,16 +4,30 @@ using System.Linq;
 using System.Text;
 using Stateless;
 using ermeX.ComponentServices.ComponentSetup;
+using ermeX.Configuration;
+using ermeX.ConfigurationManagement.Settings;
 
 namespace ermeX.ComponentServices
 {
 	internal sealed class ComponentManager
 	{
-		private readonly SetupMachine _setupMachine;
+		private readonly object _syncLock=new object();
+		private SetupMachine _setupMachine;
 		public static readonly ComponentManager Default=new ComponentManager();
 		private ComponentManager()
+		{}
+
+		public void Setup(Configurer settings)
 		{
-			_setupMachine=new SetupMachine(null);
+			lock (_syncLock)
+			{
+				if (_setupMachine != null)
+					throw new InvalidOperationException("The component can only be setup once per session");
+
+				ISetupServiceInjector serviceInjector=new SetupServiceInjector(settings.GetSettings<IComponentSettings>());
+				ISetupVersionUpgradeRunner versionUpgrader=new SetupUpgradeRunner(settings.GetSettings<IDalSettings>());
+				_setupMachine = new SetupMachine(serviceInjector,versionUpgrader);
+			}
 			_setupMachine.Setup();
 		}
 	}
