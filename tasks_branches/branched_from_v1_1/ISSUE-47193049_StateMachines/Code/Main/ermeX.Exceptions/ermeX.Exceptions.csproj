@@ -49,6 +49,7 @@
     <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
+    <Compile Include="ermeXSetupException.cs" />
     <Compile Include="ermeXTcpException.cs" />
     <Compile Include="ermeXException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
