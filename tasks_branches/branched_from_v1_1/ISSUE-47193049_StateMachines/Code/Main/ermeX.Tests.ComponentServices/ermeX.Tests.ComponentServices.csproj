@@ -65,6 +65,10 @@
       <Project>{4259822D-D109-4A26-998C-6454BF3A1EF1}</Project>
       <Name>ermeX.ComponentServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Exceptions\ermeX.Exceptions.csproj">
+      <Project>{6A23DFD5-8894-4ABA-BA81-7AB2A7DAD552}</Project>
+      <Name>ermeX.Exceptions</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
