@@ -17,11 +17,10 @@ namespace ermeX.Tests.ComponentServices
 		{
 			var context=new TestContext();
 			context.WithNormalWorkflow();
-			var target = new SetupMachine(context.Payloader);
+			var target = context.GetTarget();
 			target.Setup();
 
-			Assert.AreEqual(SetupMachine.SetupProcessState.Ready, target.State);
-
+			Assert.IsTrue(target.IsReady());
 			context.Verify();
 		}
 
@@ -43,11 +42,10 @@ namespace ermeX.Tests.ComponentServices
 
 		private static void VerifyTransitionToError(TestContext context)
 		{
-			var target = new SetupMachine(context.Payloader);
+			var target = context.GetTarget();
 			Assert.Throws<ermeXSetupException>(target.Setup);
 
-			Assert.AreEqual(SetupMachine.SetupProcessState.Error, target.State);
-
+			Assert.IsTrue(target.SetupFailed());
 			context.Verify();
 		}
 
@@ -55,34 +53,47 @@ namespace ermeX.Tests.ComponentServices
 		{
 			public TestContext()
 			{
-				_payloader=new Mock<ISetupPayloader>();
+				_injector=new Mock<ISetupServiceInjector>();
+				_upgrader=new Mock<ISetupVersionUpgradeRunner>();
+			}
+
+			public SetupMachine GetTarget()
+			{
+				return new SetupMachine(Injector,UpgradeRunner);
 			}
 
 			public void WithNormalWorkflow()
 			{
-				_payloader.Setup(x=>x.InjectServices()).Verifiable();
-				_payloader.Setup(x => x.RunUpgrades()).Verifiable();
+				_injector.Setup(x=>x.InjectServices()).Verifiable();
+				_upgrader.Setup(x => x.RunUpgrades()).Verifiable();
 			}
 
 			public void WithInjectingFailure()
 			{
-				_payloader.Setup(x=>x.InjectServices()).Throws(new Exception("Test")).Verifiable();
+				_injector.Setup(x=>x.InjectServices()).Throws(new Exception("Test")).Verifiable();
 			}
 
 			public void WithUpgradingFailure()
 			{
-				_payloader.Setup(x => x.RunUpgrades()).Throws(new Exception("Test")).Verifiable();
+				_upgrader.Setup(x => x.RunUpgrades()).Throws(new Exception("Test")).Verifiable();
 			}
 
-			private readonly Mock<ISetupPayloader> _payloader;
-			public ISetupPayloader Payloader
+			private readonly Mock<ISetupServiceInjector> _injector;
+			public ISetupServiceInjector Injector
 			{
-				get { return _payloader.Object; }
+				get { return _injector.Object; }
+			}
+
+			private readonly Mock<ISetupVersionUpgradeRunner> _upgrader;
+			public ISetupVersionUpgradeRunner UpgradeRunner
+			{
+				get { return _upgrader.Object; }
 			}
 
 			public void Verify()
 			{
-				_payloader.Verify();
+				_injector.Verify();
+				_upgrader.Verify();
 			}
 		}
 	}
