@@ -10,3 +10,5 @@
 	+Substates of Joined:
 		-Services: http://yuml.me/edit/96167d46
 		-Messages: http://yuml.me/edit/5ba190db
+
+		TODO: specify error state as an state every step could go to
