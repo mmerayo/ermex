@@ -23,6 +23,7 @@ using Common.Logging;
 using Common.Logging.Simple;
 using Ninject;
 using ermeX.Common;
+using ermeX.ComponentServices;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Status;
@@ -56,32 +57,19 @@ namespace ermeX.ermeX.Component
             get { return IoCManager.Kernel != null && StatusManager.CurrentStatus==ComponentStatus.Running; }
         }
 
+		//TODO: TO BE DONE BY THE SERVICE INJECTOR IN SETUP
         internal void ResetAll()
         {
-            if (IoCManager.Kernel == null) return;
-            
-            if (StatusManager.CurrentStatus != ComponentStatus.Running)
-                return;
             try
             {
-                try
-                {
-                    StatusManager.CurrentStatus = ComponentStatus.Stopping;
-                }catch(Exception ex)
-                {
-                    IoCManager.Reset();
-                    throw ex;
-                }
-                IoCManager.Reset();
-                SystemTaskQueue.Reset();
-                StatusManager.CurrentStatus=ComponentStatus.Stopped;
+               ComponentManager.Default.Reset();
             }
             catch (Exception ex)
             {
                 Debugger.Launch();
 
                 Logger.Warn(x=>x("ResetAll: Exception:{0} ", ex));
-                throw ex;
+                throw;
             }
         }
 

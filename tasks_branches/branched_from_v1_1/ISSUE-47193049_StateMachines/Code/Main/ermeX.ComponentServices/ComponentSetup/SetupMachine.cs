@@ -15,7 +15,9 @@ namespace ermeX.ComponentServices.ComponentSetup
 			Injected,
 			Upgrade,
 			Upgraded,
-			Error
+			Error,
+			Restart,
+			Retry
 		}
 
 		private enum SetupProcessState
@@ -40,14 +42,18 @@ namespace ermeX.ComponentServices.ComponentSetup
 		{
 			_serviceInjector = serviceInjector;
 			_versionUpgrader = versionUpgrader;
+			DefineStateMachineTransitions();
+
 		}
 
 		public void Setup()
 		{
-			DefineStateMachineTransitions();
 			try
 			{
-				_machine.Fire(SetupEvent.Inject);
+				if(IsReady()|| SetupFailed())
+					Reset();
+				else
+					_machine.Fire(SetupEvent.Inject);
 			}
 			catch (Exception ex)
 			{
@@ -77,12 +83,21 @@ namespace ermeX.ComponentServices.ComponentSetup
 			        .Permit(SetupEvent.Upgraded, SetupProcessState.Ready)
 			        .Permit(SetupEvent.Error, SetupProcessState.Error);
 
+			_machine.Configure(SetupProcessState.Ready)
+				.OnEntry(OnReady)
+				.Permit(SetupEvent.Restart, SetupProcessState.NotStarted); 
+
 			_errorTrigger = _machine.SetTriggerParameters<Exception>(SetupEvent.Error);
 
 			_machine.Configure(SetupProcessState.Error)
 			        .OnEntryFrom(_errorTrigger, OnError)
-			        .OnEntry(a => OnError(null));
+			        .OnEntry(a => OnError(null))
+					.Permit(SetupEvent.Retry, SetupProcessState.NotStarted);
 
+		}
+
+		private void OnReady(StateMachine<SetupProcessState, SetupEvent>.Transition obj)
+		{
 		}
 
 		private void FireError(Exception ex)
@@ -97,7 +112,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 			if (_machine == null)
 				throw new InvalidOperationException("Invoke SetMachine first");
 			if (!_machine.CanFire(e))
-				throw new InvalidOperationException(string.Format("Cannot transit from {0}", _machine.State));
+				throw new InvalidOperationException(string.Format("Cannot transit from:{0} with trigger:{1}", _machine.State,e));
 			if (e == SetupEvent.Error)
 				throw new InvalidOperationException("Use FireError");
 			_machine.Fire(e);
@@ -108,12 +123,14 @@ namespace ermeX.ComponentServices.ComponentSetup
 		{
 			try
 			{
-				TryFire(SetupEvent.Inject);
+				_serviceInjector.Reset();
 			}
 			catch (Exception ex)
 			{
 				FireError(ex);
 			}
+			TryFire(SetupEvent.Inject);
+
 		}
 
 		private void OnInjectServices(StateMachine<SetupProcessState, SetupEvent>.Transition transition)
@@ -131,14 +148,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 
 		private void OnServicesInjected(StateMachine<SetupProcessState, SetupEvent>.Transition transition)
 		{
-			try
-			{
-				TryFire(SetupEvent.Upgrade);
-			}
-			catch (Exception ex)
-			{
-				FireError(ex);
-			}
+			TryFire(SetupEvent.Upgrade);
 		}
 
 		private void OnUpgrading(StateMachine<SetupProcessState, SetupEvent>.Transition transition)
@@ -153,6 +163,16 @@ namespace ermeX.ComponentServices.ComponentSetup
 			}
 			TryFire(SetupEvent.Upgraded);
 		}
+
+
+		public void Reset()
+		{
+			if (SetupFailed())
+				TryFire(SetupEvent.Retry);
+			else
+				TryFire(SetupEvent.Restart);
+		}
+
 
 		public void OnError(Exception ex)
 		{
@@ -170,6 +190,11 @@ namespace ermeX.ComponentServices.ComponentSetup
 		public bool SetupFailed()
 		{
 			return _machine.State == SetupProcessState.Error;
+		}
+
+		public bool IsNotStarted()
+		{
+			return _machine.State == SetupProcessState.NotStarted;
 		}
 	}
 }

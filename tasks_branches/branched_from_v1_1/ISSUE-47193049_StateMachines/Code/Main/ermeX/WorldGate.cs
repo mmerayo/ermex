@@ -82,9 +82,6 @@ namespace ermeX
 		[Inject]
 		private IServicesManager ServicesManager { get; set; }
 
-		[Inject]
-		private IVersionUpgradeHelper VersionUpgradeHelper { get; set; }
-
 		/// <summary>
 		/// Stops & Resets the component
 		/// </summary>
