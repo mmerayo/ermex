@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using Ninject;
+using ermeX.Biz;
 using ermeX.Biz.Interfaces;
 using ermeX.Configuration;
 using ermeX.ConfigurationManagement;
@@ -113,6 +114,8 @@ namespace ermeX
 				if (settings == null) throw new ArgumentNullException("settings");
 				if (Instance.IsStarted)
 					throw new InvalidOperationException("The WorldGate has been already started. Reset it first.");
+
+				
 
 				ConfigurationManager.SetSettingsSource(settings.GetSettings<IComponentSettings>());
 				IoCManager.Kernel.Inject(Instance);

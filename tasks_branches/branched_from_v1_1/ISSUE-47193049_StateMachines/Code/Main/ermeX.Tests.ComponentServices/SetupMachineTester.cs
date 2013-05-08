@@ -77,7 +77,7 @@ namespace ermeX.Tests.ComponentServices
 			{
 				_upgrader.Setup(x => x.RunUpgrades()).Throws(new Exception("Test")).Verifiable();
 			}
-
+			
 			private readonly Mock<ISetupServiceInjector> _injector;
 			public ISetupServiceInjector Injector
 			{

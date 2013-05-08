@@ -24,7 +24,8 @@ namespace ermeX.ComponentServices
 				if (_setupMachine != null)
 					throw new InvalidOperationException("The component can only be setup once per session");
 
-				ISetupServiceInjector serviceInjector=new SetupServiceInjector(settings.GetSettings<IComponentSettings>());
+				var componentSettings = settings.GetSettings<IComponentSettings>();
+				ISetupServiceInjector serviceInjector=new SetupServiceInjector(componentSettings);
 				ISetupVersionUpgradeRunner versionUpgrader=new SetupUpgradeRunner(settings.GetSettings<IDalSettings>());
 				_setupMachine = new SetupMachine(serviceInjector,versionUpgrader);
 			}

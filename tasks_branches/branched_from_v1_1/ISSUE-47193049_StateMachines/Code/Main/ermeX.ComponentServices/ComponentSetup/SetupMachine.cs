@@ -8,7 +8,6 @@ namespace ermeX.ComponentServices.ComponentSetup
 	{
 		private readonly ISetupServiceInjector _serviceInjector;
 		private readonly ISetupVersionUpgradeRunner _versionUpgrader;
-		private readonly ISetupConfigureComponent _configurator;
 
 		private enum SetupEvent
 		{
@@ -16,8 +15,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 			Injected,
 			Upgrade,
 			Upgraded,
-			Error,
-			Configure
+			Error
 		}
 
 		private enum SetupProcessState
@@ -28,7 +26,6 @@ namespace ermeX.ComponentServices.ComponentSetup
 			Upgrading,
 			Ready,
 			Error,
-			Configuring
 		}
 
 		private readonly StateMachine<SetupProcessState, SetupEvent> _machine =
@@ -38,20 +35,19 @@ namespace ermeX.ComponentServices.ComponentSetup
 		private StateMachine<SetupProcessState, SetupEvent>.TriggerWithParameters<Exception>
 			_errorTrigger;
 
-		public SetupMachine(ISetupServiceInjector serviceInjector, 
-			ISetupVersionUpgradeRunner versionUpgrader,
-			ISetupConfigureComponent configurator)
+		public SetupMachine(ISetupServiceInjector serviceInjector,
+		                    ISetupVersionUpgradeRunner versionUpgrader)
 		{
 			_serviceInjector = serviceInjector;
 			_versionUpgrader = versionUpgrader;
-			_configurator = configurator;
 		}
 
 		public void Setup()
 		{
 			DefineStateMachineTransitions();
-			try{
-			_machine.Fire(SetupEvent.Configure);
+			try
+			{
+				_machine.Fire(SetupEvent.Inject);
 			}
 			catch (Exception ex)
 			{
@@ -63,10 +59,8 @@ namespace ermeX.ComponentServices.ComponentSetup
 		{
 			_machine.Configure(SetupProcessState.NotStarted)
 			        .OnEntry(OnNotStarted)
-			        .Permit(SetupEvent.Configure, SetupProcessState.Configuring);
-			_machine.Configure(SetupProcessState.Configuring)
-			        .OnEntry(OnConfiguring)
-			        .Permit(SetupEvent.Inject, SetupProcessState.InjectingServices);
+			        .Permit(SetupEvent.Inject, SetupProcessState.InjectingServices)
+			        .Permit(SetupEvent.Error, SetupProcessState.Error);
 
 			_machine.Configure(SetupProcessState.InjectingServices)
 			        .OnEntry(OnInjectServices)
@@ -75,7 +69,8 @@ namespace ermeX.ComponentServices.ComponentSetup
 
 			_machine.Configure(SetupProcessState.ServicesInjected)
 			        .OnEntry(OnServicesInjected)
-			        .Permit(SetupEvent.Upgrade, SetupProcessState.Upgrading);
+			        .Permit(SetupEvent.Upgrade, SetupProcessState.Upgrading)
+			        .Permit(SetupEvent.Error, SetupProcessState.Error);
 
 			_machine.Configure(SetupProcessState.Upgrading)
 			        .OnEntry(OnUpgrading)
@@ -89,8 +84,11 @@ namespace ermeX.ComponentServices.ComponentSetup
 			        .OnEntry(a => OnError(null));
 
 		}
+
 		private void FireError(Exception ex)
 		{
+			if (SetupFailed())
+				throw ex;
 			_machine.Fire(_errorTrigger, ex);
 		}
 
@@ -110,26 +108,12 @@ namespace ermeX.ComponentServices.ComponentSetup
 		{
 			try
 			{
-				TryFire(SetupEvent.Configure);
-			}
-			catch (Exception ex)
-			{
-				FireError(ex);
-			}
-		}
-
-		private void OnConfiguring(StateMachine<SetupProcessState, SetupEvent>.Transition transition)
-		{
-			try
-			{
-				_configurator.Configure();
 				TryFire(SetupEvent.Inject);
 			}
 			catch (Exception ex)
 			{
 				FireError(ex);
 			}
-
 		}
 
 		private void OnInjectServices(StateMachine<SetupProcessState, SetupEvent>.Transition transition)

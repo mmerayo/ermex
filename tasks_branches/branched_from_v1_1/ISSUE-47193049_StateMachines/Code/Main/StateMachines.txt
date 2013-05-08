@@ -1,6 +1,6 @@
 
 *ComponentStarter
-	+SetupProcess:http://yuml.me/edit/897f7dcf
+	+SetupProcess:http://yuml.me/edit/683694c3
 	
 *LocalComponent
 	+Main: http://yuml.me/edit/931a0d1a
