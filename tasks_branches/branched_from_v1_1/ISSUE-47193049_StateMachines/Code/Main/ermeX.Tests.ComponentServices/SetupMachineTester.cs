@@ -21,7 +21,24 @@ namespace ermeX.Tests.ComponentServices
 			target.Setup();
 
 			Assert.IsTrue(target.IsReady());
-			context.Verify();
+			context.Verify(1);
+		}
+
+		[Test]
+		public void CanSetupSeveralTimes()
+		{
+			var context = new TestContext();
+			context.WithNormalWorkflow();
+			var target = context.GetTarget();
+			for (int i = 0; i < 4; i++)
+			{
+				//if(i>0)
+				//    target.Reset();
+				//else
+					target.Setup();
+			}
+			Assert.IsTrue(target.IsReady());
+			context.Verify(4);
 		}
 
 		[Test]
@@ -30,6 +47,7 @@ namespace ermeX.Tests.ComponentServices
 			var context = new TestContext();
 			context.WithInjectingFailure();
 			VerifyTransitionToError(context);
+			context.VerifyInjectServices(1);
 		}
 
 		[Test]
@@ -38,15 +56,16 @@ namespace ermeX.Tests.ComponentServices
 			var context = new TestContext();
 			context.WithUpgradingFailure();
 			VerifyTransitionToError(context);
+			context.VerifyInjectServices(1);
+			context.VerifyUpgrader(1);
 		}
 
 		private static void VerifyTransitionToError(TestContext context)
 		{
 			var target = context.GetTarget();
 			Assert.Throws<ermeXSetupException>(target.Setup);
-
+			
 			Assert.IsTrue(target.SetupFailed());
-			context.Verify();
 		}
 
 		private class TestContext
@@ -90,10 +109,20 @@ namespace ermeX.Tests.ComponentServices
 				get { return _upgrader.Object; }
 			}
 
-			public void Verify()
+			public void Verify(int times=1)
 			{
-				_injector.Verify();
-				_upgrader.Verify();
+				VerifyInjectServices(times);
+				VerifyUpgrader(times);
+			}
+
+			public void VerifyUpgrader(int times)
+			{
+				_upgrader.Verify(x => x.RunUpgrades(), Times.Exactly(times));
+			}
+
+			public void VerifyInjectServices(int times)
+			{
+				_injector.Verify(x => x.InjectServices(), Times.Exactly(times));
 			}
 		}
 	}

@@ -22,14 +22,26 @@ namespace ermeX.ComponentServices
 			lock (_syncLock)
 			{
 				if (_setupMachine != null)
-					throw new InvalidOperationException("The component can only be setup once per session");
-
-				var componentSettings = settings.GetSettings<IComponentSettings>();
-				ISetupServiceInjector serviceInjector=new SetupServiceInjector(componentSettings);
-				ISetupVersionUpgradeRunner versionUpgrader=new SetupUpgradeRunner(settings.GetSettings<IDalSettings>());
-				_setupMachine = new SetupMachine(serviceInjector,versionUpgrader);
+					Reset();
+				else
+				{
+					var componentSettings = settings.GetSettings<IComponentSettings>();
+					ISetupServiceInjector serviceInjector = new SetupServiceInjector(componentSettings);
+					ISetupVersionUpgradeRunner versionUpgrader = new SetupUpgradeRunner(settings.GetSettings<IDalSettings>());
+					_setupMachine = new SetupMachine(serviceInjector, versionUpgrader);
+				}
 			}
 			_setupMachine.Setup();
+		}
+
+		public void Reset()
+		{
+			lock (_syncLock)
+			{
+				_setupMachine.Reset();
+
+				//TODO: DISPOSE THE COMPONENTS
+			}
 		}
 	}
 }
