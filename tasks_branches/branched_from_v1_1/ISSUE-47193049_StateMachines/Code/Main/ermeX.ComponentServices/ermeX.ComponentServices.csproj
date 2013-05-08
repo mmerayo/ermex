@@ -53,6 +53,8 @@
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
     <Compile Include="ComponentManager.cs" />
+    <Compile Include="ComponentSetup\ISetupConfigureComponent.cs" />
+    <Compile Include="ComponentSetup\SetupComponentConfigurator.cs" />
     <Compile Include="ComponentSetup\SetupUpgradeRunner.cs" />
     <Compile Include="ComponentSetup\ISetupServiceInjector.cs" />
     <Compile Include="ComponentSetup\ISetupVersionUpgradeRunner.cs" />
