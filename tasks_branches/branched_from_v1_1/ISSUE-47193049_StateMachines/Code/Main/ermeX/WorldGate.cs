@@ -32,6 +32,7 @@ using ermeX.DAL.Providers;
 using ermeX.LayerMessages;
 using ermeX.Versioning;
 using ermeX.ermeX.Component;
+using ComponentManager = ermeX.ComponentServices.ComponentManager;
 
 
 namespace ermeX
@@ -115,12 +116,11 @@ namespace ermeX
 				if (Instance.IsStarted)
 					throw new InvalidOperationException("The WorldGate has been already started. Reset it first.");
 
-				
+				var componentManager = ComponentManager.Default;
 
-				ConfigurationManager.SetSettingsSource(settings.GetSettings<IComponentSettings>());
+				componentManager.Setup(settings);
+
 				IoCManager.Kernel.Inject(Instance);
-				RunUpgrades(settings);
-
 				Instance.ComponentStarter.Start();
 
 				SubscribeDiscoveredMessageHandlers(settings);
@@ -168,33 +168,7 @@ namespace ermeX
 				throw ex;
 			}
 		}
-
-		private static void RunUpgrades(Configurer settings)
-		{
-			try
-			{
-				//TODO: MUST GO TO CONFIGURATION BUT THEN EVERY ASSET  MUST BE STARTABLE TO FIND THE CONFIGURATION ALWAYS UPDATED
-				var dataAccessSettings = settings.GetSettings<IDalSettings>();
-				if (dataAccessSettings == null)
-					throw new InvalidOperationException("The settings implementation is not valid");
-				//TODO: DEcouple this class and ensure the versionupgrade is injected
-				//TODO: ISSUE-281 -->MAKE THIS internal
-				if (dataAccessSettings.ConfigurationSourceType == DbEngineType.SqliteInMemory)
-				{
-					SessionProvider.SetInMemoryDb(dataAccessSettings.ConfigurationConnectionString);
-				}
-				
-				Instance.VersionUpgradeHelper.RunDataSchemaUpgrades(dataAccessSettings.SchemasApplied,
-				                                           dataAccessSettings.ConfigurationConnectionString,
-				                                           dataAccessSettings.ConfigurationSourceType);
-			}
-			catch (Exception ex)
-			{
-				Logger.Error(x => x("Unhandled ermeX exception: {0}", ex));
-				throw ex;
-			}
-		}
-
+		
 		/// <summary>
 		/// Publishes one message 
 		/// </summary>

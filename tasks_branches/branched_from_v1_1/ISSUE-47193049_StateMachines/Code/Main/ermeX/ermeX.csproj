@@ -110,6 +110,10 @@
       <Project>{49D6179A-5489-4CB0-A4AE-F40DB88B78B7}</Project>
       <Name>ermeX.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.ComponentServices\ermeX.ComponentServices.csproj">
+      <Project>{4259822D-D109-4A26-998C-6454BF3A1EF1}</Project>
+      <Name>ermeX.ComponentServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.ConfigurationManagement.Config\ermeX.ConfigurationManagement.Config.csproj">
       <Project>{18D50277-2166-45E2-96CB-8F40E5494A87}</Project>
       <Name>ermeX.ConfigurationManagement.Config</Name>
