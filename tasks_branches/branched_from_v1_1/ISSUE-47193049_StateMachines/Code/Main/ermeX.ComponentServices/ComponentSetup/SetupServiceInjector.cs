@@ -1,4 +1,5 @@
 using System;
+using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.Settings;
 
 namespace ermeX.ComponentServices.ComponentSetup
@@ -15,7 +16,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 
 		public void InjectServices()
 		{
-			throw new System.NotImplementedException();
+			ConfigurationManager.SetSettingsSource(_settings);
 		}
 	}
 }

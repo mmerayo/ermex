@@ -1,7 +1,12 @@
 using System;
+using Ninject;
 using Stateless;
 using ermeX.Configuration;
+using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
+using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
+using ermeX.DAL.Providers;
+using ermeX.Versioning;
 
 namespace ermeX.ComponentServices.ComponentSetup
 {
@@ -15,9 +20,20 @@ namespace ermeX.ComponentServices.ComponentSetup
 			_settings = settings;
 		}
 
+		[Inject]
+		private IVersionUpgradeHelper VersionUpgradeHelper { get; set; }
+
 		public void RunUpgrades()
 		{
-			throw new System.NotImplementedException();
+			IoCManager.Kernel.Inject(this);
+			if (_settings.ConfigurationSourceType == DbEngineType.SqliteInMemory)
+			{
+				SessionProvider.SetInMemoryDb(_settings.ConfigurationConnectionString);
+			}
+
+			VersionUpgradeHelper.RunDataSchemaUpgrades(_settings.SchemasApplied,
+													   _settings.ConfigurationConnectionString,
+													   _settings.ConfigurationSourceType);
 		}
 
 	}
