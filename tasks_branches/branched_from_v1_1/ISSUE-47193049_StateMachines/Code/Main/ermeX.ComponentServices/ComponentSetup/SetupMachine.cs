@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using Common.Logging;
 using Stateless;
 using ermeX.Exceptions;
 
@@ -6,6 +8,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 {
 	internal sealed class SetupMachine
 	{
+		private static readonly ILog Logger = LogManager.GetLogger<SetupMachine>();
 		private readonly ISetupServiceInjector _serviceInjector;
 		private readonly ISetupVersionUpgradeRunner _versionUpgrader;
 
@@ -40,6 +43,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 		public SetupMachine(ISetupServiceInjector serviceInjector,
 		                    ISetupVersionUpgradeRunner versionUpgrader)
 		{
+			Logger.Debug("cctor");
 			_serviceInjector = serviceInjector;
 			_versionUpgrader = versionUpgrader;
 			DefineStateMachineTransitions();
@@ -50,10 +54,11 @@ namespace ermeX.ComponentServices.ComponentSetup
 		{
 			try
 			{
+				Logger.Debug("Setup");
 				if(IsReady()|| SetupFailed())
 					Reset();
-				else
-					_machine.Fire(SetupEvent.Inject);
+				Debug.Assert(IsNotStarted());
+				_machine.Fire(SetupEvent.Inject);
 			}
 			catch (Exception ex)
 			{
@@ -63,8 +68,9 @@ namespace ermeX.ComponentServices.ComponentSetup
 
 		private void DefineStateMachineTransitions()
 		{
+			Logger.Debug("DefineStateMachineTransitions");
 			_machine.Configure(SetupProcessState.NotStarted)
-			        .OnEntry(OnNotStarted)
+			        .OnExit(OnNotStartedExit)
 			        .Permit(SetupEvent.Inject, SetupProcessState.InjectingServices)
 			        .Permit(SetupEvent.Error, SetupProcessState.Error);
 
@@ -98,10 +104,12 @@ namespace ermeX.ComponentServices.ComponentSetup
 
 		private void OnReady(StateMachine<SetupProcessState, SetupEvent>.Transition obj)
 		{
+			Logger.DebugFormat("OnReady-{0}",obj);
 		}
 
 		private void FireError(Exception ex)
 		{
+			Logger.WarnFormat("FireError-{0}", ex.ToString());
 			if (SetupFailed())
 				throw ex;
 			_machine.Fire(_errorTrigger, ex);
@@ -109,6 +117,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 
 		private void TryFire(SetupEvent e)
 		{
+			Logger.DebugFormat("TryFire - {0}", e);
 			if (_machine == null)
 				throw new InvalidOperationException("Invoke SetMachine first");
 			if (!_machine.CanFire(e))
@@ -118,9 +127,10 @@ namespace ermeX.ComponentServices.ComponentSetup
 			_machine.Fire(e);
 		}
 
-		private void OnNotStarted(
+		private void OnNotStartedExit(
 			StateMachine<SetupProcessState, SetupEvent>.Transition transtitionData)
 		{
+			Logger.DebugFormat("OnNotStartedExit-{0}", transtitionData.Trigger);
 			try
 			{
 				_serviceInjector.Reset();
@@ -129,12 +139,11 @@ namespace ermeX.ComponentServices.ComponentSetup
 			{
 				FireError(ex);
 			}
-			TryFire(SetupEvent.Inject);
-
 		}
 
 		private void OnInjectServices(StateMachine<SetupProcessState, SetupEvent>.Transition transition)
 		{
+			Logger.DebugFormat("OnInjectServices-{0}", transition.Trigger);
 			try
 			{
 				_serviceInjector.InjectServices();
@@ -148,11 +157,13 @@ namespace ermeX.ComponentServices.ComponentSetup
 
 		private void OnServicesInjected(StateMachine<SetupProcessState, SetupEvent>.Transition transition)
 		{
+			Logger.DebugFormat("OnServicesInjected-{0}" , transition.Trigger);
 			TryFire(SetupEvent.Upgrade);
 		}
 
 		private void OnUpgrading(StateMachine<SetupProcessState, SetupEvent>.Transition transition)
 		{
+			Logger.DebugFormat("OnUpgrading-{0}", transition.Trigger);
 			try
 			{
 				_versionUpgrader.RunUpgrades();
@@ -167,6 +178,11 @@ namespace ermeX.ComponentServices.ComponentSetup
 
 		public void Reset()
 		{
+			Logger.Debug("Reset");
+			
+			if (IsNotStarted())
+				return;
+
 			if (SetupFailed())
 				TryFire(SetupEvent.Retry);
 			else
@@ -177,8 +193,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 		public void OnError(Exception ex)
 		{
 			if (ex == null) throw new ArgumentNullException("ex");
-
-			//TODO: LOG??
+			Logger.DebugFormat("OnError - {0}", ex.ToString());
 			throw new ermeXSetupException(ex);
 		}
 

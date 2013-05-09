@@ -38,10 +38,16 @@ namespace ermeX.ComponentServices
 		{
 			lock (_syncLock)
 			{
-				_setupMachine.Reset();
+				if (_setupMachine != null)
+					_setupMachine.Reset();
 
 				//TODO: DISPOSE THE COMPONENTS
 			}
+		}
+
+		public bool IsRunning()
+		{
+			return _setupMachine != null && _setupMachine.IsReady();
 		}
 	}
 }
