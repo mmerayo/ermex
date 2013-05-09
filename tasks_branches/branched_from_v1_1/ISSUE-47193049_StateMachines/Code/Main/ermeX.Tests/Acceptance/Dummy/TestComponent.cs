@@ -117,7 +117,7 @@ namespace ermeX.Tests.Acceptance.Dummy
             }
             cfg.WithDevelopmentLoggingOn();
 
-
+			WorldGate.Reset();
             WorldGate.ConfigureAndStart(cfg);
 
         }

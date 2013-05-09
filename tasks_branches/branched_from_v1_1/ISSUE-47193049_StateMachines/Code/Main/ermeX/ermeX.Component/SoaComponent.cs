@@ -54,7 +54,7 @@ namespace ermeX.ermeX.Component
 
         internal bool IsStarted
         {
-            get { return IoCManager.Kernel != null && StatusManager.CurrentStatus==ComponentStatus.Running; }
+			get { return ComponentManager.Default.IsRunning(); }
         }
 
 		//TODO: TO BE DONE BY THE SERVICE INJECTOR IN SETUP
