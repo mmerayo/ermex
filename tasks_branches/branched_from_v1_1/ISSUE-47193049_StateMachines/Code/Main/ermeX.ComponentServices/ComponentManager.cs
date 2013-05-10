@@ -30,8 +30,8 @@ namespace ermeX.ComponentServices
 					ISetupVersionUpgradeRunner versionUpgrader = new SetupUpgradeRunner(settings.GetSettings<IDalSettings>());
 					_setupMachine = new SetupMachine(serviceInjector, versionUpgrader);
 				}
+				_setupMachine.Setup();
 			}
-			_setupMachine.Setup();
 		}
 
 		public void Reset()
