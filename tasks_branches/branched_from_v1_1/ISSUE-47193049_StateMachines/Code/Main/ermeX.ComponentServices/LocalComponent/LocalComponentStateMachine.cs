@@ -1,13 +1,13 @@
-﻿using Common.Logging;
+﻿using System;
+using Common.Logging;
+using Stateless;
 using ermeX.ComponentServices.ComponentSetup;
 
 namespace ermeX.ComponentServices.LocalComponent
 {
-	internal sealed class LocalComponentStateMachine
+	internal sealed partial class LocalComponent
 	{
-		private static readonly ILog Logger = LogManager.GetLogger<LocalComponentStateMachine>();
-
-		private enum MachineEvent
+		private enum LocalComponentEvent
 		{
 			Start,
 			SubscribeToMessages,
@@ -18,7 +18,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			ToError
 		}
 
-		private enum MachineState
+		private enum LocalComponentState
 		{
 			Stopped = 0,
 			Starting,
@@ -28,6 +28,20 @@ namespace ermeX.ComponentServices.LocalComponent
 			Stopping,
 			Resetting,
 			Error
+		}
+
+		private readonly StateMachine<LocalComponentState, LocalComponentEvent> _machine =
+			new StateMachine<LocalComponentState, LocalComponentEvent>(LocalComponentState.Stopped);
+
+		private StateMachine<LocalComponentState, LocalComponentEvent>.TriggerWithParameters<Exception> _errorTrigger;
+
+		private void DefineStateMachineTransitions()
+		{
+			Logger.Debug("DefineStateMachineTransitions");
+			_machine.Configure(LocalComponentState.Stopped)
+					.OnEntry(OnStopped)
+					.Permit(SetupEvent.Inject, SetupProcessState.InjectingServices)
+					.Permit(SetupEvent.Error, SetupProcessState.Error);
 		}
 	}
 }
