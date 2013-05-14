@@ -9,8 +9,6 @@ namespace ermeX.ComponentServices.ComponentSetup
 	internal sealed class SetupMachine
 	{
 		private static readonly ILog Logger = LogManager.GetLogger<SetupMachine>();
-		private readonly ISetupServiceInjector _serviceInjector;
-		private readonly ISetupVersionUpgradeRunner _versionUpgrader;
 
 		private enum SetupEvent
 		{
@@ -40,6 +38,8 @@ namespace ermeX.ComponentServices.ComponentSetup
 		private StateMachine<SetupProcessState, SetupEvent>.TriggerWithParameters<Exception>
 			_errorTrigger;
 
+		private readonly ISetupServiceInjector _serviceInjector;
+		private readonly ISetupVersionUpgradeRunner _versionUpgrader;
 		public SetupMachine(ISetupServiceInjector serviceInjector,
 		                    ISetupVersionUpgradeRunner versionUpgrader)
 		{

@@ -5,6 +5,7 @@ using System.Text;
 using Stateless;
 using ermeX.ComponentServices.ComponentSetup;
 using ermeX.Configuration;
+using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 
 namespace ermeX.ComponentServices
@@ -14,6 +15,8 @@ namespace ermeX.ComponentServices
 		private readonly object _syncLock=new object();
 		private SetupMachine _setupMachine;
 		public static readonly ComponentManager Default=new ComponentManager();
+		private volatile ILocalComponent _localComponent;
+
 		private ComponentManager()
 		{}
 
@@ -49,5 +52,19 @@ namespace ermeX.ComponentServices
 		{
 			return _setupMachine != null && _setupMachine.IsReady();
 		}
+
+		public ILocalComponent LocalComponent
+		{
+			get
+			{
+				if(!IsRunning()) throw new InvalidOperationException();
+				
+				if (_localComponent == null)
+					lock (_syncLock)
+						if (_localComponent == null)
+							_localComponent = (ILocalComponent)IoCManager.Kernel.GetService(typeof(ILocalComponent));
+				return _localComponent;
+			}
+		} 
 	}
 }
