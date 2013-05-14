@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Common.Logging;
 
 namespace ermeX.ComponentServices.LocalComponent
 {
-	internal sealed class LocalComponent:ILocalComponent
+	internal sealed partial class LocalComponent:ILocalComponent
 	{
-		private LocalComponentStateMachine _stateMachine;
+		private static readonly ILog Logger = LogManager.GetLogger<LocalComponent>();
+
+		public LocalComponent()
+		{
+			DefineStateMachineTransitions();
+		}
+
 	}
 }
