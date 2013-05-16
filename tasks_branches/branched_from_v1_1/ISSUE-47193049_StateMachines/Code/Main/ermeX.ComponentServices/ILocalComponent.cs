@@ -1,6 +1,8 @@
 ﻿namespace ermeX.ComponentServices
 {
-	interface ILocalComponent : IErmexComponent
+	internal interface ILocalComponent : IErmexComponent
 	{
+		void Start();
+		bool IsErrored();
 	}
 }
