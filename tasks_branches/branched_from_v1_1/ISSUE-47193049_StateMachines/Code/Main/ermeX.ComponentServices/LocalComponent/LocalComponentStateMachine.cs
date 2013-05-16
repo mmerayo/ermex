@@ -81,43 +81,79 @@ namespace ermeX.ComponentServices.LocalComponent
 					.Permit(LocalComponentEvent.Reset,LocalComponentState.Resetting);
 		}
 
+		
+
+		private void FireError(Exception ex)
+		{
+			Logger.WarnFormat("FireError-{0}", ex.ToString());
+			if (IsErrored())
+				throw ex;
+			_machine.Fire(_errorTrigger, ex);
+		}
+
+		
+		private void TryFire(LocalComponentEvent e)
+		{
+			Logger.DebugFormat("TryFire - {0}", e);
+			if (_machine == null)
+				throw new ApplicationException("FATAL");
+			if (!_machine.CanFire(e))
+				throw new InvalidOperationException(string.Format("Cannot transit from:{0} with trigger:{1}", _machine.State, e));
+			if (e == LocalComponentEvent.ToError)
+				throw new InvalidOperationException("Use FireError");
+			_machine.Fire(e);
+		}
+		private void OnError(Exception ex)
+		{
+			Logger.DebugFormat("OnError", ex.ToString());
+			throw new NotImplementedException();
+		}
+		private bool IsErrored()
+		{
+			return _machine.State == LocalComponentState.Error;
+		}
+
 		private void OnResetting(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
 		{
+			Logger.DebugFormat("OnResetting-{0}", obj.Trigger);
 			throw new NotImplementedException();
 		}
 
 		private void OnStopping(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
 		{
+			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			throw new NotImplementedException();
 		}
 
 		private void OnRunning(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
 		{
+			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			throw new NotImplementedException();
 		}
 
 		private void OnPublishingServices(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
 		{
+			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			throw new NotImplementedException();
 		}
 
 		private void OnSubscribingMessageHandlers(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
 		{
+			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			throw new NotImplementedException();
 		}
 
 		private void OnStarting(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
 		{
+			Logger.DebugFormat("OnStarting-{0}", obj.Trigger);
 			throw new NotImplementedException();
 		}
 
-		private void OnError(Exception ex)
-		{
-			throw new NotImplementedException();
-		}
+		
 
 		private void OnStopped(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
 		{
+			Logger.DebugFormat("OnStopped-{0}", obj.Trigger);
 			throw new NotImplementedException();
 		}
 	}
