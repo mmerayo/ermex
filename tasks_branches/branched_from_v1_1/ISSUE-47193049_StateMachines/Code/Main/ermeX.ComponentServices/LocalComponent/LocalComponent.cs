@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Common.Logging;
+using Stateless;
 
 namespace ermeX.ComponentServices.LocalComponent
 {
@@ -15,5 +16,6 @@ namespace ermeX.ComponentServices.LocalComponent
 			DefineStateMachineTransitions();
 		}
 
+		
 	}
 }
