@@ -39,9 +39,86 @@ namespace ermeX.ComponentServices.LocalComponent
 		{
 			Logger.Debug("DefineStateMachineTransitions");
 			_machine.Configure(LocalComponentState.Stopped)
-					.OnEntry(OnStopped)
-					.Permit(SetupEvent.Inject, SetupProcessState.InjectingServices)
-					.Permit(SetupEvent.Error, SetupProcessState.Error);
+			        .OnEntry(OnStopped)
+			        .Permit(LocalComponentEvent.Start, LocalComponentState.Starting);
+
+			_machine.Configure(LocalComponentState.Starting)
+					.OnEntry(OnStarting)
+					.Permit(LocalComponentEvent.SubscribeToMessages, LocalComponentState.SubscribingMessageHandlers)
+					.Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
+
+			_machine.Configure(LocalComponentState.SubscribingMessageHandlers)
+					.OnEntry(OnSubscribingMessageHandlers)
+					.Permit(LocalComponentEvent.PublishServices, LocalComponentState.PublishingServices)
+					.Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
+
+			_machine.Configure(LocalComponentState.PublishingServices)
+					.OnEntry(OnPublishingServices)
+					.Permit(LocalComponentEvent.Run, LocalComponentState.Running)
+					.Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
+
+			_machine.Configure(LocalComponentState.Running)
+					.OnEntry(OnRunning)
+					.Permit(LocalComponentEvent.Stop, LocalComponentState.Stopping)
+					.Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
+
+			_machine.Configure(LocalComponentState.Stopping)
+					.OnEntry(OnStopping)
+					.Permit(LocalComponentEvent.Reset, LocalComponentState.Resetting)
+					.Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
+
+			_machine.Configure(LocalComponentState.Resetting)
+					.OnEntry(OnResetting)
+					.Permit(LocalComponentEvent.Stop, LocalComponentState.Stopped)
+					.Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
+
+
+			_errorTrigger = _machine.SetTriggerParameters<Exception>(LocalComponentEvent.ToError);
+
+			_machine.Configure(LocalComponentState.Error)
+					.OnEntryFrom(_errorTrigger, OnError)
+					.OnEntry(a => OnError(null))
+					.Permit(LocalComponentEvent.Reset,LocalComponentState.Resetting);
+		}
+
+		private void OnResetting(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void OnStopping(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void OnRunning(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void OnPublishingServices(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void OnSubscribingMessageHandlers(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void OnStarting(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void OnError(Exception ex)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void OnStopped(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
