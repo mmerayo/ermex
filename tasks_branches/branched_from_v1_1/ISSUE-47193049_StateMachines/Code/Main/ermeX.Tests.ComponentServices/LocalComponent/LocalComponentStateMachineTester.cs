@@ -53,33 +53,67 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 			Assert.Throws<ermeXLocalComponentException>(target.Start);
 
 			Assert.IsTrue(target.IsErrored());
+			context.VerifyStartWasCalled();
 		}
-
-		[Test]
-		public void CanRestartFromErrored()
-		{
-			throw new NotImplementedException();
-		}]
 
 		[Test]
 		public void CanTransitToError_FromSubscribing()
 		{
-			throw new NotImplementedException();
+			var context = new TestContext()
+				.WithExceptionOnSubscribe();
+
+			var target = context.GetTarget();
+			Assert.Throws<ermeXLocalComponentException>(target.Start);
+
+			Assert.IsTrue(target.IsErrored());
+			context.VerifyStartWasCalled();
+			context.VerifySubscribeWasCalled();
 		}
 		[Test]
 		public void CanTransitToError_FromPublishing()
 		{
-			throw new NotImplementedException();
+			var context = new TestContext()
+				.WithExceptionOnPublishingServices();
+
+			var target = context.GetTarget();
+			Assert.Throws<ermeXLocalComponentException>(target.Start);
+
+			Assert.IsTrue(target.IsErrored());
+			context.VerifyStartWasCalled();
+			context.VerifySubscribeWasCalled();
+			context.VerifyPublishServicesWasCalled();
 		}
 		[Test]
 		public void CanTransitToError_FromRunning()
 		{
-			throw new NotImplementedException();
+			var context = new TestContext()
+				.WithExceptionOnRunning();
+
+			var target = context.GetTarget();
+			Assert.Throws<ermeXLocalComponentException>(target.Start);
+
+			Assert.IsTrue(target.IsErrored());
+			context.VerifyStartWasCalled();
+			context.VerifySubscribeWasCalled();
+			context.VerifyPublishServicesWasCalled();
+			context.VerifyRunWasCalled();
 		}
 		[Test]
 		public void CanTransitToError_FromStopping()
 		{
-			throw new NotImplementedException();
+			var context = new TestContext()
+				.WithExceptionOnStopping();
+
+			var target = context.GetTarget();
+			target.Start();
+			Assert.Throws<ermeXLocalComponentException>(target.Stop);
+
+			Assert.IsTrue(target.IsErrored());
+			context.VerifyStartWasCalled();
+			context.VerifySubscribeWasCalled();
+			context.VerifyPublishServicesWasCalled();
+			context.VerifyRunWasCalled();
+			context.VerifyStopWasCalled();
 		}
 
 		[Test]
@@ -90,6 +124,12 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 
 		[Test]
 		public void CanTransitTo_ResetErrorResetStopped()
+		{
+			throw new NotImplementedException();
+		}
+
+		[Test]
+		public void CanRestartFromErrored()
 		{
 			throw new NotImplementedException();
 		}
@@ -115,10 +155,30 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 
 			public void VerifyFromStoppedToRunning()
 			{
-				_payloader.Verify(x=>x.Start(),Times.Exactly(1));
-				_payloader.Verify(x => x.SubscribeToMessages(), Times.Exactly(1));
-				_payloader.Verify(x => x.PublishServices(), Times.Exactly(1));
+				VerifyStartWasCalled();
+				VerifySubscribeWasCalled();
+				VerifyPublishServicesWasCalled();
+				VerifyRunWasCalled();
+			}
+
+			public void VerifyRunWasCalled()
+			{
 				_payloader.Verify(x => x.Run(), Times.Exactly(1));
+			}
+
+			public void VerifyPublishServicesWasCalled()
+			{
+				_payloader.Verify(x => x.PublishServices(), Times.Exactly(1));
+			}
+
+			public void VerifySubscribeWasCalled()
+			{
+				_payloader.Verify(x => x.SubscribeToMessages(), Times.Exactly(1));
+			}
+
+			public void VerifyStartWasCalled()
+			{
+				_payloader.Verify(x => x.Start(), Times.Exactly(1));
 			}
 
 
@@ -132,12 +192,41 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 				_payloader.Verify(x => x.Reset(), Times.Exactly(1));
 			}
 
+			public void VerifyStopWasCalled()
+			{
+				_payloader.Setup(x => x.Stop()).Throws<Exception>();
+			}
+
 			public TestContext WithExceptionOnStart()
 			{
 				_payloader.Setup(x => x.Start()).Throws<Exception>();
 				return this;
 			}
 
+			public TestContext WithExceptionOnSubscribe()
+			{
+				_payloader.Setup(x => x.SubscribeToMessages()).Throws<Exception>();
+				return this;
+			}
+
+			public TestContext WithExceptionOnPublishingServices()
+			{
+				_payloader.Setup(x => x.PublishServices()).Throws<Exception>();
+				return this;
+			}
+
+			public TestContext WithExceptionOnRunning()
+			{
+				_payloader.Setup(x => x.Run()).Throws<Exception>();
+				return this;
+			}
+
+
+			public TestContext WithExceptionOnStopping()
+			{
+				_payloader.Setup(x => x.Stop()).Throws<Exception>();
+				return this;
+			}
 		}
 	}
 }
