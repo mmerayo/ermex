@@ -5,8 +5,9 @@ using ermeX.ComponentServices.ComponentSetup;
 
 namespace ermeX.ComponentServices.LocalComponent
 {
-	internal sealed partial class LocalComponent
+	internal sealed class LocalComponentStateMachine
 	{
+
 		private enum LocalComponentEvent
 		{
 			Start,
@@ -29,11 +30,18 @@ namespace ermeX.ComponentServices.LocalComponent
 			Resetting,
 			Error
 		}
-
+		private static readonly ILog Logger = LogManager.GetLogger<LocalComponentStateMachine>();
 		private readonly StateMachine<LocalComponentState, LocalComponentEvent> _machine =
 			new StateMachine<LocalComponentState, LocalComponentEvent>(LocalComponentState.Stopped);
 
 		private StateMachine<LocalComponentState, LocalComponentEvent>.TriggerWithParameters<Exception> _errorTrigger;
+		private readonly ILocalStateMachinePayloader _target;
+
+		public LocalComponentStateMachine(ILocalStateMachinePayloader target)
+		{
+			_target = target;
+			DefineStateMachineTransitions();
+		}
 
 		private void DefineStateMachineTransitions()
 		{
@@ -123,7 +131,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnResetting-{0}", obj.Trigger);
 			try
 			{
-				throw new NotImplementedException();
+				_target.Reset();
 			}
 			catch (Exception ex)
 			{
@@ -137,7 +145,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			try
 			{
-				throw new NotImplementedException();
+				_target.Stop();
 			}
 			catch (Exception ex)
 			{
@@ -151,7 +159,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			try
 			{
-				throw new NotImplementedException();
+				_target.Run();
 			}
 			catch (Exception ex)
 			{
@@ -165,7 +173,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			try
 			{
-				throw new NotImplementedException();
+				_target.PublishServices();
 			}
 			catch (Exception ex)
 			{
@@ -179,7 +187,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			try
 			{
-				throw new NotImplementedException();
+				_target.SubscribeToMessages();
 			}
 			catch (Exception ex)
 			{
@@ -193,7 +201,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStarting-{0}", obj.Trigger);
 			try
 			{
-				throw new NotImplementedException();
+				_target.Start();
 			}
 			catch (Exception ex)
 			{
@@ -207,7 +215,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStopped-{0}", obj.Trigger);
 			try
 			{
-				throw new NotImplementedException();
+				//TODO??
 			}
 			catch (Exception ex)
 			{
