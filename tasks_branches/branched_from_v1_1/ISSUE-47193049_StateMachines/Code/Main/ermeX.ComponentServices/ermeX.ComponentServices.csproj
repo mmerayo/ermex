@@ -62,6 +62,7 @@
     <Compile Include="ComponentSetup\SetupServiceInjector.cs" />
     <Compile Include="IErmexComponent.cs" />
     <Compile Include="ILocalComponent.cs" />
+    <Compile Include="LocalComponent\ILocalComponentStateMachine.cs" />
     <Compile Include="LocalComponent\ILocalStateMachinePayloader.cs" />
     <Compile Include="LocalComponent\LocalComponent.cs" />
     <Compile Include="LocalComponent\LocalComponentStateMachine.cs" />

@@ -2,10 +2,11 @@
 using Common.Logging;
 using Stateless;
 using ermeX.ComponentServices.ComponentSetup;
+using ermeX.Exceptions;
 
 namespace ermeX.ComponentServices.LocalComponent
 {
-	internal sealed class LocalComponentStateMachine
+	internal sealed class LocalComponentStateMachine : ILocalComponentStateMachine
 	{
 
 		private enum LocalComponentEvent
@@ -30,7 +31,9 @@ namespace ermeX.ComponentServices.LocalComponent
 			Resetting,
 			Error
 		}
+
 		private static readonly ILog Logger = LogManager.GetLogger<LocalComponentStateMachine>();
+
 		private readonly StateMachine<LocalComponentState, LocalComponentEvent> _machine =
 			new StateMachine<LocalComponentState, LocalComponentEvent>(LocalComponentState.Stopped);
 
@@ -51,45 +54,45 @@ namespace ermeX.ComponentServices.LocalComponent
 			        .Permit(LocalComponentEvent.Start, LocalComponentState.Starting);
 
 			_machine.Configure(LocalComponentState.Starting)
-					.OnEntry(OnStarting)
-					.Permit(LocalComponentEvent.SubscribeToMessages, LocalComponentState.SubscribingMessageHandlers)
-					.Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
+			        .OnEntry(OnStarting)
+			        .Permit(LocalComponentEvent.SubscribeToMessages, LocalComponentState.SubscribingMessageHandlers)
+			        .Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
 
 			_machine.Configure(LocalComponentState.SubscribingMessageHandlers)
-					.OnEntry(OnSubscribingMessageHandlers)
-					.Permit(LocalComponentEvent.PublishServices, LocalComponentState.PublishingServices)
-					.Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
+			        .OnEntry(OnSubscribingMessageHandlers)
+			        .Permit(LocalComponentEvent.PublishServices, LocalComponentState.PublishingServices)
+			        .Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
 
 			_machine.Configure(LocalComponentState.PublishingServices)
-					.OnEntry(OnPublishingServices)
-					.Permit(LocalComponentEvent.Run, LocalComponentState.Running)
-					.Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
+			        .OnEntry(OnPublishingServices)
+			        .Permit(LocalComponentEvent.Run, LocalComponentState.Running)
+			        .Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
 
 			_machine.Configure(LocalComponentState.Running)
-					.OnEntry(OnRunning)
-					.Permit(LocalComponentEvent.Stop, LocalComponentState.Stopping)
-					.Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
+			        .OnEntry(OnRunning)
+			        .Permit(LocalComponentEvent.Stop, LocalComponentState.Stopping)
+			        .Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
 
 			_machine.Configure(LocalComponentState.Stopping)
-					.OnEntry(OnStopping)
-					.Permit(LocalComponentEvent.Reset, LocalComponentState.Resetting)
-					.Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
+			        .OnEntry(OnStopping)
+			        .Permit(LocalComponentEvent.Reset, LocalComponentState.Resetting)
+			        .Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
 
 			_machine.Configure(LocalComponentState.Resetting)
-					.OnEntry(OnResetting)
-					.Permit(LocalComponentEvent.Stop, LocalComponentState.Stopped)
-					.Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
+			        .OnEntry(OnResetting)
+			        .Permit(LocalComponentEvent.Stop, LocalComponentState.Stopped)
+			        .Permit(LocalComponentEvent.ToError, LocalComponentState.Error);
 
 
 			_errorTrigger = _machine.SetTriggerParameters<Exception>(LocalComponentEvent.ToError);
 
 			_machine.Configure(LocalComponentState.Error)
-					.OnEntryFrom(_errorTrigger, OnError)
-					.OnEntry(a => OnError(null))
-					.Permit(LocalComponentEvent.Reset,LocalComponentState.Resetting);
+			        .OnEntryFrom(_errorTrigger, OnError)
+			        .OnEntry(a => OnError(null))
+			        .Permit(LocalComponentEvent.Reset, LocalComponentState.Resetting);
 		}
 
-		
+
 
 		private void FireError(Exception ex)
 		{
@@ -99,7 +102,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			_machine.Fire(_errorTrigger, ex);
 		}
 
-		
+
 		private void TryFire(LocalComponentEvent e)
 		{
 			Logger.DebugFormat("TryFire - {0}", e);
@@ -111,11 +114,14 @@ namespace ermeX.ComponentServices.LocalComponent
 				throw new InvalidOperationException("Use FireError");
 			_machine.Fire(e);
 		}
+
 		private void OnError(Exception ex)
 		{
-			Logger.DebugFormat("OnError", ex.ToString());
-			throw new NotImplementedException();
+			if (ex == null) throw new ArgumentNullException("ex");
+			Logger.DebugFormat("OnError - {0}", ex.ToString());
+			throw new ermeXLocalComponentException(ex);
 		}
+
 		public bool IsErrored()
 		{
 			return _machine.State == LocalComponentState.Error;
@@ -125,6 +131,13 @@ namespace ermeX.ComponentServices.LocalComponent
 		{
 			TryFire(LocalComponentEvent.Start);
 		}
+
+		public void Stop()
+		{
+			TryFire(LocalComponentEvent.Stop);
+
+		}
+
 
 		private void OnResetting(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
 		{
@@ -165,7 +178,6 @@ namespace ermeX.ComponentServices.LocalComponent
 			{
 				FireError(ex);
 			}
-			TryFire(LocalComponentEvent.Stop);
 		}
 
 		private void OnPublishingServices(StateMachine<LocalComponentState, LocalComponentEvent>.Transition obj)
@@ -221,6 +233,16 @@ namespace ermeX.ComponentServices.LocalComponent
 			{
 				FireError(ex);
 			}
+		}
+
+		public bool IsStopped()
+		{
+			return _machine.State == LocalComponentState.Stopped;
+		}
+
+		public bool IsRunning()
+		{
+			return _machine.State == LocalComponentState.Running;
 		}
 	}
 }
