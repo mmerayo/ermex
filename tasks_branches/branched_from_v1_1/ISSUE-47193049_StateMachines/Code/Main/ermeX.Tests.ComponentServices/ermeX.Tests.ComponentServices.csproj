@@ -53,6 +53,7 @@
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
     <Compile Include="ComponentSetup\SetupMachineTester.cs" />
+    <Compile Include="LocalComponent\LocalComponentStateMachineTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
