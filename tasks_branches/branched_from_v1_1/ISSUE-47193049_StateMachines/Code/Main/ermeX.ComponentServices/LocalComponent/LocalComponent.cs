@@ -54,10 +54,12 @@ namespace ermeX.ComponentServices.LocalComponent
 			_stateMachine.Start();
 		}
 
-		public bool IsErrored()
+		public void Error()
 		{
-			Logger.Debug("IsErrored");
-			return _stateMachine.IsErrored();
+			Logger.Debug("Error");
+			throw new NotImplementedException();
 		}
+
+		
 	}
 }

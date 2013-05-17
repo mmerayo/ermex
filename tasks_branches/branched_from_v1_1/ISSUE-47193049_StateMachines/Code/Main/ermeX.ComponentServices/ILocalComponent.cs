@@ -3,6 +3,5 @@
 	internal interface ILocalComponent : IErmexComponent
 	{
 		void Start();
-		bool IsErrored();
 	}
 }

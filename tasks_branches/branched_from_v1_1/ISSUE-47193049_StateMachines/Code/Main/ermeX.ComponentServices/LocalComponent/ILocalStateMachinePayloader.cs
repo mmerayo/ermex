@@ -8,5 +8,6 @@
 		void PublishServices();
 		void SubscribeToMessages();
 		void Start();
+		void Error();
 	}
 }
