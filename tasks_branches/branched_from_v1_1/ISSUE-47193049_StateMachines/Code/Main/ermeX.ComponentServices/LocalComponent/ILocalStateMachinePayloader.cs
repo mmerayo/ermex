@@ -7,7 +7,7 @@
 		void Run();
 		void PublishServices();
 		void SubscribeToMessages();
-		void Start();
+		void OnStart();
 		void Error();
 	}
 }
