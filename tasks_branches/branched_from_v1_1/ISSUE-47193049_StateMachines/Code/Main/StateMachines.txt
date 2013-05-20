@@ -3,7 +3,7 @@
 	+SetupProcess:http://yuml.me/adcf09c3
 	
 *LocalComponent
-	+Main: http://yuml.me/edit/d7111128
+	+Main: http://yuml.me/edit/4b4c6e86
 
 *Remote components
 	+Main:http://yuml.me/edit/6bec7906

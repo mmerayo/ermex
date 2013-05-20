@@ -88,8 +88,8 @@ namespace ermeX.ComponentServices.LocalComponent
 
 			_machine.Configure(LocalComponentState.Error)
 			        .OnEntryFrom(_errorTrigger, OnError)
-			        .OnEntry(a => OnError(null))
-			        .Permit(LocalComponentEvent.Reset, LocalComponentState.Resetting);
+			        .OnEntry(a => OnError(null));
+
 		}
 
 
