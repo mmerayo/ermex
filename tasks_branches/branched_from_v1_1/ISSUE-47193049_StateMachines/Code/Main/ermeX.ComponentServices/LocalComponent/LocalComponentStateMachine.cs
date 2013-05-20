@@ -213,7 +213,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStarting-{0}", obj.Trigger);
 			try
 			{
-				_target.Start();
+				_target.OnStart();
 			}
 			catch (Exception ex)
 			{
