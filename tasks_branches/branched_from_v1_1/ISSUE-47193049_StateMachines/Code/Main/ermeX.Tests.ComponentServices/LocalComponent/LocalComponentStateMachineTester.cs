@@ -119,20 +119,22 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 		[Test]
 		public void CanTransitToError_FromResetting()
 		{
-			throw new NotImplementedException();
-		}
+			var context = new TestContext()
+				.WithExceptionOnResetting();
 
-		[Test]
-		public void CanTransitTo_ResetErrorResetStopped()
-		{
-			throw new NotImplementedException();
-		}
+			var target = context.GetTarget();
+			target.Start();
+			Assert.Throws<ermeXLocalComponentException>(target.Stop);
 
-		[Test]
-		public void CanRestartFromErrored()
-		{
-			throw new NotImplementedException();
+			Assert.IsTrue(target.IsErrored());
+			context.VerifyStartWasCalled();
+			context.VerifySubscribeWasCalled();
+			context.VerifyPublishServicesWasCalled();
+			context.VerifyRunWasCalled();
+			context.VerifyStopWasCalled();
+			context.VerifyResetWasCalled();
 		}
+		
 
 		private class TestContext
 		{
@@ -187,16 +189,17 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 				VerifyResetWasCalled();
 			}
 
-			private void VerifyResetWasCalled()
+			public void VerifyResetWasCalled()
 			{
 				_payloader.Verify(x => x.Reset(), Times.Exactly(1));
 			}
 
 			public void VerifyStopWasCalled()
 			{
-				_payloader.Setup(x => x.Stop()).Throws<Exception>();
+				_payloader.Verify(x => x.Stop(), Times.Exactly(1));
 			}
 
+			
 			public TestContext WithExceptionOnStart()
 			{
 				_payloader.Setup(x => x.Start()).Throws<Exception>();
@@ -227,6 +230,14 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 				_payloader.Setup(x => x.Stop()).Throws<Exception>();
 				return this;
 			}
+
+			public TestContext WithExceptionOnResetting()
+			{
+				_payloader.Setup(x => x.Reset()).Throws<Exception>();
+				return this;
+			}
+
+			
 		}
 	}
 }
