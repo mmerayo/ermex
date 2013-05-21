@@ -1,7 +1,7 @@
 ﻿namespace ermeX.ComponentServices.LocalComponent.Commands
 {
-	internal interface IRunStepExecutor
+	internal interface IOnPublishServicesStepExecutor
 	{
-		void Run();
+		void Publish();
 	}
 }

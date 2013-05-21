@@ -1,4 +1,6 @@
 ﻿using Common.Logging;
+using Ninject;
+using ermeX.Biz.Interfaces;
 using ermeX.ConfigurationManagement.Settings;
 
 namespace ermeX.ComponentServices.LocalComponent
@@ -8,7 +10,10 @@ namespace ermeX.ComponentServices.LocalComponent
 		private static readonly ILog Logger = LogManager.GetLogger<LocalComponent>();
 		private readonly LocalComponentStateMachine _stateMachine;
 
-		public LocalComponent(LocalComponentStateMachine stateMachine)
+		[Inject]
+		public LocalComponent(
+			LocalComponentStateMachine stateMachine
+		)
 		{
 			_stateMachine = stateMachine;
 		}

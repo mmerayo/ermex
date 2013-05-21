@@ -1,7 +1,7 @@
 ﻿namespace ermeX.ComponentServices.LocalComponent.Commands
 {
-	internal interface IPublishServicesStepExecutor
+	internal interface IOnResetStepExecutor
 	{
-		void Publish();
+		void Reset();
 	}
 }

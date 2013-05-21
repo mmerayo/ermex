@@ -155,7 +155,7 @@ namespace ermeX.Bus.Synchronisation
 
 		private void JoinNetworkComponent(Guid componentId)
 		{
-
+			Este implementar el join del componente
 			Logger.Trace(x => x("HANDSHAKE: Start Joining component {0}", componentId));
 			if (BusSettings.FriendComponent == null)
 				return;

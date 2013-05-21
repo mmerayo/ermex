@@ -139,24 +139,24 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 
 		private class TestContext
 		{
-			private readonly Mock<IStartablesStarterStepExecutor >_startablesStarter;
-			private readonly Mock<ISubscribeToMessagesStepExecutor> _messagesSubscriber;
-			private readonly Mock<IPublishServicesStepExecutor> _servicesPublisher;
-			private readonly Mock<IResetStepExecutor> _resetExecutor;
-			private readonly Mock<IStopComponentStepExecutor> _stopExecutor;
-			private readonly Mock<IRunStepExecutor >_runExecutor;
-			private readonly Mock<IErrorStepExecutor> _errorExecutor;
+			private readonly Mock<IOnStartStepExecutor >_startablesStarter;
+			private readonly Mock<IOnSubscribeToMessagesStepExecutor> _messagesSubscriber;
+			private readonly Mock<IOnPublishServicesStepExecutor> _servicesPublisher;
+			private readonly Mock<IOnResetStepExecutor> _resetExecutor;
+			private readonly Mock<IOnStopStepExecutor> _stopExecutor;
+			private readonly Mock<IOnRunStepExecutor >_runExecutor;
+			private readonly Mock<IOnErrorStepExecutor> _errorExecutor;
 
 
 			public TestContext()
 			{
-				_startablesStarter=new Mock<IStartablesStarterStepExecutor>();
-				_messagesSubscriber=new Mock<ISubscribeToMessagesStepExecutor>();
-				_servicesPublisher=new Mock<IPublishServicesStepExecutor>();
-				_resetExecutor=new Mock<IResetStepExecutor>();
-				_stopExecutor= new Mock<IStopComponentStepExecutor>();
-				_runExecutor=new Mock<IRunStepExecutor>();
-				_errorExecutor=new Mock<IErrorStepExecutor>();
+				_startablesStarter=new Mock<IOnStartStepExecutor>();
+				_messagesSubscriber=new Mock<IOnSubscribeToMessagesStepExecutor>();
+				_servicesPublisher=new Mock<IOnPublishServicesStepExecutor>();
+				_resetExecutor=new Mock<IOnResetStepExecutor>();
+				_stopExecutor= new Mock<IOnStopStepExecutor>();
+				_runExecutor=new Mock<IOnRunStepExecutor>();
+				_errorExecutor=new Mock<IOnErrorStepExecutor>();
 			}
 
 			public LocalComponentStateMachine GetTarget()

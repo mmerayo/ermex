@@ -1,6 +1,6 @@
 ﻿namespace ermeX.ComponentServices.LocalComponent.Commands
 {
-	internal interface IErrorStepExecutor
+	internal interface IOnErrorStepExecutor
 	{
 		void OnError();
 	}
