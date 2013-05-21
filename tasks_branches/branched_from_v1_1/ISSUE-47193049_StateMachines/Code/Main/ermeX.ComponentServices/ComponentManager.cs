@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Ninject;
 using Stateless;
 using ermeX.ComponentServices.ComponentSetup;
 using ermeX.ComponentServices.LocalComponent;
+using ermeX.ComponentServices.RemoteComponent;
 using ermeX.Configuration;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.Interfaces.Component;
 
 namespace ermeX.ComponentServices
 {
@@ -17,14 +20,21 @@ namespace ermeX.ComponentServices
 		private SetupMachine _setupMachine;
 		public static readonly ComponentManager Default=new ComponentManager();
 		private volatile ILocalComponent _localComponent;
-
+		private volatile IRemoteComponent _friendComponent;
+		private Configurer _settings;
 		private ComponentManager()
 		{}
+
+		[Inject]
+		private IRegisterComponents ComponentRegistrator { get; set; }
+
+
 
 		public void Setup(Configurer settings)
 		{
 			lock (_syncLock)
 			{
+				_settings = settings;
 				if (_setupMachine != null)
 					Reset();
 				else
@@ -35,6 +45,7 @@ namespace ermeX.ComponentServices
 					_setupMachine = new SetupMachine(serviceInjector, versionUpgrader);
 				}
 				_setupMachine.Setup();
+				IoCManager.InjectObject(this);
 			}
 		}
 
@@ -66,6 +77,28 @@ namespace ermeX.ComponentServices
 							_localComponent = (ILocalComponent)IoCManager.Kernel.GetService(typeof(ILocalComponent));
 				return _localComponent;
 			}
-		} 
+		}
+
+		public IRemoteComponent FriendComponent
+		{
+			get
+			{
+				if(!IsRunning()) throw new InvalidOperationException();
+
+				if(_friendComponent==null)
+					lock(_syncLock)
+						if (_friendComponent == null)
+						{
+							var busSettings = _settings.GetSettings<IBusSettings>();
+							if (busSettings.FriendComponent != null)
+								ComponentRegistrator.CreateRemoteComponent(busSettings.FriendComponent.ComponentId,
+																			busSettings.FriendComponent.Endpoint.Address.ToString(),
+																			busSettings.FriendComponent.Endpoint.Port);
+						}
+
+				throw new NotImplementedException("return value");
+				return null;
+			}
+		}
 	}
 }

@@ -61,19 +61,23 @@
     <Compile Include="ComponentSetup\SetupMachine.cs" />
     <Compile Include="ComponentSetup\SetupServiceInjector.cs" />
     <Compile Include="IErmexComponent.cs" />
+    <Compile Include="LocalComponent\Commands\OnPublishServicesStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\OnRunStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\OnSubscribeToMessagesStepExecutor.cs" />
     <Compile Include="LocalComponent\ILocalComponent.cs" />
-    <Compile Include="LocalComponent\Commands\ISubscribeToMessagesStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\IErrorStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\IPublishServicesStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\IResetStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\IRunStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\IStartablesStarterStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\IStopComponentStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\StartablesStarterStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnSubscribeToMessagesStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnErrorStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnPublishServicesStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnResetStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnRunStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnStartStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnStopStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\OnStartStepExecutor.cs" />
     <Compile Include="LocalComponent\ILocalComponentStateMachine.cs" />
     <Compile Include="LocalComponent\LocalComponent.cs" />
     <Compile Include="LocalComponent\LocalComponentStateMachine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteComponent\ILocalComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ermeX\KeyFile.snk">
@@ -82,6 +86,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ermeX.Biz.Interfaces\ermeX.Biz.Interfaces.csproj">
+      <Project>{2A5A42E3-AC6B-4312-968B-9FEEEA8C8286}</Project>
+      <Name>ermeX.Biz.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Bus.Interfaces\ermeX.Bus.Interfaces.csproj">
       <Project>{9E3D8616-BD44-4E0A-A67C-182473CE2453}</Project>
       <Name>ermeX.Bus.Interfaces</Name>

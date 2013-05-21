@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ermeX.ComponentServices.LocalComponent.Commands
 {
-	internal interface IStartablesStarterStepExecutor
+	internal interface IOnStartStepExecutor
 	{
 		void DoStart();
 	}

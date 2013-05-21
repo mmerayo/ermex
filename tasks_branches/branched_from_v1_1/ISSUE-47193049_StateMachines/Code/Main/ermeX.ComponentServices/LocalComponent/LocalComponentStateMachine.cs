@@ -40,28 +40,28 @@ namespace ermeX.ComponentServices.LocalComponent
 
 		private StateMachine<LocalComponentState, LocalComponentEvent>.TriggerWithParameters<Exception> _errorTrigger;
 
-		private readonly IStartablesStarterStepExecutor _startablesStarter;
-		private readonly ISubscribeToMessagesStepExecutor _messagesSubscriber;
-		private readonly IPublishServicesStepExecutor _servicesPublisher;
-		private readonly IResetStepExecutor _resetExecutor;
-		private readonly IStopComponentStepExecutor _stopExecutor;
-		private readonly IRunStepExecutor _runExecutor;
-		private readonly IErrorStepExecutor _errorExecutor;
+		private readonly IOnStartStepExecutor _startablesStarter;
+		private readonly IOnSubscribeToMessagesStepExecutor _messagesSubscriber;
+		private readonly IOnPublishServicesStepExecutor _servicesPublisher;
+		private readonly IOnResetStepExecutor _onResetExecutor;
+		private readonly IOnStopStepExecutor _onStopExecutor;
+		private readonly IOnRunStepExecutor _onRunExecutor;
+		private readonly IOnErrorStepExecutor _errorExecutor;
 
-		public LocalComponentStateMachine(IStartablesStarterStepExecutor startablesStarter, 
-			ISubscribeToMessagesStepExecutor messagesSubscriber, 
-			IPublishServicesStepExecutor servicesPublisher, 
-			IResetStepExecutor resetExecutor, 
-			IStopComponentStepExecutor stopExecutor, 
-			IRunStepExecutor runExecutor, 
-			IErrorStepExecutor errorExecutor)
+		public LocalComponentStateMachine(IOnStartStepExecutor startablesStarter, 
+			IOnSubscribeToMessagesStepExecutor messagesSubscriber,
+			IOnPublishServicesStepExecutor servicesPublisher, 
+			IOnResetStepExecutor onResetExecutor, 
+			IOnStopStepExecutor onStopExecutor, 
+			IOnRunStepExecutor onRunExecutor,
+			IOnErrorStepExecutor errorExecutor)
 		{
 			_startablesStarter = startablesStarter;
 			_messagesSubscriber = messagesSubscriber;
 			_servicesPublisher = servicesPublisher;
-			_resetExecutor = resetExecutor;
-			_stopExecutor = stopExecutor;
-			_runExecutor = runExecutor;
+			_onResetExecutor = onResetExecutor;
+			_onStopExecutor = onStopExecutor;
+			_onRunExecutor = onRunExecutor;
 			_errorExecutor = errorExecutor;
 			DefineStateMachineTransitions();
 		}
@@ -165,7 +165,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnResetting-{0}", obj.Trigger);
 			try
 			{
-				_resetExecutor.Reset();
+				_onResetExecutor.Reset();
 			}
 			catch (Exception ex)
 			{
@@ -179,7 +179,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			try
 			{
-				_stopExecutor.Stop();
+				_onStopExecutor.Stop();
 			}
 			catch (Exception ex)
 			{
@@ -193,7 +193,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			try
 			{
-				_runExecutor.Run();
+				_onRunExecutor.Run();
 			}
 			catch (Exception ex)
 			{

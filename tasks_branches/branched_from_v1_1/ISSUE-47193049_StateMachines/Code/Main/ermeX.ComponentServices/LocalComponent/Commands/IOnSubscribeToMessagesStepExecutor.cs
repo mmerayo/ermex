@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ermeX.ComponentServices.LocalComponent.Commands
 {
-	internal interface ISubscribeToMessagesStepExecutor
+	internal interface IOnSubscribeToMessagesStepExecutor
 	{
 		void Subscribe();
 	}

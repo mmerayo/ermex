@@ -1,6 +1,6 @@
 ﻿namespace ermeX.ComponentServices.LocalComponent.Commands
 {
-	internal interface IStopComponentStepExecutor
+	internal interface IOnStopStepExecutor
 	{
 		void Stop();
 	}

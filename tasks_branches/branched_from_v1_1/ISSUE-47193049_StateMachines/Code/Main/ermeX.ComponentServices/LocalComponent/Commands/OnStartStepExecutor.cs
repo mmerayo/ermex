@@ -1,4 +1,5 @@
 ﻿using Common.Logging;
+using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
 using ermeX.Bus.Publishing.Dispatching.Messages;
@@ -7,9 +8,9 @@ using ermeX.DAL.Interfaces.Component;
 
 namespace ermeX.ComponentServices.LocalComponent.Commands
 {
-	internal class StartablesStarterStepExecutor : IStartablesStarterStepExecutor
+	internal class OnStartStepExecutor : IOnStartStepExecutor
 	{
-		private static readonly ILog Logger = LogManager.GetLogger<StartablesStarterStepExecutor>();
+		private static readonly ILog Logger = LogManager.GetLogger<OnStartStepExecutor>();
 
 		private readonly IBizSettings _bizSettings;
 		private readonly IRegisterComponents _componentsRegister;
@@ -19,7 +20,8 @@ namespace ermeX.ComponentServices.LocalComponent.Commands
 		private readonly IMessageSubscribersDispatcher _messageSubscribersDispatcher;
 		private readonly IMessageDistributor _messageDistributor;
 
-		public StartablesStarterStepExecutor(IBizSettings bizSettings, 
+		[Inject]
+		public OnStartStepExecutor(IBizSettings bizSettings, 
 		                                IRegisterComponents componentsRegister,
 		                                IMessageListener messageListener, 
 		                                IMessagePublisher messagePublisher, 
