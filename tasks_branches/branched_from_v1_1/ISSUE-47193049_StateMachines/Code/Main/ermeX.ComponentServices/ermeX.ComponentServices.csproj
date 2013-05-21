@@ -61,7 +61,7 @@
     <Compile Include="ComponentSetup\SetupMachine.cs" />
     <Compile Include="ComponentSetup\SetupServiceInjector.cs" />
     <Compile Include="IErmexComponent.cs" />
-    <Compile Include="ILocalComponent.cs" />
+    <Compile Include="LocalComponent\ILocalComponent.cs" />
     <Compile Include="LocalComponent\Commands\ISubscribeToMessagesStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\IErrorStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\IPublishServicesStepExecutor.cs" />
@@ -71,10 +71,8 @@
     <Compile Include="LocalComponent\Commands\IStopComponentStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\StartablesStarterStepExecutor.cs" />
     <Compile Include="LocalComponent\ILocalComponentStateMachine.cs" />
-    <Compile Include="LocalComponent\ILocalStateMachinePayloader.cs" />
     <Compile Include="LocalComponent\LocalComponent.cs" />
     <Compile Include="LocalComponent\LocalComponentStateMachine.cs" />
-    <Compile Include="LocalComponent\LocalComponentStateMachineHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +113,10 @@
     <ProjectReference Include="..\ermeX.Exceptions\ermeX.Exceptions.csproj">
       <Project>{6A23DFD5-8894-4ABA-BA81-7AB2A7DAD552}</Project>
       <Name>ermeX.Exceptions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Interfaces\ermeX.Interfaces.csproj">
+      <Project>{A67BD599-72DF-40F6-B632-AFB22B4B3D18}</Project>
+      <Name>ermeX.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Parallel\ermeX.Parallel.csproj">
       <Project>{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}</Project>

@@ -2,6 +2,7 @@
 using Common.Logging;
 using Stateless;
 using ermeX.ComponentServices.ComponentSetup;
+using ermeX.ComponentServices.LocalComponent.Commands;
 using ermeX.Exceptions;
 
 namespace ermeX.ComponentServices.LocalComponent
@@ -38,11 +39,30 @@ namespace ermeX.ComponentServices.LocalComponent
 			new StateMachine<LocalComponentState, LocalComponentEvent>(LocalComponentState.Stopped);
 
 		private StateMachine<LocalComponentState, LocalComponentEvent>.TriggerWithParameters<Exception> _errorTrigger;
-		private readonly ILocalStateMachinePayloader _target;
 
-		public LocalComponentStateMachine(ILocalStateMachinePayloader target)
+		private readonly IStartablesStarterStepExecutor _startablesStarter;
+		private readonly ISubscribeToMessagesStepExecutor _messagesSubscriber;
+		private readonly IPublishServicesStepExecutor _servicesPublisher;
+		private readonly IResetStepExecutor _resetExecutor;
+		private readonly IStopComponentStepExecutor _stopExecutor;
+		private readonly IRunStepExecutor _runExecutor;
+		private readonly IErrorStepExecutor _errorExecutor;
+
+		public LocalComponentStateMachine(IStartablesStarterStepExecutor startablesStarter, 
+			ISubscribeToMessagesStepExecutor messagesSubscriber, 
+			IPublishServicesStepExecutor servicesPublisher, 
+			IResetStepExecutor resetExecutor, 
+			IStopComponentStepExecutor stopExecutor, 
+			IRunStepExecutor runExecutor, 
+			IErrorStepExecutor errorExecutor)
 		{
-			_target = target;
+			_startablesStarter = startablesStarter;
+			_messagesSubscriber = messagesSubscriber;
+			_servicesPublisher = servicesPublisher;
+			_resetExecutor = resetExecutor;
+			_stopExecutor = stopExecutor;
+			_runExecutor = runExecutor;
+			_errorExecutor = errorExecutor;
 			DefineStateMachineTransitions();
 		}
 
@@ -119,6 +139,7 @@ namespace ermeX.ComponentServices.LocalComponent
 		{
 			if (ex == null) throw new ArgumentNullException("ex");
 			Logger.DebugFormat("OnError - {0}", ex.ToString());
+			_errorExecutor.OnError(); //TODO: MOVE NEXT LINE TO THE EXECUTOR
 			throw new ermeXLocalComponentException(ex);
 		}
 
@@ -144,7 +165,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnResetting-{0}", obj.Trigger);
 			try
 			{
-				_target.Reset();
+				_resetExecutor.Reset();
 			}
 			catch (Exception ex)
 			{
@@ -158,7 +179,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			try
 			{
-				_target.Stop();
+				_stopExecutor.Stop();
 			}
 			catch (Exception ex)
 			{
@@ -172,7 +193,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			try
 			{
-				_target.Run();
+				_runExecutor.Run();
 			}
 			catch (Exception ex)
 			{
@@ -185,7 +206,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			try
 			{
-				_target.PublishServices();
+				_servicesPublisher.Publish();
 			}
 			catch (Exception ex)
 			{
@@ -199,7 +220,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStopping-{0}", obj.Trigger);
 			try
 			{
-				_target.SubscribeToMessages();
+				_messagesSubscriber.Subscribe();
 			}
 			catch (Exception ex)
 			{
@@ -213,7 +234,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStarting-{0}", obj.Trigger);
 			try
 			{
-				_target.OnStart();
+				_startablesStarter.DoStart();
 			}
 			catch (Exception ex)
 			{
@@ -227,7 +248,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Logger.DebugFormat("OnStopped-{0}", obj.Trigger);
 			try
 			{
-				//TODO??
+				//TODO:
 			}
 			catch (Exception ex)
 			{

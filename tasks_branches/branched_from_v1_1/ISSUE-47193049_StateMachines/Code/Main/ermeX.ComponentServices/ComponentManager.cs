@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Stateless;
 using ermeX.ComponentServices.ComponentSetup;
+using ermeX.ComponentServices.LocalComponent;
 using ermeX.Configuration;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
