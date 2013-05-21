@@ -62,6 +62,14 @@
     <Compile Include="ComponentSetup\SetupServiceInjector.cs" />
     <Compile Include="IErmexComponent.cs" />
     <Compile Include="ILocalComponent.cs" />
+    <Compile Include="LocalComponent\Commands\ISubscribeToMessagesStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IErrorStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IPublishServicesStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IResetStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IRunStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IStartablesStarterStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IStopComponentStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\StartablesStarter.cs" />
     <Compile Include="LocalComponent\ILocalComponentStateMachine.cs" />
     <Compile Include="LocalComponent\ILocalStateMachinePayloader.cs" />
     <Compile Include="LocalComponent\LocalComponent.cs" />
