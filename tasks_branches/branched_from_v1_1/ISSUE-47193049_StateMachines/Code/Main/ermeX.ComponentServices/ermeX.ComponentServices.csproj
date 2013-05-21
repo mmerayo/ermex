@@ -69,11 +69,12 @@
     <Compile Include="LocalComponent\Commands\IRunStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\IStartablesStarterStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\IStopComponentStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\StartablesStarter.cs" />
+    <Compile Include="LocalComponent\Commands\StartablesStarterStepExecutor.cs" />
     <Compile Include="LocalComponent\ILocalComponentStateMachine.cs" />
     <Compile Include="LocalComponent\ILocalStateMachinePayloader.cs" />
     <Compile Include="LocalComponent\LocalComponent.cs" />
     <Compile Include="LocalComponent\LocalComponentStateMachine.cs" />
+    <Compile Include="LocalComponent\LocalComponentStateMachineHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
