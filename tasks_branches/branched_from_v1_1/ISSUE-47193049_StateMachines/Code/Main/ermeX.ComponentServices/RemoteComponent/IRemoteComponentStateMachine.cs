@@ -6,6 +6,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 	{
 		void Create();
 		void Join();
+		void Joined();
 		void Stop();
 
 		bool IsErrored();

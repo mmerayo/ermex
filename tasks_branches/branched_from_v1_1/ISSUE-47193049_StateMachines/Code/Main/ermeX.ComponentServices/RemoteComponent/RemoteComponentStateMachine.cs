@@ -33,7 +33,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 		private static readonly ILog Logger = LogManager.GetLogger<RemoteComponentStateMachine>();
 
 		private readonly StateMachine<RemoteComponentState, RemoteComponentEvent> _machine =
-			new StateMachine<RemoteComponentState, RemoteComponentEvent>(RemoteComponentState.Stopped);
+			new StateMachine<RemoteComponentState, RemoteComponentEvent>(RemoteComponentState.Prelive);
 
 		private StateMachine<RemoteComponentState, RemoteComponentEvent>.TriggerWithParameters<Exception> _errorTrigger;
 
@@ -67,17 +67,13 @@ namespace ermeX.ComponentServices.RemoteComponent
 			        .OnEntry(OnJoined)
 			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
 			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped);
-
-			_machine.Configure(RemoteComponentState.Errored)
-					.OnEntry(OnErrored)
-					.Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped);
-
-
+			
 			_errorTrigger = _machine.SetTriggerParameters<Exception>(RemoteComponentEvent.ToError);
 
 			_machine.Configure(RemoteComponentState.Errored)
 					.OnEntryFrom(_errorTrigger, OnError)
-					.OnEntry(a => OnError(null));
+					.OnEntry(a => OnError(null))
+					.Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped);
 		}
 
 		private void FireError(Exception ex)
@@ -96,7 +92,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 				throw new ApplicationException("FATAL");
 			if (!_machine.CanFire(e))
 				throw new InvalidOperationException(string.Format("Cannot transit from:{0} with trigger:{1}", _machine.State, e));
-			if (e == LocalComponentEvent.ToError)
+			if (e == RemoteComponentEvent.ToError)
 				throw new InvalidOperationException("Use FireError");
 			_machine.Fire(e);
 		}
@@ -109,10 +105,6 @@ namespace ermeX.ComponentServices.RemoteComponent
 			throw new ermeXRemoteComponentException(ex);
 		}
 
-		private void OnErrored(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
-		{
-			throw new NotImplementedException();
-		}
 
 		private void OnJoined(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
 		{
@@ -146,6 +138,11 @@ namespace ermeX.ComponentServices.RemoteComponent
 		}
 
 		public void Join()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Joined()
 		{
 			throw new NotImplementedException();
 		}
