@@ -1,5 +1,6 @@
 ﻿using System;
 using Common.Logging;
+using Ninject;
 using Stateless;
 using ermeX.ComponentServices.ComponentSetup;
 using ermeX.ComponentServices.LocalComponent.Commands;
@@ -48,6 +49,7 @@ namespace ermeX.ComponentServices.LocalComponent
 		private readonly IOnRunStepExecutor _onRunExecutor;
 		private readonly IOnErrorStepExecutor _errorExecutor;
 
+		[Inject]
 		public LocalComponentStateMachine(IOnStartStepExecutor startablesStarter, 
 			IOnSubscribeToMessagesStepExecutor messagesSubscriber,
 			IOnPublishServicesStepExecutor servicesPublisher, 
