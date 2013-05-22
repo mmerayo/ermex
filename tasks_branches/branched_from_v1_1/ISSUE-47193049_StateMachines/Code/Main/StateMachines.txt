@@ -6,9 +6,9 @@
 	+Main: http://yuml.me/edit/4b4c6e86
 
 *Remote components
-	+Main:http://yuml.me/edit/55c282fc
+	+Main:http://yuml.me/11260e1d
 	+Substates of Joined:
-		-Services: http://yuml.me/edit/96167d46
+		-Services: http://yuml.me/8ad87619
 		-Messages: http://yuml.me/edit/5ba190db
 
 		TODO: specify error state as an state every step could go to
