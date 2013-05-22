@@ -77,6 +77,8 @@
     <Compile Include="LocalComponent\LocalComponent.cs" />
     <Compile Include="LocalComponent\LocalComponentStateMachine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteComponent\IRemoteComponentStateMachine.cs" />
+    <Compile Include="RemoteComponent\RemoteComponentStateMachine.cs" />
     <Compile Include="RemoteComponent\IRemoteComponent.cs" />
     <Compile Include="RemoteComponent\RemoteComponent.cs" />
   </ItemGroup>
