@@ -6,7 +6,7 @@
 	+Main: http://yuml.me/edit/4b4c6e86
 
 *Remote components
-	+Main:http://yuml.me/edit/6bec7906
+	+Main:http://yuml.me/edit/55c282fc
 	+Substates of Joined:
 		-Services: http://yuml.me/edit/96167d46
 		-Messages: http://yuml.me/edit/5ba190db

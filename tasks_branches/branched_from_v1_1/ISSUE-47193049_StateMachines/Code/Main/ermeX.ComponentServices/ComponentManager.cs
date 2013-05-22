@@ -28,8 +28,6 @@ namespace ermeX.ComponentServices
 		[Inject]
 		private IRegisterComponents ComponentRegistrator { get; set; }
 
-
-
 		public void Setup(Configurer settings)
 		{
 			lock (_syncLock)
@@ -89,6 +87,7 @@ namespace ermeX.ComponentServices
 					lock(_syncLock)
 						if (_friendComponent == null)
 						{
+							throw new NotImplementedException("The following lines to be implemented by the state machine");
 							var busSettings = _settings.GetSettings<IBusSettings>();
 							if (busSettings.FriendComponent != null)
 								ComponentRegistrator.CreateRemoteComponent(busSettings.FriendComponent.ComponentId,
