@@ -5,13 +5,20 @@ using System.Text;
 using Common.Logging;
 using Ninject;
 using Stateless;
-using ermeX.ComponentServices.LocalComponent;
+using ermeX.ComponentServices.RemoteComponent.Commands;
 using ermeX.Exceptions;
 
 namespace ermeX.ComponentServices.RemoteComponent
 {
 	internal sealed class RemoteComponentStateMachine:IRemoteComponentStateMachine
 	{
+		private readonly IOnPreliveExecutor _preliveExecutor;
+		private readonly IOnCreatingStepExecutor _creatingExecutor;
+		private readonly IOnStoppedStepExecutor _stoppedStepExecutor;
+		private readonly IOnJoiningStepExecutor _joiningStepExecutor;
+		private readonly IOnRunningStepExecutor _runningStepExecutor;
+		private readonly IOnErrorStepExecutor _errorStepExecutor;
+
 		private enum RemoteComponentEvent
 		{
 			Create=0,
@@ -24,10 +31,10 @@ namespace ermeX.ComponentServices.RemoteComponent
 		private enum RemoteComponentState
 		{
 			Prelive=0,
-			Created,
+			Creating,
 			Stopped,
 			Joining,
-			Joined,
+			Running,
 			Errored
 		}
 		private static readonly ILog Logger = LogManager.GetLogger<RemoteComponentStateMachine>();
@@ -38,8 +45,19 @@ namespace ermeX.ComponentServices.RemoteComponent
 		private StateMachine<RemoteComponentState, RemoteComponentEvent>.TriggerWithParameters<Exception> _errorTrigger;
 
 		[Inject]
-		public RemoteComponentStateMachine()
+		public RemoteComponentStateMachine(IOnPreliveExecutor preliveExecutor,
+			IOnCreatingStepExecutor creatingExecutor,
+			IOnStoppedStepExecutor stoppedStepExecutor,
+			IOnJoiningStepExecutor joiningStepExecutor,
+			IOnRunningStepExecutor runningStepExecutor,
+			IOnErrorStepExecutor errorStepExecutor)
 		{
+			_preliveExecutor = preliveExecutor;
+			_creatingExecutor = creatingExecutor;
+			_stoppedStepExecutor = stoppedStepExecutor;
+			_joiningStepExecutor = joiningStepExecutor;
+			_runningStepExecutor = runningStepExecutor;
+			_errorStepExecutor = errorStepExecutor;
 			DefineStateMachineTransitions();
 		}
 
@@ -48,32 +66,34 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Logger.Debug("DefineStateMachineTransitions");
 			_machine.Configure(RemoteComponentState.Prelive)
 					.OnEntry(OnPrelive)
-					.Permit(RemoteComponentEvent.Create, RemoteComponentState.Created);
+					.Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
+					.Permit(RemoteComponentEvent.Create, RemoteComponentState.Creating);
 
-			_machine.Configure(RemoteComponentState.Created)
-					.OnEntry(OnCreated)
+			_machine.Configure(RemoteComponentState.Creating)
+					.OnEntry(OnCreating)
+					.Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
 					.Permit(RemoteComponentEvent.Ready, RemoteComponentState.Stopped);
 
 			_machine.Configure(RemoteComponentState.Stopped)
 			        .OnEntry(OnStopped)
+					.Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
 			        .Permit(RemoteComponentEvent.Join, RemoteComponentState.Joining);
 
 			_machine.Configure(RemoteComponentState.Joining)
 			        .OnEntry(OnJoining)
-			        .Permit(RemoteComponentEvent.Joined, RemoteComponentState.Joined)
+			        .Permit(RemoteComponentEvent.Joined, RemoteComponentState.Running)
 			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored);
 
-			_machine.Configure(RemoteComponentState.Joined)
-			        .OnEntry(OnJoined)
+			_machine.Configure(RemoteComponentState.Running)
+			        .OnEntry(OnRunning)
 			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
 			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped);
 			
 			_errorTrigger = _machine.SetTriggerParameters<Exception>(RemoteComponentEvent.ToError);
 
 			_machine.Configure(RemoteComponentState.Errored)
-					.OnEntryFrom(_errorTrigger, OnError)
-					.OnEntry(a => OnError(null))
-					.Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped);
+			        .OnEntryFrom(_errorTrigger, OnError)
+			        .OnEntry(a => OnError(null));
 		}
 
 		private void FireError(Exception ex)
@@ -101,70 +121,110 @@ namespace ermeX.ComponentServices.RemoteComponent
 		{
 			if (ex == null) throw new ArgumentNullException("ex");
 			Logger.DebugFormat("OnError - {0}", ex.ToString());
-			_errorExecutor.OnError(); //TODO: MOVE NEXT LINE TO THE EXECUTOR
+			_errorStepExecutor.OnError(); //TODO: MOVE NEXT LINE TO THE EXECUTOR
 			throw new ermeXRemoteComponentException(ex);
 		}
 
 
-		private void OnJoined(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
+		private void OnRunning(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
 		{
-			throw new NotImplementedException();
+			Logger.DebugFormat("OnJoined-{0}", obj.Trigger);
+			try
+			{
+				_runningStepExecutor.OnRunning();
+			}
+			catch (Exception ex)
+			{
+				FireError(ex);
+			}
 		}
 
 		private void OnJoining(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
 		{
-			throw new NotImplementedException();
+			Logger.DebugFormat("OnJoining-{0}", obj.Trigger);
+			try
+			{
+				_joiningStepExecutor.Join();
+			}
+			catch (Exception ex)
+			{
+				FireError(ex);
+			}
 		}
 
 		private void OnStopped(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
 		{
-			throw new NotImplementedException();
+			Logger.DebugFormat("OnStopped-{0}", obj.Trigger);
+			try
+			{
+				_stoppedStepExecutor.Stop();
+			}
+			catch (Exception ex)
+			{
+				FireError(ex);
+			}
 		}
 
-		private void OnCreated(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
+		private void OnCreating(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
 		{
-			throw new NotImplementedException();
+			Logger.DebugFormat("OnCreating-{0}", obj.Trigger);
+			try
+			{
+				_creatingExecutor.Create();
+			}
+			catch (Exception ex)
+			{
+				FireError(ex);
+			}
+			TryFire(RemoteComponentEvent.Ready);
 		}
 
 		private void OnPrelive(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
 		{
-			throw new NotImplementedException();
+			Logger.DebugFormat("OnPrelive-{0}", obj.Trigger);
+			try
+			{
+				_preliveExecutor.OnPrelive();
+			}
+			catch (Exception ex)
+			{
+				FireError(ex);
+			}
 		}
-
 
 		public void Create()
 		{
-			throw new NotImplementedException();
+			TryFire(RemoteComponentEvent.Create);
 		}
 
 		public void Join()
 		{
-			throw new NotImplementedException();
+			TryFire(RemoteComponentEvent.Join);
 		}
 
 		public void Joined()
 		{
-			throw new NotImplementedException();
+			TryFire(RemoteComponentEvent.Joined);
 		}
 
 		public void Stop()
 		{
-			throw new NotImplementedException();
+			TryFire(RemoteComponentEvent.Stop);
 		}
 
 		public bool IsErrored()
 		{
-			throw new NotImplementedException();
+			return _machine.State == RemoteComponentState.Errored;
 		}
 
 		public bool IsStopped()
 		{
-			throw new NotImplementedException();
+			return _machine.State == RemoteComponentState.Stopped;
 		}
 
 		public bool IsRunning()
 		{
-			throw new NotImplementedException();
+			return _machine.State == RemoteComponentState.Running;
 		}
 	}
 }
