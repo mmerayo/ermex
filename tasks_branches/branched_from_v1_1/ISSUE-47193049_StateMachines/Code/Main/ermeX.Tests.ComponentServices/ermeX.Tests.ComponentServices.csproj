@@ -55,6 +55,7 @@
     <Compile Include="ComponentSetup\SetupMachineTester.cs" />
     <Compile Include="LocalComponent\LocalComponentStateMachineTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteComponent\RemoteComponentStateMachineTester.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ermeX\KeyFile.snk">
