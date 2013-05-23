@@ -6,7 +6,7 @@
 	+Main: http://yuml.me/edit/4b4c6e86
 
 *Remote components
-	+Main:http://yuml.me/11260e1d
+	+Main:http://yuml.me/b716d97e
 	+Substates of Running:
 		-Current http://yuml.me/e0a4edc8
 		IMPROVEMENT TO BE DONE WHEN RESPONSE IS ASYNCHRONOUS

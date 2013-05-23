@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Moq;
 using NUnit.Framework;
 using ermeX.ComponentServices.LocalComponent;
@@ -11,152 +8,28 @@ using ermeX.Exceptions;
 namespace ermeX.Tests.ComponentServices.LocalComponent
 {
 	[TestFixture]
-	class LocalComponentStateMachineTester
+	internal class LocalComponentStateMachineTester
 	{
-		[Test]
-		public void IsStoppedWhenInitialized()
-		{
-			var context = new TestContext();
-			var target = context.GetTarget();
-			Assert.IsTrue(target.IsStopped());
-		}
-
-		[Test]
-		public void CanRun()
-		{
-			var context = new TestContext();
-			var target = context.GetTarget();
-			target.Start();
-			Assert.IsTrue(target.IsRunning());
-			context.VerifyFromStoppedToRunning();
-		}
-
-		[Test]
-		public void CanStop()
-		{
-			var context = new TestContext();
-			var target = context.GetTarget();
-			target.Start();
-
-			target.Stop();
-
-			Assert.IsTrue(target.IsStopped());
-			context.VerifyFromRunningToStopped();
-		}
-
-		[Test]
-		public void CanTransitToError_FromStarting()
-		{
-			var context = new TestContext()
-				.WithExceptionOnStart();
-
-			var target = context.GetTarget();
-			Assert.Throws<ermeXLocalComponentException>(target.Start);
-
-			Assert.IsTrue(target.IsErrored());
-			context.VerifyStartWasCalled();
-		}
-
-		[Test]
-		public void CanTransitToError_FromSubscribing()
-		{
-			var context = new TestContext()
-				.WithExceptionOnSubscribe();
-
-			var target = context.GetTarget();
-			Assert.Throws<ermeXLocalComponentException>(target.Start);
-
-			Assert.IsTrue(target.IsErrored());
-			context.VerifyStartWasCalled();
-			context.VerifySubscribeWasCalled();
-		}
-		[Test]
-		public void CanTransitToError_FromPublishing()
-		{
-			var context = new TestContext()
-				.WithExceptionOnPublishingServices();
-
-			var target = context.GetTarget();
-			Assert.Throws<ermeXLocalComponentException>(target.Start);
-
-			Assert.IsTrue(target.IsErrored());
-			context.VerifyStartWasCalled();
-			context.VerifySubscribeWasCalled();
-			context.VerifyPublishServicesWasCalled();
-		}
-		[Test]
-		public void CanTransitToError_FromRunning()
-		{
-			var context = new TestContext()
-				.WithExceptionOnRunning();
-
-			var target = context.GetTarget();
-			Assert.Throws<ermeXLocalComponentException>(target.Start);
-
-			Assert.IsTrue(target.IsErrored());
-			context.VerifyStartWasCalled();
-			context.VerifySubscribeWasCalled();
-			context.VerifyPublishServicesWasCalled();
-			context.VerifyRunWasCalled();
-		}
-		[Test]
-		public void CanTransitToError_FromStopping()
-		{
-			var context = new TestContext()
-				.WithExceptionOnStopping();
-
-			var target = context.GetTarget();
-			target.Start();
-			Assert.Throws<ermeXLocalComponentException>(target.Stop);
-
-			Assert.IsTrue(target.IsErrored());
-			context.VerifyStartWasCalled();
-			context.VerifySubscribeWasCalled();
-			context.VerifyPublishServicesWasCalled();
-			context.VerifyRunWasCalled();
-			context.VerifyStopWasCalled();
-		}
-
-		[Test]
-		public void CanTransitToError_FromResetting()
-		{
-			var context = new TestContext()
-				.WithExceptionOnResetting();
-
-			var target = context.GetTarget();
-			target.Start();
-			Assert.Throws<ermeXLocalComponentException>(target.Stop);
-
-			Assert.IsTrue(target.IsErrored());
-			context.VerifyStartWasCalled();
-			context.VerifySubscribeWasCalled();
-			context.VerifyPublishServicesWasCalled();
-			context.VerifyRunWasCalled();
-			context.VerifyStopWasCalled();
-			context.VerifyResetWasCalled();
-		}
-		
-
 		private class TestContext
 		{
-			private readonly Mock<IOnStartStepExecutor >_startablesStarter;
-			private readonly Mock<IOnSubscribeToMessagesStepExecutor> _messagesSubscriber;
-			private readonly Mock<IOnPublishServicesStepExecutor> _servicesPublisher;
-			private readonly Mock<IOnResetStepExecutor> _resetExecutor;
-			private readonly Mock<IOnStopStepExecutor> _stopExecutor;
-			private readonly Mock<IOnRunStepExecutor >_runExecutor;
 			private readonly Mock<IOnErrorStepExecutor> _errorExecutor;
+			private readonly Mock<IOnSubscribeToMessagesStepExecutor> _messagesSubscriber;
+			private readonly Mock<IOnResetStepExecutor> _resetExecutor;
+			private readonly Mock<IOnRunStepExecutor> _runExecutor;
+			private readonly Mock<IOnPublishServicesStepExecutor> _servicesPublisher;
+			private readonly Mock<IOnStartStepExecutor> _startablesStarter;
+			private readonly Mock<IOnStopStepExecutor> _stopExecutor;
 
 
 			public TestContext()
 			{
-				_startablesStarter=new Mock<IOnStartStepExecutor>();
-				_messagesSubscriber=new Mock<IOnSubscribeToMessagesStepExecutor>();
-				_servicesPublisher=new Mock<IOnPublishServicesStepExecutor>();
-				_resetExecutor=new Mock<IOnResetStepExecutor>();
-				_stopExecutor= new Mock<IOnStopStepExecutor>();
-				_runExecutor=new Mock<IOnRunStepExecutor>();
-				_errorExecutor=new Mock<IOnErrorStepExecutor>();
+				_startablesStarter = new Mock<IOnStartStepExecutor>();
+				_messagesSubscriber = new Mock<IOnSubscribeToMessagesStepExecutor>();
+				_servicesPublisher = new Mock<IOnPublishServicesStepExecutor>();
+				_resetExecutor = new Mock<IOnResetStepExecutor>();
+				_stopExecutor = new Mock<IOnStopStepExecutor>();
+				_runExecutor = new Mock<IOnRunStepExecutor>();
+				_errorExecutor = new Mock<IOnErrorStepExecutor>();
 			}
 
 			public LocalComponentStateMachine GetTarget()
@@ -190,7 +63,7 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 
 			public void VerifySubscribeWasCalled()
 			{
-				_messagesSubscriber.Verify(x => x.Subscribe() ,Times.Exactly(1));
+				_messagesSubscriber.Verify(x => x.Subscribe(), Times.Exactly(1));
 			}
 
 			public void VerifyStartWasCalled()
@@ -214,7 +87,7 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 				_stopExecutor.Verify(x => x.Stop(), Times.Exactly(1));
 			}
 
-			
+
 			public TestContext WithExceptionOnStart()
 			{
 				_startablesStarter.Setup(x => x.DoStart()).Throws<Exception>();
@@ -251,8 +124,132 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 				_resetExecutor.Setup(x => x.Reset()).Throws<Exception>();
 				return this;
 			}
+		}
 
-			
+		[Test]
+		public void CanRun()
+		{
+			var context = new TestContext();
+			LocalComponentStateMachine target = context.GetTarget();
+			target.Start();
+			Assert.IsTrue(target.IsRunning());
+			context.VerifyFromStoppedToRunning();
+		}
+
+		[Test]
+		public void CanStop()
+		{
+			var context = new TestContext();
+			LocalComponentStateMachine target = context.GetTarget();
+			target.Start();
+
+			target.Stop();
+
+			Assert.IsTrue(target.IsStopped());
+			context.VerifyFromRunningToStopped();
+		}
+
+		[Test]
+		public void CanTransitToError_FromPublishing()
+		{
+			TestContext context = new TestContext()
+				.WithExceptionOnPublishingServices();
+
+			LocalComponentStateMachine target = context.GetTarget();
+			Assert.Throws<ermeXLocalComponentException>(target.Start);
+
+			Assert.IsTrue(target.IsErrored());
+			context.VerifyStartWasCalled();
+			context.VerifySubscribeWasCalled();
+			context.VerifyPublishServicesWasCalled();
+		}
+
+		[Test]
+		public void CanTransitToError_FromResetting()
+		{
+			TestContext context = new TestContext()
+				.WithExceptionOnResetting();
+
+			LocalComponentStateMachine target = context.GetTarget();
+			target.Start();
+			Assert.Throws<ermeXLocalComponentException>(target.Stop);
+
+			Assert.IsTrue(target.IsErrored());
+			context.VerifyStartWasCalled();
+			context.VerifySubscribeWasCalled();
+			context.VerifyPublishServicesWasCalled();
+			context.VerifyRunWasCalled();
+			context.VerifyStopWasCalled();
+			context.VerifyResetWasCalled();
+		}
+
+		[Test]
+		public void CanTransitToError_FromRunning()
+		{
+			TestContext context = new TestContext()
+				.WithExceptionOnRunning();
+
+			LocalComponentStateMachine target = context.GetTarget();
+			Assert.Throws<ermeXLocalComponentException>(target.Start);
+
+			Assert.IsTrue(target.IsErrored());
+			context.VerifyStartWasCalled();
+			context.VerifySubscribeWasCalled();
+			context.VerifyPublishServicesWasCalled();
+			context.VerifyRunWasCalled();
+		}
+
+		[Test]
+		public void CanTransitToError_FromStarting()
+		{
+			TestContext context = new TestContext()
+				.WithExceptionOnStart();
+
+			LocalComponentStateMachine target = context.GetTarget();
+			Assert.Throws<ermeXLocalComponentException>(target.Start);
+
+			Assert.IsTrue(target.IsErrored());
+			context.VerifyStartWasCalled();
+		}
+
+		[Test]
+		public void CanTransitToError_FromStopping()
+		{
+			TestContext context = new TestContext()
+				.WithExceptionOnStopping();
+
+			LocalComponentStateMachine target = context.GetTarget();
+			target.Start();
+			Assert.Throws<ermeXLocalComponentException>(target.Stop);
+
+			Assert.IsTrue(target.IsErrored());
+			context.VerifyStartWasCalled();
+			context.VerifySubscribeWasCalled();
+			context.VerifyPublishServicesWasCalled();
+			context.VerifyRunWasCalled();
+			context.VerifyStopWasCalled();
+		}
+
+		[Test]
+		public void CanTransitToError_FromSubscribing()
+		{
+			TestContext context = new TestContext()
+				.WithExceptionOnSubscribe();
+
+			LocalComponentStateMachine target = context.GetTarget();
+			Assert.Throws<ermeXLocalComponentException>(target.Start);
+
+			Assert.IsTrue(target.IsErrored());
+			context.VerifyStartWasCalled();
+			context.VerifySubscribeWasCalled();
+		}
+
+		[Test]
+		public void IsStoppedWhenInitialized()
+		{
+			var context = new TestContext();
+			LocalComponentStateMachine target = context.GetTarget();
+			Assert.IsTrue(target.IsStopped());
 		}
 	}
 }
