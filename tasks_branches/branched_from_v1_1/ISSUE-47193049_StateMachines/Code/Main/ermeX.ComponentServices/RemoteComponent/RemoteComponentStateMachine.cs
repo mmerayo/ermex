@@ -20,7 +20,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 		private readonly IOnErrorStepExecutor _errorStepExecutor;
 		private readonly IOnRequestingSubscriptionsStepExecutor _subscriptionsRequester;
 		private readonly IOnSubscriptionsReceivedStepExecutor _subscriptionsReceivedHandler;
-		private readonly IOnServicesRequestedStepExecutor _servicesRequester;
+		private readonly IOnRequestingServicesStepExecutor _servicesRequester;
 		private readonly IOnServicesReceivedStepExecutor _servicesReceivedHandler;
 
 		private enum RemoteComponentEvent
@@ -35,7 +35,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 			RequestServices,
 			ServicesReceived,
 			RequestSubscriptions,
-			SubscriptionsReceived
+			SubscriptionsReceived,
+			UnAvailable
 		}
 		private enum RemoteComponentState
 		{
@@ -68,7 +69,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			IOnErrorStepExecutor errorStepExecutor,
 			IOnRequestingSubscriptionsStepExecutor subscriptionsRequester,
 			IOnSubscriptionsReceivedStepExecutor subscriptionsReceivedHandler,
-			IOnServicesRequestedStepExecutor servicesRequester,
+			IOnRequestingServicesStepExecutor servicesRequester,
 			IOnServicesReceivedStepExecutor servicesReceivedHandler)
 		{
 			_preliveExecutor = preliveExecutor;
@@ -105,6 +106,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			_machine.Configure(RemoteComponentState.Joining)
 			        .OnEntry(OnJoining)
 			        .Permit(RemoteComponentEvent.Joined, RemoteComponentState.Running)
+					.Permit(RemoteComponentEvent.UnAvailable,RemoteComponentState.Stopped)
 			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored);
 
 			_machine.Configure(RemoteComponentState.Running)
@@ -336,6 +338,11 @@ namespace ermeX.ComponentServices.RemoteComponent
 		public bool IsRunning()
 		{
 			return _machine.State == RemoteComponentState.Running;
+		}
+
+		public bool Created()
+		{
+			return _machine.State != RemoteComponentState.Prelive;
 		}
 	}
 }

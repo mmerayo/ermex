@@ -1,6 +1,6 @@
 ﻿namespace ermeX.ComponentServices.RemoteComponent.Commands
 {
-	internal interface IOnServicesRequestedStepExecutor
+	internal interface IOnRequestingServicesStepExecutor
 	{
 		void Request();
 	}

@@ -87,6 +87,8 @@ namespace ermeX.ComponentServices
 					lock(_syncLock)
 						if (_friendComponent == null)
 						{
+							//TODO: components are created prelive and then invoke join from stop in a different thread
+							//TODO: when any component is errored establish a policy to try to restart it
 							throw new NotImplementedException("The following lines to be implemented by the state machine");
 							var busSettings = _settings.GetSettings<IBusSettings>();
 							if (busSettings.FriendComponent != null)
