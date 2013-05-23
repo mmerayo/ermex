@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using ermeX.ComponentServices.RemoteComponent;
 using ermeX.ComponentServices.RemoteComponent.Commands;
+using ermeX.Exceptions;
 
 namespace ermeX.Tests.ComponentServices.RemoteComponent
 {
@@ -53,99 +54,175 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 						);
 				}
 			}
+
+			public void VerifyCreatedHandlerWasCalled(int times=1)
+			{
+				_onCreatingStepExecutor.Verify(x=>x.Create(),Times.Exactly(times));
+			}
+
+			public void VerifyPreliveHandlerWasCalled(int times=1)
+			{
+				_onPreliveExecutor.Verify(x=>x.OnPrelive(),Times.Exactly(times));
+			}
+
+			public void VerifyJoiningHandlerWasCalled(int times=1)
+			{
+				_onJoiningStepExecutor.Verify(x=>x.Join(),Times.Exactly(times));
+			}
+
+			public void VerifyStoppedHandlerWasCalled(int times=1)
+			{
+				_onStoppedStepExecutor.Verify(x=>x.Stop(),Times.Exactly(times));
+			}
+
+			public void VerifyRunningHandlerWasCalled(int times=1)
+			{
+				_onRunningStepExecutor.Verify(x=>x.OnRunning(),Times.Exactly(times));
+			}
+
+			public void VerifyRunningSubstatesHandlersWereCalled(int times=1)
+			{
+				VerifyRequestingServicesHandlerWasCalled(times);
+				VerifyServicesReceptionExecutor(times);
+				VerifyRequestingSubscriptionsHandlerWasCalled(times);
+				VerifySubscriptionsReceptionExecutor(times);
+			}
+
+			public void VerifySubscriptionsReceptionExecutor(int times=1)
+			{
+				_onReceivedSubscriptionsStepExecutor.Verify(x => x.SubscriptionsReceived(), Times.Exactly(times));
+			}
+
+			public void VerifyServicesReceptionExecutor(int times=1)
+			{
+				_onServicesReceivedStepExecutor.Verify(x => x.ServicesReceived(), Times.Exactly(times));
+			}
+
+			public void VerifyRequestingSubscriptionsHandlerWasCalled(int times=1)
+			{
+				_onRequestingSubscriptionsStepExecutor.Verify(x => x.Request(), Times.Exactly(times));
+			}
+
+			public void VerifyRequestingServicesHandlerWasCalled(int times = 1)
+			{
+				_onRequestingServicesStepExecutor.Verify(x => x.Request(), Times.Exactly(times));
+			}
+
+			public void VerifyErrorHandlerWasCalled(int times = 1)
+			{
+				_onErrorStepExecutor.Verify(x=>x.OnError(),Times.Exactly(times));
+			}
+
+			public TestContext WithExceptionOnCreating()
+			{
+				_onCreatingStepExecutor.Setup(x=>x.Create()).Throws<Exception>();
+				return this;
+			}
+
+
+			public TestContext WithExceptionOnJoining()
+			{
+				_onJoiningStepExecutor.Setup(x => x.Join()).Throws<Exception>();
+				return this;
+			}
+
+			public TestContext WithExceptionOnRequestingServices()
+			{
+				_onRequestingServicesStepExecutor.Setup(x => x.Request()).Throws<Exception>();
+				return this;
+			}
+
+
+			public TestContext WithExceptionOnRequestingSubscriptions()
+			{
+				_onRequestingSubscriptionsStepExecutor.Setup(x => x.Request()).Throws<Exception>();
+				return this;
+			}
+
+			public TestContext WithExceptionOnSubscriptionsReception()
+			{
+				_onReceivedSubscriptionsStepExecutor.Setup(x => x.SubscriptionsReceived()).Throws<Exception>();
+				return this;
+			}
+			public TestContext WithExceptionOnServicesReception()
+			{
+				_onServicesReceivedStepExecutor.Setup(x => x.ServicesReceived()).Throws<Exception>();
+				return this;
+			}
+
+			public TestContext WithExceptionOnRunning()
+			{
+				_onRunningStepExecutor.Setup(x => x.OnRunning()).Throws<Exception>();
+				return this;
+			}
+		}
+
+		TestContext _context;
+
+		[SetUp]
+		public void OnSetup()
+		{
+			_context = new TestContext();
 		}
 
 		[Test]
 		public void CanCreate()
 		{
-			throw new NotImplementedException();
-		}
+			var target = _context.Sut;
+			target.Create();
 
-		[Test]
-		public void CanGetReady()
-		{
-			throw new NotImplementedException();
+			Assert.IsTrue(target.WasCreated());
+			Assert.IsTrue(target.IsStopped());
+			_context.VerifyCreatedHandlerWasCalled();
+			_context.VerifyStoppedHandlerWasCalled();
+			
 		}
 
 		[Test]
 		public void CanJoin()
 		{
-			throw new NotImplementedException();
+			var target = _context.Sut;
+			target.Create();
+			target.Join();
+
+			Assert.IsTrue(target.WasCreated());
+			Assert.IsTrue(target.IsJoining());
+			Assert.IsFalse(target.IsStopped());
+			_context.VerifyJoiningHandlerWasCalled();
 		}
 
 		[Test]
 		public void CanRun()
 		{
-			throw new NotImplementedException();
-		}
+			var target = _context.Sut;
+			target.Create();
+			target.Join();
 
-		[Test]
-		public void CanStop()
-		{
-			throw new NotImplementedException();
-		}
-
-		[Test]
-		public void CanTransitToError_FromCreating()
-		{
-			throw new NotImplementedException();
-		}
-
-		[Test]
-		public void CanTransitToError_FromJoining()
-		{
-			throw new NotImplementedException();
-		}
-
-		[Test]
-		public void CanTransitToError_FromPrelive()
-		{
-			throw new NotImplementedException();
-		}
-
-		[Test]
-		public void CanTransitToError_FromRequestServices()
-		{
-			throw new NotImplementedException();
-		}
-
-		[Test]
-		public void CanTransitToError_FromRequestSubscriptions()
-		{
-			throw new NotImplementedException();
-		}
-
-		[Test]
-		public void CanTransitToError_FromRunning()
-		{
-			throw new NotImplementedException();
-		}
-
-		[Test]
-		public void CanTransitToError_FromServicesReceived()
-		{
-			throw new NotImplementedException();
-		}
-
-		[Test]
-		public void CanTransitToError_FromSubscriptionsReceived()
-		{
-			throw new NotImplementedException();
-		}
-
-		[Test]
-		public void InitsInPrelive()
-		{
-			var context = new TestContext();
-			IRemoteComponentStateMachine target = context.Sut;
-
-			Assert.IsFalse(target.Created());
+			target.Joined();
+			target.ServicesReceived();
+			target.SubscriptionsReceived();
+			
+			Assert.IsFalse(target.IsJoining());
+			Assert.IsTrue(target.IsRunning());
+			
+			_context.VerifyRunningHandlerWasCalled();
+			_context.VerifyRunningSubstatesHandlersWereCalled();
 		}
 
 		[Test]
 		public void WhenRunningCanReceiveServices()
 		{
-			throw new NotImplementedException();
+			var target = _context.Sut;
+			target.Create();
+			target.Join();
+
+			target.Joined();
+			Assert.IsTrue(target.IsRunning());
+			_context.VerifyRunningHandlerWasCalled();
+
+			target.ServicesReceived();
+			_context.VerifyServicesReceptionExecutor();
+			Assert.IsTrue(target.IsRequestingServices());
 		}
 
 		[Test]
@@ -167,6 +244,139 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			throw new NotImplementedException();
 		}
 
+		[Test]
+		public void CanStop()
+		{
+			var target = _context.Sut;
+			target.Create();
+			target.Join();
+			target.Joined();
+
+			_context.VerifyStoppedHandlerWasCalled(1);
+
+			target.Stop();
+			Assert.IsTrue(target.IsStopped());
+			_context.VerifyStoppedHandlerWasCalled(2);
+
+		}
+
+		[Test]
+		public void CanTransitToError_FromCreating()
+		{
+			_context.WithExceptionOnCreating();
+			var target = _context.Sut;
+			Assert.Throws<ermeXRemoteComponentException>(target.Create);
+			Assert.IsTrue(target.IsErrored());
+			Assert.IsFalse(target.WasCreated());
+
+			_context.VerifyCreatedHandlerWasCalled();
+			_context.VerifyErrorHandlerWasCalled();
+		}
+
+		[Test]
+		public void CanTransitToError_FromJoining()
+		{
+			_context.WithExceptionOnJoining();
+			var target = _context.Sut;
+			target.Create();
+
+			Assert.Throws<ermeXRemoteComponentException>(target.Join);
+			Assert.IsTrue(target.IsErrored());
+			Assert.IsTrue(target.WasCreated());
+
+			_context.VerifyJoiningHandlerWasCalled();
+			_context.VerifyErrorHandlerWasCalled();
+		}
+
+		[Test]
+		public void CanTransitToError_FromRequestServices()
+		{
+			_context.WithExceptionOnRequestingServices();
+			var target = _context.Sut;
+			target.Create();
+			target.Join();
+
+			Assert.Throws<ermeXRemoteComponentException>(target.Joined);
+			Assert.IsTrue(target.IsErrored());
+			Assert.IsTrue(target.WasCreated());
+
+			_context.VerifyRequestingServicesHandlerWasCalled();
+			_context.VerifyErrorHandlerWasCalled();
+		}
+
+		[Test]
+		public void CanTransitToError_FromRequestSubscriptions()
+		{
+			_context.WithExceptionOnRequestingSubscriptions();
+			var target = _context.Sut;
+			target.Create();
+			target.Join();
+			target.Joined();
+			Assert.Throws<ermeXRemoteComponentException>(target.SubscriptionsReceived);
+			Assert.IsTrue(target.IsErrored());
+			Assert.IsTrue(target.WasCreated());
+
+			_context.VerifyRequestingSubscriptionsHandlerWasCalled();
+			_context.VerifyErrorHandlerWasCalled();
+		}
+
+		[Test]
+		public void CanTransitToError_FromRunning()
+		{
+			_context.WithExceptionOnRunning();
+			var target = _context.Sut;
+			target.Create();
+			target.Join();
+
+			Assert.Throws<ermeXRemoteComponentException>(target.Joined);
+			Assert.IsTrue(target.IsErrored());
+			Assert.IsTrue(target.WasCreated());
+
+			_context.VerifyRunningHandlerWasCalled();
+			_context.VerifyErrorHandlerWasCalled();
+		}
+
+		[Test]
+		public void CanTransitToError_FromServicesReceived()
+		{
+			_context.WithExceptionOnServicesReception();
+			var target = _context.Sut;
+			target.Create();
+			target.Join();
+
+			Assert.Throws<ermeXRemoteComponentException>(target.Joined);
+			Assert.IsTrue(target.IsErrored());
+			Assert.IsTrue(target.WasCreated());
+
+			_context.VerifyServicesReceptionExecutor();
+			_context.VerifyErrorHandlerWasCalled();
+		}
+
+		[Test]
+		public void CanTransitToError_FromSubscriptionsReceived()
+		{
+			_context.WithExceptionOnSubscriptionsReception();
+			var target = _context.Sut;
+			target.Create();
+			target.Join();
+
+			Assert.Throws<ermeXRemoteComponentException>(target.Joined);
+			Assert.IsTrue(target.IsErrored());
+			Assert.IsTrue(target.WasCreated());
+
+			_context.VerifySubscriptionsReceptionExecutor();
+			_context.VerifyErrorHandlerWasCalled();
+		}
+
+		[Test]
+		public void InitsInPrelive()
+		{
+			IRemoteComponentStateMachine target = _context.Sut;
+
+			Assert.IsFalse(target.WasCreated());
+			_context.VerifyPreliveHandlerWasCalled(0);
+		}
+		
 		[Test]
 		public void WhenUnavailableGoesToStopped()
 		{
