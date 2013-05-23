@@ -12,6 +12,10 @@ namespace ermeX.ComponentServices.RemoteComponent
 		bool IsErrored();
 		bool IsStopped();
 		bool IsRunning();
-		bool Created();
+		bool WasCreated();
+		bool IsJoining();
+		bool IsRequestingServices();
+		void SubscriptionsReceived();
+		void ServicesReceived();
 	}
 }

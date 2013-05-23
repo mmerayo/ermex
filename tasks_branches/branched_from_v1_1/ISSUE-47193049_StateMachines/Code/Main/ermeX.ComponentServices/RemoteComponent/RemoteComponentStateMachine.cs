@@ -58,7 +58,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 			new StateMachine<RemoteComponentState, RemoteComponentEvent>(RemoteComponentState.Prelive);
 
 		private StateMachine<RemoteComponentState, RemoteComponentEvent>.TriggerWithParameters<Exception> _errorTrigger;
-		
+		private bool _wasCreated=false;
+
 
 		[Inject]
 		public RemoteComponentStateMachine(IOnPreliveExecutor preliveExecutor,
@@ -208,7 +209,6 @@ namespace ermeX.ComponentServices.RemoteComponent
 			{
 				FireError(ex);
 			}
-			TryFire(RemoteComponentEvent.SubscriptionsReceived);
 		}
 
 		private void OnServicesReceived(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
@@ -236,7 +236,6 @@ namespace ermeX.ComponentServices.RemoteComponent
 			{
 				FireError(ex);
 			}
-			TryFire(RemoteComponentEvent.ServicesReceived);
 		}
 
 		private void OnRunning(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
@@ -250,6 +249,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			{
 				FireError(ex);
 			}
+			TryFire(RemoteComponentEvent.RequestServices);
 		}
 
 		private void OnJoining(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
@@ -289,6 +289,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			{
 				FireError(ex);
 			}
+			_wasCreated = true;
 			TryFire(RemoteComponentEvent.Ready);
 		}
 
@@ -337,12 +338,34 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 		public bool IsRunning()
 		{
-			return _machine.State == RemoteComponentState.Running;
+			return _machine.IsInState(RemoteComponentState.Running);
 		}
 
-		public bool Created()
+		public bool WasCreated()
 		{
-			return _machine.State != RemoteComponentState.Prelive;
+			return _wasCreated;
+		}
+
+		public bool IsJoining()
+		{
+			return _machine.State == RemoteComponentState.Joining;
+		}
+
+		public bool IsRequestingServices()
+		{
+			return _machine.State == RemoteComponentState.RequestingServices;
+		}
+
+		public void SubscriptionsReceived()
+		{
+			//TODO: ASK PARAM AND POPULATE CONTEXT
+			TryFire(RemoteComponentEvent.SubscriptionsReceived);
+		}
+
+		public void ServicesReceived()
+		{
+			//TODO: ASK PARAM AND POPULATE CONTEXT
+			TryFire(RemoteComponentEvent.ServicesReceived);
 		}
 	}
 }
