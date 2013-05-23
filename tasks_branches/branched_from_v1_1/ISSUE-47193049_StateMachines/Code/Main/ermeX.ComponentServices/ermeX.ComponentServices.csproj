@@ -83,10 +83,15 @@
     <Compile Include="RemoteComponent\Commands\IOnJoiningStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\IOnPreliveExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\IOnStoppedStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnSubscriptionsReceivedStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnRequestingSubscriptionsStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnServicesReceivedStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnServicesRequestedStepExecutor.cs" />
     <Compile Include="RemoteComponent\IRemoteComponentStateMachine.cs" />
     <Compile Include="RemoteComponent\RemoteComponentStateMachine.cs" />
     <Compile Include="RemoteComponent\IRemoteComponent.cs" />
     <Compile Include="RemoteComponent\RemoteComponent.cs" />
+    <Compile Include="RemoteComponent\RemoteComponentStateMachineContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ermeX\KeyFile.snk">

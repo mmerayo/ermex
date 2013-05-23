@@ -18,6 +18,10 @@ namespace ermeX.ComponentServices.RemoteComponent
 		private readonly IOnJoiningStepExecutor _joiningStepExecutor;
 		private readonly IOnRunningStepExecutor _runningStepExecutor;
 		private readonly IOnErrorStepExecutor _errorStepExecutor;
+		private readonly IOnRequestingSubscriptionsStepExecutor _subscriptionsRequester;
+		private readonly IOnSubscriptionsReceivedStepExecutor _subscriptionsReceivedHandler;
+		private readonly IOnServicesRequestedStepExecutor _servicesRequester;
+		private readonly IOnServicesReceivedStepExecutor _servicesReceivedHandler;
 
 		private enum RemoteComponentEvent
 		{
@@ -26,7 +30,12 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Join,
 			Joined,
 			ToError,
-			Stop
+			Stop,
+			//sub state machine
+			RequestServices,
+			ServicesReceived,
+			RequestSubscriptions,
+			SubscriptionsReceived
 		}
 		private enum RemoteComponentState
 		{
@@ -35,7 +44,12 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Stopped,
 			Joining,
 			Running,
-			Errored
+			Errored,
+			//sub state machine
+			RequestingServices,
+			ServicesReceived,
+			RequestingSubscriptions,
+			SubscriptionsReceived
 		}
 		private static readonly ILog Logger = LogManager.GetLogger<RemoteComponentStateMachine>();
 
@@ -43,6 +57,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			new StateMachine<RemoteComponentState, RemoteComponentEvent>(RemoteComponentState.Prelive);
 
 		private StateMachine<RemoteComponentState, RemoteComponentEvent>.TriggerWithParameters<Exception> _errorTrigger;
+		
 
 		[Inject]
 		public RemoteComponentStateMachine(IOnPreliveExecutor preliveExecutor,
@@ -50,7 +65,11 @@ namespace ermeX.ComponentServices.RemoteComponent
 			IOnStoppedStepExecutor stoppedStepExecutor,
 			IOnJoiningStepExecutor joiningStepExecutor,
 			IOnRunningStepExecutor runningStepExecutor,
-			IOnErrorStepExecutor errorStepExecutor)
+			IOnErrorStepExecutor errorStepExecutor,
+			IOnRequestingSubscriptionsStepExecutor subscriptionsRequester,
+			IOnSubscriptionsReceivedStepExecutor subscriptionsReceivedHandler,
+			IOnServicesRequestedStepExecutor servicesRequester,
+			IOnServicesReceivedStepExecutor servicesReceivedHandler)
 		{
 			_preliveExecutor = preliveExecutor;
 			_creatingExecutor = creatingExecutor;
@@ -58,6 +77,10 @@ namespace ermeX.ComponentServices.RemoteComponent
 			_joiningStepExecutor = joiningStepExecutor;
 			_runningStepExecutor = runningStepExecutor;
 			_errorStepExecutor = errorStepExecutor;
+			_subscriptionsRequester = subscriptionsRequester;
+			_subscriptionsReceivedHandler = subscriptionsReceivedHandler;
+			_servicesRequester = servicesRequester;
+			_servicesReceivedHandler = servicesReceivedHandler;
 			DefineStateMachineTransitions();
 		}
 
@@ -65,18 +88,18 @@ namespace ermeX.ComponentServices.RemoteComponent
 		{
 			Logger.Debug("DefineStateMachineTransitions");
 			_machine.Configure(RemoteComponentState.Prelive)
-					.OnEntry(OnPrelive)
-					.Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
-					.Permit(RemoteComponentEvent.Create, RemoteComponentState.Creating);
+			        .OnEntry(OnPrelive)
+			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
+			        .Permit(RemoteComponentEvent.Create, RemoteComponentState.Creating);
 
 			_machine.Configure(RemoteComponentState.Creating)
-					.OnEntry(OnCreating)
-					.Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
-					.Permit(RemoteComponentEvent.Ready, RemoteComponentState.Stopped);
+			        .OnEntry(OnCreating)
+			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
+			        .Permit(RemoteComponentEvent.Ready, RemoteComponentState.Stopped);
 
 			_machine.Configure(RemoteComponentState.Stopped)
 			        .OnEntry(OnStopped)
-					.Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
+			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
 			        .Permit(RemoteComponentEvent.Join, RemoteComponentState.Joining);
 
 			_machine.Configure(RemoteComponentState.Joining)
@@ -87,13 +110,46 @@ namespace ermeX.ComponentServices.RemoteComponent
 			_machine.Configure(RemoteComponentState.Running)
 			        .OnEntry(OnRunning)
 			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
-			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped);
-			
+			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
+			        .Permit(RemoteComponentEvent.RequestServices, RemoteComponentState.RequestingServices);
+
 			_errorTrigger = _machine.SetTriggerParameters<Exception>(RemoteComponentEvent.ToError);
 
 			_machine.Configure(RemoteComponentState.Errored)
 			        .OnEntryFrom(_errorTrigger, OnError)
 			        .OnEntry(a => OnError(null));
+
+			DefineRunningSubStateMachine();
+		}
+
+		private void DefineRunningSubStateMachine()
+		{
+			_machine.Configure(RemoteComponentState.RequestingServices)
+			        .SubstateOf(RemoteComponentState.Running)
+			        .OnEntry(OnRequestingServices)
+			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
+			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
+			        .Permit(RemoteComponentEvent.ServicesReceived, RemoteComponentState.ServicesReceived);
+
+			_machine.Configure(RemoteComponentState.ServicesReceived)
+			        .SubstateOf(RemoteComponentState.Running)
+			        .OnEntry(OnServicesReceived)
+			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
+			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
+			        .Permit(RemoteComponentEvent.RequestSubscriptions, RemoteComponentState.RequestingSubscriptions);
+
+			_machine.Configure(RemoteComponentState.RequestingSubscriptions)
+			        .SubstateOf(RemoteComponentState.Running)
+			        .OnEntry(OnRequestingSubscriptions)
+			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
+			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
+			        .Permit(RemoteComponentEvent.SubscriptionsReceived, RemoteComponentState.SubscriptionsReceived);
+
+			_machine.Configure(RemoteComponentState.SubscriptionsReceived)
+			        .SubstateOf(RemoteComponentState.Running)
+			        .OnEntry(OnSubscriptionsReceived)
+			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
+			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped);
 		}
 
 		private void FireError(Exception ex)
@@ -125,6 +181,61 @@ namespace ermeX.ComponentServices.RemoteComponent
 			throw new ermeXRemoteComponentException(ex);
 		}
 
+		private void OnSubscriptionsReceived(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
+		{
+			Logger.DebugFormat("OnSubscriptionsReceived-{0}", obj.Trigger);
+			try
+			{
+				_subscriptionsReceivedHandler.SubscriptionsReceived();
+			}
+			catch (Exception ex)
+			{
+				FireError(ex);
+			}
+			
+		}
+
+		private void OnRequestingSubscriptions(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
+		{
+			Logger.DebugFormat("OnRequestingSubscriptions-{0}", obj.Trigger);
+			try
+			{
+				_subscriptionsRequester.Request();
+			}
+			catch (Exception ex)
+			{
+				FireError(ex);
+			}
+			TryFire(RemoteComponentEvent.SubscriptionsReceived);
+		}
+
+		private void OnServicesReceived(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
+		{
+			Logger.DebugFormat("OnServicesReceived-{0}", obj.Trigger);
+			try
+			{
+				_servicesReceivedHandler.ServicesReceived();
+			}
+			catch (Exception ex)
+			{
+				FireError(ex);
+			}
+			TryFire(RemoteComponentEvent.RequestSubscriptions);
+		}
+
+		private void OnRequestingServices(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
+		{
+			Logger.DebugFormat("OnRequestingServices-{0}", obj.Trigger);
+			try
+			{
+				_servicesRequester.Request();
+			}
+			catch (Exception ex)
+			{
+				FireError(ex);
+			}
+			TryFire(RemoteComponentEvent.ServicesReceived);
+		}
 
 		private void OnRunning(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
 		{
