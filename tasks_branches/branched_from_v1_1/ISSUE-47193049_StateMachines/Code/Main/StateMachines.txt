@@ -7,7 +7,9 @@
 
 *Remote components
 	+Main:http://yuml.me/11260e1d
-	+Substates of Joined:
+	+Substates of Running:
+		-Current http://yuml.me/e0a4edc8
+		IMPROVEMENT TO BE DONE WHEN RESPONSE IS ASYNCHRONOUS
 		-Services: http://yuml.me/8ad87619
 		-Messages: http://yuml.me/edit/5ba190db
 
