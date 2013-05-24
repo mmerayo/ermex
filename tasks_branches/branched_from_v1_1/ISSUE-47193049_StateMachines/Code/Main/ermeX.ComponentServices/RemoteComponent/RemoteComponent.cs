@@ -17,10 +17,11 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 		public void Join()
 		{
+			//TODO: IN A SEPARATE THREAD
 			throw new System.NotImplementedException();
 		}
 
-		public void Create(Guid componentId, IPAddress ipAddress, int port)
+		public void Create(Guid componentId, IPAddress ipAddress, ushort port)
 		{
 			_stateMachine.Create(componentId,ipAddress,port);
 		}

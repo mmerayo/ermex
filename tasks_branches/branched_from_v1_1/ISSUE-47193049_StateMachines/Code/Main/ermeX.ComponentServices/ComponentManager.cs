@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using Ninject;
 using Stateless;
@@ -11,6 +13,7 @@ using ermeX.Configuration;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Component;
+using ermeX.Exceptions;
 
 namespace ermeX.ComponentServices
 {
@@ -21,6 +24,7 @@ namespace ermeX.ComponentServices
 		public static readonly ComponentManager Default=new ComponentManager();
 		private volatile ILocalComponent _localComponent;
 		private volatile IRemoteComponent _friendComponent;
+		private readonly IDictionary<Guid,IRemoteComponent> _remoteComponents = new Dictionary<Guid, IRemoteComponent>();
 		private Configurer _settings;
 		private ComponentManager()
 		{}
@@ -90,17 +94,38 @@ namespace ermeX.ComponentServices
 							var busSettings = _settings.GetSettings<IBusSettings>();
 							if (busSettings.FriendComponent != null)
 							{
-								_friendComponent = (IRemoteComponent) IoCManager.Kernel.GetService(typeof (IRemoteComponent));
-								_friendComponent.Create(busSettings.FriendComponent.ComponentId,
-								                        busSettings.FriendComponent.Endpoint.Address,
-								                        busSettings.FriendComponent.Endpoint.Port);
+								_friendComponent = AddRemoteComponent(busSettings.FriendComponent.ComponentId,
+			                        busSettings.FriendComponent.Endpoint.Address,
+			                        (ushort) busSettings.FriendComponent.Endpoint.Port);
 							}
-								
 						}
 
-				throw new NotImplementedException("return value");
-				return null;
+				return _friendComponent;
 			}
+		}
+
+		public IRemoteComponent GetRemoteComponent(Guid componentId)
+		{
+			IRemoteComponent result;
+			_remoteComponents.TryGetValue(componentId, out result);
+
+			return result;
+		}
+
+		public IRemoteComponent AddRemoteComponent(Guid componentId, IPAddress address, ushort port)
+		{
+
+			if(!_remoteComponents.ContainsKey(componentId))
+				lock(_syncLock)
+					if (!_remoteComponents.ContainsKey(componentId))
+					{
+						var result = (IRemoteComponent)IoCManager.Kernel.GetService(typeof(IRemoteComponent));
+						_remoteComponents.Add(componentId,result);
+						result.Create(componentId, address, port);
+						result.Join();
+					}
+
+			return _remoteComponents[componentId];
 		}
 	}
 }
