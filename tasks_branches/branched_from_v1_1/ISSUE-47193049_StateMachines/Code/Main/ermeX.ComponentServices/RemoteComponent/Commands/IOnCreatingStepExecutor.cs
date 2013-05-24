@@ -2,6 +2,6 @@
 {
 	internal interface IOnCreatingStepExecutor
 	{
-		void Create();
+		void Create(IRemoteComponentStateMachineContext context);
 	}
 }
