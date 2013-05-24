@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Net;
 
 namespace ermeX.ComponentServices.RemoteComponent
 {
 	internal interface IRemoteComponentStateMachine
 	{
-		void Create();
+		void Create(Guid componentId, IPAddress ipAddress, ushort port);
 		void Join();
 		void Joined();
 		void Stop();

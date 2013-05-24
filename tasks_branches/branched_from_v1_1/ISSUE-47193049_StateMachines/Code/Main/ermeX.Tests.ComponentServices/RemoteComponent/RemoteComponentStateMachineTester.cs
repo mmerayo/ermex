@@ -57,7 +57,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public void VerifyCreatedHandlerWasCalled(int times=1)
 			{
-				_onCreatingStepExecutor.Verify(x=>x.Create(),Times.Exactly(times));
+				_onCreatingStepExecutor.Verify(x=>x.Create(TODO),Times.Exactly(times));
 			}
 
 			public void VerifyPreliveHandlerWasCalled(int times=1)
@@ -115,7 +115,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public TestContext WithExceptionOnCreating()
 			{
-				_onCreatingStepExecutor.Setup(x=>x.Create()).Throws<Exception>();
+				_onCreatingStepExecutor.Setup(x=>x.Create(TODO)).Throws<Exception>();
 				return this;
 			}
 

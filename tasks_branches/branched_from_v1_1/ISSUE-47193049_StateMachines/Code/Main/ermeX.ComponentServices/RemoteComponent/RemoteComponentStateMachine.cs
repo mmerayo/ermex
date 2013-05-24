@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using Common.Logging;
 using Ninject;
 using Stateless;
 using ermeX.ComponentServices.RemoteComponent.Commands;
+using ermeX.ConfigurationManagement.IoC;
 using ermeX.Exceptions;
 
 namespace ermeX.ComponentServices.RemoteComponent
 {
 	internal sealed class RemoteComponentStateMachine:IRemoteComponentStateMachine
 	{
+		private readonly IRemoteComponentStateMachineContext _context;
 		private readonly IOnPreliveExecutor _preliveExecutor;
 		private readonly IOnCreatingStepExecutor _creatingExecutor;
 		private readonly IOnStoppedStepExecutor _stoppedStepExecutor;
@@ -62,7 +65,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 
 		[Inject]
-		public RemoteComponentStateMachine(IOnPreliveExecutor preliveExecutor,
+		public RemoteComponentStateMachine(IRemoteComponentStateMachineContext context,
+			IOnPreliveExecutor preliveExecutor,
 			IOnCreatingStepExecutor creatingExecutor,
 			IOnStoppedStepExecutor stoppedStepExecutor,
 			IOnJoiningStepExecutor joiningStepExecutor,
@@ -73,6 +77,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			IOnRequestingServicesStepExecutor servicesRequester,
 			IOnServicesReceivedStepExecutor servicesReceivedHandler)
 		{
+			_context = context;
 			_preliveExecutor = preliveExecutor;
 			_creatingExecutor = creatingExecutor;
 			_stoppedStepExecutor = stoppedStepExecutor;
@@ -287,7 +292,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Logger.DebugFormat("OnCreating-{0}", obj.Trigger);
 			try
 			{
-				_creatingExecutor.Create();
+				_creatingExecutor.Create(_context);
 			}
 			catch (Exception ex)
 			{
@@ -310,8 +315,12 @@ namespace ermeX.ComponentServices.RemoteComponent
 			}
 		}
 
-		public void Create()
+		public void Create (Guid componentId, IPAddress ipAddress, ushort port)
 		{
+			_context.ComponentId = componentId;
+			_context.IpAddress = ipAddress;
+			_context.Port = port;
+
 			TryFire(RemoteComponentEvent.Create);
 		}
 

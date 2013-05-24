@@ -1,10 +1,15 @@
-﻿namespace ermeX.ComponentServices.RemoteComponent
+﻿using System;
+using System.Net;
+
+namespace ermeX.ComponentServices.RemoteComponent
 {
 	/// <summary>
 	/// Keeps state machine context info
 	/// </summary>
-	internal class RemoteComponentStateMachineContext
+	internal class RemoteComponentStateMachineContext:IRemoteComponentStateMachineContext
 	{
-		
+		public Guid ComponentId { get; set; }
+		public IPAddress IpAddress { get; set; }
+		public ushort Port { get; set; }
 	}
 }

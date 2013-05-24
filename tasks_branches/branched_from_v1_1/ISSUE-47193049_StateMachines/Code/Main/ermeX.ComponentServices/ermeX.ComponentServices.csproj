@@ -87,7 +87,9 @@
     <Compile Include="RemoteComponent\Commands\IOnRequestingSubscriptionsStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\IOnServicesReceivedStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\IOnRequestingServicesStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\OnCreatingStepExecutor.cs" />
     <Compile Include="RemoteComponent\IRemoteComponentStateMachine.cs" />
+    <Compile Include="RemoteComponent\IRemoteComponentStateMachineContext.cs" />
     <Compile Include="RemoteComponent\RemoteComponentStateMachine.cs" />
     <Compile Include="RemoteComponent\IRemoteComponent.cs" />
     <Compile Include="RemoteComponent\RemoteComponent.cs" />

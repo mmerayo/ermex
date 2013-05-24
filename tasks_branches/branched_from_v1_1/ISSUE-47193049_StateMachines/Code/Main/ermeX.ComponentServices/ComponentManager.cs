@@ -24,10 +24,7 @@ namespace ermeX.ComponentServices
 		private Configurer _settings;
 		private ComponentManager()
 		{}
-
-		[Inject]
-		private IRegisterComponents ComponentRegistrator { get; set; }
-
+		
 		public void Setup(Configurer settings)
 		{
 			lock (_syncLock)
@@ -89,12 +86,16 @@ namespace ermeX.ComponentServices
 						{
 							//TODO: components are created prelive and then invoke join from stop in a different thread
 							//TODO: when any component is errored establish a policy to try to restart it
-							throw new NotImplementedException("The following lines to be implemented by the state machine");
+							//throw new NotImplementedException("The following lines to be implemented by the state machine");
 							var busSettings = _settings.GetSettings<IBusSettings>();
 							if (busSettings.FriendComponent != null)
-								ComponentRegistrator.CreateRemoteComponent(busSettings.FriendComponent.ComponentId,
-																			busSettings.FriendComponent.Endpoint.Address.ToString(),
-																			busSettings.FriendComponent.Endpoint.Port);
+							{
+								_friendComponent = (IRemoteComponent) IoCManager.Kernel.GetService(typeof (IRemoteComponent));
+								_friendComponent.Create(busSettings.FriendComponent.ComponentId,
+								                        busSettings.FriendComponent.Endpoint.Address,
+								                        busSettings.FriendComponent.Endpoint.Port);
+							}
+								
 						}
 
 				throw new NotImplementedException("return value");
