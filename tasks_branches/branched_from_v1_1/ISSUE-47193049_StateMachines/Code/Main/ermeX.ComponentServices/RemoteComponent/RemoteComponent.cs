@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
+using System.Threading;
 using Ninject;
-using ermeX.DAL.Interfaces.Component;
 
 namespace ermeX.ComponentServices.RemoteComponent
 {
@@ -17,8 +17,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 		public void Join()
 		{
-			//TODO: IN A SEPARATE THREAD
-			throw new System.NotImplementedException();
+			var joinThread = new Thread(() => _stateMachine.Join());
+			joinThread.Start();
 		}
 
 		public void Create(Guid componentId, IPAddress ipAddress, ushort port)

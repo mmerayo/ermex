@@ -2,6 +2,6 @@
 {
 	internal interface IOnServicesReceivedStepExecutor
 	{
-		void ServicesReceived();
+		void ServicesReceived(RemoteComponentStateMachineContext context);
 	}
 }

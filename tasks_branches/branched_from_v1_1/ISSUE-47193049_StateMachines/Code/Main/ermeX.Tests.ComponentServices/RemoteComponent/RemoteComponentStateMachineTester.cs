@@ -67,7 +67,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public void VerifyJoiningHandlerWasCalled(int times=1)
 			{
-				_onJoiningStepExecutor.Verify(x=>x.Join(),Times.Exactly(times));
+				_onJoiningStepExecutor.Verify(x=>x.Join(TODO),Times.Exactly(times));
 			}
 
 			public void VerifyStoppedHandlerWasCalled(int times=1)
@@ -95,7 +95,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public void VerifyServicesReceptionExecutor(int times=1)
 			{
-				_onServicesReceivedStepExecutor.Verify(x => x.ServicesReceived(), Times.Exactly(times));
+				_onServicesReceivedStepExecutor.Verify(x => x.ServicesReceived(TODO), Times.Exactly(times));
 			}
 
 			public void VerifyRequestingSubscriptionsHandlerWasCalled(int times=1)
@@ -122,7 +122,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public TestContext WithExceptionOnJoining()
 			{
-				_onJoiningStepExecutor.Setup(x => x.Join()).Throws<Exception>();
+				_onJoiningStepExecutor.Setup(x => x.Join(TODO)).Throws<Exception>();
 				return this;
 			}
 
@@ -146,7 +146,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			}
 			public TestContext WithExceptionOnServicesReception()
 			{
-				_onServicesReceivedStepExecutor.Setup(x => x.ServicesReceived()).Throws<Exception>();
+				_onServicesReceivedStepExecutor.Setup(x => x.ServicesReceived(TODO)).Throws<Exception>();
 				return this;
 			}
 

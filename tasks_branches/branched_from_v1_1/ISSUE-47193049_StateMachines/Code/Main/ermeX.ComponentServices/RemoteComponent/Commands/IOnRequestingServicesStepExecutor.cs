@@ -1,7 +1,9 @@
-﻿namespace ermeX.ComponentServices.RemoteComponent.Commands
+﻿using Ninject;
+
+namespace ermeX.ComponentServices.RemoteComponent.Commands
 {
 	internal interface IOnRequestingServicesStepExecutor
 	{
-		void Request();
+		void Request(IRemoteComponentStateMachineContext context);
 	}
 }
