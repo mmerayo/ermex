@@ -2,6 +2,6 @@
 {
 	internal interface IOnJoiningStepExecutor
 	{
-		void Join();
+		void Join(RemoteComponentStateMachineContext context);
 	}
 }

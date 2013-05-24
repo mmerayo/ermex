@@ -88,6 +88,9 @@
     <Compile Include="RemoteComponent\Commands\IOnServicesReceivedStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\IOnRequestingServicesStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnCreatingStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\OnJoiningStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\OnRequestingServicesStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\OnServicesReceivedStepExecutor.cs" />
     <Compile Include="RemoteComponent\IRemoteComponentStateMachine.cs" />
     <Compile Include="RemoteComponent\IRemoteComponentStateMachineContext.cs" />
     <Compile Include="RemoteComponent\RemoteComponentStateMachine.cs" />
@@ -118,6 +121,10 @@
       <Project>{AC2791B0-305E-44E5-B6C1-88771BDE7860}</Project>
       <Name>ermeX.Bus.Publishing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Bus.Synchronisation\ermeX.Bus.Synchronisation.csproj">
+      <Project>{560852A4-AF6A-4440-BC97-9A5453DDD5FC}</Project>
+      <Name>ermeX.Bus.Synchronisation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.ConfigurationManagement.Settings\ermeX.ConfigurationManagement.Settings.csproj">
       <Project>{A6C2D141-25F0-4BFF-93BC-F9EF0CBDB3B1}</Project>
       <Name>ermeX.ConfigurationManagement.Settings</Name>
@@ -141,6 +148,10 @@
     <ProjectReference Include="..\ermeX.Interfaces\ermeX.Interfaces.csproj">
       <Project>{A67BD599-72DF-40F6-B632-AFB22B4B3D18}</Project>
       <Name>ermeX.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Models\ermeX.Models.csproj">
+      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
+      <Name>ermeX.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Parallel\ermeX.Parallel.csproj">
       <Project>{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}</Project>

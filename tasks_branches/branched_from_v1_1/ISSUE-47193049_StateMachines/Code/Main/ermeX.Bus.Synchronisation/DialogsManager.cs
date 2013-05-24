@@ -501,6 +501,7 @@ namespace ermeX.Bus.Synchronisation
 
 		private void NotifyMySubscriptions(Guid componentId)
 		{
+			aqui, hacer en la recepcion de las subscriptiones
 			var myIncomingSubscriptions = IncommingSubscriptionsReader.FetchAll();
 			//get my subscriptions that are not from componentId
 

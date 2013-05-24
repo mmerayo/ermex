@@ -78,6 +78,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 			IOnServicesReceivedStepExecutor servicesReceivedHandler)
 		{
 			_context = context;
+			_context.StateMachine = this;
+
 			_preliveExecutor = preliveExecutor;
 			_creatingExecutor = creatingExecutor;
 			_stoppedStepExecutor = stoppedStepExecutor;
@@ -88,6 +90,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			_subscriptionsReceivedHandler = subscriptionsReceivedHandler;
 			_servicesRequester = servicesRequester;
 			_servicesReceivedHandler = servicesReceivedHandler;
+			
 			DefineStateMachineTransitions();
 		}
 
@@ -221,7 +224,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Logger.DebugFormat("OnServicesReceived-{0}", obj.Trigger);
 			try
 			{
-				_servicesReceivedHandler.ServicesReceived();
+				_servicesReceivedHandler.ServicesReceived(TODO);
 			}
 			catch (Exception ex)
 			{
@@ -266,7 +269,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Logger.DebugFormat("OnJoining-{0}", obj.Trigger);
 			try
 			{
-				_joiningStepExecutor.Join();
+				_joiningStepExecutor.Join(TODO);
 			}
 			catch (Exception ex)
 			{
