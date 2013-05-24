@@ -6,9 +6,9 @@
 	+Main: http://yuml.me/edit/4b4c6e86
 
 *Remote components
-	+Main:http://yuml.me/b716d97e
+	+Main:http://yuml.me/52506275
 	+Substates of Running:
-		-Current http://yuml.me/e0a4edc8
+		-Current http://yuml.me/b271cf89
 		IMPROVEMENT TO BE DONE WHEN RESPONSE IS ASYNCHRONOUS
 		-Services: http://yuml.me/8ad87619
 		-Messages: http://yuml.me/edit/5ba190db
