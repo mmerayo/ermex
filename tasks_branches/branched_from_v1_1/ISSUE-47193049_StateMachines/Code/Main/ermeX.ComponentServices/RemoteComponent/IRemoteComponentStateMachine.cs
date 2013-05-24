@@ -15,6 +15,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 		bool WasCreated();
 		bool IsJoining();
 		bool IsRequestingServices();
+		bool IsRequestingSubscriptions();
+
 		void SubscriptionsReceived();
 		void ServicesReceived();
 	}

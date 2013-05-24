@@ -101,18 +101,18 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 			_machine.Configure(RemoteComponentState.Stopped)
 			        .OnEntry(OnStopped)
+
 			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
 			        .Permit(RemoteComponentEvent.Join, RemoteComponentState.Joining);
 
 			_machine.Configure(RemoteComponentState.Joining)
 			        .OnEntry(OnJoining)
 			        .Permit(RemoteComponentEvent.Joined, RemoteComponentState.Running)
-					.Permit(RemoteComponentEvent.UnAvailable,RemoteComponentState.Stopped)
-			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored);
+			        .Permit(RemoteComponentEvent.UnAvailable, RemoteComponentState.Stopped);
 
 			_machine.Configure(RemoteComponentState.Running)
 			        .OnEntry(OnRunning)
-			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
+			        .Permit(RemoteComponentEvent.UnAvailable, RemoteComponentState.Stopped)
 			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
 			        .Permit(RemoteComponentEvent.RequestServices, RemoteComponentState.RequestingServices);
 
@@ -130,29 +130,29 @@ namespace ermeX.ComponentServices.RemoteComponent
 			_machine.Configure(RemoteComponentState.RequestingServices)
 			        .SubstateOf(RemoteComponentState.Running)
 			        .OnEntry(OnRequestingServices)
-			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
-			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
+					//.Permit(RemoteComponentEvent.UnAvailable, RemoteComponentState.Stopped)
+					//.Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
 			        .Permit(RemoteComponentEvent.ServicesReceived, RemoteComponentState.ServicesReceived);
 
 			_machine.Configure(RemoteComponentState.ServicesReceived)
 			        .SubstateOf(RemoteComponentState.Running)
 			        .OnEntry(OnServicesReceived)
-			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
-			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
+				//.Permit(RemoteComponentEvent.UnAvailable, RemoteComponentState.Stopped)
+				//.Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
 			        .Permit(RemoteComponentEvent.RequestSubscriptions, RemoteComponentState.RequestingSubscriptions);
 
 			_machine.Configure(RemoteComponentState.RequestingSubscriptions)
 			        .SubstateOf(RemoteComponentState.Running)
 			        .OnEntry(OnRequestingSubscriptions)
-			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
-			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
+				//.Permit(RemoteComponentEvent.UnAvailable, RemoteComponentState.Stopped)
+				//.Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
 			        .Permit(RemoteComponentEvent.SubscriptionsReceived, RemoteComponentState.SubscriptionsReceived);
 
 			_machine.Configure(RemoteComponentState.SubscriptionsReceived)
 			        .SubstateOf(RemoteComponentState.Running)
-			        .OnEntry(OnSubscriptionsReceived)
-			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
-			        .Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped);
+			        .OnEntry(OnSubscriptionsReceived);
+			//.Permit(RemoteComponentEvent.UnAvailable, RemoteComponentState.Stopped)
+			//.Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
 		}
 
 		private void FireError(Exception ex)
@@ -193,7 +193,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			}
 			catch (Exception ex)
 			{
-				FireError(ex);
+				StopDueToUnAvailability(obj, ex);
 			}
 			
 		}
@@ -207,7 +207,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			}
 			catch (Exception ex)
 			{
-				FireError(ex);
+				StopDueToUnAvailability(obj, ex);
 			}
 		}
 
@@ -220,7 +220,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 			}
 			catch (Exception ex)
 			{
-				FireError(ex);
+				StopDueToUnAvailability(obj, ex);
+				return;
 			}
 			TryFire(RemoteComponentEvent.RequestSubscriptions);
 		}
@@ -234,9 +235,11 @@ namespace ermeX.ComponentServices.RemoteComponent
 			}
 			catch (Exception ex)
 			{
-				FireError(ex);
+				StopDueToUnAvailability(obj, ex);
 			}
 		}
+
+	
 
 		private void OnRunning(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
 		{
@@ -247,7 +250,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 			}
 			catch (Exception ex)
 			{
-				FireError(ex);
+				StopDueToUnAvailability(obj, ex);
+				return;
 			}
 			TryFire(RemoteComponentEvent.RequestServices);
 		}
@@ -261,7 +265,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			}
 			catch (Exception ex)
 			{
-				FireError(ex);
+				StopDueToUnAvailability(obj, ex);
 			}
 		}
 
@@ -356,6 +360,11 @@ namespace ermeX.ComponentServices.RemoteComponent
 			return _machine.State == RemoteComponentState.RequestingServices;
 		}
 
+		public bool IsRequestingSubscriptions()
+		{
+			return _machine.IsInState(RemoteComponentState.RequestingSubscriptions);
+		}
+
 		public void SubscriptionsReceived()
 		{
 			//TODO: ASK PARAM AND POPULATE CONTEXT
@@ -366,6 +375,11 @@ namespace ermeX.ComponentServices.RemoteComponent
 		{
 			//TODO: ASK PARAM AND POPULATE CONTEXT
 			TryFire(RemoteComponentEvent.ServicesReceived);
+		}
+		private void StopDueToUnAvailability(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj, Exception ex)
+		{
+			Logger.InfoFormat("Could not transit to {0} due to {1}", obj.Destination, ex.ToString());
+			TryFire(RemoteComponentEvent.UnAvailable);
 		}
 	}
 }
