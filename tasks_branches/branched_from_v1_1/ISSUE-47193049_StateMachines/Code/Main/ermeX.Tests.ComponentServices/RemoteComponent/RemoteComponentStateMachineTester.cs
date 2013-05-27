@@ -77,7 +77,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public void VerifyRunningHandlerWasCalled(int times=1)
 			{
-				_onRunningStepExecutor.Verify(x=>x.OnRunning(),Times.Exactly(times));
+				_onRunningStepExecutor.Verify(x=>x.OnRunning(TODO),Times.Exactly(times));
 			}
 
 			public void VerifyRunningSubstatesHandlersWereCalled(int times=1)
@@ -152,7 +152,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public TestContext WithExceptionOnRunning()
 			{
-				_onRunningStepExecutor.Setup(x => x.OnRunning()).Throws<Exception>();
+				_onRunningStepExecutor.Setup(x => x.OnRunning(TODO)).Throws<Exception>();
 				return this;
 			}
 

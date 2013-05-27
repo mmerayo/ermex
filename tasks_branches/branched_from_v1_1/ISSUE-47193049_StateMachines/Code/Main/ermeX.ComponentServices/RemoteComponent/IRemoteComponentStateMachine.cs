@@ -20,5 +20,6 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 		void SubscriptionsReceived();
 		void ServicesReceived();
+		IRemoteComponentStateMachineContext Context { get; }
 	}
 }

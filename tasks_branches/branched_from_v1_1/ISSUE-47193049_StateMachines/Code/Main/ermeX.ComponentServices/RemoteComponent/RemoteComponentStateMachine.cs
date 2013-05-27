@@ -55,6 +55,12 @@ namespace ermeX.ComponentServices.RemoteComponent
 			RequestingSubscriptions,
 			SubscriptionsReceived
 		}
+
+		public IRemoteComponentStateMachineContext Context
+		{
+			get { return _context; }
+		}
+
 		private static readonly ILog Logger = LogManager.GetLogger<RemoteComponentStateMachine>();
 
 		private readonly StateMachine<RemoteComponentState, RemoteComponentEvent> _machine =
@@ -254,7 +260,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Logger.DebugFormat("OnJoined-{0}", obj.Trigger);
 			try
 			{
-				_runningStepExecutor.OnRunning();
+				_runningStepExecutor.OnRunning(TODO);
 			}
 			catch (Exception ex)
 			{
@@ -388,6 +394,9 @@ namespace ermeX.ComponentServices.RemoteComponent
 			//TODO: ASK PARAM AND POPULATE CONTEXT
 			TryFire(RemoteComponentEvent.ServicesReceived);
 		}
+
+		
+
 		private void StopDueToUnAvailability(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj, Exception ex)
 		{
 			Logger.InfoFormat("Could not transit to {0} due to {1}", obj.Destination, ex.ToString());
