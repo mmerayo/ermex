@@ -94,9 +94,10 @@ namespace ermeX.ComponentServices
 							var busSettings = _settings.GetSettings<IBusSettings>();
 							if (busSettings.FriendComponent != null)
 							{
-								_friendComponent = AddRemoteComponent(busSettings.FriendComponent.ComponentId,
+								AddRemoteComponent(busSettings.FriendComponent.ComponentId,
 			                        busSettings.FriendComponent.Endpoint.Address,
 			                        (ushort) busSettings.FriendComponent.Endpoint.Port);
+								_friendComponent = GetRemoteComponent(busSettings.FriendComponent.ComponentId);
 							}
 						}
 
@@ -112,7 +113,7 @@ namespace ermeX.ComponentServices
 			return result;
 		}
 
-		public IRemoteComponent AddRemoteComponent(Guid componentId, IPAddress address, ushort port)
+		public bool AddRemoteComponent(Guid componentId, IPAddress address, ushort port,bool joinIfCreated=false)
 		{
 
 			if(!_remoteComponents.ContainsKey(componentId))
@@ -122,10 +123,12 @@ namespace ermeX.ComponentServices
 						var result = (IRemoteComponent)IoCManager.Kernel.GetService(typeof(IRemoteComponent));
 						_remoteComponents.Add(componentId,result);
 						result.Create(componentId, address, port);
-						result.Join();
+						if(joinIfCreated)
+							result.Join();
+						return true;
 					}
 
-			return _remoteComponents[componentId];
+			return false;
 		}
 	}
 }
