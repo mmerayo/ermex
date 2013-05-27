@@ -8,7 +8,8 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 		public void OnRunning(RemoteComponentStateMachineContext context)
 		{
 			Logger.DebugFormat("OnRunning- Component:{0}" ,context.ComponentId);
-			//TODO: USE PARALLELTASK
+
+			//TODO: PARALLEL TASK
 			ComponentManager.Default.LocalComponent.PublishMyServices(context.ComponentId);
 			ComponentManager.Default.LocalComponent.PublishMySubscriptions(context.ComponentId);
 		}

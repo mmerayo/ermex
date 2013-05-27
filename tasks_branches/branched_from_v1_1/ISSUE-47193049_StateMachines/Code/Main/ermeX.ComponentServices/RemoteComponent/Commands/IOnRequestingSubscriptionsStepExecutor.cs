@@ -2,6 +2,6 @@
 {
 	internal interface IOnRequestingSubscriptionsStepExecutor
 	{
-		void Request();
+		void Request(IRemoteComponentStateMachineContext context);
 	}
 }

@@ -155,7 +155,6 @@ namespace ermeX.Bus.Synchronisation
 
 		private void JoinNetworkComponent(Guid componentId)
 		{
-			Este implementar el join del componente
 			Logger.Trace(x => x("HANDSHAKE: Start Joining component {0}", componentId));
 			if (BusSettings.FriendComponent == null)
 				return;
@@ -501,7 +500,6 @@ namespace ermeX.Bus.Synchronisation
 
 		private void NotifyMySubscriptions(Guid componentId)
 		{
-			aqui, hacer en la recepcion de las subscriptiones
 			var myIncomingSubscriptions = IncommingSubscriptionsReader.FetchAll();
 			//get my subscriptions that are not from componentId
 
