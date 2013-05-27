@@ -24,7 +24,6 @@ using Ninject.Parameters;
 using ermeX.Common.Caching;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
-using ermeX.ConfigurationManagement.Status;
 using ermeX.Parallel.Scheduling;
 
 
@@ -49,10 +48,7 @@ namespace ermeX.ConfigurationManagement.IoC.InjectionModules
         {
             
             Bind<IComponentSettings>().ToConstant(_settings);
-
-            Bind<IStatusManager>().To<StatusManager>().InSingletonScope();
-
-             
+ 
             Bind<ICacheProvider>().ToConstant(new MemoryCacheStore(_settings.CacheExpirationSeconds));
 
             //Bind<SystemTaskQueue>().ToSelf().InSingletonScope();

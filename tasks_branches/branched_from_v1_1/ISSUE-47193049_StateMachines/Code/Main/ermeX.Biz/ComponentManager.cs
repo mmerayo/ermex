@@ -28,7 +28,7 @@ using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByMessageQueue;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.ConfigurationManagement.Status;
+
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.Models.Entities;

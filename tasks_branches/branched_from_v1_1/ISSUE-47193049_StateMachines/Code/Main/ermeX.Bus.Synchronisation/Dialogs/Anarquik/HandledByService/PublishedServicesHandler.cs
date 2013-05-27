@@ -26,7 +26,7 @@ using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
-using ermeX.ConfigurationManagement.Status;
+
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.Models.Entities;
@@ -43,19 +43,16 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		                                IMessageListener listener,
 		                                ICanReadServiceDetails serviceDetailsReader,
 		                                ICanWriteServiceDetails serviceDetailsWritter,
-		                                IComponentSettings settings,
-		                                IStatusManager statusManager)
+		                                IComponentSettings settings)
 		{
 			_serviceDetailsReader = serviceDetailsReader;
 			_serviceDetailsWritter = serviceDetailsWritter;
 			if (publisher == null) throw new ArgumentNullException("publisher");
 			if (listener == null) throw new ArgumentNullException("listener");
 			if (settings == null) throw new ArgumentNullException("settings");
-			if (statusManager == null) throw new ArgumentNullException("statusManager");
 			Publisher = publisher;
 			Listener = listener;
 			Settings = settings;
-			StatusManager = statusManager;
 		}
 
 		private IMessagePublisher Publisher { get; set; }
@@ -63,7 +60,6 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		private IMessageListener Listener { get; set; }
 		private IComponentSettings Settings { get; set; }
 		private static readonly ILog Logger = LogManager.GetLogger(typeof(PublishedServicesHandler).FullName);
-		private IStatusManager StatusManager { get; set; }
 
 		#region IPublishedServicesDefinitionsService Members
 

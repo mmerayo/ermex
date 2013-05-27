@@ -4,7 +4,7 @@ using Ninject;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.ConfigurationManagement.Status;
+
 using ermeX.Parallel.Queues;
 
 namespace ermeX.ComponentServices.ComponentSetup

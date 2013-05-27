@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using Common.Logging;
 using Ninject;
-using ermeX.ConfigurationManagement.Status;
+
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
@@ -23,23 +23,6 @@ namespace ermeX.DAL.Commands.Component
 			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_factory = factory;
 			_repository = repository;
-		}
-
-		public void SetComponentRunningStatus(Guid componentId, ComponentStatus newStatus, bool exchangedDefinitions = false)
-		{
-			Logger.TraceFormat(
-				"SetComponentRunningStatus. AppDomain: {0} - ThreadId: {1}  componentId={2}, newStatus={3}, exchangedDefinitions={4}",
-				AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId,
-				componentId, newStatus, exchangedDefinitions);
-
-			var localComponent = _repository.Single(x => x.ComponentId == componentId);
-			localComponent.IsRunning = newStatus == ComponentStatus.Running;
-			localComponent.ExchangedDefinitions = exchangedDefinitions;
-
-			_factory.ExecuteInUnitOfWork(false, uow =>
-				{
-					_repository.Save(uow, localComponent);
-				});
 		}
 
 		public void Save(AppComponent component)

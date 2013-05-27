@@ -26,7 +26,7 @@ using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
-using ermeX.ConfigurationManagement.Status;
+
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Models.Entities;

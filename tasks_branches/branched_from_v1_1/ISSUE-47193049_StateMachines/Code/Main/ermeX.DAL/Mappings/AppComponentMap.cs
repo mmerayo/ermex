@@ -51,8 +51,6 @@ namespace ermeX.DAL.Mappings
 			Map(x => x.ComponentOwner).Column(AppComponent.GetDbFieldName("ComponentOwner")).Not.Nullable();
 			Map(x => x.Latency).Column(AppComponent.GetDbFieldName("Latency")).Not.Nullable();
 			Map(x => x.Version).Column(AppComponent.GetDbFieldName("Version")).Not.Nullable();
-			Map(x => x.IsRunning).Column(AppComponent.GetDbFieldName("IsRunning")).Not.Nullable();
-			Map(x => x.ExchangedDefinitions).Column(AppComponent.GetDbFieldName("ExchangedDefinitions")).Not.Nullable();
             Map(x => x.ComponentExchanges).Column(AppComponent.GetDbFieldName("ComponentExchanges"));
             //TODO:restrictions composite key
         }
