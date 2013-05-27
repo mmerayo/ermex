@@ -69,5 +69,15 @@ namespace ermeX.ComponentServices.LocalComponent
 			if (myIncomingSubscriptions != null && myIncomingSubscriptions.Any())
 				proxy.AddSuscriptions(myIncomingSubscriptions);
 		}
+
+		public void Stop()
+		{
+			_stateMachine.Stop();
+		}
+
+		public bool IsStarted()
+		{
+			return _stateMachine.IsRunning();
+		}
 	}
 }

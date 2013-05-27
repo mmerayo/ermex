@@ -63,6 +63,7 @@
     <Compile Include="IErmexComponent.cs" />
     <Compile Include="LocalComponent\Commands\OnPublishServicesStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\OnRunStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\OnStopStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\OnSubscribeToMessagesStepExecutor.cs" />
     <Compile Include="LocalComponent\ILocalComponent.cs" />
     <Compile Include="LocalComponent\Commands\IOnSubscribeToMessagesStepExecutor.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="RemoteComponent\Commands\OnCreatingStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnJoiningStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnRequestingServicesStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\OnRunningStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnServicesReceivedStepExecutor.cs" />
     <Compile Include="RemoteComponent\IRemoteComponentStateMachine.cs" />
     <Compile Include="RemoteComponent\IRemoteComponentStateMachineContext.cs" />

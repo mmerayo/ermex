@@ -22,6 +22,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 		[Inject]
 		private IStatusManager StatusManager { get; set; }
 
+
 		public void InjectServices()
 		{
 			ConfigurationManager.SetSettingsSource(_settings);
@@ -32,6 +33,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 		{
 			//clean up the soa component and its reset to call the component manager
 			if (IoCManager.Kernel == null) return;
+			
 
 			if (StatusManager.CurrentStatus != ComponentStatus.Running)
 				return;

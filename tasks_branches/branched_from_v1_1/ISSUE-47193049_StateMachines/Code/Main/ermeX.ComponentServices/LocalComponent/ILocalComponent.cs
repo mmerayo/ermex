@@ -7,5 +7,7 @@ namespace ermeX.ComponentServices.LocalComponent
 		void Start();
 		void PublishMyServices(Guid componentId);
 		void PublishMySubscriptions(Guid componentId);
+		void Stop();
+		bool IsStarted();
 	}
 }
