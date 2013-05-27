@@ -79,7 +79,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteComponent\Commands\IOnCreatingStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\IOnErrorStepExecutor.cs" />
-    <Compile Include="RemoteComponent\Commands\IOnJoinedStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnRunningStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\IOnJoiningStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\IOnPreliveExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\IOnStoppedStepExecutor.cs" />
