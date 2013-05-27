@@ -61,7 +61,9 @@
     <Compile Include="ComponentSetup\SetupMachine.cs" />
     <Compile Include="ComponentSetup\SetupServiceInjector.cs" />
     <Compile Include="IErmexComponent.cs" />
+    <Compile Include="LocalComponent\Commands\OnErrorStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\OnPublishServicesStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\OnResetStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\OnRunStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\OnStopStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\OnSubscribeToMessagesStepExecutor.cs" />
@@ -89,10 +91,15 @@
     <Compile Include="RemoteComponent\Commands\IOnServicesReceivedStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\IOnRequestingServicesStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnCreatingStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\OnErrorStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnJoiningStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\OnPreliveExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnRequestingServicesStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\OnRequestingSubscriptionsStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnRunningStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnServicesReceivedStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\OnStoppedStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\OnSubscriptionsReceivedStepExecutor.cs" />
     <Compile Include="RemoteComponent\IRemoteComponentStateMachine.cs" />
     <Compile Include="RemoteComponent\IRemoteComponentStateMachineContext.cs" />
     <Compile Include="RemoteComponent\RemoteComponentStateMachine.cs" />
