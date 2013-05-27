@@ -52,7 +52,7 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 				}
 				ComponentManager.Default.AddRemoteComponent(componentData.Item2.ServerId,
 				                                            ipAddress,
-				                                            (ushort) componentData.Item2.Port);
+				                                            (ushort) componentData.Item2.Port,true);
 			}
 		}
 	}
