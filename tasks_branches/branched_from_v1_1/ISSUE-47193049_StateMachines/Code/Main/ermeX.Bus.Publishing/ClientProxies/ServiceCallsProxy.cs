@@ -28,7 +28,7 @@ using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.ConfigurationManagement.Status;
+
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Services;

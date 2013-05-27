@@ -26,7 +26,7 @@ using ermeX.Common;
 using ermeX.ComponentServices;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.ConfigurationManagement.Status;
+
 using ermeX.NonMerged;
 using ermeX.Parallel.Queues;
 

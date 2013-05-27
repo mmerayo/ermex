@@ -49,19 +49,6 @@ namespace ermeX.DAL.Commands.Component
 			return result;
 		}
 
-		public IEnumerable<AppComponent> FetchOtherComponentsNotExchangedDefinitions(bool running = false)
-		{
-			Logger.TraceFormat("FetchOtherComponentsNotExchangedDefinitions. AppDomain={0} - Thread={1} - running={2}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId,running);
-			List<AppComponent> result=null;
-			_factory.ExecuteInUnitOfWork(true,
-				uow =>
-				result = Repository.Where(uow, x => x.ComponentId != _settings.ComponentId
-				                                    && !x.ExchangedDefinitions
-				                                    && x.IsRunning == running).ToList());
-			
-			return result;
-		}
-
 		public AppComponent Fetch(Guid componentId)
 		{
 			Logger.TraceFormat("FetchAll. AppDomain={0} - Thread={1} - componentId={2}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId,componentId);

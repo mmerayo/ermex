@@ -45,9 +45,6 @@ namespace ermeX.Models.Entities
 		}
 
 		public virtual int Latency { get; set; }
-		public virtual bool IsRunning { get; set; }
-
-		public virtual bool ExchangedDefinitions { get; set; }
 
 		/// <summary>
 		/// Only one component exchanges the definitions, this is done by the one holded here
@@ -64,9 +61,7 @@ namespace ermeX.Models.Entities
 			return ComponentId == other.ComponentId
 			       && Latency == other.Latency
 			       && ComponentOwner == other.ComponentOwner
-			       && Version == other.Version
-			       && IsRunning == other.IsRunning
-			       && ExchangedDefinitions == other.ExchangedDefinitions;
+			       && Version == other.Version;
 		}
 
 		public static bool operator ==(AppComponent a, AppComponent b)
@@ -109,8 +104,6 @@ namespace ermeX.Models.Entities
 					Version = (long) dataRow[GetDbFieldName("Version")],
 					ComponentId = (Guid) dataRow[GetDbFieldName("ComponentId")],
 					Latency = Convert.ToInt32(dataRow[GetDbFieldName("Latency")]),
-					IsRunning = (bool) dataRow[GetDbFieldName("IsRunning")],
-					ExchangedDefinitions = (bool) dataRow[GetDbFieldName("ExchangedDefinitions")]
 				};
 			return result;
 		}
@@ -128,9 +121,7 @@ namespace ermeX.Models.Entities
 					ComponentId = component.ComponentId,
 					ComponentOwner = component.ComponentOwner,
 					Version = component.Version,
-					IsRunning = component.IsRunning,
 					Latency = component.Latency,
-					ExchangedDefinitions = component.ExchangedDefinitions
 				};
 			return result;
 		}

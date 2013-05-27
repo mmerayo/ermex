@@ -19,7 +19,7 @@
 using System;
 using ermeX;
 using ermeX.Bus.Synchronisation.Messages;
-using ermeX.ConfigurationManagement.Status;
+
 
 
 namespace ermeX.Bus.Synchronisation.Dialogs.HandledByService

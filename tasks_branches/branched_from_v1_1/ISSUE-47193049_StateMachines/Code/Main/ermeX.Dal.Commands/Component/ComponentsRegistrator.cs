@@ -5,7 +5,7 @@ using NHibernate;
 using Ninject;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
-using ermeX.ConfigurationManagement.Status;
+
 using ermeX.DAL.Commands.Connectivity;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Connectivity;
@@ -26,7 +26,6 @@ namespace ermeX.DAL.Commands.Component
 		private readonly IPersistRepository<ConnectivityDetails> _connectivityRepository;
 		private readonly IPersistRepository<ServiceDetails> _serviceDetailsRepository;
 		private readonly IComponentSettings _settings;
-		private readonly IStatusManager _statusManager;
 		private readonly ICanWriteConnectivityDetails _connectivityDetailsWritter;
 
 		[Inject]
@@ -35,7 +34,6 @@ namespace ermeX.DAL.Commands.Component
 		                             IPersistRepository<ConnectivityDetails> connectivityRepository,
 		                             IPersistRepository<ServiceDetails> serviceDetailsRepository,
 		                             IComponentSettings settings,
-		                             IStatusManager statusManager,
 			ICanWriteConnectivityDetails connectivityDetailsWritter)
 		{
 			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
@@ -44,7 +42,6 @@ namespace ermeX.DAL.Commands.Component
 			_connectivityRepository = connectivityRepository;
 			_serviceDetailsRepository = serviceDetailsRepository;
 			_settings = settings;
-			_statusManager = statusManager;
 			_connectivityDetailsWritter = connectivityDetailsWritter;
 		}
 
@@ -86,8 +83,6 @@ namespace ermeX.DAL.Commands.Component
 				{
 					ComponentOwner = _settings.ComponentId,
 					ComponentId = _settings.ComponentId,
-					IsRunning = _statusManager.CurrentStatus == ComponentStatus.Running,
-					ExchangedDefinitions = true
 				};
 			_componentsRepository.Save(uow, appComponent);
 		}
@@ -105,13 +100,10 @@ namespace ermeX.DAL.Commands.Component
 					{
 						ComponentOwner = _settings.ComponentId,
 						ComponentId = remoteComponentId,
-						IsRunning = false,
-						ExchangedDefinitions = false
 					};
 				isNew = true;
 			}
 
-			appComponent.ExchangedDefinitions = false;
 			_componentsRepository.Save(uow, appComponent);
 			return isNew;
 		}

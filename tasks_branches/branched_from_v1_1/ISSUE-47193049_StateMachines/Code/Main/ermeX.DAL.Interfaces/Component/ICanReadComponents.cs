@@ -9,6 +9,5 @@ namespace ermeX.DAL.Interfaces.Component
 		AppComponent Fetch(Guid componentId);
 		IEnumerable<AppComponent> FetchAll();
 		IEnumerable<AppComponent> FetchOtherComponents();
-		IEnumerable<AppComponent> FetchOtherComponentsNotExchangedDefinitions(bool running = false);
 	}
 }
