@@ -67,7 +67,8 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		{
 			if (request == null) throw new ArgumentNullException("request");
 
-			StatusManager.WaitIsRunning();
+			//TODO: IF IS STARTING OTHERWISE RETURN EXCEPTION
+			//StatusManager.WaitIsRunning();
 			IEnumerable<ServiceDetails> localServiceDefinitions;
 			if (request.IsSingleResult)
 			{

@@ -46,11 +46,6 @@ namespace ermeX.Models.Entities
 
 		public virtual int Latency { get; set; }
 
-		/// <summary>
-		/// Only one component exchanges the definitions, this is done by the one holded here
-		/// </summary>
-		public virtual Guid? ComponentExchanges { get; set; }
-
 		#region Equatable
 
 		public virtual bool Equals(AppComponent other)

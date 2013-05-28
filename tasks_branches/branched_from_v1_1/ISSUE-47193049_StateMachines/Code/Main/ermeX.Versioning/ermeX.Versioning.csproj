@@ -58,6 +58,8 @@
     <Compile Include="VersionUpgradeHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Schema\Scripts\SqlServer\ClientComponent\20130528080000.sql" />
+    <EmbeddedResource Include="Schema\Scripts\Sqlite\ClientComponent\20130528080000.sql" />
     <EmbeddedResource Include="Schema\Scripts\Sqlite\ClientComponent\20120309144041.sql" />
     <EmbeddedResource Include="Schema\Scripts\Sqlite\dbo\00000000000000.sql" />
     <Content Include="Schema\Scripts\ScriptFileGenerator.vbs" />
