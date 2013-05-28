@@ -45,8 +45,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		                                                ICanReadIncommingMessagesSubscriptions incommingSubscriptionsReader,
 		                                                ICanReadOutgoingMessagesSubscriptions outgoingSubscriptionsReader,
 		                                                ICanUpdateOutgoingMessagesSubscriptions outgoingSubscriptionsWritter,
-		                                                IComponentSettings settings,
-		                                                IStatusManager statusManager)
+		                                                IComponentSettings settings)
 		{
 			_incommingSubscriptionsReader = incommingSubscriptionsReader;
 			_outgoingSubscriptionsReader = outgoingSubscriptionsReader;
@@ -54,7 +53,6 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 			Publisher = publisher;
 			Listener = listener;
 			Settings = settings;
-			StatusManager = statusManager;
 		}
 
 		private IMessagePublisher Publisher { get; set; }
@@ -62,7 +60,6 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		private IMessageListener Listener { get; set; }
 		private IComponentSettings Settings { get; set; }
 		private static readonly ILog Logger = LogManager.GetLogger(typeof(MessageSuscriptionsRequestMessageHandler).FullName);
-		private IStatusManager StatusManager { get; set; }
 
 		#region IMessageSuscriptionsService Members
 
