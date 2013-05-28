@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E5CF88F8-1141-4D44-AB1C-E2883065C735}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ermeX.ComponentServices.Interfaces</RootNamespace>
+    <AssemblyName>ermeX.ComponentServices.Interfaces</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ermeX\Properties\KeyFileInfo.cs">
+      <Link>Properties\KeyFileInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
+      <Link>Properties\ProjectInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
+      <Link>Properties\TestVisibilityInfo.cs</Link>
+    </Compile>
+    <Compile Include="ComponentSetup\ISetupServiceInjector.cs" />
+    <Compile Include="ComponentSetup\ISetupVersionUpgradeRunner.cs" />
+    <Compile Include="IComponentManager.cs" />
+    <Compile Include="IErmexComponent.cs" />
+    <Compile Include="LocalComponent\Commands\IOnErrorStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnPublishServicesStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnResetStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnRunStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnStartStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnStopStepExecutor.cs" />
+    <Compile Include="LocalComponent\Commands\IOnSubscribeToMessagesStepExecutor.cs" />
+    <Compile Include="LocalComponent\ILocalComponent.cs" />
+    <Compile Include="LocalComponent\ILocalComponentStateMachine.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnCreatingStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnErrorStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnJoiningStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnPreliveExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnRequestingServicesStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnRequestingSubscriptionsStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnRunningStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnServicesReceivedStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnStoppedStepExecutor.cs" />
+    <Compile Include="RemoteComponent\Commands\IOnSubscriptionsReceivedStepExecutor.cs" />
+    <Compile Include="RemoteComponent\IRemoteComponent.cs" />
+    <Compile Include="RemoteComponent\IRemoteComponentStateMachine.cs" />
+    <Compile Include="RemoteComponent\IRemoteComponentStateMachineContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ermeX\KeyFile.snk">
+      <Link>KeyFile.snk</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement\ermeX.ConfigurationManagement.csproj">
+      <Project>{C4536E30-DC91-4AA4-8860-ECBDAF1AE4DE}</Project>
+      <Name>ermeX.ConfigurationManagement</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

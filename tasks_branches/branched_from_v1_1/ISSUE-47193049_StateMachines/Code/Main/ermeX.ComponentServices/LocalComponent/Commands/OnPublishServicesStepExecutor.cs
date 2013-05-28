@@ -1,5 +1,6 @@
 ﻿using Ninject;
 using ermeX.Biz.Interfaces;
+using ermeX.ComponentServices.Interfaces.LocalComponent.Commands;
 using ermeX.Configuration;
 
 namespace ermeX.ComponentServices.LocalComponent.Commands

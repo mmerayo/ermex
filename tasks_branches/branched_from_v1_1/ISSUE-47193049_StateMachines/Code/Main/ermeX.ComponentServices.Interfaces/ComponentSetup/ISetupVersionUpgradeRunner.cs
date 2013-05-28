@@ -1,4 +1,4 @@
-namespace ermeX.ComponentServices.ComponentSetup
+namespace ermeX.ComponentServices.Interfaces.ComponentSetup
 {
 	internal interface ISetupVersionUpgradeRunner
 	{

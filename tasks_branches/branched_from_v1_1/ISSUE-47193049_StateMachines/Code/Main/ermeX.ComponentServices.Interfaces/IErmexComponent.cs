@@ -1,4 +1,4 @@
-﻿namespace ermeX.ComponentServices
+﻿namespace ermeX.ComponentServices.Interfaces
 {
 	internal interface IErmexComponent
 	{

@@ -1,6 +1,7 @@
 using System;
 using Ninject;
 using Stateless;
+using ermeX.ComponentServices.Interfaces.ComponentSetup;
 using ermeX.Configuration;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;

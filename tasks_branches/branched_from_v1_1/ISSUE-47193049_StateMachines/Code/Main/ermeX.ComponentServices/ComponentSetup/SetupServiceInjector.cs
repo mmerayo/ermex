@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using Ninject;
+using ermeX.ComponentServices.Interfaces;
+using ermeX.ComponentServices.Interfaces.ComponentSetup;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
@@ -19,14 +21,9 @@ namespace ermeX.ComponentServices.ComponentSetup
 			_settings = settings;
 		}
 
-		[Inject]
-		private IStatusManager StatusManager { get; set; }
-
-
 		public void InjectServices()
 		{
 			ConfigurationManager.SetSettingsSource(_settings);
-			IoCManager.Kernel.Inject(this);
 		}
 
 		public void Reset()
@@ -34,21 +31,9 @@ namespace ermeX.ComponentServices.ComponentSetup
 			//clean up the soa component and its reset to call the component manager
 			if (IoCManager.Kernel == null) return;
 			
-
-			if (StatusManager.CurrentStatus != ComponentStatus.Running)
-				return;
-			try
-			{
-				StatusManager.CurrentStatus = ComponentStatus.Stopping;
-			}
-			catch (Exception)
-			{
-				IoCManager.Reset();
-				throw;
-			}
 			IoCManager.Reset();
+			IoCManager.Kernel.Bind<IComponentManager>().ToConstant(ComponentManager.Default);//TODO: INJECT THIS PREVIOUSLY AND REINJECT AFTER EVERY RESET
 			SystemTaskQueue.Reset();
-			StatusManager.CurrentStatus = ComponentStatus.Stopped;
 		}
 	}
 }

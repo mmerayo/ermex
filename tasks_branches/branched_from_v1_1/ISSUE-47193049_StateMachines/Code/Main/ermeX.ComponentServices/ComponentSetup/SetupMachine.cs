@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Common.Logging;
 using Stateless;
+using ermeX.ComponentServices.Interfaces.ComponentSetup;
 using ermeX.Exceptions;
 
 namespace ermeX.ComponentServices.ComponentSetup

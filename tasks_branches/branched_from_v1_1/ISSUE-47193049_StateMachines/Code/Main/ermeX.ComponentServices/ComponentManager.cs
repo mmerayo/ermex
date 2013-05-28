@@ -7,6 +7,10 @@ using System.Text;
 using Ninject;
 using Stateless;
 using ermeX.ComponentServices.ComponentSetup;
+using ermeX.ComponentServices.Interfaces;
+using ermeX.ComponentServices.Interfaces.ComponentSetup;
+using ermeX.ComponentServices.Interfaces.LocalComponent;
+using ermeX.ComponentServices.Interfaces.RemoteComponent;
 using ermeX.ComponentServices.LocalComponent;
 using ermeX.ComponentServices.RemoteComponent;
 using ermeX.Configuration;
@@ -17,11 +21,11 @@ using ermeX.Exceptions;
 
 namespace ermeX.ComponentServices
 {
-	internal sealed class ComponentManager
+	internal sealed class ComponentManager : IComponentManager
 	{
 		private readonly object _syncLock=new object();
 		private SetupMachine _setupMachine;
-		public static readonly ComponentManager Default=new ComponentManager();
+		public static readonly IComponentManager Default=new ComponentManager();//TODO: INJECT THIS PREVIOUSLY TO THE REST OF THE INJECTIONS
 		private volatile ILocalComponent _localComponent;
 		private volatile IRemoteComponent _friendComponent;
 		private readonly IDictionary<Guid,IRemoteComponent> _remoteComponents = new Dictionary<Guid, IRemoteComponent>();
@@ -47,6 +51,7 @@ namespace ermeX.ComponentServices
 				IoCManager.InjectObject(this);
 			}
 		}
+
 
 		public void Reset()
 		{

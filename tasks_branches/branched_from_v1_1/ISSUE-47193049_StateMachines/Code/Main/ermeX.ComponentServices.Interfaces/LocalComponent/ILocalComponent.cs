@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ermeX.ComponentServices.LocalComponent
+namespace ermeX.ComponentServices.Interfaces.LocalComponent
 {
 	internal interface ILocalComponent : IErmexComponent
 	{
