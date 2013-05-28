@@ -5,6 +5,7 @@ using Ninject;
 using ermeX.Biz.Interfaces;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
+using ermeX.ComponentServices.Interfaces.LocalComponent;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.DAL.Interfaces.Subscriptions;

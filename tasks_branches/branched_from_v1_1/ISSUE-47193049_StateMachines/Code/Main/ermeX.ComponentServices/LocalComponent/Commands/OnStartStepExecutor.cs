@@ -3,6 +3,7 @@ using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
 using ermeX.Bus.Publishing.Dispatching.Messages;
+using ermeX.ComponentServices.Interfaces.LocalComponent.Commands;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Component;
 

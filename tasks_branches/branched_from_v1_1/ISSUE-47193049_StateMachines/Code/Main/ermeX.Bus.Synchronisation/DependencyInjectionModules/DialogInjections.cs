@@ -37,7 +37,6 @@ namespace ermeX.Bus.Synchronisation.DependencyInjectionModules
 
         public override void Load()
         {
-            Bind<IDialogsManager>().To<DialogsManager>().InSingletonScope();
 
             //TODO: DIALOGS FOR ANARQUIK OR GOVERNED
 

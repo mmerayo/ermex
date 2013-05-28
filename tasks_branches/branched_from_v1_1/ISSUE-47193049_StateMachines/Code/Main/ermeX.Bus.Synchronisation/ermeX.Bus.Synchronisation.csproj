@@ -55,7 +55,6 @@
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
     <Compile Include="DependencyInjectionModules\DialogInjections.cs" />
-    <Compile Include="DialogsManager.cs" />
     <Compile Include="Dialogs\Anarquik\HandledByMessageQueue\UpdatePublishedServiceMessageHandler.cs" />
     <Compile Include="Dialogs\Anarquik\HandledByMessageQueue\UpdateSuscriptionMessageHandler.cs" />
     <Compile Include="Dialogs\Anarquik\HandledByService\HandshakeServiceHandler.cs" />

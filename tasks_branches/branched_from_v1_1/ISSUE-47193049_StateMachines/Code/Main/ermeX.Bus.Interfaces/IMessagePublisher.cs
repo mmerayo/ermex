@@ -17,16 +17,14 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-
+using ermeX.Common;
 using ermeX.LayerMessages;
 
 namespace ermeX.Bus.Interfaces
 {
-    internal interface IMessagePublisher 
+    internal interface IMessagePublisher: IStartable
     {
         void PublishMessage(BusMessage message);
-        // void PublishMessage<TMessage>(MessagePriority priority, TMessage message) where TMessage:class;
-        void Start();
 
         TServiceInterface GetServiceProxy<TServiceInterface>() where TServiceInterface : IService;
 

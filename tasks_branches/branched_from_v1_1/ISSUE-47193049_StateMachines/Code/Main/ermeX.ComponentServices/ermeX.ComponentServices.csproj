@@ -109,6 +109,10 @@
       <Project>{560852A4-AF6A-4440-BC97-9A5453DDD5FC}</Project>
       <Name>ermeX.Bus.Synchronisation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Common\ermeX.Common.csproj">
+      <Project>{49D6179A-5489-4CB0-A4AE-F40DB88B78B7}</Project>
+      <Name>ermeX.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.ComponentServices.Interfaces\ermeX.ComponentServices.Interfaces.csproj">
       <Project>{E5CF88F8-1141-4D44-AB1C-E2883065C735}</Project>
       <Name>ermeX.ComponentServices.Interfaces</Name>

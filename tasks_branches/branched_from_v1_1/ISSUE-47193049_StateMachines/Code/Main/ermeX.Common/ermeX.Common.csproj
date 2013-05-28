@@ -55,6 +55,7 @@
     <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
+    <Compile Include="IStartable.cs" />
     <Compile Include="ILGeneration\ILHelper.cs" />
     <Compile Include="JsonSerializer.cs" />
     <Compile Include="Memoization\Memoizer.cs" />
