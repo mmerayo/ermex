@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading;
 using Common.Logging;
 using Ninject;
+using ermeX.ComponentServices.Interfaces.RemoteComponent;
 using ermeX.Parallel.Queues;
 
 namespace ermeX.ComponentServices.RemoteComponent

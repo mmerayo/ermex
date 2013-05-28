@@ -3,6 +3,8 @@ using Common.Logging;
 using Ninject;
 using Stateless;
 using ermeX.ComponentServices.ComponentSetup;
+using ermeX.ComponentServices.Interfaces.LocalComponent;
+using ermeX.ComponentServices.Interfaces.LocalComponent.Commands;
 using ermeX.ComponentServices.LocalComponent.Commands;
 using ermeX.Exceptions;
 

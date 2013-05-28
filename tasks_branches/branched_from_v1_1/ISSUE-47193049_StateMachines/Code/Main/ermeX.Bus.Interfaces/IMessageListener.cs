@@ -17,13 +17,14 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using ermeX.Common;
 
 
 namespace ermeX.Bus.Interfaces
 {
     //TODO: sagas with configurator
 
-    internal interface IMessageListener
+	internal interface IMessageListener : IStartable
     {
 	    
         /// <summary>
@@ -42,8 +43,6 @@ namespace ermeX.Bus.Interfaces
         /// <param name="objHandler"> real subscribed handler </param>
         /// <returns> The suscriptionHandlerId </returns>
         Guid Suscribe(Type handlerInterfaceType, object handler, out object objHandler);
-
-		void Start();//TODO: TO ANOTHER INTERFACE INJECTED AND INHERITED NOT BY THIS ONE
         void PublishService<TServiceInterface>(Type serviceImplementation) where TServiceInterface : IService;
 
         /// <summary>

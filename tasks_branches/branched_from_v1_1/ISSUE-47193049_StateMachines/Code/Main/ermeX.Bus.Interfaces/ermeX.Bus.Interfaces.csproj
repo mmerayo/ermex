@@ -54,7 +54,6 @@
     <Compile Include="DispatcherStatus.cs" />
     <Compile Include="Dispatching\IMessagePublisherDispatcherStrategy.cs" />
     <Compile Include="Dispatching\IServiceRequestDispatcher.cs" />
-    <Compile Include="IDialogsManager.cs" />
     <Compile Include="IEsbManager.cs" />
     <Compile Include="IHandleMessages.cs" />
     <Compile Include="IMessageListener.cs" />

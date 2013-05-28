@@ -17,13 +17,12 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using ermeX.Common;
 
 namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 {
-	internal interface IReceptionMessageDistributor : IDisposable
+	internal interface IReceptionMessageDistributor :IStartable, IDisposable
 	{
-		void Start(); //TODO: CREATE INTERFACE ISTARTABLE common for all this kind of components and inject
-
 		/// <summary>
 		/// Number of threads active currently
 		/// </summary>

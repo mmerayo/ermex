@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using ermeX.ComponentServices.Interfaces.RemoteComponent;
 
 namespace ermeX.ComponentServices.RemoteComponent
 {

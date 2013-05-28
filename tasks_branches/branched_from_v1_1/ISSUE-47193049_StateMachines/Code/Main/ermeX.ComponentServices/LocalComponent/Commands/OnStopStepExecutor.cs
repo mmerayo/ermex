@@ -4,7 +4,9 @@ using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
 using ermeX.Bus.Publishing.Dispatching.Messages;
+using ermeX.ComponentServices.Interfaces.LocalComponent.Commands;
 using ermeX.DAL.Interfaces.Component;
+using IStartable = ermeX.Common.IStartable;
 
 namespace ermeX.ComponentServices.LocalComponent.Commands
 {
@@ -16,7 +18,7 @@ namespace ermeX.ComponentServices.LocalComponent.Commands
 		private readonly IReceptionMessageDistributor _receptionMessageDistributor;
 		private readonly IMessageSubscribersDispatcher _messageSubscribersDispatcher;
 		private readonly IMessageDistributor _messageDistributor;
-		private IEnumerable<object> _toDispose;
+		private IEnumerable<IStartable> _startables;
 
 
 		[Inject]
@@ -34,27 +36,20 @@ namespace ermeX.ComponentServices.LocalComponent.Commands
 			_messageSubscribersDispatcher = messageSubscribersDispatcher;
 			_messageDistributor = messageDistributor;
 
-			_toDispose = new List<object>()
+			_startables = new List<IStartable>() //TODO: INJECT AS IStartable[]
 				{
-					componentsRegister,
 					messageListener,
 					messagePublisher,
 					receptionMessageDistributor,
 					messageSubscribersDispatcher,
 					messageDistributor
 				};
-
-
 		}
 
 		public void Stop()
 		{
-			foreach (var o in _toDispose)
-			{
-				var disposable = o as IDisposable;
-				if(disposable!=null)
-					disposable.Dispose();
-			}
+			foreach (var o in _startables)
+				o.Stop();
 		}
 	}
 }

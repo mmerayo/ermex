@@ -6,6 +6,8 @@ using System.Text;
 using Common.Logging;
 using Ninject;
 using Stateless;
+using ermeX.ComponentServices.Interfaces.RemoteComponent;
+using ermeX.ComponentServices.Interfaces.RemoteComponent.Commands;
 using ermeX.ComponentServices.RemoteComponent.Commands;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.Exceptions;

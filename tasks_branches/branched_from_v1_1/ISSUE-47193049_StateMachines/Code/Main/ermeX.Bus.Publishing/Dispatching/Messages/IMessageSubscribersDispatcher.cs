@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 using Common.Logging;
 using ermeX.Bus.Interfaces;
+using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 
@@ -29,10 +30,8 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 	/// <summary>
 	/// 
 	/// </summary>
-	internal interface IMessageSubscribersDispatcher
+	internal interface IMessageSubscribersDispatcher:IStartable
 	{
-		void Start();
-
 		/// <summary>
 		/// Number of threads active currently
 		/// </summary>

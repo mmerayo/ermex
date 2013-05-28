@@ -17,10 +17,11 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using ermeX.Common;
 
 namespace ermeX.Bus.Publishing.Dispatching.Messages
 {
-    internal interface IMessageDistributor:IDisposable
+    internal interface IMessageDistributor:IStartable, IDisposable
     {
         /// <summary>
         /// Number of threads active currently
@@ -29,6 +30,5 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
         int Count { get; }
         void EnqueueItem(MessageDistributor.MessageDistributorMessage item);
-        void Start(); //TODO: THE IMPLEMENTOR TO BE ISTARTABLE
     }
 }

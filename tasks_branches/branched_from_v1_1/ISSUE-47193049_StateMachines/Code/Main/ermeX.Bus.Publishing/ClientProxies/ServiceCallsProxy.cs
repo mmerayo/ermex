@@ -43,22 +43,20 @@ namespace ermeX.Bus.Publishing.ClientProxies
     {
         [Inject]
         public ServiceCallsProxy(IServiceRequestManager serviceRequestsManager, 
-			IDialogsManager dialogsManager,IBusSettings settings,ICanReadComponents componentReader,
+			IBusSettings settings,
+			ICanReadComponents componentReader,
 			ICanReadServiceDetails serviceDetailsReader)
         {
-            if (dialogsManager == null) throw new ArgumentNullException("dialogsManager");
             if (settings == null) throw new ArgumentNullException("settings");
 
             if (serviceRequestsManager == null) throw new ArgumentNullException("serviceRequestsManager");
             ServiceRequestsManager = serviceRequestsManager;
-            DialogsManager = dialogsManager;
             Settings = settings;
 	        ComponentReader = componentReader;
 	        ServiceDetailsReader = serviceDetailsReader;
         }
 
         private IServiceRequestManager ServiceRequestsManager { get; set; }
-        private IDialogsManager DialogsManager { get; set; }
         private IBusSettings Settings { get; set; }
 	    private ICanReadComponents ComponentReader { get; set; }
 	    private ICanReadServiceDetails ServiceDetailsReader { get; set; }
@@ -85,43 +83,6 @@ namespace ermeX.Bus.Publishing.ClientProxies
 				//TODO: IF COMPONENT IS RUNNING REECHANGE DEFINITIONS OTHERWISE RAISE EXCEPTION
 				//if(StatusManager.CurrentStatus==ComponentStatus.Running)
 				//    RefreshDefinition(invocation, ex.InterfaceName,ex.MethodName);
-            }
-        }
-
-
-        private void RefreshDefinition(IInvocation invocation, string interfaceName, string methodName)
-        {
-            try
-            {
-                
-                if (DestinationComponent.IsEmpty())
-                {
-                    DialogsManager.UpdateRemoteServiceDefinition(interfaceName, methodName);
-                }
-                else
-                {
-                    var appComponent = ComponentReader.Fetch(DestinationComponent);
-                    if (appComponent == null)
-                        throw new InvalidOperationException(string.Format("The component {0} could not be found",
-                                                                          DestinationComponent));
-                    //if(!appComponent.ExchangedDefinitions)
-                    //    DialogsManager.EnsureDefinitionsAreExchanged(appComponent);
-                    DialogsManager.UpdateRemoteServiceDefinition(interfaceName, methodName, appComponent);
-                }
-
-                DoInvoke(invocation);
-            }
-            catch (ermeXComponentNotAvailableException ex)
-            {
-                Logger.Error(x=>x( "{}", ex));
-                throw;
-            }
-            catch (ermeXUndefinedServiceException exFatal)
-            {
-                Logger.Fatal(x=>x("Could not perform the invocation {0}.{1}",
-                                           invocation.Method.DeclaringType.FullName, invocation.Method.Name),
-                             exFatal);
-                throw;
             }
         }
 
