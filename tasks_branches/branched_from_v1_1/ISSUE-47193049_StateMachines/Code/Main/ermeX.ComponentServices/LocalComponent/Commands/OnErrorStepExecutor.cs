@@ -1,4 +1,6 @@
-﻿namespace ermeX.ComponentServices.LocalComponent.Commands
+﻿using ermeX.ComponentServices.Interfaces.LocalComponent.Commands;
+
+namespace ermeX.ComponentServices.LocalComponent.Commands
 {
 	class OnErrorStepExecutor : IOnErrorStepExecutor
 	{

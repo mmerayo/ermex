@@ -1,4 +1,4 @@
-﻿namespace ermeX.ComponentServices.LocalComponent.Commands
+﻿namespace ermeX.ComponentServices.Interfaces.LocalComponent.Commands
 {
 	internal interface IOnErrorStepExecutor
 	{

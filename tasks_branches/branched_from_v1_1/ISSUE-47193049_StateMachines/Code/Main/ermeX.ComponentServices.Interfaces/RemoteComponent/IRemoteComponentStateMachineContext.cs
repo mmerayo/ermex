@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace ermeX.ComponentServices.RemoteComponent
+namespace ermeX.ComponentServices.Interfaces.RemoteComponent
 {
 	internal interface IRemoteComponentStateMachineContext
 	{

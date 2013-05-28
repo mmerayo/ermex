@@ -3,6 +3,7 @@ using Common.Logging;
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
+using ermeX.ComponentServices.Interfaces.RemoteComponent.Commands;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.Models.Entities;
 

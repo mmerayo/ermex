@@ -1,5 +1,7 @@
 ﻿using System;
 using Ninject;
+using ermeX.ComponentServices.Interfaces.RemoteComponent;
+using ermeX.ComponentServices.Interfaces.RemoteComponent.Commands;
 using ermeX.DAL.Interfaces.Component;
 
 namespace ermeX.ComponentServices.RemoteComponent.Commands

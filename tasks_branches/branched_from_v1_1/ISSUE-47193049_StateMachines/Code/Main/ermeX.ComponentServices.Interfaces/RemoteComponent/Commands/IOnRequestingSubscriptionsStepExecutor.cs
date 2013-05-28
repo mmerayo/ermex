@@ -1,4 +1,4 @@
-﻿namespace ermeX.ComponentServices.RemoteComponent.Commands
+﻿namespace ermeX.ComponentServices.Interfaces.RemoteComponent.Commands
 {
 	internal interface IOnRequestingSubscriptionsStepExecutor
 	{

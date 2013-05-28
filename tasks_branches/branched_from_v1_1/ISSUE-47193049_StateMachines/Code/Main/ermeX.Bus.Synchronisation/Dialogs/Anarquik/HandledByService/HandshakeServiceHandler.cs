@@ -25,6 +25,7 @@ using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
+using ermeX.ComponentServices.Interfaces;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
@@ -41,13 +42,15 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 	    private readonly ICanWriteComponents _componentsWritter;
 	    private readonly IRegisterComponents _componentsRegistrator;
 	    private readonly ICanReadConnectivityDetails _connectivityReader;
+	    private readonly IComponentManager _componentManager;
+
 
 	    [Inject]
         public HandshakeServiceHandler(IMessagePublisher publisher, IMessageListener listener,
                                        IComponentSettings settings,
 			ICanReadComponents componentReader,
                                        ICanWriteComponents componentsWritter,
-									   IStatusManager statusManager, IRegisterComponents componentsRegistrator,ICanReadConnectivityDetails connectivityReader)
+									   IComponentManager componentManager, IRegisterComponents componentsRegistrator,ICanReadConnectivityDetails connectivityReader)
         {
 		    _componentsWritter = componentsWritter;
 		    _componentsRegistrator = componentsRegistrator;
@@ -55,13 +58,13 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		    if (publisher == null) throw new ArgumentNullException("publisher");
             if (listener == null) throw new ArgumentNullException("listener");
             if (settings == null) throw new ArgumentNullException("settings");
-            if (statusManager == null) throw new ArgumentNullException("statusManager");
+            if (componentManager == null) throw new ArgumentNullException("componentManager");
             Publisher = publisher;
             Listener = listener;
             Settings = settings;
 	        ComponentReader = componentReader;
             
-            StatusManager = statusManager;
+            _componentManager = componentManager;
         }
 
 
@@ -72,7 +75,6 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 	    private ICanReadComponents ComponentReader { get; set; }
 
 		private static readonly ILog Logger = LogManager.GetLogger(typeof(HandshakeServiceHandler).FullName);
-        private IStatusManager StatusManager { get; set; }
 
         //this handler id is static
 
@@ -80,6 +82,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
         public MyComponentsResponseMessage RequestJoinNetwork(JoinRequestMessage message)
         {
+			//TODO: CLENA UP THIS BOOTCH
             //should call before ComponentIsReady
             //StatusManager.WaitIsRunning();
             try
@@ -96,7 +99,6 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
                 foreach (var appComponent in components)
                 {
-                    appComponent.ComponentExchanges = null; //To not to share the local configurations
                     var tuple = new Tuple<AppComponent, ConnectivityDetails>(appComponent,_connectivityReader.Fetch(appComponent.ComponentId));
                     componentsDatas.Add(tuple);
                 }
@@ -113,85 +115,6 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
             }
         }
 
-        public ComponentStatus ExchangeComponentStatus(Guid sourceComponentId, ComponentStatus status)
-        {
-            try
-            {
-                Debug.Assert(sourceComponentId != Settings.ComponentId);
-                var item = ComponentReader.Fetch(sourceComponentId);
-                if (item == null)
-                    throw new InvalidOperationException(
-                        string.Format("The component {0} didnt exist previously. Use RequestJoinNetwork before this.",
-                                      sourceComponentId));
-
-                item.IsRunning = status == ComponentStatus.Running;
-
-                _componentsWritter.Save(item);
-                Logger.Trace(
-                    string.Format(
-                        "ComponentStatus HANDLED on {0} from {1} Input.IsRunning: {2} Output.IsRunning: {3}",
-                        Settings.ComponentId,
-                        sourceComponentId, item.IsRunning, StatusManager.CurrentStatus));
-
-                return StatusManager.CurrentStatus;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(x=>x( "ComponentStatus: Error while handling request. {0}", ex));
-                throw ex;
-            }
-        }
-
-        public bool CanExchangeDefinitions(Guid componentId)
-        {
-            try
-            {
-                //TODO: transactional
-                bool result=false;
-                AppComponent component = ComponentReader.Fetch(componentId);
-
-                if (componentId != component.ComponentOwner && componentId != component.ComponentId)
-                    throw new InvalidOperationException(string.Format("the componentId: {0} is not valid as an exchanger for component:{1} owned by :{2}", componentId,component.ComponentId,component.ComponentOwner));
-                if (component.ComponentExchanges == componentId)
-                    result = true;
-                else if(component.ComponentExchanges==Settings.ComponentId)
-                    result = false;
-                else
-                {
-                    component.ComponentExchanges = componentId;
-                    component.ExchangedDefinitions = false;
-                    _componentsWritter.Save(component);
-                    result = true;
-                }
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(x=>x( "ComponentStatus: Error while handling request CanExchangeDefinitions. {0}", ex));
-                throw ex;
-            }
-        }
-
-        public void DefinitionsExchanged(Guid componentId)
-        {
-            try
-            {
-                //TODO: transactional
-                AppComponent component = ComponentReader.Fetch(componentId);
-                component.ExchangedDefinitions = true;
-                component.ComponentExchanges = null;
-                _componentsWritter.Save(component);
-
-                StatusManager.SyncEvents.SignalEvent(
-                        ConfigurationManagement.Status.StatusManager.GlobalSync.GlobalEvents.DefinitionsExchanged,
-                        component.ComponentId);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(x=>x( "ComponentStatus: Error while handling request DefinitionsExchanged. {0}", ex));
-                throw ex;
-            }
-        }
 
         #endregion
     }

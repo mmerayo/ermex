@@ -56,40 +56,18 @@
     </Compile>
     <Compile Include="ComponentManager.cs" />
     <Compile Include="ComponentSetup\SetupUpgradeRunner.cs" />
-    <Compile Include="ComponentSetup\ISetupServiceInjector.cs" />
-    <Compile Include="ComponentSetup\ISetupVersionUpgradeRunner.cs" />
     <Compile Include="ComponentSetup\SetupMachine.cs" />
     <Compile Include="ComponentSetup\SetupServiceInjector.cs" />
-    <Compile Include="IErmexComponent.cs" />
     <Compile Include="LocalComponent\Commands\OnErrorStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\OnPublishServicesStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\OnResetStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\OnRunStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\OnStopStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\OnSubscribeToMessagesStepExecutor.cs" />
-    <Compile Include="LocalComponent\ILocalComponent.cs" />
-    <Compile Include="LocalComponent\Commands\IOnSubscribeToMessagesStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\IOnErrorStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\IOnPublishServicesStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\IOnResetStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\IOnRunStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\IOnStartStepExecutor.cs" />
-    <Compile Include="LocalComponent\Commands\IOnStopStepExecutor.cs" />
     <Compile Include="LocalComponent\Commands\OnStartStepExecutor.cs" />
-    <Compile Include="LocalComponent\ILocalComponentStateMachine.cs" />
     <Compile Include="LocalComponent\LocalComponent.cs" />
     <Compile Include="LocalComponent\LocalComponentStateMachine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RemoteComponent\Commands\IOnCreatingStepExecutor.cs" />
-    <Compile Include="RemoteComponent\Commands\IOnErrorStepExecutor.cs" />
-    <Compile Include="RemoteComponent\Commands\IOnRunningStepExecutor.cs" />
-    <Compile Include="RemoteComponent\Commands\IOnJoiningStepExecutor.cs" />
-    <Compile Include="RemoteComponent\Commands\IOnPreliveExecutor.cs" />
-    <Compile Include="RemoteComponent\Commands\IOnStoppedStepExecutor.cs" />
-    <Compile Include="RemoteComponent\Commands\IOnSubscriptionsReceivedStepExecutor.cs" />
-    <Compile Include="RemoteComponent\Commands\IOnRequestingSubscriptionsStepExecutor.cs" />
-    <Compile Include="RemoteComponent\Commands\IOnServicesReceivedStepExecutor.cs" />
-    <Compile Include="RemoteComponent\Commands\IOnRequestingServicesStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnCreatingStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnErrorStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnJoiningStepExecutor.cs" />
@@ -100,10 +78,7 @@
     <Compile Include="RemoteComponent\Commands\OnServicesReceivedStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnStoppedStepExecutor.cs" />
     <Compile Include="RemoteComponent\Commands\OnSubscriptionsReceivedStepExecutor.cs" />
-    <Compile Include="RemoteComponent\IRemoteComponentStateMachine.cs" />
-    <Compile Include="RemoteComponent\IRemoteComponentStateMachineContext.cs" />
     <Compile Include="RemoteComponent\RemoteComponentStateMachine.cs" />
-    <Compile Include="RemoteComponent\IRemoteComponent.cs" />
     <Compile Include="RemoteComponent\RemoteComponent.cs" />
     <Compile Include="RemoteComponent\RemoteComponentStateMachineContext.cs" />
   </ItemGroup>
@@ -133,6 +108,10 @@
     <ProjectReference Include="..\ermeX.Bus.Synchronisation\ermeX.Bus.Synchronisation.csproj">
       <Project>{560852A4-AF6A-4440-BC97-9A5453DDD5FC}</Project>
       <Name>ermeX.Bus.Synchronisation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.ComponentServices.Interfaces\ermeX.ComponentServices.Interfaces.csproj">
+      <Project>{E5CF88F8-1141-4D44-AB1C-E2883065C735}</Project>
+      <Name>ermeX.ComponentServices.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.ConfigurationManagement.Settings\ermeX.ConfigurationManagement.Settings.csproj">
       <Project>{A6C2D141-25F0-4BFF-93BC-F9EF0CBDB3B1}</Project>

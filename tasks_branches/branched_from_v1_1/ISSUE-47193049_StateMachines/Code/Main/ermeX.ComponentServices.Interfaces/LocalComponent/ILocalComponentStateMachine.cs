@@ -1,4 +1,4 @@
-﻿namespace ermeX.ComponentServices.LocalComponent
+﻿namespace ermeX.ComponentServices.Interfaces.LocalComponent
 {
 	internal interface ILocalComponentStateMachine
 	{

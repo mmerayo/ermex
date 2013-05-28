@@ -4,6 +4,8 @@ using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
+using ermeX.ComponentServices.Interfaces.RemoteComponent;
+using ermeX.ComponentServices.Interfaces.RemoteComponent.Commands;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Subscriptions;
 
