@@ -67,9 +67,29 @@
       <Project>{9E3D8616-BD44-4E0A-A67C-182473CE2453}</Project>
       <Name>ermeX.Bus.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Bus.Synchronisation\ermeX.Bus.Synchronisation.csproj">
+      <Project>{560852A4-AF6A-4440-BC97-9A5453DDD5FC}</Project>
+      <Name>ermeX.Bus.Synchronisation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Common\ermeX.Common.csproj">
+      <Project>{49D6179A-5489-4CB0-A4AE-F40DB88B78B7}</Project>
+      <Name>ermeX.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement.Settings\ermeX.ConfigurationManagement.Settings.csproj">
+      <Project>{A6C2D141-25F0-4BFF-93BC-F9EF0CBDB3B1}</Project>
+      <Name>ermeX.ConfigurationManagement.Settings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.DAL.Interfaces\ermeX.DAL.Interfaces.csproj">
+      <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>
+      <Name>ermeX.DAL.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Interfaces\ermeX.Interfaces.csproj">
       <Project>{A67BD599-72DF-40F6-B632-AFB22B4B3D18}</Project>
       <Name>ermeX.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Models\ermeX.Models.csproj">
+      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
+      <Name>ermeX.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

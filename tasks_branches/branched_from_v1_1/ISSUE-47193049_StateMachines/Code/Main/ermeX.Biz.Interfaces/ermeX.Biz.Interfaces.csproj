@@ -47,7 +47,6 @@
     <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
       <Link>Properties\TestVisibilityInfo.cs</Link>
     </Compile>
-    <Compile Include="IComponentManager.cs" />
     <Compile Include="IMessagingManager.cs" />
     <Compile Include="IServicePublishingManager.cs" />
     <Compile Include="IServicesManager.cs" />

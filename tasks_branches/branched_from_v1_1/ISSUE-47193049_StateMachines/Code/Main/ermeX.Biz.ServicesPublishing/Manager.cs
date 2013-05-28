@@ -17,48 +17,80 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
+using System.Linq;
 using Ninject;
 using ermeX.Biz.Interfaces;
 using ermeX.Bus.Interfaces;
+using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
+using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.Interfaces.Component;
+using ermeX.DAL.Interfaces.Services;
 
 
 namespace ermeX.Biz.ServicesPublishing
 {
     internal class Manager : IServicePublishingManager
     {
-        [Inject]
-        public Manager(IMessagePublisher publisher, IMessageListener listener, IDialogsManager dialogsManager)
+	    private readonly ICanReadComponents _componentReader;
+	    private readonly ICanReadServiceDetails _serviceDetailsReader;
+	    private readonly IComponentSettings _componentSettings;
+
+	    [Inject]
+        public Manager(IMessagePublisher publisher, 
+			IMessageListener listener, 
+			ICanReadComponents componentReader,
+			ICanReadServiceDetails serviceDetailsReader,
+			IComponentSettings componentSettings)
         {
-            if (publisher == null) throw new ArgumentNullException("publisher");
+	       
+		    if (publisher == null) throw new ArgumentNullException("publisher");
             if (listener == null) throw new ArgumentNullException("listener");
-            if (dialogsManager == null) throw new ArgumentNullException("dialogsManager");
             Publisher = publisher;
             Listener = listener;
-            DialogsManager = dialogsManager;
+			_componentReader = componentReader;
+			_serviceDetailsReader = serviceDetailsReader;
+		    _componentSettings = componentSettings;
         }
 
         private IMessagePublisher Publisher { get; set; }
         private IMessageListener Listener { get; set; }
-        private IDialogsManager DialogsManager { get; set; }
 
         #region IServicePublishingManager Members
 
+		public void PublishService<TServiceInterface>() where TServiceInterface : IService
+		{
+			//TODO: CONSIDER REMOVAL OF THIS
+			Listener.PublishService<TServiceInterface>();
+		}
+
         public void PublishService<TServiceInterface>(Type serviceImplementationType) where TServiceInterface : IService
         {
-            Listener.PublishService<TServiceInterface>(serviceImplementationType);
-            DialogsManager.NotifyService<TServiceInterface>(serviceImplementationType);
-        }
-
-        public void PublishService<TServiceInterface>() where TServiceInterface : IService
-        {
-            Listener.PublishService<TServiceInterface>();
+	        PublishService(typeof (TServiceInterface), serviceImplementationType);
         }
 
         public void PublishService(Type serviceInterface, Type serviceImplementation)
         {
             //TODO: THIS IS REDUNDANT
             Listener.PublishService(serviceInterface, serviceImplementation);
-            DialogsManager.NotifyService(serviceInterface,serviceImplementation);
+
+
+			if (serviceInterface == null) throw new ArgumentNullException("serviceInterface");
+			if (serviceImplementation == null) throw new ArgumentNullException("serviceImplementation");
+			var appComponents = _componentReader.FetchOtherComponents();
+
+			//ISSUE-281: From reader
+			var serviceOperations =
+				_serviceDetailsReader.GetByInterfaceType(serviceInterface.FullName).Where(x => x.Publisher == _componentSettings.ComponentId).
+					ToList();
+
+			foreach (var appComponent in appComponents)
+			{
+				var proxy = Publisher.GetServiceProxy<IPublishedServicesDefinitionsService>(appComponent.ComponentId);
+				foreach (var serviceOperation in serviceOperations)
+				{
+					proxy.AddService(serviceOperation);
+				}
+			}
 
         }
 

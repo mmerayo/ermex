@@ -1,4 +1,5 @@
 ﻿using Common.Logging;
+using ermeX.ComponentServices.Interfaces.RemoteComponent;
 using ermeX.ComponentServices.Interfaces.RemoteComponent.Commands;
 
 namespace ermeX.ComponentServices.RemoteComponent.Commands
@@ -6,7 +7,7 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 	class OnRunningStepExecutor : IOnRunningStepExecutor
 	{
 		private static readonly ILog Logger = LogManager.GetLogger<OnRunningStepExecutor>();
-		public void OnRunning(RemoteComponentStateMachineContext context)
+		public void OnRunning(IRemoteComponentStateMachineContext context)
 		{
 			Logger.DebugFormat("OnRunning- Component:{0}" ,context.ComponentId);
 

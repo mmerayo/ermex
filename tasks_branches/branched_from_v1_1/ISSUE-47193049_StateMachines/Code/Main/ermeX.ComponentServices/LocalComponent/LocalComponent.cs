@@ -76,7 +76,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			_stateMachine.Stop();
 		}
 
-		public bool IsStarted()
+		public bool IsRunning()
 		{
 			return _stateMachine.IsRunning();
 		}

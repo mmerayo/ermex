@@ -33,6 +33,7 @@ using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Connectivity;
+using ermeX.Exceptions;
 using ermeX.Models.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
@@ -82,9 +83,8 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
         public MyComponentsResponseMessage RequestJoinNetwork(JoinRequestMessage message)
         {
-			//TODO: CLENA UP THIS BOOTCH
-            //should call before ComponentIsReady
-            //StatusManager.WaitIsRunning();
+			if (!_componentManager.LocalComponent.IsRunning())
+				throw new ermeXComponentNotStartedException(Settings.ComponentId);
             try
             {
                 Logger.Trace(x=>x("RequestJoinNetwork RECEIVED on {0} from {1}", Settings.ComponentId,

@@ -24,11 +24,13 @@ using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
+using ermeX.ComponentServices.Interfaces;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Services;
+using ermeX.Exceptions;
 using ermeX.Models.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
@@ -37,16 +39,19 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 	{
 		private readonly ICanReadServiceDetails _serviceDetailsReader;
 		private readonly ICanWriteServiceDetails _serviceDetailsWritter;
+		private readonly IComponentManager _componentManager;
 
 		[Inject]
 		public PublishedServicesHandler(IMessagePublisher publisher,
 		                                IMessageListener listener,
 		                                ICanReadServiceDetails serviceDetailsReader,
 		                                ICanWriteServiceDetails serviceDetailsWritter,
-		                                IComponentSettings settings)
+		                                IComponentSettings settings,
+		                                IComponentManager componentManager)
 		{
 			_serviceDetailsReader = serviceDetailsReader;
 			_serviceDetailsWritter = serviceDetailsWritter;
+			_componentManager = componentManager;
 			if (publisher == null) throw new ArgumentNullException("publisher");
 			if (listener == null) throw new ArgumentNullException("listener");
 			if (settings == null) throw new ArgumentNullException("settings");
@@ -59,16 +64,17 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		private IMessageListener Listener { get; set; }
 		private IComponentSettings Settings { get; set; }
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(PublishedServicesHandler).FullName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof (PublishedServicesHandler).FullName);
 
 		#region IPublishedServicesDefinitionsService Members
 
 		public PublishedServicesResponseMessage RequestDefinitions(PublishedServicesRequestMessage request)
 		{
+			if (!_componentManager.LocalComponent.IsRunning())
+				throw new ermeXComponentNotStartedException(Settings.ComponentId);
 			if (request == null) throw new ArgumentNullException("request");
 
-			//TODO: IF IS STARTING OTHERWISE RETURN EXCEPTION
-			//StatusManager.WaitIsRunning();
+
 			IEnumerable<ServiceDetails> localServiceDefinitions;
 			if (request.IsSingleResult)
 			{
@@ -94,7 +100,9 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		public void AddServices(IList<ServiceDetails> services)
 		{
-			StatusManager.WaitIsRunning();
+			//TODO: LOGS
+			if (!_componentManager.LocalComponent.IsRunning())
+				throw new ermeXComponentNotStartedException(Settings.ComponentId);
 			foreach (var serviceDetails in services)
 			{
 				AddService(serviceDetails);
@@ -103,7 +111,9 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		public void AddService(ServiceDetails service)
 		{
-			StatusManager.WaitIsRunning();
+			//TODO:LOGS	
+			if (!_componentManager.LocalComponent.IsRunning())
+				throw new ermeXComponentNotStartedException(Settings.ComponentId);
 			_serviceDetailsWritter.ImportFromOtherComponent(service);
 
 			//TODO: TEST THIS as is saving it from the other component

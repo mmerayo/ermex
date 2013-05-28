@@ -72,5 +72,10 @@ namespace ermeX.Bus.Publishing
 		}
 
 		#endregion
+
+		public void Stop()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

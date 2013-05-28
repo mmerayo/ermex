@@ -219,7 +219,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Logger.DebugFormat("OnRequestingSubscriptions-{0}", obj.Trigger);
 			try
 			{
-				_subscriptionsRequester.Request();
+				_subscriptionsRequester.Request(_context);
 			}
 			catch (Exception ex)
 			{
@@ -232,7 +232,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Logger.DebugFormat("OnServicesReceived-{0}", obj.Trigger);
 			try
 			{
-				_servicesReceivedHandler.ServicesReceived(TODO);
+				_servicesReceivedHandler.ServicesReceived(_context);
 			}
 			catch (Exception ex)
 			{
@@ -247,7 +247,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Logger.DebugFormat("OnRequestingServices-{0}", obj.Trigger);
 			try
 			{
-				_servicesRequester.Request();
+				_servicesRequester.Request(_context);
 			}
 			catch (Exception ex)
 			{
@@ -262,7 +262,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Logger.DebugFormat("OnJoined-{0}", obj.Trigger);
 			try
 			{
-				_runningStepExecutor.OnRunning(TODO);
+				_runningStepExecutor.OnRunning(_context);
 			}
 			catch (Exception ex)
 			{
@@ -277,7 +277,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Logger.DebugFormat("OnJoining-{0}", obj.Trigger);
 			try
 			{
-				_joiningStepExecutor.Join(TODO);
+				_joiningStepExecutor.Join(_context);
 			}
 			catch (Exception ex)
 			{
