@@ -44,12 +44,10 @@ namespace ermeX.Bus.Publishing.ClientProxies
         [Inject]
         public ServiceCallsProxy(IServiceRequestManager serviceRequestsManager, 
 			IDialogsManager dialogsManager,IBusSettings settings,ICanReadComponents componentReader,
-			ICanReadServiceDetails serviceDetailsReader,
-            IStatusManager statusManager)
+			ICanReadServiceDetails serviceDetailsReader)
         {
             if (dialogsManager == null) throw new ArgumentNullException("dialogsManager");
             if (settings == null) throw new ArgumentNullException("settings");
-            if (statusManager == null) throw new ArgumentNullException("statusManager");
 
             if (serviceRequestsManager == null) throw new ArgumentNullException("serviceRequestsManager");
             ServiceRequestsManager = serviceRequestsManager;
@@ -57,7 +55,6 @@ namespace ermeX.Bus.Publishing.ClientProxies
             Settings = settings;
 	        ComponentReader = componentReader;
 	        ServiceDetailsReader = serviceDetailsReader;
-	        StatusManager = statusManager;
         }
 
         private IServiceRequestManager ServiceRequestsManager { get; set; }
@@ -66,7 +63,6 @@ namespace ermeX.Bus.Publishing.ClientProxies
 	    private ICanReadComponents ComponentReader { get; set; }
 	    private ICanReadServiceDetails ServiceDetailsReader { get; set; }
 		private static readonly ILog Logger = LogManager.GetLogger(typeof(ServiceCallsProxy).FullName);
-        private IStatusManager StatusManager { get; set; }
 
         private Guid DestinationComponent { get; set; }
 
@@ -86,8 +82,9 @@ namespace ermeX.Bus.Publishing.ClientProxies
             catch (ermeXUndefinedServiceException ex)
             {
                 //Invoke service failed. Re-Exchanging definitions
-                if(StatusManager.CurrentStatus==ComponentStatus.Running)
-                    RefreshDefinition(invocation, ex.InterfaceName,ex.MethodName);
+				//TODO: IF COMPONENT IS RUNNING REECHANGE DEFINITIONS OTHERWISE RAISE EXCEPTION
+				//if(StatusManager.CurrentStatus==ComponentStatus.Running)
+				//    RefreshDefinition(invocation, ex.InterfaceName,ex.MethodName);
             }
         }
 
