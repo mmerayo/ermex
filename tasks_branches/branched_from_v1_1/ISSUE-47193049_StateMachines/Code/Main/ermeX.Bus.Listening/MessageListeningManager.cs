@@ -114,6 +114,11 @@ namespace ermeX.Bus.Listening
 			}
 		}
 
+		public void Stop()
+		{
+			//TODO: IT DOES NOTHING AS IT REMAINS STARTED
+		}
+
 
 		public void PublishService<TServiceInterface>(Type serviceImplementationType) where TServiceInterface : IService
 		{

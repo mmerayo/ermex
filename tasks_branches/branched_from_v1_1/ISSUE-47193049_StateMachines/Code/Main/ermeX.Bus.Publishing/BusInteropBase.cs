@@ -40,9 +40,14 @@ namespace ermeX.Bus.Publishing
             get { return _bus; }
         }
 
-        public void Start()
+        public virtual void Start()
         {
             Bus.Start();
         }
+
+		public virtual void Stop()
+		{
+			Bus.Stop();
+		}
     }
 }

@@ -3,6 +3,7 @@ using Common.Logging;
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
+using ermeX.ComponentServices.Interfaces.RemoteComponent;
 using ermeX.ComponentServices.Interfaces.RemoteComponent.Commands;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.Models.Entities;
@@ -15,7 +16,7 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 	
 
 		
-		public void ServicesReceived(RemoteComponentStateMachineContext context)
+		public void ServicesReceived(IRemoteComponentStateMachineContext context)
 		{
 			Logger.DebugFormat("ServicesReceived - Component: {0}",context.ComponentId);
 		}

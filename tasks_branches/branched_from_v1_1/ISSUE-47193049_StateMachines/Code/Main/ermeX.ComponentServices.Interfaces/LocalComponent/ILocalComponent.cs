@@ -8,6 +8,6 @@ namespace ermeX.ComponentServices.Interfaces.LocalComponent
 		void PublishMyServices(Guid componentId);
 		void PublishMySubscriptions(Guid componentId);
 		void Stop();
-		bool IsStarted();
+		bool IsRunning();
 	}
 }

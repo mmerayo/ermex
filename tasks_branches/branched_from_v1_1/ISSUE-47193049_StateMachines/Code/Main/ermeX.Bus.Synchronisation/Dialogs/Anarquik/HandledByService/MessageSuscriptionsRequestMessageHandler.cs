@@ -24,11 +24,13 @@ using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
+using ermeX.ComponentServices.Interfaces;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
 
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Subscriptions;
+using ermeX.Exceptions;
 using ermeX.Models.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
@@ -38,6 +40,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		private readonly ICanReadIncommingMessagesSubscriptions _incommingSubscriptionsReader;
 		private readonly ICanReadOutgoingMessagesSubscriptions _outgoingSubscriptionsReader;
 		private readonly ICanUpdateOutgoingMessagesSubscriptions _outgoingSubscriptionsWritter;
+		private readonly IComponentManager _componentManager;
 
 		[Inject]
 		public MessageSuscriptionsRequestMessageHandler(IMessagePublisher publisher,
@@ -45,11 +48,13 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		                                                ICanReadIncommingMessagesSubscriptions incommingSubscriptionsReader,
 		                                                ICanReadOutgoingMessagesSubscriptions outgoingSubscriptionsReader,
 		                                                ICanUpdateOutgoingMessagesSubscriptions outgoingSubscriptionsWritter,
-		                                                IComponentSettings settings)
+		                                                IComponentSettings settings,
+			IComponentManager componentManager)
 		{
 			_incommingSubscriptionsReader = incommingSubscriptionsReader;
 			_outgoingSubscriptionsReader = outgoingSubscriptionsReader;
 			_outgoingSubscriptionsWritter = outgoingSubscriptionsWritter;
+			_componentManager = componentManager;
 			Publisher = publisher;
 			Listener = listener;
 			Settings = settings;
@@ -78,7 +83,9 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		public void AddSuscription(IncomingMessageSuscription request)
 		{
-			StatusManager.WaitIsRunning();
+			if(!_componentManager.LocalComponent.IsRunning())
+				throw new ermeXComponentNotStartedException(Settings.ComponentId);
+			
 			try
 			{
 				if (request == null) throw new ArgumentNullException("request");
@@ -92,9 +99,10 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		public void AddSuscriptions(IEnumerable<IncomingMessageSuscription> request)
 		{
+			if (!_componentManager.LocalComponent.IsRunning())
+					throw new ermeXComponentNotStartedException(Settings.ComponentId);
 			try
-			{
-				StatusManager.WaitIsRunning();
+			{				
 				foreach (var incomingMessageSuscription in request)
 				{
 					AddSuscription(incomingMessageSuscription);

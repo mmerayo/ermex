@@ -61,5 +61,7 @@ namespace ermeX.Bus.Interfaces
         /// <param name="requestParams"> </param>
         void RequestService<TResult>(Guid destinationComponent, Guid serviceOperation,
                                      Action<IServiceOperationResult<TResult>> responseHandler, object[] requestParams);
+
+	    void Stop();
     }
 }

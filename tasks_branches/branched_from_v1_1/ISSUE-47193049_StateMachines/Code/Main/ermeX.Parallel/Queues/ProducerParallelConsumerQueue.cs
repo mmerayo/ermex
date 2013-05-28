@@ -87,6 +87,11 @@ namespace ermeX.Parallel.Queues
 				AddNewThread();
 		}
 
+		public virtual void Stop()
+		{
+			Shutdown(true);
+		}
+
 		protected IQueueWrapper<TQueueItem> ItemsQueue { get; set; }
 
 		public int Count

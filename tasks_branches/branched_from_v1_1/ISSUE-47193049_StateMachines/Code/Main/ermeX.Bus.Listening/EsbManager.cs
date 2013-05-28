@@ -105,6 +105,14 @@ namespace ermeX.Bus.Listening
 			ServiceRequestDispatcher.RequestAsync(request, responseHandler);
 		}
 
+		public void Stop()
+		{
+			lock (this)
+			{
+				MessagesDispatcher.Stop();
+			}
+		}
+
 		private ServiceRequestMessage GetServiceRequestMessage<TResult>(Guid destinationComponent, Guid operationId,
 		                                                                object[] requestParams)
 		{
