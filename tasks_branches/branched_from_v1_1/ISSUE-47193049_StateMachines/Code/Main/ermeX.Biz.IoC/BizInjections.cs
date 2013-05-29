@@ -46,10 +46,9 @@ namespace ermeX.Biz.IoC
         public override void Load()
         {
             Bind<IMessagingManager>().To<Manager>().InSingletonScope();
-            Bind<IServicePublishingManager>().To<ServicesPublishing.Manager>().InSingletonScope();
+            Bind<IServicePublishingManager>().To<ServicesPublishing.ServicePublishingManager>().InSingletonScope();
             Bind<IServicesManager>().To<Services.Manager>().InSingletonScope();
-            Bind<ISubscriptionsManager>().To<Subscriptions.Manager>().InSingletonScope();
-            Bind<IComponentManager>().To<ComponentManager>().InSingletonScope();//(TypesHelper.GetTypeFromDomainByClassName("ComponentStarter")).InSingletonScope();
+            Bind<ISubscriptionsManager>().To<Subscriptions.SubscriptionsManager>().InSingletonScope();
         }
     }
 }

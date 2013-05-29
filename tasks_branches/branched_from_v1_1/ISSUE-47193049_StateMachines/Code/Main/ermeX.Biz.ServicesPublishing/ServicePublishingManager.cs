@@ -29,14 +29,14 @@ using ermeX.DAL.Interfaces.Services;
 
 namespace ermeX.Biz.ServicesPublishing
 {
-    internal class Manager : IServicePublishingManager
+    internal class ServicePublishingManager : IServicePublishingManager
     {
 	    private readonly ICanReadComponents _componentReader;
 	    private readonly ICanReadServiceDetails _serviceDetailsReader;
 	    private readonly IComponentSettings _componentSettings;
 
 	    [Inject]
-        public Manager(IMessagePublisher publisher, 
+        public ServicePublishingManager(IMessagePublisher publisher, 
 			IMessageListener listener, 
 			ICanReadComponents componentReader,
 			ICanReadServiceDetails serviceDetailsReader,

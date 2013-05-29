@@ -23,29 +23,37 @@ using Common.Logging;
 using Ninject;
 using ermeX.Biz.Interfaces;
 using ermeX.Bus.Interfaces;
+using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.Interfaces.Component;
+using ermeX.DAL.Interfaces.Subscriptions;
 
 
 namespace ermeX.Biz.Subscriptions
 {
-    internal sealed class Manager : ISubscriptionsManager
+    internal sealed class SubscriptionsManager : ISubscriptionsManager
     {
-        [Inject]
-        public Manager(IMessagePublisher publisher, IMessageListener listener, IDialogsManager dialogsManager)
+	    private readonly ICanReadComponents _componentsReader;
+	    private readonly ICanReadIncommingMessagesSubscriptions _incommingSubscriptionsReader;
+
+	    [Inject]
+        public SubscriptionsManager(IMessagePublisher publisher,
+			IMessageListener listener,
+			ICanReadComponents componentsReader,
+			ICanReadIncommingMessagesSubscriptions incommingSubscriptionsReader)
         {
-            if (publisher == null) throw new ArgumentNullException("publisher");
+	        _componentsReader = componentsReader;
+		    _incommingSubscriptionsReader = incommingSubscriptionsReader;
+		    if (publisher == null) throw new ArgumentNullException("publisher");
             if (listener == null) throw new ArgumentNullException("listener");
-            if (dialogsManager == null) throw new ArgumentNullException("dialogsManager");
             Publisher = publisher;
             Listener = listener;
-            DialogsManager = dialogsManager;
         }
 
         private IMessagePublisher Publisher { get; set; }
         private IMessageListener Listener { get; set; }
-        private IDialogsManager DialogsManager { get; set; }
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(Manager).FullName);
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(SubscriptionsManager).FullName);
 
         #region ISubscriptionsManager Members
 
@@ -123,7 +131,15 @@ namespace ermeX.Biz.Subscriptions
         private object DoSubscribe(object handlerToSuscribe, Type interfaceHandler)
         {
             Guid subscriptionHandlerId = Listener.Suscribe(interfaceHandler, handlerToSuscribe, out handlerToSuscribe);
-            DialogsManager.Suscribe(subscriptionHandlerId);
+			
+			var appComponents = _componentsReader.FetchOtherComponents().Select(x => x.ComponentId); //get other components
+			var subscription = _incommingSubscriptionsReader.GetByHandlerId(subscriptionHandlerId);
+			//get the phisical subscription
+			foreach (var appComponent in appComponents)
+			{
+				var proxy = Publisher.GetServiceProxy<IMessageSuscriptionsService>(appComponent);
+				proxy.AddSuscription(subscription);
+			}
             return handlerToSuscribe;
         }
        
