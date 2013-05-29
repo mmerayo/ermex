@@ -49,10 +49,7 @@ namespace ermeX.ermeX.Component
 
 		protected static readonly ILog Logger = LogManager.GetLogger(typeof(SoaComponent).FullName); 
 
-        [Inject]
-        internal IStatusManager StatusManager { get; set; }
-
-        internal bool IsStarted
+       internal bool IsStarted
         {
 			get { return ComponentManager.Default.IsRunning(); }
         }

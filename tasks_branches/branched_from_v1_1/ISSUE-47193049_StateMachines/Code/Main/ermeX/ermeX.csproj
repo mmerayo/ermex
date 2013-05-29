@@ -110,6 +110,10 @@
       <Project>{49D6179A-5489-4CB0-A4AE-F40DB88B78B7}</Project>
       <Name>ermeX.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.ComponentServices.Interfaces\ermeX.ComponentServices.Interfaces.csproj">
+      <Project>{E5CF88F8-1141-4D44-AB1C-E2883065C735}</Project>
+      <Name>ermeX.ComponentServices.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.ComponentServices\ermeX.ComponentServices.csproj">
       <Project>{4259822D-D109-4A26-998C-6454BF3A1EF1}</Project>
       <Name>ermeX.ComponentServices</Name>
