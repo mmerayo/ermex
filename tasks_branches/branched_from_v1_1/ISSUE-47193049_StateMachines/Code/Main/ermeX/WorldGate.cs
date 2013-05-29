@@ -67,21 +67,6 @@ namespace ermeX
 
 		#endregion
 
-		[Inject]
-		private IMessagingManager MessageManager { get; set; }
-
-		[Inject]
-		private ISubscriptionsManager SubscriptionsManager { get; set; }
-
-		[Inject]
-		private IComponentManager ComponentStarter { get; set; }
-
-		[Inject]
-		private IServicePublishingManager ServicePublishingManager { get; set; }
-
-		[Inject]
-		private IServicesManager ServicesManager { get; set; }
-
 		/// <summary>
 		/// Stops & Resets the component
 		/// </summary>
@@ -117,12 +102,8 @@ namespace ermeX
 
 				componentManager.Setup(settings);
 
-				IoCManager.Kernel.Inject(Instance);
-				Instance.ComponentStarter.Start();
+				componentManager.LocalComponent.Start();
 
-				SubscribeDiscoveredMessageHandlers(settings);
-
-				PublishDiscoveredServices(settings);
 			}
 			catch (Exception ex)
 			{
@@ -131,41 +112,6 @@ namespace ermeX
 			}
 		}
 
-		private static void PublishDiscoveredServices(Configurer settings)
-		{
-			try
-			{
-				var discoveredServices = settings.GetDiscoveredServices();
-				foreach (var svc in discoveredServices)
-				{
-					Instance.ServicePublishingManager.PublishService(svc.InterfaceType, svc.ImplementationType);
-				}
-			}
-			catch (Exception ex)
-			{
-				Logger.Error(x => x("Unhandled ermeX exception: {0}", ex));
-				throw;
-			}
-		}
-
-		private static void SubscribeDiscoveredMessageHandlers(Configurer settings)
-		{
-			try
-			{
-				var discoveredSubscriptions = settings.GetDiscoveredSubscriptions();
-				foreach (var discoveredSubscription in discoveredSubscriptions)
-				{
-					Instance.SubscriptionsManager.Subscribe(discoveredSubscription.HandlerType,
-					                                        discoveredSubscription.MessageType);
-				}
-			}
-			catch (Exception ex)
-			{
-				Logger.Error(x => x("Unhandled ermeX exception: {0}", ex));
-				throw ex;
-			}
-		}
-		
 		/// <summary>
 		/// Publishes one message 
 		/// </summary>
@@ -182,7 +128,8 @@ namespace ermeX
 					x =>
 					x("{0} - Created BizMessage for Type: {1} ", bizMessage.MessageId, bizMessage.MessageType.FullName));
 
-				Instance.MessageManager.PublishMessage(bizMessage);
+				ComponentManager.Default.LocalComponent.PublishMessage(bizMessage);
+
 			}
 			catch (Exception ex)
 			{
@@ -202,7 +149,8 @@ namespace ermeX
 		{
 			try
 			{
-				return Instance.SubscriptionsManager.Subscribe<THandler>(handlerType);
+				return ComponentManager.Default.LocalComponent.Subscribe<THandler>(handlerType);
+				//return Instance.SubscriptionsManager.Subscribe<THandler>(handlerType);
 			}
 			catch (Exception ex)
 			{
@@ -230,7 +178,7 @@ namespace ermeX
 		/// <remarks>any issue or question? please report it here "http://code.google.com/p/ermex/issues/entry" </remarks>
 		public static object Suscribe(Type handlerType)
 		{
-			return Instance.SubscriptionsManager.Subscribe(handlerType);
+			return ComponentManager.Default.LocalComponent.Subscribe(handlerType);
 		}
 
 		/// <summary>
@@ -244,7 +192,7 @@ namespace ermeX
 		{
 			try
 			{
-				Instance.ServicePublishingManager.PublishService<TServiceInterface>(serviceImplementationType);
+				ComponentManager.Default.LocalComponent.PublishService<TServiceInterface>(serviceImplementationType);
 			}
 			catch (Exception ex)
 			{
@@ -264,7 +212,7 @@ namespace ermeX
 		{
 			try
 			{
-				return Instance.ServicesManager.GetServiceProxy<TService>();
+				return ComponentManager.Default.LocalComponent.GetServiceProxy<TService>();
 			}
 			catch (Exception ex)
 			{
@@ -286,7 +234,7 @@ namespace ermeX
 		{
 			try
 			{
-				return Instance.ServicesManager.GetServiceProxy<TService>(componentId);
+				return ComponentManager.Default.LocalComponent.GetServiceProxy<TService>(componentId);
 			}
 			catch (Exception ex)
 			{

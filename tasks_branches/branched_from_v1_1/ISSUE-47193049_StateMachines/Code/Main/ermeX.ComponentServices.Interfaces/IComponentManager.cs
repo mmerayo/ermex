@@ -3,6 +3,7 @@ using System.Net;
 using ermeX.ComponentServices.Interfaces.LocalComponent;
 using ermeX.ComponentServices.Interfaces.RemoteComponent;
 using ermeX.Configuration;
+using ermeX.LayerMessages;
 
 namespace ermeX.ComponentServices.Interfaces
 {

@@ -28,10 +28,10 @@ using ermeX.LayerMessages;
 
 namespace ermeX.Biz.Messaging
 {
-    internal class Manager : IMessagingManager
+    internal class MessagingManager : IMessagingManager
     {
         [Inject]
-        public Manager(IBusSettings settings, IMessagePublisher publisher, IMessageListener listener)
+		public MessagingManager(IBusSettings settings, IMessagePublisher publisher, IMessageListener listener)
         {
             if (settings == null) throw new ArgumentNullException("settings");
             if (publisher == null) throw new ArgumentNullException("publisher");
@@ -44,7 +44,7 @@ namespace ermeX.Biz.Messaging
         private IBusSettings Settings { get; set; }
         private IMessagePublisher Publisher { get; set; }
         private IMessageListener Listener { get; set; }
-        private static readonly ILog Logger=LogManager.GetLogger(typeof(Manager).FullName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof(MessagingManager).FullName);
 
         #region IMessagingManager Members
 

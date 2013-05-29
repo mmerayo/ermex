@@ -45,7 +45,7 @@ namespace ermeX.Biz.IoC
 
         public override void Load()
         {
-            Bind<IMessagingManager>().To<Manager>().InSingletonScope();
+            Bind<IMessagingManager>().To<MessagingManager>().InSingletonScope();
             Bind<IServicePublishingManager>().To<ServicesPublishing.ServicePublishingManager>().InSingletonScope();
             Bind<IServicesManager>().To<Services.Manager>().InSingletonScope();
             Bind<ISubscriptionsManager>().To<Subscriptions.SubscriptionsManager>().InSingletonScope();
