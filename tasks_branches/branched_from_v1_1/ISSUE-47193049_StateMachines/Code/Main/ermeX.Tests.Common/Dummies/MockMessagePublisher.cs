@@ -41,7 +41,12 @@ namespace ermeX.Tests.Common.Dummies
         {
         }
 
-        public TServiceInterface GetServiceProxy<TServiceInterface>() where TServiceInterface : IService
+	    public void Stop()
+	    {
+		    throw new NotImplementedException();
+	    }
+
+	    public TServiceInterface GetServiceProxy<TServiceInterface>() where TServiceInterface : IService
         {
             throw new NotImplementedException();
         }

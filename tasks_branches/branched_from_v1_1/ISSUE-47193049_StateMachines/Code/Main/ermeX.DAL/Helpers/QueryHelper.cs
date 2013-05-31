@@ -331,6 +331,10 @@ namespace ermeX.DAL.Helpers
 					{
 						foreach (var sqlQuery in sqlCommands)
 						{
+							try//TODO: REMOVE THIS TRY CATCH
+							{
+
+							
 							if (!string.IsNullOrEmpty(sqlQuery))
 							{
 								using (var command = conn.CreateCommand())
@@ -339,6 +343,12 @@ namespace ermeX.DAL.Helpers
 									command.CommandText = GetSupportedSql(sqlQuery);
 									command.ExecuteNonQuery();
 								}
+							}
+							}
+							catch (Exception)
+							{
+
+								throw;
 							}
 						}
 						tr.Commit();

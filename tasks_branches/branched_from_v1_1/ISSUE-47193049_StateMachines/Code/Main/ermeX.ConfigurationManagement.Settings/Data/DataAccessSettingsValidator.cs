@@ -38,13 +38,13 @@ namespace ermeX.ConfigurationManagement.Settings.Data
             bool result = true;
             if (_settings.SchemasApplied.Count == 0)
             {
-                errors.Add("Configuration:SchemasApplied: Need to define one schema");
+                errors.Add("Configuration:SchemasApplied: At least one schema defined is expected");
                 result = false;
             }
 
             if (string.IsNullOrEmpty(_settings.ConfigurationConnectionString))
             {
-                errors.Add("Configuration:ConfigurationConnectionString: Need to define one connection string");
+                errors.Add("Configuration:ConfigurationConnectionString: db connection string is expected");
                 result = false;
             }
 
