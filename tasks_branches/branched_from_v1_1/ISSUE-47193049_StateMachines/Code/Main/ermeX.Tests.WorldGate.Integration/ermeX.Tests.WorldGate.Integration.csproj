@@ -1,61 +1,62 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <MergeAsm Include="*.dll" />
-  </ItemGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{84423F30-093B-4345-A417-409C79FD945E}</ProjectGuid>
+    <ProjectGuid>{3E3F6C26-C2B3-4F8C-8EED-D54967A10EA0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ermeX</RootNamespace>
-    <AssemblyName>ermeX</AssemblyName>
+    <RootNamespace>ermeX.Tests.WorldGate.Integration</RootNamespace>
+    <AssemblyName>ermeX.Tests.WorldGate.Integration</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.Logging">
-      <HintPath>..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Ninject, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+    <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\..\Build\Packages\nUnit\NUnit-2.5.6.10205\nunitbin\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NamespaceDoc.cs" />
-    <Compile Include="ermeX.Component\SoaComponent.cs" />
-    <Compile Include="Properties\TestVisibilityInfo.cs" />
-    <Compile Include="Properties\ProjectInfo.cs" />
-    <Compile Include="Properties\KeyFileInfo.cs" />
-    <Compile Include="WorldGate.cs" />
+    <Compile Include="..\ermeX\Properties\KeyFileInfo.cs">
+      <Link>Properties\KeyFileInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
+      <Link>Properties\ProjectInfo.cs</Link>
+    </Compile>
+    <Compile Include="LonelyComponentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="KeyFile.snk" />
-    <None Include="packages.config" />
+    <None Include="..\ermeX\KeyFile.snk">
+      <Link>KeyFile.snk</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ermeX.Biz.Interfaces\ermeX.Biz.Interfaces.csproj">
@@ -102,6 +103,10 @@
       <Project>{AC2791B0-305E-44E5-B6C1-88771BDE7860}</Project>
       <Name>ermeX.Bus.Publishing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Bus.Synchronisation\ermeX.Bus.Synchronisation.csproj">
+      <Project>{560852A4-AF6A-4440-BC97-9A5453DDD5FC}</Project>
+      <Name>ermeX.Bus.Synchronisation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Bus\ermeX.Bus.csproj">
       <Project>{DA91A63E-958D-4478-94F7-44D12EA15F05}</Project>
       <Name>ermeX.Bus</Name>
@@ -113,10 +118,6 @@
     <ProjectReference Include="..\ermeX.ComponentServices.Interfaces\ermeX.ComponentServices.Interfaces.csproj">
       <Project>{E5CF88F8-1141-4D44-AB1C-E2883065C735}</Project>
       <Name>ermeX.ComponentServices.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ermeX.ComponentServices.IoC\ermeX.ComponentServices.IoC.csproj">
-      <Project>{5D431CB4-4AA9-4B30-93A4-0DF688DB99EC}</Project>
-      <Name>ermeX.ComponentServices.IoC</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.ComponentServices\ermeX.ComponentServices.csproj">
       <Project>{4259822D-D109-4A26-998C-6454BF3A1EF1}</Project>
@@ -150,6 +151,10 @@
       <Project>{588A3C5F-C021-480E-B413-AEF2DEC4F97F}</Project>
       <Name>ermeX.DAL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Exceptions\ermeX.Exceptions.csproj">
+      <Project>{6A23DFD5-8894-4ABA-BA81-7AB2A7DAD552}</Project>
+      <Name>ermeX.Exceptions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Interfaces\ermeX.Interfaces.csproj">
       <Project>{A67BD599-72DF-40F6-B632-AFB22B4B3D18}</Project>
       <Name>ermeX.Interfaces</Name>
@@ -158,6 +163,10 @@
       <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
       <Name>ermeX.LayerMessages</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.Models\ermeX.Models.csproj">
+      <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
+      <Name>ermeX.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.NonMerged\ermeX.NonMerged.csproj">
       <Project>{E72B0ECE-557C-4002-9368-2273101F76F3}</Project>
       <Name>ermeX.NonMerged</Name>
@@ -165,6 +174,10 @@
     <ProjectReference Include="..\ermeX.Parallel\ermeX.Parallel.csproj">
       <Project>{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}</Project>
       <Name>ermeX.Parallel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Tests.Common\ermeX.Tests.Common.csproj">
+      <Project>{7E841F70-E81D-4AB8-B387-DD7383202915}</Project>
+      <Name>ermeX.Tests.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Transport.BuiltIn.SuperSocket\ermeX.Transport.BuiltIn.SuperSocket.csproj">
       <Project>{91BAFA98-AFBA-4CD0-BC04-AD1030C4E0F8}</Project>
@@ -194,18 +207,17 @@
       <Project>{01A43626-806A-4657-BEAC-52E0EFFCD068}</Project>
       <Name>ermeX.Versioning</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ChangeLog.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="RemainPublicAfterMerge.txt" />
+    <ProjectReference Include="..\ermeX\ermeX.csproj">
+      <Project>{84423F30-093B-4345-A417-409C79FD945E}</Project>
+      <Name>ermeX</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!--<UsingTask TaskName="ILMerge" AssemblyFile="$(ProjectDir)..\..\..\Code\Build\Packages\ILMerge\ILMerge.MSBuild.Tasks.dll"/>-->
-  <!--TODO: change based on config vbles generating a new executable for the task for each case on demand-->
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target>
+  -->
 </Project>

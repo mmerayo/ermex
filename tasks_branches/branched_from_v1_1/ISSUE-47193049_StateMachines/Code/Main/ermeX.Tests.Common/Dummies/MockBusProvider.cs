@@ -46,7 +46,12 @@ namespace ermeX.Tests.Common.Dummies
             throw new NotImplementedException();
         }
 
-        public ServiceOperationResult<TResult> RequestService<TResult>(Guid serviceOperation, object[] requestParams)
+	    public void Stop()
+	    {
+		    throw new NotImplementedException();
+	    }
+
+	    public ServiceOperationResult<TResult> RequestService<TResult>(Guid serviceOperation, object[] requestParams)
         {
             throw new NotImplementedException();
         }

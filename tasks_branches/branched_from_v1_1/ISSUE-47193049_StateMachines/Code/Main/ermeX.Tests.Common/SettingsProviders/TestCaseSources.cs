@@ -30,15 +30,22 @@ namespace ermeX.Tests.Common.SettingsProviders
 		public const string OptionDbPersistent = "SqliteDb";
 		public const string OptionDbSqlServer = "SqlServerDb";
 		public const string OptionAllDbs = "AllDbs";
+		public const string OptionAllSqliteDbs = "AllSqliteDbs";
 		
 
 		public static IEnumerable<DbEngineType> InMemoryDb()
 		{
 			yield return DbEngineType.SqliteInMemory;
 		}
-
+		
 		public static IEnumerable<DbEngineType> SqliteDb()
 		{
+			yield return DbEngineType.Sqlite;
+		}
+
+		public static IEnumerable<DbEngineType> AllSqliteDbs()
+		{
+			yield return DbEngineType.SqliteInMemory;
 			yield return DbEngineType.Sqlite;
 		}
 

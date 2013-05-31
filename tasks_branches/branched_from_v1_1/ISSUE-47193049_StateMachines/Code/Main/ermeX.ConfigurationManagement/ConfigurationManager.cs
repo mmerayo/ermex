@@ -77,8 +77,6 @@ namespace ermeX.ConfigurationManagement
             {
                 _instance = ObjectBuilder.FromType<IConfigurationManager>(settings.ConfigurationManagerType);
             }
-
-
             
             INinjectModule[] injectionModules = GetInjectionModules(settings);
             IoCManager.SetCurrentInjections(injectionModules);
@@ -110,8 +108,8 @@ namespace ermeX.ConfigurationManagement
     		try
     		{
 #endif
-    			TypesHelper.GetAssemblyFromDomain("ermeX.Dal.IoC");
-    			//TODO: ADD ALL or define the injections using another mechanism
+    			TypesHelper.GetAssemblyFromDomain("ermeX.Dal.IoC");//TODO: ADD ALL or define the injections using another mechanism
+    			
 
 #if !DEBUG
     		}
