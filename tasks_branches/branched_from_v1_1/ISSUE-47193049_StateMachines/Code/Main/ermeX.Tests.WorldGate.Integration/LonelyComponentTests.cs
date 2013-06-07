@@ -22,6 +22,11 @@ namespace ermeX.Tests.Full.Integration
 				LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
 		}
 
+		[TearDown]
+		public void OnTearDown()
+		{
+			WorldGate.Reset();
+		}
 
 		[Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionAllSqliteDbs)]
 		public void CanStartLonelyComponent(DbEngineType dbType)

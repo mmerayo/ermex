@@ -195,7 +195,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 		private void OnError(Exception ex)
 		{
 			if (ex == null) throw new ArgumentNullException("ex");
-			Logger.DebugFormat("OnError - {0}", ex.ToString());
+			Logger.ErrorFormat("OnError - {0}", ex.ToString());
 			_errorStepExecutor.OnError(); //TODO: MOVE NEXT LINE TO THE EXECUTOR
 			throw new ermeXRemoteComponentException(ex);
 		}

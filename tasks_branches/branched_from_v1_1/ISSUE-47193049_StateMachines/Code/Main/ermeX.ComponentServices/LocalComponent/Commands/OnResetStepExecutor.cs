@@ -6,7 +6,7 @@ namespace ermeX.ComponentServices.LocalComponent.Commands
 	{
 		public void Reset()
 		{
-			throw new System.NotImplementedException();
+			
 		}
 	}
 }
