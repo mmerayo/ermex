@@ -42,8 +42,7 @@ namespace ermeX.ComponentServices
 					Reset();
 				else
 				{
-					var componentSettings = settings.GetSettings<IComponentSettings>();
-					ISetupServiceInjector serviceInjector = new SetupServiceInjector(componentSettings);
+					ISetupServiceInjector serviceInjector = new SetupServiceInjector(settings);
 					ISetupVersionUpgradeRunner versionUpgrader = new SetupUpgradeRunner(settings.GetSettings<IDalSettings>());
 					_setupMachine = new SetupMachine(serviceInjector, versionUpgrader);
 				}
