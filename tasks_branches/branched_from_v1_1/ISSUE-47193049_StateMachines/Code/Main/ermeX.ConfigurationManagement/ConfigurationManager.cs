@@ -102,14 +102,17 @@ namespace ermeX.ConfigurationManagement
             return result.ToArray();
         }
 
-    	private static void EnsureIocAssembliesAreInDomain()
-    	{
+	    private static void EnsureIocAssembliesAreInDomain()
+	    {
 #if !DEBUG
     		try
     		{
 #endif
-    			TypesHelper.GetAssemblyFromDomain("ermeX.Dal.IoC");//TODO: ADD ALL or define the injections using another mechanism
-    			
+		    TypesHelper.GetAssemblyFromDomain("ermeX.Dal.IoC");
+			    //TODO: ADD ALL or define the injections using another mechanism
+		    TypesHelper.GetAssemblyFromDomain("ermeX.ComponentServices.IoC");
+			    //TODO: ADD ALL or define the injections using another mechanism
+
 
 #if !DEBUG
     		}
@@ -118,12 +121,10 @@ namespace ermeX.ConfigurationManagement
     			//swallow as could be merged
     		}
 #endif
+	    }
 
 
-    	}
-
-
-    	public static Cfg GetSettingsFromConfig()
+	    public static Cfg GetSettingsFromConfig()
         {
             var config = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var target = (ermeXConfiguration) config.GetSection("ermeXConfiguration");

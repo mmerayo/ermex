@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ermeX.ComponentServices\Properties\LayerInfo.cs">
+      <Link>Properties\LayerInfo.cs</Link>
+    </Compile>
     <Compile Include="..\ermeX\Properties\KeyFileInfo.cs">
       <Link>Properties\KeyFileInfo.cs</Link>
     </Compile>
