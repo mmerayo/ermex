@@ -63,8 +63,6 @@ namespace ermeX.ermeX.Component
             }
             catch (Exception ex)
             {
-                Debugger.Launch();
-
                 Logger.Warn(x=>x("ResetAll: Exception:{0} ", ex));
                 throw;
             }
