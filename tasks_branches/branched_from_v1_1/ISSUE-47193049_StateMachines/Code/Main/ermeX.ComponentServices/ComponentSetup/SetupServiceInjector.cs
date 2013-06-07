@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Ninject;
 using ermeX.ComponentServices.Interfaces;
 using ermeX.ComponentServices.Interfaces.ComponentSetup;
+using ermeX.Configuration;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
@@ -13,17 +14,19 @@ namespace ermeX.ComponentServices.ComponentSetup
 {
 	internal sealed class SetupServiceInjector : ISetupServiceInjector
 	{
-		private readonly IComponentSettings _settings;
+		private readonly Configurer _settings;
 
-		public SetupServiceInjector(IComponentSettings settings)
+		public SetupServiceInjector(Configurer settings)
 		{
 			if (settings == null) throw new ArgumentNullException("settings");
+
 			_settings = settings;
 		}
 
 		public void InjectServices()
 		{
-			ConfigurationManager.SetSettingsSource(_settings);
+			ConfigurationManager.SetSettingsSource(_settings.GetSettings<IComponentSettings>());
+			InjectConstantSettings();
 		}
 
 		public void Reset()
@@ -32,8 +35,17 @@ namespace ermeX.ComponentServices.ComponentSetup
 			if (IoCManager.Kernel == null) return;
 			
 			IoCManager.Reset();
-			IoCManager.Kernel.Bind<IComponentManager>().ToConstant(ComponentManager.Default);//TODO: INJECT THIS PREVIOUSLY AND REINJECT AFTER EVERY RESET
+
+			//TODO: INJECT THIS PREVIOUSLY AND REINJECT AFTER EVERY RESET
+			InjectConstantSettings();
+
 			SystemTaskQueue.Reset();
+		}
+
+		private void InjectConstantSettings()
+		{
+			IoCManager.Kernel.Bind<Configurer>().ToConstant(_settings);
+			IoCManager.Kernel.Bind<IComponentManager>().ToConstant(ComponentManager.Default);
 		}
 	}
 }
