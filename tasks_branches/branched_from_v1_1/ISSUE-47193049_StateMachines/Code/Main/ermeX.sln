@@ -106,7 +106,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.ConfigurationManageme
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ermeX.Tests.ConfigurationManagement.Config", "ermeX.Tests.ConfigurationManagement.Config\ermeX.Tests.ConfigurationManagement.Config.csproj", "{3E590AAB-4344-4C11-8D99-E9046F2AD63F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SystemTests", "SystemTests", "{4215B08A-9BAF-4B1E-B704-FFE0AABCE35B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{4215B08A-9BAF-4B1E-B704-FFE0AABCE35B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ToBeReorganized", "ToBeReorganized", "{DED33F47-0F7E-463F-8C61-DF34AB22773F}"
 EndProject
