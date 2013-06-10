@@ -34,7 +34,7 @@ namespace ermeX.ComponentServices.LocalComponent
 		[Inject]
 		public LocalComponent(
 			LocalComponentStateMachine stateMachine,
-			encapsulate the following to be retaken from the container on start
+			encapsulate the following to be retaken from the container on start and do the same on the remote component
 			ICanReadServiceDetails serviceDetailsReader, 
 			IMessagePublisher publisher,
 			ICanReadIncommingMessagesSubscriptions incommingMessagesSubscriptionsReader,
