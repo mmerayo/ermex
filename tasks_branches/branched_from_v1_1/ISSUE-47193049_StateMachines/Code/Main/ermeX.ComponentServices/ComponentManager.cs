@@ -60,7 +60,7 @@ namespace ermeX.ComponentServices
 				{
 					if (_localComponent.IsStopped())
 						return;
-					throw new InvalidOperationException("The has not been started");
+					throw new InvalidOperationException("The local component is not running nor stopped");
 				}
 				if (_setupMachine != null)
 					_setupMachine.Reset();
