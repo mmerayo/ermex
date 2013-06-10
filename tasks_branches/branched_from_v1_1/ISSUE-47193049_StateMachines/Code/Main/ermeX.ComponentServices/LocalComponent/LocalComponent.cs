@@ -101,6 +101,12 @@ namespace ermeX.ComponentServices.LocalComponent
 			return _stateMachine.IsRunning();
 		}
 
+
+		public bool IsStopped()
+		{
+			return _stateMachine.IsStopped();
+		}
+
 		public void PublishMessage(BizMessage bizMessage)
 		{
 			_messagingManager.PublishMessage(bizMessage);
@@ -130,5 +136,6 @@ namespace ermeX.ComponentServices.LocalComponent
 		{
 			return _servicesManager.GetServiceProxy<TService>(componentId);
 		}
+
 	}
 }

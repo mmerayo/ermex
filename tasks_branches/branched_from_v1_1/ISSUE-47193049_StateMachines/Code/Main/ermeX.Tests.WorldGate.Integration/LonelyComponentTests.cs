@@ -35,6 +35,25 @@ namespace ermeX.Tests.Full.Integration
 			WorldGate.ConfigureAndStart(testContext.Configuration);
 		}
 
+		[Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionAllSqliteDbs)]
+		public void CanStartLonelyComponentSeveralTimes(DbEngineType dbType)
+		{
+			int times = 10;
+			var testContext = new TestContext(dbType);
+			while (times-- > 0)
+			{
+				try
+				{
+					WorldGate.ConfigureAndStart(testContext.Configuration);
+					WorldGate.Reset();
+				}
+				catch (Exception ex)
+				{
+					throw new Exception("times=" + times, ex);
+				}
+			}
+		}
+
 		[Test]
 		public void CanResetLonelyComponent()
 		{
