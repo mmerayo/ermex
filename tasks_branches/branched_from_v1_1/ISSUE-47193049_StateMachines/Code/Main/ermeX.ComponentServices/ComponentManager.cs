@@ -57,8 +57,11 @@ namespace ermeX.ComponentServices
 			lock (_syncLock)
 			{
 				if (_localComponent != null && !_localComponent.IsRunning())
+				{
+					if (_localComponent.IsStopped())
+						return;
 					throw new InvalidOperationException("The has not been started");
-
+				}
 				if (_setupMachine != null)
 					_setupMachine.Reset();
 

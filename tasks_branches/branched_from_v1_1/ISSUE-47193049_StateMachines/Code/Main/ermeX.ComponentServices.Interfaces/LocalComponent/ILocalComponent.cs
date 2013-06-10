@@ -16,5 +16,6 @@ namespace ermeX.ComponentServices.Interfaces.LocalComponent
 		void PublishService<TServiceInterface>(Type serviceImplementationType) where TServiceInterface : IService;
 		TService GetServiceProxy<TService>() where TService : IService;
 		TService GetServiceProxy<TService>(Guid componentId) where TService : IService;
+		bool IsStopped();
 	}
 }

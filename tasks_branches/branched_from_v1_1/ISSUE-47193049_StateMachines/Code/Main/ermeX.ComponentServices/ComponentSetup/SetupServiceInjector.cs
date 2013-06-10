@@ -36,8 +36,8 @@ namespace ermeX.ComponentServices.ComponentSetup
 			
 			IoCManager.Reset();
 
-			//TODO: INJECT THIS PREVIOUSLY AND REINJECT AFTER EVERY RESET
-			InjectConstantSettings();
+			////TODO: INJECT THIS PREVIOUSLY AND REINJECT AFTER EVERY RESET
+			//InjectConstantSettings();
 
 			SystemTaskQueue.Reset();
 		}
