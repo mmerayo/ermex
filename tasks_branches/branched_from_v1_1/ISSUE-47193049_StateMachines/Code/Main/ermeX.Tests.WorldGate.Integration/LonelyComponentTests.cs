@@ -54,21 +54,51 @@ namespace ermeX.Tests.Full.Integration
 			}
 		}
 
-		[Test]
-		public void CanResetLonelyComponent()
+		[Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionAllSqliteDbs)]
+		public void CanResetLonelyComponent(DbEngineType dbType)
 		{
 			throw new NotImplementedException();
 		}
 
-		[Test]
-		public void CanStartLonelyComponentWithServicesAndSubscriptions()
+		[Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionAllSqliteDbs)]
+		public void CanStartLonelyComponentWithServicesAndSubscriptions(DbEngineType dbType)
 		{
+			const int times = 2;
 			throw new NotImplementedException();
 		}
 
-		[Test]
-		public void CanResetLonelyComponentWithServicesAndSubscriptions()
+		[Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionAllSqliteDbs)]
+		public void CanResetLonelyComponentWithServicesAndSubscriptions(DbEngineType dbType)
 		{
+			const int times = 2;
+			throw new NotImplementedException();
+		}
+
+		[Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionAllSqliteDbs)]
+		public void CanPublishMessagesToLonelyComponent(DbEngineType dbType)
+		{
+			const int times = 2;
+			throw new NotImplementedException();
+		}
+
+		[Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionAllSqliteDbs)]
+		public void CanSubscribeToMessagesToLonelyComponent(DbEngineType dbType)
+		{
+			const int times = 2;
+			throw new NotImplementedException();
+		}
+
+		[Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionAllSqliteDbs)]
+		public void CanPublishServicesToLonelyComponent(DbEngineType dbType)
+		{
+			const int times = 2;
+			throw new NotImplementedException();
+		}
+
+		[Test, TestCaseSource(typeof(TestCaseSources), TestCaseSources.OptionAllSqliteDbs)]
+		public void CanRequestServicesPublishedByLonelyComponent(DbEngineType dbType)
+		{
+			const int times = 2;
 			throw new NotImplementedException();
 		}
 

@@ -29,7 +29,7 @@ namespace ermeX.ConfigurationManagement.IoC
     internal static class IoCManager
     {
         private static readonly object syncRoot = new object();
-        public static IKernel Kernel { get; private set; }
+        public static IKernel Kernel { get; private set; }//TODO: dont expose this and expose methods where needed 
         public static event EventHandler IoCKernelChanged;
 
         public static void SetCurrentInjections(INinjectModule[] injectionModules)
