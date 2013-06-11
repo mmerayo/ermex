@@ -124,6 +124,11 @@ namespace ermeX.ComponentServices
 			return result;
 		}
 
+		public IEnumerable<IRemoteComponent> GetRemoteComponents()
+		{
+			return _remoteComponents.Values;
+		}
+
 		public bool AddRemoteComponent(Guid componentId, IPAddress address, ushort port,bool joinIfCreated=false)
 		{
 

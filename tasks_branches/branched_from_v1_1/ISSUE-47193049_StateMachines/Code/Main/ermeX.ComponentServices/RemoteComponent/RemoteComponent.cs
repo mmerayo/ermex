@@ -38,5 +38,10 @@ namespace ermeX.ComponentServices.RemoteComponent
 		{
 			_stateMachine.Create(componentId,ipAddress,port);
 		}
+
+		public void Stop()
+		{
+			_stateMachine.Stop();
+		}
 	}
 }
