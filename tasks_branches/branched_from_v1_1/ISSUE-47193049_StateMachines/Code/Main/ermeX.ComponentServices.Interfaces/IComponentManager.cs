@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using ermeX.ComponentServices.Interfaces.LocalComponent;
 using ermeX.ComponentServices.Interfaces.RemoteComponent;
@@ -16,5 +17,6 @@ namespace ermeX.ComponentServices.Interfaces
 		IRemoteComponent FriendComponent { get; }
 		IRemoteComponent GetRemoteComponent(Guid componentId);
 		bool AddRemoteComponent(Guid componentId, IPAddress address, ushort port,bool joinIfCreated=false);
+		IEnumerable<IRemoteComponent> GetRemoteComponents();
 	}
 }

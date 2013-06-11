@@ -6,6 +6,7 @@ using ermeX.Biz.Interfaces;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.ComponentServices.Interfaces.LocalComponent;
+using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.DAL.Interfaces.Subscriptions;
@@ -16,49 +17,46 @@ namespace ermeX.ComponentServices.LocalComponent
 {
 	internal sealed class LocalComponent : ILocalComponent
 	{
-		private readonly ICanReadServiceDetails _serviceDetailsReader;
+		private ICanReadServiceDetails _serviceDetailsReader;
 
 		//TODO: THE FOLLOWING 3 HAVE SIMILAR COMMITMENTS, PUT THEM UNDER SAME COMPONENT INTERFACE
-		private readonly IMessagePublisher _publisher;
-		private readonly IMessagingManager _messagingManager;
-		private readonly ISubscriptionsManager _subscriptionsManager;
+		private  IMessagePublisher _publisher;
+		private  IMessagingManager _messagingManager;
+		private  ISubscriptionsManager _subscriptionsManager;
 
 		//TODO: FOLLOWING 2 TYPES UNDER SAME INTERFACE
-		private readonly IServicePublishingManager _servicePublishingManager;
-		private readonly IServicesManager _servicesManager;
+		private  IServicePublishingManager _servicePublishingManager;
+		private  IServicesManager _servicesManager;
 
-		private readonly ICanReadIncommingMessagesSubscriptions _incommingMessagesSubscriptionsReader;
+		private  ICanReadIncommingMessagesSubscriptions _incommingMessagesSubscriptionsReader;
 		private static readonly ILog Logger = LogManager.GetLogger<LocalComponent>();
 		private readonly LocalComponentStateMachine _stateMachine;
 
 		[Inject]
-		public LocalComponent(
-			LocalComponentStateMachine stateMachine,
-			encapsulate the following to be retaken from the container on start and do the same on the remote component
-			ICanReadServiceDetails serviceDetailsReader, 
-			IMessagePublisher publisher,
-			ICanReadIncommingMessagesSubscriptions incommingMessagesSubscriptionsReader,
-			IMessagingManager messagingManager,
-			ISubscriptionsManager subscriptionsManager,
-			IServicePublishingManager servicePublishingManager,
-			IServicesManager servicesManager
-			)
+		public LocalComponent(LocalComponentStateMachine stateMachine)
 		{
-			_serviceDetailsReader = serviceDetailsReader;
-			_publisher = publisher;
-			_incommingMessagesSubscriptionsReader = incommingMessagesSubscriptionsReader;
-			_messagingManager = messagingManager;
-			_subscriptionsManager = subscriptionsManager;
-			_servicePublishingManager = servicePublishingManager;
-			_servicesManager = servicesManager;
-
 			_stateMachine = stateMachine;
 		}
 
 		public void Start()
 		{
 			Logger.Debug("Start");
+
+			RefreshInjections();
+
 			_stateMachine.Start();
+		}
+
+		//needed before the start oif the cicle as the container might have been reset
+		private void RefreshInjections()
+		{
+			_serviceDetailsReader = IoCManager.Kernel.Get<ICanReadServiceDetails>();
+			_publisher = IoCManager.Kernel.Get < IMessagePublisher>();
+			_incommingMessagesSubscriptionsReader = IoCManager.Kernel.Get<ICanReadIncommingMessagesSubscriptions>();
+			_messagingManager = IoCManager.Kernel.Get<IMessagingManager>();
+			_subscriptionsManager = IoCManager.Kernel.Get<ISubscriptionsManager>();
+			_servicePublishingManager = IoCManager.Kernel.Get<IServicePublishingManager>();
+			_servicesManager = IoCManager.Kernel.Get<IServicesManager>();
 		}
 
 		//TODO: THE FOLLOWING 2 METHODS SMELL HERE
