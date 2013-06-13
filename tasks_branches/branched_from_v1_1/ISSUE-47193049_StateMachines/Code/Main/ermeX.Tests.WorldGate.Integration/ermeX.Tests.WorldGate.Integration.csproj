@@ -50,6 +50,7 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
+    <Compile Include="WithFriendComponent.cs" />
     <Compile Include="LonelyComponentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -182,6 +183,10 @@
     <ProjectReference Include="..\ermeX.Tests.Common\ermeX.Tests.Common.csproj">
       <Project>{7E841F70-E81D-4AB8-B387-DD7383202915}</Project>
       <Name>ermeX.Tests.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Tests.SupportTypes\ermeX.Tests.SupportTypes.csproj">
+      <Project>{B26507AE-B7E4-4E3B-8643-1F3A7B8F8224}</Project>
+      <Name>ermeX.Tests.SupportTypes</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Transport.BuiltIn.SuperSocket\ermeX.Transport.BuiltIn.SuperSocket.csproj">
       <Project>{91BAFA98-AFBA-4CD0-BC04-AD1030C4E0F8}</Project>

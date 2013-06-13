@@ -29,5 +29,7 @@ namespace ermeX.Tests.SupportTypes.Services
     {
         [ServiceOperation("96FC8562-3600-4AC6-88F5-0E2D39810767")]
         void EmptyMethod();
+		[ServiceOperation("AB3AC0E7-4A38-4B98-98D5-1C34833A461B")]
+	    long MethodReturnsTodayTicks();
     }
 }

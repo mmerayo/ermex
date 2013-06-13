@@ -26,5 +26,12 @@ namespace ermeX.Tests.SupportTypes.Messages
     [Serializable]
     public class MessageA
     {
+	    private Guid _theValue = Guid.NewGuid();
+
+	    public Guid TheValue
+	    {
+		    get { return _theValue; }
+		    set { _theValue = value; }
+	    }
     }
 }
