@@ -26,5 +26,10 @@ namespace ermeX.Tests.SupportTypes.Services
         {
             throw new NotImplementedException();
         }
+
+	    public long MethodReturnsTodayTicks()
+	    {
+		    return DateTime.Today.Ticks;
+	    }
     }
 }

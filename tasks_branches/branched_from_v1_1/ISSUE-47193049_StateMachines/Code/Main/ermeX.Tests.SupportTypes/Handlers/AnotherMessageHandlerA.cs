@@ -16,25 +16,32 @@
 //        specific language governing permissions and limitations
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
+
+using System;
+using System.Threading;
 using ermeX.Bus.Interfaces;
 using ermeX.Tests.SupportTypes.Messages;
 
 namespace ermeX.Tests.SupportTypes.Handlers
 {
-    public class AnotherMessageHandlerA:IHandleMessages<MessageA>,IAmASillyInterface
-    {
-        public virtual void HandleMessage(MessageA message)
-        {
-            throw new System.NotImplementedException();
-        }
+	public class AnotherMessageHandlerA : IHandleMessages<MessageA>, IAmASillyInterface
+	{
+		public virtual void HandleMessage(MessageA message)
+		{
+			Message = message;
+		}
 
-        //public bool Evaluate(MessageA message)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
-        public void SillyMethod()
-        {
-            throw new System.NotImplementedException();
-        }
-    }
+		//public bool Evaluate(MessageA message)
+		//{
+		//    throw new System.NotImplementedException();
+		//}
+		public void SillyMethod()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public MessageA Message { get; private set; }
+
+		
+	}
 }
