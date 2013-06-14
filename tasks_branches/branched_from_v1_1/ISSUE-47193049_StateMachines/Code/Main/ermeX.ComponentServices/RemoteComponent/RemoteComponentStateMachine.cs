@@ -17,16 +17,16 @@ namespace ermeX.ComponentServices.RemoteComponent
 	internal sealed class RemoteComponentStateMachine:IRemoteComponentStateMachine
 	{
 		private readonly IRemoteComponentStateMachineContext _context;
-		private readonly IOnPreliveExecutor _preliveExecutor;
-		private readonly IOnCreatingStepExecutor _creatingExecutor;
-		private readonly IOnStoppedStepExecutor _stoppedStepExecutor;
-		private readonly IOnJoiningStepExecutor _joiningStepExecutor;
-		private readonly IOnRunningStepExecutor _runningStepExecutor;
-		private readonly IOnErrorStepExecutor _errorStepExecutor;
-		private readonly IOnRequestingSubscriptionsStepExecutor _subscriptionsRequester;
-		private readonly IOnSubscriptionsReceivedStepExecutor _subscriptionsReceivedHandler;
-		private readonly IOnRequestingServicesStepExecutor _servicesRequester;
-		private readonly IOnServicesReceivedStepExecutor _servicesReceivedHandler;
+		private IOnPreliveExecutor _preliveExecutor;
+		private IOnCreatingStepExecutor _creatingExecutor;
+		private IOnStoppedStepExecutor _stoppedStepExecutor;
+		private IOnJoiningStepExecutor _joiningStepExecutor;
+		private IOnRunningStepExecutor _runningStepExecutor;
+		private IOnErrorStepExecutor _errorStepExecutor;
+		private IOnRequestingSubscriptionsStepExecutor _subscriptionsRequester;
+		private IOnSubscriptionsReceivedStepExecutor _subscriptionsReceivedHandler;
+		private IOnRequestingServicesStepExecutor _servicesRequester;
+		private IOnServicesReceivedStepExecutor _servicesReceivedHandler;
 
 		private enum RemoteComponentEvent
 		{
@@ -73,33 +73,27 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 
 		[Inject]
-		public RemoteComponentStateMachine(IRemoteComponentStateMachineContext context,
-			IOnPreliveExecutor preliveExecutor,
-			IOnCreatingStepExecutor creatingExecutor,
-			IOnStoppedStepExecutor stoppedStepExecutor,
-			IOnJoiningStepExecutor joiningStepExecutor,
-			IOnRunningStepExecutor runningStepExecutor,
-			IOnErrorStepExecutor errorStepExecutor,
-			IOnRequestingSubscriptionsStepExecutor subscriptionsRequester,
-			IOnSubscriptionsReceivedStepExecutor subscriptionsReceivedHandler,
-			IOnRequestingServicesStepExecutor servicesRequester,
-			IOnServicesReceivedStepExecutor servicesReceivedHandler)
+		public RemoteComponentStateMachine(IRemoteComponentStateMachineContext context)
 		{
 			_context = context;
 			_context.StateMachine = this;
 
-			_preliveExecutor = preliveExecutor;
-			_creatingExecutor = creatingExecutor;
-			_stoppedStepExecutor = stoppedStepExecutor;
-			_joiningStepExecutor = joiningStepExecutor;
-			_runningStepExecutor = runningStepExecutor;
-			_errorStepExecutor = errorStepExecutor;
-			_subscriptionsRequester = subscriptionsRequester;
-			_subscriptionsReceivedHandler = subscriptionsReceivedHandler;
-			_servicesRequester = servicesRequester;
-			_servicesReceivedHandler = servicesReceivedHandler;
 			
 			DefineStateMachineTransitions();
+		}
+
+		private void RefreshInjections()
+		{
+			_preliveExecutor = IoCManager.Kernel.Get<IOnPreliveExecutor>();
+			_creatingExecutor = IoCManager.Kernel.Get<IOnCreatingStepExecutor>();
+			_stoppedStepExecutor = IoCManager.Kernel.Get<IOnStoppedStepExecutor>();
+			_joiningStepExecutor = IoCManager.Kernel.Get<IOnJoiningStepExecutor>();
+			_runningStepExecutor = IoCManager.Kernel.Get<IOnRunningStepExecutor>();
+			_errorStepExecutor = IoCManager.Kernel.Get<IOnErrorStepExecutor>();
+			_subscriptionsRequester = IoCManager.Kernel.Get<IOnRequestingSubscriptionsStepExecutor>();
+			_subscriptionsReceivedHandler = IoCManager.Kernel.Get<IOnSubscriptionsReceivedStepExecutor>();
+			_servicesRequester = IoCManager.Kernel.Get<IOnRequestingServicesStepExecutor>();
+			_servicesReceivedHandler = IoCManager.Kernel.Get<IOnServicesReceivedStepExecutor>();
 		}
 
 		private void DefineStateMachineTransitions()
@@ -318,6 +312,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Logger.DebugFormat("OnPrelive-{0}", obj.Trigger);
 			try
 			{
+				RefreshInjections();
 				_preliveExecutor.OnPrelive();
 			}
 			catch (Exception ex)

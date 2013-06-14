@@ -34,6 +34,7 @@
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.0.10827\NET40\Moq.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL" />
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\Build\Packages\nUnit\NUnit-2.5.6.10205\nunitbin\nunit.framework.dll</HintPath>
     </Reference>
@@ -63,9 +64,17 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ermeX.ComponentServices.Interfaces\ermeX.ComponentServices.Interfaces.csproj">
+      <Project>{E5CF88F8-1141-4D44-AB1C-E2883065C735}</Project>
+      <Name>ermeX.ComponentServices.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.ComponentServices\ermeX.ComponentServices.csproj">
       <Project>{4259822D-D109-4A26-998C-6454BF3A1EF1}</Project>
       <Name>ermeX.ComponentServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement\ermeX.ConfigurationManagement.csproj">
+      <Project>{C4536E30-DC91-4AA4-8860-ECBDAF1AE4DE}</Project>
+      <Name>ermeX.ConfigurationManagement</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Exceptions\ermeX.Exceptions.csproj">
       <Project>{6A23DFD5-8894-4ABA-BA81-7AB2A7DAD552}</Project>
