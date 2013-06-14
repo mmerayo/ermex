@@ -5,6 +5,7 @@ using System.Text;
 using Moq;
 using NUnit.Framework;
 using ermeX.ComponentServices.ComponentSetup;
+using ermeX.ComponentServices.Interfaces.ComponentSetup;
 using ermeX.Exceptions;
 
 namespace ermeX.Tests.ComponentServices

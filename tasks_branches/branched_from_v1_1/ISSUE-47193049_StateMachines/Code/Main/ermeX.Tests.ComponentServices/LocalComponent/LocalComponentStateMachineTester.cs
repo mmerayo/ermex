@@ -1,8 +1,11 @@
 ﻿using System;
 using Moq;
 using NUnit.Framework;
+using Ninject.Modules;
+using ermeX.ComponentServices.Interfaces.LocalComponent.Commands;
 using ermeX.ComponentServices.LocalComponent;
 using ermeX.ComponentServices.LocalComponent.Commands;
+using ermeX.ConfigurationManagement.IoC;
 using ermeX.Exceptions;
 
 namespace ermeX.Tests.ComponentServices.LocalComponent
@@ -12,6 +15,47 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 	{
 		private class TestContext
 		{
+			private class TestInjectionsModule:NinjectModule
+			{
+				private readonly IOnStartStepExecutor _onStartStepExecutor;
+				private readonly IOnSubscribeToMessagesStepExecutor _onSubscribeToMessagesStepExecutor;
+				private readonly IOnPublishServicesStepExecutor _onPublishServicesStepExecutor;
+				private readonly IOnResetStepExecutor _onResetStepExecutor;
+				private readonly IOnStopStepExecutor _onStopStepExecutor;
+				private readonly IOnRunStepExecutor _onRunStepExecutor;
+				private readonly IOnErrorStepExecutor _onErrorStepExecutor;
+
+				public TestInjectionsModule(IOnStartStepExecutor onStartStepExecutor, 
+					IOnSubscribeToMessagesStepExecutor onSubscribeToMessagesStepExecutor, 
+					IOnPublishServicesStepExecutor onPublishServicesStepExecutor, 
+					IOnResetStepExecutor onResetStepExecutor, 
+					IOnStopStepExecutor onStopStepExecutor,
+					IOnRunStepExecutor onRunStepExecutor, 
+					IOnErrorStepExecutor onErrorStepExecutor)
+				{
+					_onStartStepExecutor = onStartStepExecutor;
+					_onSubscribeToMessagesStepExecutor = onSubscribeToMessagesStepExecutor;
+					_onPublishServicesStepExecutor = onPublishServicesStepExecutor;
+					_onResetStepExecutor = onResetStepExecutor;
+					_onStopStepExecutor = onStopStepExecutor;
+					_onRunStepExecutor = onRunStepExecutor;
+					_onErrorStepExecutor = onErrorStepExecutor;
+				}
+
+				public override void Load()
+				{
+					Bind<IOnStartStepExecutor>().ToConstant(_onStartStepExecutor);
+
+					Bind<IOnSubscribeToMessagesStepExecutor>().ToConstant(_onSubscribeToMessagesStepExecutor);
+					Bind<IOnPublishServicesStepExecutor>().ToConstant(_onPublishServicesStepExecutor);
+					Bind<IOnResetStepExecutor>().ToConstant(_onResetStepExecutor);
+					Bind<IOnStopStepExecutor>().ToConstant(_onStopStepExecutor);
+					Bind<IOnRunStepExecutor>().ToConstant(_onRunStepExecutor);
+					Bind<IOnErrorStepExecutor>().ToConstant(_onErrorStepExecutor);
+					
+				}
+			}
+
 			private readonly Mock<IOnErrorStepExecutor> _errorExecutor;
 			private readonly Mock<IOnSubscribeToMessagesStepExecutor> _messagesSubscriber;
 			private readonly Mock<IOnResetStepExecutor> _resetExecutor;
@@ -30,17 +74,19 @@ namespace ermeX.Tests.ComponentServices.LocalComponent
 				_stopExecutor = new Mock<IOnStopStepExecutor>();
 				_runExecutor = new Mock<IOnRunStepExecutor>();
 				_errorExecutor = new Mock<IOnErrorStepExecutor>();
+
+				IoCManager.SetCurrentInjections(new INinjectModule[]{ new TestInjectionsModule(_startablesStarter.Object,
+													  _messagesSubscriber.Object,
+													  _servicesPublisher.Object,
+													  _resetExecutor.Object,
+													  _stopExecutor.Object,
+													  _runExecutor.Object,
+													  _errorExecutor.Object)});
 			}
 
 			public LocalComponentStateMachine GetTarget()
 			{
-				return new LocalComponentStateMachine(_startablesStarter.Object,
-				                                      _messagesSubscriber.Object,
-				                                      _servicesPublisher.Object,
-				                                      _resetExecutor.Object,
-				                                      _stopExecutor.Object,
-				                                      _runExecutor.Object,
-				                                      _errorExecutor.Object);
+				return new LocalComponentStateMachine();
 			}
 
 			public void VerifyFromStoppedToRunning()

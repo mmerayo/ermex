@@ -1,8 +1,12 @@
 ﻿using System;
 using Moq;
 using NUnit.Framework;
+using Ninject.Modules;
+using ermeX.ComponentServices.Interfaces.RemoteComponent;
+using ermeX.ComponentServices.Interfaces.RemoteComponent.Commands;
 using ermeX.ComponentServices.RemoteComponent;
 using ermeX.ComponentServices.RemoteComponent.Commands;
+using ermeX.ConfigurationManagement.IoC;
 using ermeX.Exceptions;
 
 namespace ermeX.Tests.ComponentServices.RemoteComponent
@@ -12,6 +16,60 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 	{
 		private class TestContext
 		{
+			private class TestInjectionsModule : NinjectModule
+			{
+				private readonly IOnCreatingStepExecutor _onCreatingStepExecutor;
+				private readonly IOnErrorStepExecutor _onErrorStepExecutor;
+				private readonly IOnJoiningStepExecutor _onJoiningStepExecutor;
+				private readonly IOnPreliveExecutor _onPreliveExecutor;
+				private readonly IOnSubscriptionsReceivedStepExecutor _onReceivedSubscriptionsStepExecutor;
+				private readonly IOnRequestingServicesStepExecutor _onRequestingServicesStepExecutor;
+				private readonly IOnRequestingSubscriptionsStepExecutor _onRequestingSubscriptionsStepExecutor;
+				private readonly IOnRunningStepExecutor _onRunningStepExecutor;
+				private readonly IOnServicesReceivedStepExecutor _onServicesReceivedStepExecutor;
+				private readonly IOnStoppedStepExecutor _onStoppedStepExecutor;
+
+
+				public TestInjectionsModule(IOnCreatingStepExecutor onCreatingStepExecutor,
+				                            IOnErrorStepExecutor onErrorStepExecutor,
+				                            IOnJoiningStepExecutor onJoiningStepExecutor,
+				                            IOnPreliveExecutor onPreliveExecutor,
+				                            IOnSubscriptionsReceivedStepExecutor onReceivedSubscriptionsStepExecutor,
+				                            IOnRequestingServicesStepExecutor onRequestingServicesStepExecutor,
+				                            IOnRequestingSubscriptionsStepExecutor onRequestingSubscriptionsStepExecutor,
+				                            IOnRunningStepExecutor onRunningStepExecutor,
+				                            IOnServicesReceivedStepExecutor onServicesReceivedStepExecutor,
+				                            IOnStoppedStepExecutor onStoppedStepExecutor)
+				{
+					_onCreatingStepExecutor = onCreatingStepExecutor;
+					_onErrorStepExecutor = onErrorStepExecutor;
+					_onJoiningStepExecutor = onJoiningStepExecutor;
+					_onPreliveExecutor = onPreliveExecutor;
+					_onReceivedSubscriptionsStepExecutor = onReceivedSubscriptionsStepExecutor;
+					_onRequestingServicesStepExecutor = onRequestingServicesStepExecutor;
+					_onRequestingSubscriptionsStepExecutor = onRequestingSubscriptionsStepExecutor;
+					_onRunningStepExecutor = onRunningStepExecutor;
+					_onServicesReceivedStepExecutor = onServicesReceivedStepExecutor;
+					_onStoppedStepExecutor = onStoppedStepExecutor;
+				}
+
+				public override void Load()
+				{
+					Bind<IOnCreatingStepExecutor>().ToConstant(_onCreatingStepExecutor);
+					Bind<IOnErrorStepExecutor>().ToConstant(_onErrorStepExecutor);
+					Bind<IOnJoiningStepExecutor>().ToConstant(_onJoiningStepExecutor);
+					Bind<IOnPreliveExecutor>().ToConstant(_onPreliveExecutor);
+					Bind<IOnSubscriptionsReceivedStepExecutor>().ToConstant(_onReceivedSubscriptionsStepExecutor);
+					Bind<IOnRequestingServicesStepExecutor>().ToConstant(_onRequestingServicesStepExecutor);
+					Bind<IOnRequestingSubscriptionsStepExecutor>().ToConstant(_onRequestingSubscriptionsStepExecutor);
+					Bind<IOnRunningStepExecutor>().ToConstant(_onRunningStepExecutor);
+					Bind<IOnServicesReceivedStepExecutor>().ToConstant(_onServicesReceivedStepExecutor);
+					Bind<IOnStoppedStepExecutor>().ToConstant(_onStoppedStepExecutor);
+				}
+			}
+
+
+			//do the injections as in the local component tester
 			private readonly Mock<IOnCreatingStepExecutor> _onCreatingStepExecutor;
 			private readonly Mock<IOnErrorStepExecutor> _onErrorStepExecutor;
 			private readonly Mock<IOnJoiningStepExecutor> _onJoiningStepExecutor;
@@ -35,29 +93,32 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 				_onRequestingServicesStepExecutor = new Mock<IOnRequestingServicesStepExecutor>();
 				_onReceivedSubscriptionsStepExecutor = new Mock<IOnSubscriptionsReceivedStepExecutor>();
 				_onServicesReceivedStepExecutor = new Mock<IOnServicesReceivedStepExecutor>();
+
+				IoCManager.SetCurrentInjections(new INinjectModule[]
+					{
+						new TestInjectionsModule(_onCreatingStepExecutor.Object,
+						                         _onErrorStepExecutor.Object,
+						                         _onJoiningStepExecutor.Object,
+						                         _onPreliveExecutor.Object, _onReceivedSubscriptionsStepExecutor.Object,
+						                         _onRequestingServicesStepExecutor.Object, _onRequestingSubscriptionsStepExecutor.Object,
+						                         _onRunningStepExecutor.Object, _onServicesReceivedStepExecutor.Object,
+						                         _onStoppedStepExecutor.Object)
+					});
 			}
+
+			public IRemoteComponentStateMachineContext 
 
 			public IRemoteComponentStateMachine Sut
 			{
 				get
 				{
-					return new RemoteComponentStateMachine(_onPreliveExecutor.Object,
-					                                       _onCreatingStepExecutor.Object,
-					                                       _onStoppedStepExecutor.Object,
-					                                       _onJoiningStepExecutor.Object,
-					                                       _onRunningStepExecutor.Object,
-					                                       _onErrorStepExecutor.Object,
-					                                       _onRequestingSubscriptionsStepExecutor.Object,
-					                                       _onReceivedSubscriptionsStepExecutor.Object,
-					                                       _onRequestingServicesStepExecutor.Object,
-					                                       _onServicesReceivedStepExecutor.Object
-						);
+					return new RemoteComponentStateMachine();
 				}
 			}
 
 			public void VerifyCreatedHandlerWasCalled(int times=1)
 			{
-				_onCreatingStepExecutor.Verify(x=>x.Create(TODO),Times.Exactly(times));
+				_onCreatingStepExecutor.Verify(x=>x.Create(this.),Times.Exactly(times));
 			}
 
 			public void VerifyPreliveHandlerWasCalled(int times=1)
