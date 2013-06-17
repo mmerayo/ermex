@@ -48,7 +48,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 		{
 			Guid cid;
 			DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
-			dataAccessTestHelper.InsertAppComponent(ComponentId, ComponentOwnerId, 0, false, false);
+			dataAccessTestHelper.InsertAppComponent(ComponentId, ComponentOwnerId, 0, false);
 			return dataAccessTestHelper.InsertConnectivityDetailsRecord(ComponentId, ComponentOwnerId, IP, Port, false, serverId,
 			                                                            DateTime.UtcNow);
 		}
@@ -63,7 +63,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 		protected override ConnectivityDetails GetExpected(DbEngineType engine)
 		{
 			DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
-			int idComponent = dataAccessTestHelper.InsertAppComponent(Guid.NewGuid(), LocalComponentId, 0, false, false);
+			int idComponent = dataAccessTestHelper.InsertAppComponent(Guid.NewGuid(), LocalComponentId, 0, false);
 			AppComponent appComponent;
 			var unitOfWorkFactory = GetUnitOfWorkFactory(engine);
 

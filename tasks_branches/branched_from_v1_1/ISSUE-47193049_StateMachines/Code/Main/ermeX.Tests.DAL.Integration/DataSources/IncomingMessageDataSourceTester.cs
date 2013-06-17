@@ -65,7 +65,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
         protected override int InsertRecord(DbEngineType engine)
         {
             DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
-            dataAccessTestHelper.InsertAppComponent(componentId, ownerCompId,0,false,false);
+            dataAccessTestHelper.InsertAppComponent(componentId, ownerCompId,0,false);
 
             return dataAccessTestHelper.InsertIncomingMessage(componentId, ownerCompId, BMID, 
                                          TimePublished, TimeReceived, suscriptionHandlerId,Message.MessageStatus.ReceiverReceived, new BizMessage("TheMessage").JsonMessage);
