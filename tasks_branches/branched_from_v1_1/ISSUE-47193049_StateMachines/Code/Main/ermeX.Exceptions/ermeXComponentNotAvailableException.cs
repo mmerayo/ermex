@@ -23,6 +23,7 @@ using System.Text;
 
 namespace ermeX.Exceptions
 {
+	[Serializable]
     public class ermeXComponentNotAvailableException : ermeXException
     {
         public ermeXComponentNotAvailableException(Guid remoteComponentId)

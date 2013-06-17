@@ -23,6 +23,7 @@ using System.Text;
 
 namespace ermeX.Exceptions
 {
+	[Serializable]
     public class ermeXTcpException:ermeXException
     {
         public ermeXTcpException(string message) : base(message)

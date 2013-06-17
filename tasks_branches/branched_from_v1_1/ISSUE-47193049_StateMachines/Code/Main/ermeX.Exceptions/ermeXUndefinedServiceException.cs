@@ -20,6 +20,7 @@ using System;
 
 namespace ermeX.Exceptions
 {
+	[Serializable]
     public class ermeXUndefinedServiceException : ermeXException
     {
         public ermeXUndefinedServiceException(string interfaceName,string methodName):this(interfaceName,methodName,null) {}

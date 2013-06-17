@@ -23,6 +23,7 @@ using System.Text;
 
 namespace ermeX.Exceptions
 {
+	[Serializable]
     public class ermeXServiceNotAvailableException : ermeXException
     {
         public ermeXServiceNotAvailableException(string interfaceName, string methodName)
