@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -30,7 +31,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 		private enum RemoteComponentEvent
 		{
-			Create=0,
+			ToPrelive=0,
+			Create,
 			Ready,
 			Join,
 			Joined,
@@ -45,7 +47,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 		}
 		private enum RemoteComponentState
 		{
-			Prelive=0,
+			NotStarted=0,
+			Prelive,
 			Creating,
 			Stopped,
 			Joining,
@@ -66,7 +69,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 		private static readonly ILog Logger = LogManager.GetLogger<RemoteComponentStateMachine>();
 
 		private readonly StateMachine<RemoteComponentState, RemoteComponentEvent> _machine =
-			new StateMachine<RemoteComponentState, RemoteComponentEvent>(RemoteComponentState.Prelive);
+			new StateMachine<RemoteComponentState, RemoteComponentEvent>(RemoteComponentState.NotStarted);
 
 		private StateMachine<RemoteComponentState, RemoteComponentEvent>.TriggerWithParameters<Exception> _errorTrigger;
 		private bool _wasCreated=false;
@@ -77,9 +80,9 @@ namespace ermeX.ComponentServices.RemoteComponent
 		{
 			_context = context;
 			_context.StateMachine = this;
-
 			
 			DefineStateMachineTransitions();
+			TryFire(RemoteComponentEvent.ToPrelive);
 		}
 
 		private void RefreshInjections()
@@ -94,11 +97,25 @@ namespace ermeX.ComponentServices.RemoteComponent
 			_subscriptionsReceivedHandler = IoCManager.Kernel.Get<IOnSubscriptionsReceivedStepExecutor>();
 			_servicesRequester = IoCManager.Kernel.Get<IOnRequestingServicesStepExecutor>();
 			_servicesReceivedHandler = IoCManager.Kernel.Get<IOnServicesReceivedStepExecutor>();
+
+			Debug.Assert(_preliveExecutor!=null);
+			Debug.Assert(_creatingExecutor != null);
+			Debug.Assert(_stoppedStepExecutor != null);
+			Debug.Assert(_joiningStepExecutor != null);
+			Debug.Assert(_runningStepExecutor != null);
+			Debug.Assert(_errorStepExecutor != null);
+			Debug.Assert(_subscriptionsRequester != null);
+			Debug.Assert(_subscriptionsReceivedHandler != null);
+			Debug.Assert(_servicesRequester != null);
+			Debug.Assert(_servicesReceivedHandler != null);
 		}
 
 		private void DefineStateMachineTransitions()
 		{
 			Logger.Debug("DefineStateMachineTransitions");
+			_machine.Configure(RemoteComponentState.NotStarted)
+					.Permit(RemoteComponentEvent.ToPrelive, RemoteComponentState.Prelive);
+
 			_machine.Configure(RemoteComponentState.Prelive)
 			        .OnEntry(OnPrelive)
 			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
@@ -294,7 +311,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 		private void OnCreating(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
 		{
-			Logger.DebugFormat("OnCreating-{0}", obj.Trigger);
+			Logger.DebugFormat("OnCreating-{0} - Component:{1}", obj.Trigger,_context.ComponentId);
 			try
 			{
 				_creatingExecutor.Create(_context);
