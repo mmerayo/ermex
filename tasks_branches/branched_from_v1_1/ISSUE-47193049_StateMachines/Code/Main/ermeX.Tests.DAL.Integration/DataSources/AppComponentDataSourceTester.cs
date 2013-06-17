@@ -44,7 +44,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 		protected override int InsertRecord(DbEngineType engine)
 		{
 			return GetDataHelper(engine)
-				.InsertAppComponent(ComponentId, OwnerComponentId, VersionUtc, Latency, IsRunning, ExchangedDefinitions);
+				.InsertAppComponent(ComponentId, OwnerComponentId, VersionUtc, Latency);
 		}
 
 		protected override void CheckInsertedRecord(AppComponent record)
@@ -54,6 +54,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 		}
 
 		private const int Latency = 10;
+		private const int NewLatency = 110;
 
 		protected override AppComponent GetExpected(DbEngineType engine)
 		{
@@ -62,14 +63,13 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 					ComponentId = ComponentId,
 					ComponentOwner = OwnerComponentId,
 					Latency = Latency,
-					IsRunning = IsRunning
 				};
 		}
 
 
 		protected override AppComponent GetExpectedWithChanges(AppComponent source)
 		{
-			source.IsRunning = false;
+			source.Latency = NewLatency;
 			return source;
 		}
 
@@ -86,8 +86,6 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 		}
 
 		private readonly DateTime VersionUtc = DateTime.UtcNow;
-		private bool IsRunning = true;
-		private bool ExchangedDefinitions = true;
 
 
 		//[Test, TestCaseSource(typeof (TestCaseSources), "AllDbs")]

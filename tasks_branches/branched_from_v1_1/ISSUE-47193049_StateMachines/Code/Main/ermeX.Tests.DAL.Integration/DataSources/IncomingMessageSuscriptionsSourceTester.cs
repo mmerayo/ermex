@@ -55,7 +55,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 		{
 			Guid cid;
 			DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
-			dataAccessTestHelper.InsertAppComponent(LocalComponentId, LocalComponentId, 0, false, false);
+			dataAccessTestHelper.InsertAppComponent(LocalComponentId, LocalComponentId, 0, false);
 
 			return dataAccessTestHelper.InsertIncomingMessageSuscriptions(_messageType, _updateTime, LocalComponentId,
 			                                                              _suscriptionHandlerId, _handlerType);
@@ -76,7 +76,7 @@ namespace ermeX.Tests.DAL.Integration.DataSources
 		protected override IncomingMessageSuscription GetExpected(DbEngineType engine)
 		{
 			DataAccessTestHelper dataAccessTestHelper = GetDataHelper(engine);
-			int idComponent = dataAccessTestHelper.InsertAppComponent(Guid.NewGuid(), LocalComponentId, 0, false, false);
+			int idComponent = dataAccessTestHelper.InsertAppComponent(Guid.NewGuid(), LocalComponentId, 0, false);
 			AppComponent appComponent;
 			var repository = GetRepository<Repository<AppComponent>>(engine);
 			appComponent = repository.Single(idComponent);

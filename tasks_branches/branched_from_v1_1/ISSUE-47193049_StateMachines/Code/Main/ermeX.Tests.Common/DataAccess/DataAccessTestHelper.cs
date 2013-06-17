@@ -193,33 +193,29 @@ namespace ermeX.Tests.Common.DataAccess
 		}
 
 		public string InsertAppComponentQuery(Guid componentId, Guid ownerComponentId,
-		                                      int latency, DateTime versionUtc, bool isRunning,
-		                                      bool exchangedDefinitions)
+		                                      int latency, DateTime versionUtc)
 		{
 			return
 				string.Format(
-					"Insert into {2}.{0} ({0}_ComponentId,{0}_ComponentOwner,{0}_Latency,{0}_Version,{0}_IsRunning,{0}_ExchangedDefinitions) Values ('{1}','{3}',{4},{5},'{6}','{7}')",
-					AppComponent.TableName, componentId, SchemaName, ownerComponentId, latency, versionUtc.Ticks,
-					isRunning, exchangedDefinitions);
+					"Insert into {2}.{0} ({0}_ComponentId,{0}_ComponentOwner,{0}_Latency,{0}_Version) Values ('{1}','{3}',{4},{5})",
+					AppComponent.TableName, componentId, SchemaName, ownerComponentId, latency, versionUtc.Ticks);
 		}
 
 		public int InsertAppComponent(Guid componentId, Guid ownerComponentId, int latency,
-		                              bool isRunning, bool exchangedDefinitions)
+		                               bool exchangedDefinitions)
 		{
 			QueryTestHelper.ExecuteNonQuery(InsertAppComponentQuery(componentId, ownerComponentId,
-			                                                        latency, DateTime.UtcNow, isRunning,
-			                                                        exchangedDefinitions));
+			                                                        latency, DateTime.UtcNow));
 			var id = QueryTestHelper.ExecuteScalar<int>(LastIdSqlQuery("Components"));
 
 			return id;
 		}
 
 		public int InsertAppComponent(Guid componentId, Guid ownerComponentId,
-		                              DateTime versionUtc, int latency, bool isRunning, bool exchangedDefinitions)
+		                              DateTime versionUtc, int latency)
 		{
 			QueryTestHelper.ExecuteNonQuery(InsertAppComponentQuery(componentId, ownerComponentId,
-			                                                        latency, versionUtc, isRunning,
-			                                                        exchangedDefinitions));
+			                                                        latency, versionUtc));
 			string lastIdSqlQuery = LastIdSqlQuery("Components");
 			var id = QueryTestHelper.ExecuteScalar<int>(lastIdSqlQuery);
 
