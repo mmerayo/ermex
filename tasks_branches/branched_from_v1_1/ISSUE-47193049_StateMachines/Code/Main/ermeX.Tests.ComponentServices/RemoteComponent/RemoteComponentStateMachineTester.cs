@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using Moq;
 using NUnit.Framework;
 using Ninject.Modules;
@@ -8,6 +9,7 @@ using ermeX.ComponentServices.RemoteComponent;
 using ermeX.ComponentServices.RemoteComponent.Commands;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.Exceptions;
+using ermeX.Tests.Common.RandomValues;
 
 namespace ermeX.Tests.ComponentServices.RemoteComponent
 {
@@ -83,6 +85,12 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public TestContext()
 			{
+
+				//TODO: AUTOFIXTURE FOR THIS
+				ComponentId = Guid.NewGuid();
+				this.IPAddress=IPAddress.Parse("123.123.123.123");
+				this.Port = RandomHelper.GetRandomUShort();
+
 				_onPreliveExecutor = new Mock<IOnPreliveExecutor>();
 				_onCreatingStepExecutor = new Mock<IOnCreatingStepExecutor>();
 				_onStoppedStepExecutor = new Mock<IOnStoppedStepExecutor>();
@@ -93,6 +101,8 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 				_onRequestingServicesStepExecutor = new Mock<IOnRequestingServicesStepExecutor>();
 				_onReceivedSubscriptionsStepExecutor = new Mock<IOnSubscriptionsReceivedStepExecutor>();
 				_onServicesReceivedStepExecutor = new Mock<IOnServicesReceivedStepExecutor>();
+
+				DataContext=new RemoteComponentStateMachineContext();
 
 				IoCManager.SetCurrentInjections(new INinjectModule[]
 					{
@@ -106,19 +116,25 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 					});
 			}
 
-			public IRemoteComponentStateMachineContext 
+			public IRemoteComponentStateMachineContext DataContext { get; private set; }
 
 			public IRemoteComponentStateMachine Sut
 			{
 				get
 				{
-					return new RemoteComponentStateMachine();
+					return new RemoteComponentStateMachine(DataContext);
 				}
 			}
 
+			public Guid ComponentId { get; private set; }
+
+			public IPAddress IPAddress { get; private set; }
+
+			public ushort Port { get; private set; }
+
 			public void VerifyCreatedHandlerWasCalled(int times=1)
 			{
-				_onCreatingStepExecutor.Verify(x=>x.Create(this.),Times.Exactly(times));
+				_onCreatingStepExecutor.Verify(x=>x.Create(DataContext),Times.Exactly(times));
 			}
 
 			public void VerifyPreliveHandlerWasCalled(int times=1)
@@ -128,7 +144,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public void VerifyJoiningHandlerWasCalled(int times=1)
 			{
-				_onJoiningStepExecutor.Verify(x=>x.Join(TODO),Times.Exactly(times));
+				_onJoiningStepExecutor.Verify(x => x.Join(DataContext), Times.Exactly(times));
 			}
 
 			public void VerifyStoppedHandlerWasCalled(int times=1)
@@ -138,7 +154,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public void VerifyRunningHandlerWasCalled(int times=1)
 			{
-				_onRunningStepExecutor.Verify(x=>x.OnRunning(TODO),Times.Exactly(times));
+				_onRunningStepExecutor.Verify(x => x.OnRunning(DataContext), Times.Exactly(times));
 			}
 
 			public void VerifyRunningSubstatesHandlersWereCalled(int times=1)
@@ -156,17 +172,17 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public void VerifyServicesReceptionExecutor(int times=1)
 			{
-				_onServicesReceivedStepExecutor.Verify(x => x.ServicesReceived(TODO), Times.Exactly(times));
+				_onServicesReceivedStepExecutor.Verify(x => x.ServicesReceived(DataContext), Times.Exactly(times));
 			}
 
 			public void VerifyRequestingSubscriptionsHandlerWasCalled(int times=1)
 			{
-				_onRequestingSubscriptionsStepExecutor.Verify(x => x.Request(), Times.Exactly(times));
+				_onRequestingSubscriptionsStepExecutor.Verify(x => x.Request(DataContext), Times.Exactly(times));
 			}
 
 			public void VerifyRequestingServicesHandlerWasCalled(int times = 1)
 			{
-				_onRequestingServicesStepExecutor.Verify(x => x.Request(), Times.Exactly(times));
+				_onRequestingServicesStepExecutor.Verify(x => x.Request(DataContext), Times.Exactly(times));
 			}
 
 			public void VerifyErrorHandlerWasCalled(int times = 1)
@@ -176,27 +192,27 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public TestContext WithExceptionOnCreating()
 			{
-				_onCreatingStepExecutor.Setup(x=>x.Create(TODO)).Throws<Exception>();
+				_onCreatingStepExecutor.Setup(x => x.Create(DataContext)).Throws<Exception>();
 				return this;
 			}
 
 
 			public TestContext WithExceptionOnJoining()
 			{
-				_onJoiningStepExecutor.Setup(x => x.Join(TODO)).Throws<Exception>();
+				_onJoiningStepExecutor.Setup(x => x.Join(DataContext)).Throws<Exception>();
 				return this;
 			}
 
 			public TestContext WithExceptionOnRequestingServices()
 			{
-				_onRequestingServicesStepExecutor.Setup(x => x.Request()).Throws<Exception>();
+				_onRequestingServicesStepExecutor.Setup(x => x.Request(DataContext)).Throws<Exception>();
 				return this;
 			}
 
 
 			public TestContext WithExceptionOnRequestingSubscriptions()
 			{
-				_onRequestingSubscriptionsStepExecutor.Setup(x => x.Request()).Throws<Exception>();
+				_onRequestingSubscriptionsStepExecutor.Setup(x => x.Request(DataContext)).Throws<Exception>();
 				return this;
 			}
 
@@ -207,13 +223,13 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			}
 			public TestContext WithExceptionOnServicesReception()
 			{
-				_onServicesReceivedStepExecutor.Setup(x => x.ServicesReceived(TODO)).Throws<Exception>();
+				_onServicesReceivedStepExecutor.Setup(x => x.ServicesReceived(DataContext)).Throws<Exception>();
 				return this;
 			}
 
 			public TestContext WithExceptionOnRunning()
 			{
-				_onRunningStepExecutor.Setup(x => x.OnRunning(TODO)).Throws<Exception>();
+				_onRunningStepExecutor.Setup(x => x.OnRunning(DataContext)).Throws<Exception>();
 				return this;
 			}
 
@@ -236,7 +252,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		public void CanCreate()
 		{
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 
 			Assert.IsTrue(target.WasCreated());
 			Assert.IsTrue(target.IsStopped());
@@ -249,7 +265,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		public void CanJoin()
 		{
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
 			Assert.IsTrue(target.WasCreated());
@@ -262,7 +278,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		public void CanRun()
 		{
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
 			target.Joined();
@@ -280,7 +296,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		public void WhenRunningCanReceiveServices()
 		{
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
 			target.Joined();
@@ -296,7 +312,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		public void WhenRunningCanReceiveSubscriptions()
 		{
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
 			target.Joined();
@@ -314,7 +330,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		public void WhenRunningRequestsServices()
 		{
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 			target.Joined();
 
@@ -327,7 +343,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		public void WhenServicesReceivedRequestsSubscriptions()
 		{
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 			target.Joined();
 			target.ServicesReceived();
@@ -339,7 +355,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		public void CanStop()
 		{
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 			target.Joined();
 
@@ -356,7 +372,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		{
 			_context.WithExceptionOnStopped();
 			var target = _context.Sut;
-			Assert.Throws<ermeXRemoteComponentException>(target.Create);
+			Assert.Throws<ermeXRemoteComponentException>(()=>target.Create(_context.ComponentId,_context.IPAddress,_context.Port));
 			Assert.IsTrue(target.IsErrored());
 			Assert.IsTrue(target.WasCreated());
 
@@ -369,7 +385,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		{
 			_context.WithExceptionOnCreating();
 			var target = _context.Sut;
-			Assert.Throws<ermeXRemoteComponentException>(target.Create);
+			Assert.Throws<ermeXRemoteComponentException>(() => target.Create(_context.ComponentId, _context.IPAddress, _context.Port));
 			Assert.IsTrue(target.IsErrored());
 			Assert.IsFalse(target.WasCreated());
 
@@ -382,7 +398,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		{
 			_context.WithExceptionOnJoining();
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 
 			target.Join();
 			Assert.IsTrue(target.IsStopped());
@@ -398,7 +414,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		{
 			_context.WithExceptionOnRequestingServices();
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
 			target.Joined();
@@ -415,7 +431,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		{
 			_context.WithExceptionOnRequestingSubscriptions();
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 			target.Joined();
 			target.ServicesReceived();
@@ -432,7 +448,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		{
 			_context.WithExceptionOnRunning();
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
 			target.Joined();
@@ -449,7 +465,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		{
 			_context.WithExceptionOnServicesReception();
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 			target.Joined();
 			
@@ -468,7 +484,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 		{
 			_context.WithExceptionOnSubscriptionsReception();
 			var target = _context.Sut;
-			target.Create();
+			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
 			target.Joined();

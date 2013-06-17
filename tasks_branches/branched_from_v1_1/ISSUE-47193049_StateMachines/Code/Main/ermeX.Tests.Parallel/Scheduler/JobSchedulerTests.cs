@@ -41,7 +41,7 @@ namespace ermeX.Tests.Parallel.Scheduler
         }
 
         [Test]
-        public void Can_ScheduleJob([Values(1,2,3,4,5,20)]int seconds)
+        public void Can_ScheduleJob([Values(1,3,7)]int seconds)
         {
            using(var target= new JobScheduler())
            {
