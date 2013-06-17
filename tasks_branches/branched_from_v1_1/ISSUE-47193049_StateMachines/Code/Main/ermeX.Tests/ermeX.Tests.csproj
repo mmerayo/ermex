@@ -196,6 +196,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ermeX.Biz.Interfaces\ermeX.Biz.Interfaces.csproj">
+      <Project>{2A5A42E3-AC6B-4312-968B-9FEEEA8C8286}</Project>
+      <Name>ermeX.Biz.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.Biz.IoC\ermeX.Biz.IoC.csproj">
       <Project>{6E6F4849-39C6-42F3-BE1C-477420CE8CF9}</Project>
       <Name>ermeX.Biz.IoC</Name>
@@ -248,6 +252,22 @@
       <Project>{49D6179A-5489-4CB0-A4AE-F40DB88B78B7}</Project>
       <Name>ermeX.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.ComponentServices.Interfaces\ermeX.ComponentServices.Interfaces.csproj">
+      <Project>{E5CF88F8-1141-4D44-AB1C-E2883065C735}</Project>
+      <Name>ermeX.ComponentServices.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.ComponentServices.IoC\ermeX.ComponentServices.IoC.csproj">
+      <Project>{5D431CB4-4AA9-4B30-93A4-0DF688DB99EC}</Project>
+      <Name>ermeX.ComponentServices.IoC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.ComponentServices\ermeX.ComponentServices.csproj">
+      <Project>{4259822D-D109-4A26-998C-6454BF3A1EF1}</Project>
+      <Name>ermeX.ComponentServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.ConfigurationManagement.Config\ermeX.ConfigurationManagement.Config.csproj">
+      <Project>{18D50277-2166-45E2-96CB-8F40E5494A87}</Project>
+      <Name>ermeX.ConfigurationManagement.Config</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.ConfigurationManagement.Settings\ermeX.ConfigurationManagement.Settings.csproj">
       <Project>{A6C2D141-25F0-4BFF-93BC-F9EF0CBDB3B1}</Project>
       <Name>ermeX.ConfigurationManagement.Settings</Name>
@@ -255,6 +275,10 @@
     <ProjectReference Include="..\ermeX.ConfigurationManagement\ermeX.ConfigurationManagement.csproj">
       <Project>{C4536E30-DC91-4AA4-8860-ECBDAF1AE4DE}</Project>
       <Name>ermeX.ConfigurationManagement</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Dal.Commands\ermeX.Dal.Commands.csproj">
+      <Project>{4CB1C5B5-6883-4FBE-80CC-97B2EDC2F5DE}</Project>
+      <Name>ermeX.Dal.Commands</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.DAL.Interfaces\ermeX.DAL.Interfaces.csproj">
       <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>
@@ -283,6 +307,14 @@
     <ProjectReference Include="..\ermeX.Models\ermeX.Models.csproj">
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>
       <Name>ermeX.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.NonMerged\ermeX.NonMerged.csproj">
+      <Project>{E72B0ECE-557C-4002-9368-2273101F76F3}</Project>
+      <Name>ermeX.NonMerged</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Parallel\ermeX.Parallel.csproj">
+      <Project>{AE19CF24-90CF-4BA2-9336-374DC8AE7AE4}</Project>
+      <Name>ermeX.Parallel</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Tests.Common\ermeX.Tests.Common.csproj">
       <Project>{7E841F70-E81D-4AB8-B387-DD7383202915}</Project>
