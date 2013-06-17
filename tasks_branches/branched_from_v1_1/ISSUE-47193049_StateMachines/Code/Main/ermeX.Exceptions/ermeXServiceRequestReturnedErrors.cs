@@ -20,6 +20,7 @@ using System;
 
 namespace ermeX.Exceptions
 {
+	[Serializable]
     public class ermeXServiceRequestReturnedErrors : ermeXException
     {
         public ermeXServiceRequestReturnedErrors(string interfaceName, string methodName) : this(interfaceName, methodName, null) { }

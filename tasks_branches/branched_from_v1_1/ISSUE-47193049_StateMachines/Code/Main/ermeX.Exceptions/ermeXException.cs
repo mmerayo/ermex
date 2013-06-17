@@ -21,6 +21,7 @@ using System.Runtime.Serialization;
 
 namespace ermeX.Exceptions
 {
+	[Serializable]
     public class ermeXException:Exception
     {
         public ermeXException(string message):base(message){}

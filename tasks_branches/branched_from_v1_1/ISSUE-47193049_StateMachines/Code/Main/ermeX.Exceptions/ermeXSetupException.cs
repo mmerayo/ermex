@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 namespace ermeX.Exceptions
 {
+	[Serializable]
 	public class ermeXSetupException:ermeXException
 	{
 		public ermeXSetupException(string message) : base(message)

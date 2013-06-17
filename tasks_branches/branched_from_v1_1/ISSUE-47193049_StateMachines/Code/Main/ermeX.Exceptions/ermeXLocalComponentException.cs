@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 namespace ermeX.Exceptions
 {
+	[Serializable]
 	public class ermeXLocalComponentException : ermeXException
 	{
 		public ermeXLocalComponentException(string message)
