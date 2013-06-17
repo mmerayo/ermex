@@ -177,8 +177,9 @@ namespace ermeX.Tests.Dialogs
                                                          GetDummyMyComponentsMessageResult(remoteComponentId));
 
             CreateServiceOperation(dbEngine, remoteComponentId, out operationIdentifier, typeof(IHandshakeService), "ExchangeComponentStatus");
-            const ComponentStatus resultForResponse = ComponentStatus.Starting;
-            var componentStatusResult = new DummySocketServerResult(operationIdentifier, resultForResponse);
+			//TODO: COMMENTED IN BIG REFACTOR [https://www.pivotaltracker.com/story/show/47193049]
+			//const string resultForResponse = ComponentStatus.Starting;
+			//var componentStatusResult = new DummySocketServerResult(operationIdentifier, resultForResponse);
 
             CreateServiceOperation(dbEngine, remoteComponentId, out operationIdentifier, typeof(IMessageSuscriptionsService), "RequestSuscriptions");
             var messageSuscriptionsResult =
@@ -215,7 +216,7 @@ namespace ermeX.Tests.Dialogs
 
             dummyResult = new List<DummySocketServerResult>()
                               {
-                                  componentStatusResult,
+                                  //componentStatusResult,
                                   joinResult
                                   ,messageSuscriptionsResult
                                   ,messagePublishedServicesResult
