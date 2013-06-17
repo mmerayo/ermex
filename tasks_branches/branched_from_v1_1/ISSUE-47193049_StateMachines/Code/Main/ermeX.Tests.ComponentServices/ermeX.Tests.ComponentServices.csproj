@@ -68,6 +68,10 @@
       <Project>{E5CF88F8-1141-4D44-AB1C-E2883065C735}</Project>
       <Name>ermeX.ComponentServices.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ermeX.ComponentServices.IoC\ermeX.ComponentServices.IoC.csproj">
+      <Project>{5D431CB4-4AA9-4B30-93A4-0DF688DB99EC}</Project>
+      <Name>ermeX.ComponentServices.IoC</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ermeX.ComponentServices\ermeX.ComponentServices.csproj">
       <Project>{4259822D-D109-4A26-998C-6454BF3A1EF1}</Project>
       <Name>ermeX.ComponentServices</Name>
@@ -79,6 +83,10 @@
     <ProjectReference Include="..\ermeX.Exceptions\ermeX.Exceptions.csproj">
       <Project>{6A23DFD5-8894-4ABA-BA81-7AB2A7DAD552}</Project>
       <Name>ermeX.Exceptions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Tests.Common\ermeX.Tests.Common.csproj">
+      <Project>{7E841F70-E81D-4AB8-B387-DD7383202915}</Project>
+      <Name>ermeX.Tests.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -60,5 +60,10 @@ namespace ermeX.Tests.Common.RandomValues
             var random = new Random((int)DateTime.Now.Ticks);
             return from + new TimeSpan((long)(range.Ticks * random.NextDouble()));
         }
+
+	    public static ushort GetRandomUShort()
+	    {
+		    return (ushort) GetRandomInt(0, ushort.MaxValue);
+	    }
     }
 }
