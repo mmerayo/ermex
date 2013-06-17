@@ -504,7 +504,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			IRemoteComponentStateMachine target = _context.Sut;
 
 			Assert.IsFalse(target.WasCreated());
-			_context.VerifyPreliveHandlerWasCalled(0);
+			_context.VerifyPreliveHandlerWasCalled(1);
 		}
 		
 	}

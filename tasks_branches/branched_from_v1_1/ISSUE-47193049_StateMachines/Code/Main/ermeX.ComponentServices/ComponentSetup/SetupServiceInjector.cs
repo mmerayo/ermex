@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Common.Logging;
 using Ninject;
 using ermeX.ComponentServices.Interfaces;
 using ermeX.ComponentServices.Interfaces.ComponentSetup;
@@ -14,6 +15,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 {
 	internal sealed class SetupServiceInjector : ISetupServiceInjector
 	{
+		private static readonly ILog Logger = LogManager.GetLogger<SetupServiceInjector>();
 		private readonly Configurer _settings;
 
 		public SetupServiceInjector(Configurer settings)
@@ -25,12 +27,16 @@ namespace ermeX.ComponentServices.ComponentSetup
 
 		public void InjectServices()
 		{
-			ConfigurationManager.SetSettingsSource(_settings.GetSettings<IComponentSettings>());
+			var componentSettings = _settings.GetSettings<IComponentSettings>();
+			Logger.DebugFormat("Component:{0} - InjectServices",componentSettings.ComponentId);
+			ConfigurationManager.SetSettingsSource(componentSettings);
 			InjectConstantSettings();
 		}
 
 		public void Reset()
 		{
+			Logger.Debug("Reset");
+
 			//clean up the soa component and its reset to call the component manager
 			if (IoCManager.Kernel == null) return;
 			
