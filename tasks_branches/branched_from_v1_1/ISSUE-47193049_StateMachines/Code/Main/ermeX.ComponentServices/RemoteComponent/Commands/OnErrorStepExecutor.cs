@@ -6,7 +6,6 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 	{
 		public void OnError()
 		{
-			throw new System.NotImplementedException();
 		}
 	}
 }

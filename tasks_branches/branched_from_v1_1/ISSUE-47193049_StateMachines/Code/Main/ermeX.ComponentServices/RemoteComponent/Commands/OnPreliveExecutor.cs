@@ -6,7 +6,6 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 	{
 		public void OnPrelive()
 		{
-			throw new System.NotImplementedException();
 		}
 	}
 }
