@@ -135,6 +135,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			_machine.Configure(RemoteComponentState.Joining)
 			        .OnEntry(OnJoining)
 			        .Permit(RemoteComponentEvent.Joined, RemoteComponentState.Running)
+					.Permit(RemoteComponentEvent.Stop, RemoteComponentState.Stopped)
 			        .Permit(RemoteComponentEvent.UnAvailable, RemoteComponentState.Stopped);
 
 			_machine.Configure(RemoteComponentState.Running)
@@ -294,6 +295,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			{
 				StopDueToUnAvailability(obj, ex);
 			}
+			Joined();
 		}
 
 		private void OnStopped(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
