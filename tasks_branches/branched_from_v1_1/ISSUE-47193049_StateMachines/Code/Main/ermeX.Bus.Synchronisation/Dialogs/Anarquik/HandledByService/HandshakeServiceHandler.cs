@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Threading;
 using Common.Logging;
 using Ninject;
@@ -38,84 +39,91 @@ using ermeX.Models.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 {
-    internal sealed class HandshakeServiceHandler : IHandshakeService
-    {
-	    private readonly ICanWriteComponents _componentsWritter;
-	    private readonly IRegisterComponents _componentsRegistrator;
-	    private readonly ICanReadConnectivityDetails _connectivityReader;
-	    private readonly IComponentManager _componentManager;
+	internal sealed class HandshakeServiceHandler : IHandshakeService
+	{
+		private readonly ICanWriteComponents _componentsWritter;
+		private readonly IRegisterComponents _componentsRegistrator;
+		private readonly ICanReadConnectivityDetails _connectivityReader;
+		private readonly IComponentManager _componentManager;
 
 
-	    [Inject]
-        public HandshakeServiceHandler(IMessagePublisher publisher, IMessageListener listener,
-                                       IComponentSettings settings,
-			ICanReadComponents componentReader,
-                                       ICanWriteComponents componentsWritter,
-									   IComponentManager componentManager, IRegisterComponents componentsRegistrator,ICanReadConnectivityDetails connectivityReader)
-        {
-		    _componentsWritter = componentsWritter;
-		    _componentsRegistrator = componentsRegistrator;
-		    _connectivityReader = connectivityReader;
-		    if (publisher == null) throw new ArgumentNullException("publisher");
-            if (listener == null) throw new ArgumentNullException("listener");
-            if (settings == null) throw new ArgumentNullException("settings");
-            if (componentManager == null) throw new ArgumentNullException("componentManager");
-            Publisher = publisher;
-            Listener = listener;
-            Settings = settings;
-	        ComponentReader = componentReader;
-            
-            _componentManager = componentManager;
-        }
+		[Inject]
+		public HandshakeServiceHandler(IMessagePublisher publisher, IMessageListener listener,
+		                               IComponentSettings settings,
+		                               ICanReadComponents componentReader,
+		                               ICanWriteComponents componentsWritter,
+		                               IComponentManager componentManager, IRegisterComponents componentsRegistrator,
+		                               ICanReadConnectivityDetails connectivityReader)
+		{
+			_componentsWritter = componentsWritter;
+			_componentsRegistrator = componentsRegistrator;
+			_connectivityReader = connectivityReader;
+			if (publisher == null) throw new ArgumentNullException("publisher");
+			if (listener == null) throw new ArgumentNullException("listener");
+			if (settings == null) throw new ArgumentNullException("settings");
+			if (componentManager == null) throw new ArgumentNullException("componentManager");
+			Publisher = publisher;
+			Listener = listener;
+			Settings = settings;
+			ComponentReader = componentReader;
+
+			_componentManager = componentManager;
+		}
 
 
-        private IMessagePublisher Publisher { get; set; }
+		private IMessagePublisher Publisher { get; set; }
 
-        private IMessageListener Listener { get; set; }
-        private IComponentSettings Settings { get; set; }
-	    private ICanReadComponents ComponentReader { get; set; }
+		private IMessageListener Listener { get; set; }
+		private IComponentSettings Settings { get; set; }
+		private ICanReadComponents ComponentReader { get; set; }
 
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(HandshakeServiceHandler).FullName);
+		private static readonly ILog Logger = LogManager.GetLogger(typeof (HandshakeServiceHandler).FullName);
 
-        //this handler id is static
+		//this handler id is static
 
-        #region IHandshakeService Members
+		#region IHandshakeService Members
 
-        public MyComponentsResponseMessage RequestJoinNetwork(JoinRequestMessage message)
-        {
+		public MyComponentsResponseMessage RequestJoinNetwork(JoinRequestMessage message)
+		{
 			if (!_componentManager.LocalComponent.IsRunning())
 				throw new ermeXComponentNotStartedException(Settings.ComponentId);
-            try
-            {
-                Logger.Trace(x=>x("RequestJoinNetwork RECEIVED on {0} from {1}", Settings.ComponentId,
-                                           message.SourceComponentId));
+			try
+			{
+				Logger.Trace(x => x("RequestJoinNetwork RECEIVED on {0} from {1}", Settings.ComponentId,
+				                    message.SourceComponentId));
 
-                _componentsRegistrator.CreateRemoteComponent(message.SourceComponentId,message.SourceIp,message.SourcePort);
+				_componentsRegistrator.CreateRemoteComponent(message.SourceComponentId, message.SourceIp, message.SourcePort);
 
-                //prepare result
-                var componentsDatas = new List<Tuple<AppComponent, ConnectivityDetails>>();
+				//prepare result
+				var componentsDatas = new List<Tuple<AppComponent, ConnectivityDetails>>();
 
-                var components = new List<AppComponent>(ComponentReader.FetchAll());
+				var components = new List<AppComponent>(ComponentReader.FetchAll());
 
-                foreach (var appComponent in components)
-                {
-                    var tuple = new Tuple<AppComponent, ConnectivityDetails>(appComponent,_connectivityReader.Fetch(appComponent.ComponentId));
-                    componentsDatas.Add(tuple);
-                }
-                var result = new MyComponentsResponseMessage(message.SourceComponentId, componentsDatas);
+				foreach (var appComponent in components)
+				{
+					var tuple = new Tuple<AppComponent, ConnectivityDetails>(appComponent,
+					                                                         _connectivityReader.Fetch(appComponent.ComponentId));
+					componentsDatas.Add(tuple);
+				}
+				var result = new MyComponentsResponseMessage(message.SourceComponentId, componentsDatas);
 
-                Logger.Trace(x=>x("RequestJoinNetwork HANDLED on {0} from {1}", Settings.ComponentId,
-                                           message.SourceComponentId));
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(x=>x( "RequestJoinNetwork: Error while handling request. Exception: {0}", ex));
-                throw ex;
-            }
-        }
+				_componentManager.AddRemoteComponent(message.SourceComponentId, IPAddress.Parse(message.SourceIp),
+				                                     (ushort) message.SourcePort);
 
 
-        #endregion
-    }
+				Logger.Trace(x => x("RequestJoinNetwork HANDLED on {0} from {1}", Settings.ComponentId,
+				                    message.SourceComponentId));
+
+				return result;
+			}
+			catch (Exception ex)
+			{
+				Logger.Error(x => x("RequestJoinNetwork: Error while handling request. Exception: {0}", ex));
+				throw ex;
+			}
+		}
+
+
+		#endregion
+	}
 }
