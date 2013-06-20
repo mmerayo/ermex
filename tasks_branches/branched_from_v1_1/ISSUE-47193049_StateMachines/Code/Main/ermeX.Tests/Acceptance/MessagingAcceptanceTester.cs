@@ -70,7 +70,7 @@ namespace ermeX.Tests.Acceptance
                         sender.Publish(o);
                     }
 
-                    finishedEvent.WaitOne(AppComponent.DefaultLatencyMilliseconds *2);
+	                finishedEvent.WaitOne();//TODO: REPLACE TO (AppComponent.DefaultLatencyMilliseconds * 2);
 
                     Assert.IsTrue(handler.ReceivedMessages.Count == 1);
 

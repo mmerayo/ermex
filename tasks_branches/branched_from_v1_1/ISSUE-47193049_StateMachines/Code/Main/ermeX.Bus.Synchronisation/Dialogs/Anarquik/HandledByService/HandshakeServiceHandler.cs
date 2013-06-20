@@ -108,7 +108,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 				var result = new MyComponentsResponseMessage(message.SourceComponentId, componentsDatas);
 
 				_componentManager.AddRemoteComponent(message.SourceComponentId, IPAddress.Parse(message.SourceIp),
-				                                     (ushort) message.SourcePort);
+				                                     (ushort) message.SourcePort,true);//TODO: VERIFY TRUE IS NEEDED as the components could be starting at the same time
 
 
 				Logger.Trace(x => x("RequestJoinNetwork HANDLED on {0} from {1}", Settings.ComponentId,
