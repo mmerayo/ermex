@@ -128,7 +128,6 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 			_machine.Configure(RemoteComponentState.Stopped)
 			        .OnEntry(OnStopped)
-
 			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
 			        .Permit(RemoteComponentEvent.Join, RemoteComponentState.Joining);
 

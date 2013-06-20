@@ -83,6 +83,7 @@ namespace ermeX.Transport
 
 		public IEndPoint GetClientProxy(Guid destinationComponent)
 		{
+			Es null cuando se va a publicar
 			var connectivityDetails = ConnectivityDetailsReader.Fetch(destinationComponent);
 			var serverInfos = new List<ServerInfo>();
 
