@@ -351,6 +351,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 		public void Join()
 		{
+			_context.ExecutesJoin = true;
 			TryFire(RemoteComponentEvent.Join);
 		}
 

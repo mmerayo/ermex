@@ -29,5 +29,8 @@ namespace ermeX.Bus.Synchronisation.Dialogs.HandledByService
     {
         [ServiceOperation("752C3C75-324A-48BB-B55E-56C91F443C72")]
         MyComponentsResponseMessage RequestJoinNetwork(JoinRequestMessage request);
+
+		[ServiceOperation("DE1F88EE-25EA-482E-A37A-286ADEA192E9")]
+	    void HandshakeCompleted(Guid componentId);
     }
 }

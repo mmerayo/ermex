@@ -9,5 +9,10 @@ namespace ermeX.ComponentServices.Interfaces.RemoteComponent
 		Guid ComponentId { get; set; }
 		IPAddress IpAddress { get; set; }
 		ushort Port { get; set; }
+
+		/// <summary>
+		/// Indicates thet current state machine performs the join
+		/// </summary>
+		bool ExecutesJoin { get; set; }
 	}
 }
