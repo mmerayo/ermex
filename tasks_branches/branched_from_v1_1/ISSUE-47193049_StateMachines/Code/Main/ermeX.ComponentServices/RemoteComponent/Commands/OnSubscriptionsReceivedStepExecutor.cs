@@ -9,11 +9,11 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 		private static readonly ILog Logger = LogManager.GetLogger<OnSubscriptionsReceivedStepExecutor>();
 		public void SubscriptionsReceived(IRemoteComponentStateMachineContext context)
 		{
-			Logger.DebugFormat("SubscriptionsReceived- Component:{0}", context.ComponentId);
+			Logger.DebugFormat("SubscriptionsReceived- Component:{0}", context.RemoteComponentId);
 
 			//TODO: PARALLEL TASK
-			ComponentManager.Default.LocalComponent.PublishMyServices(context.ComponentId);
-			ComponentManager.Default.LocalComponent.PublishMySubscriptions(context.ComponentId);
+			ComponentManager.Default.LocalComponent.PublishMyServices(context.RemoteComponentId);
+			ComponentManager.Default.LocalComponent.PublishMySubscriptions(context.RemoteComponentId);
 		}
 	}
 }

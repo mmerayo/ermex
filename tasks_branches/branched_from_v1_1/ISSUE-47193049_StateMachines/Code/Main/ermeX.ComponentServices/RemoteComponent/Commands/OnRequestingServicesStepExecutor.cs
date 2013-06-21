@@ -29,9 +29,9 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 
 		public void Request(IRemoteComponentStateMachineContext context)
 		{
-			Logger.DebugFormat("Request- Component:", context.ComponentId);
+			Logger.DebugFormat("Request- Component:", context.RemoteComponentId);
 
-			var proxy = _publisher.GetServiceProxy<IPublishedServicesDefinitionsService>(context.ComponentId);
+			var proxy = _publisher.GetServiceProxy<IPublishedServicesDefinitionsService>(context.RemoteComponentId);
 
 			var request = new PublishedServicesRequestMessage(_settings.ComponentId);
 			var remoteDefinitions = proxy.RequestDefinitions(request);

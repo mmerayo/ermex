@@ -313,7 +313,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 		private void OnCreating(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
 		{
-			Logger.DebugFormat("OnCreating-{0} - Component:{1}", obj.Trigger,_context.ComponentId);
+			Logger.DebugFormat("OnCreating-{0} - Component:{1}", obj.Trigger,_context.RemoteComponentId);
 			try
 			{
 				_creatingExecutor.Create(_context);
@@ -342,16 +342,17 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 		public void Create (Guid componentId, IPAddress ipAddress, ushort port)
 		{
-			_context.ComponentId = componentId;
-			_context.IpAddress = ipAddress;
-			_context.Port = port;
+			
+			_context.RemoteComponentId = componentId;
+			_context.RemoteIpAddress = ipAddress;
+			_context.RemotePort = port;
 
 			TryFire(RemoteComponentEvent.Create);
 		}
 
 		public void Join()
 		{
-			_context.ExecutesJoin = true;
+			_context.RemoteExecutesJoin = true;
 			TryFire(RemoteComponentEvent.Join);
 		}
 

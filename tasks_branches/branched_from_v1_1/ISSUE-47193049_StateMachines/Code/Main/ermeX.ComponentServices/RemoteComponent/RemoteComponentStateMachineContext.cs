@@ -10,9 +10,9 @@ namespace ermeX.ComponentServices.RemoteComponent
 	internal class RemoteComponentStateMachineContext:IRemoteComponentStateMachineContext
 	{
 		public IRemoteComponentStateMachine StateMachine { get; set; }
-		public Guid ComponentId { get; set; }
-		public IPAddress IpAddress { get; set; }
-		public ushort Port { get; set; }
-		public bool ExecutesJoin { get; set; }
+		public Guid RemoteComponentId { get; set; }
+		public IPAddress RemoteIpAddress { get; set; }
+		public ushort RemotePort { get; set; }
+		public bool RemoteExecutesJoin { get; set; }
 	}
 }

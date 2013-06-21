@@ -18,11 +18,11 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 
 		public void OnRunning(IRemoteComponentStateMachineContext context)
 		{
-			Logger.DebugFormat("OnRunning- Component:{0}" ,context.ComponentId);
-			if (context.ExecutesJoin)
+			Logger.DebugFormat("OnRunning- Component:{0}" ,context.RemoteComponentId);
+			if (context.RemoteExecutesJoin)
 			{
-				var handshakeService = _publisher.GetServiceProxy<IHandshakeService>(context.ComponentId);
-				handshakeService.HandshakeCompleted(context.ComponentId);
+				var handshakeService = _publisher.GetServiceProxy<IHandshakeService>(context.RemoteComponentId);
+				handshakeService.HandshakeCompleted(context.RemoteComponentId);
 			}
 
 		}

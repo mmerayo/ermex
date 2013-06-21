@@ -18,7 +18,7 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 		
 		public void ServicesReceived(IRemoteComponentStateMachineContext context)
 		{
-			Logger.DebugFormat("ServicesReceived - Component: {0}",context.ComponentId);
+			Logger.DebugFormat("ServicesReceived - Component: {0}",context.RemoteComponentId);
 		}
 		
 	}

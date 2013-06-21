@@ -24,10 +24,10 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 
 		public void Join(IRemoteComponentStateMachineContext context)
 		{
-			Logger.DebugFormat("Join- Component:", context.ComponentId);
+			Logger.DebugFormat("Join- Component:", context.RemoteComponentId);
 
-			var handshakeService = _publisher.GetServiceProxy<IHandshakeService>(context.ComponentId);
-			var message = new JoinRequestMessage(context.ComponentId, context.IpAddress.ToString(), context.Port);
+			var handshakeService = _publisher.GetServiceProxy<IHandshakeService>(context.RemoteComponentId);
+			var message = new JoinRequestMessage(context.RemoteComponentId, context.RemoteIpAddress.ToString(), context.RemotePort);
 			MyComponentsResponseMessage response = null;
 			try
 			{
@@ -35,7 +35,7 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 			}
 			catch (Exception ex)
 			{
-				Logger.Warn(x => x("Join - Could not join the component {0}. Reason {1}", context.ComponentId, ex));
+				Logger.Warn(x => x("Join - Could not join the component {0}. Reason {1}", context.RemoteComponentId, ex));
 				throw;
 			}
 			AddComponentsFromResponse(response);

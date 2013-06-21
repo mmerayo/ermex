@@ -29,7 +29,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 					}
 					catch (Exception ex)
 					{
-						Logger.ErrorFormat("Join -Component:{0}, Exception:{1}",_stateMachine.Context.ComponentId,ex.ToString());
+						Logger.ErrorFormat("Join -Component:{0}, Exception:{1}",_stateMachine.Context.RemoteComponentId,ex.ToString());
 					}
 				});
 		}
@@ -42,7 +42,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			}
 			catch (Exception ex)
 			{
-				Logger.ErrorFormat("JoinedRemotely -Component:{0}, Exception:{1}", _stateMachine.Context.ComponentId, ex.ToString());
+				Logger.ErrorFormat("JoinedRemotely -Component:{0}, Exception:{1}", _stateMachine.Context.RemoteComponentId, ex.ToString());
 			}
 		}
 

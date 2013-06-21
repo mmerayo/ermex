@@ -18,9 +18,9 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 
 		public void Create(IRemoteComponentStateMachineContext context)
 		{
-			_componentRegistrator.CreateRemoteComponent(context.ComponentId,
-			                                            context.IpAddress.ToString(),
-			                                            context.Port);
+			_componentRegistrator.CreateRemoteComponent(context.RemoteComponentId,
+			                                            context.RemoteIpAddress.ToString(),
+			                                            context.RemotePort);
 		}
 	}
 }
