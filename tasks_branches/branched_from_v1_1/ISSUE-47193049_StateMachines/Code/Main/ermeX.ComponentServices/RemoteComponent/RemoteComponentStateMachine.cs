@@ -11,6 +11,7 @@ using ermeX.ComponentServices.Interfaces.RemoteComponent;
 using ermeX.ComponentServices.Interfaces.RemoteComponent.Commands;
 using ermeX.ComponentServices.RemoteComponent.Commands;
 using ermeX.ConfigurationManagement.IoC;
+using ermeX.ConfigurationManagement.Settings;
 using ermeX.Exceptions;
 
 namespace ermeX.ComponentServices.RemoteComponent
@@ -28,6 +29,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 		private IOnSubscriptionsReceivedStepExecutor _subscriptionsReceivedHandler;
 		private IOnRequestingServicesStepExecutor _servicesRequester;
 		private IOnServicesReceivedStepExecutor _servicesReceivedHandler;
+		private IComponentSettings _settings;
+
 
 		private enum RemoteComponentEvent
 		{
@@ -97,6 +100,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 			_subscriptionsReceivedHandler = IoCManager.Kernel.Get<IOnSubscriptionsReceivedStepExecutor>();
 			_servicesRequester = IoCManager.Kernel.Get<IOnRequestingServicesStepExecutor>();
 			_servicesReceivedHandler = IoCManager.Kernel.Get<IOnServicesReceivedStepExecutor>();
+
+			_settings = IoCManager.Kernel.Get<IComponentSettings>();
 
 			Debug.Assert(_preliveExecutor!=null);
 			Debug.Assert(_creatingExecutor != null);
@@ -295,7 +300,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			{
 				StopDueToUnAvailability(obj, ex);
 			}
-			Joined();
+			Joined(false);
 		}
 
 		private void OnStopped(StateMachine<RemoteComponentState, RemoteComponentEvent>.Transition obj)
@@ -342,7 +347,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 		public void Create (Guid componentId, IPAddress ipAddress, ushort port)
 		{
-			
+			if(_settings.ComponentId==componentId)
+				throw new InvalidOperationException("The local component cannot create itself as remote");
 			_context.RemoteComponentId = componentId;
 			_context.RemoteIpAddress = ipAddress;
 			_context.RemotePort = port;
@@ -352,12 +358,12 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 		public void Join()
 		{
-			_context.RemoteExecutesJoin = true;
 			TryFire(RemoteComponentEvent.Join);
 		}
 
-		public void Joined()
+		public void Joined(bool remotely)
 		{
+			_context.RemoteExecutesJoin = remotely;
 			TryFire(RemoteComponentEvent.Joined);
 		}
 

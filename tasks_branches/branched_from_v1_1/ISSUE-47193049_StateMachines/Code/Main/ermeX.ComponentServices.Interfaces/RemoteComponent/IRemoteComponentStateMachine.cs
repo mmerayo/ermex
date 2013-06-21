@@ -7,7 +7,11 @@ namespace ermeX.ComponentServices.Interfaces.RemoteComponent
 	{
 		void Create(Guid componentId, IPAddress ipAddress, ushort port);
 		void Join();
-		void Joined();
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="remotely">The remote component carried out the handshake</param>
+		void Joined(bool remotely);
 		void Stop();
 
 		bool IsErrored();
