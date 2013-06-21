@@ -30,13 +30,13 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 
 		public void Request(IRemoteComponentStateMachineContext context)
 		{
-			Logger.DebugFormat("Request- Component:", context.ComponentId);
+			Logger.DebugFormat("Request- Component:", context.RemoteComponentId);
 
 			//TODO: MOVE PAYLOAD
 
-			var proxy = _publisher.GetServiceProxy<IMessageSuscriptionsService>(context.ComponentId);
+			var proxy = _publisher.GetServiceProxy<IMessageSuscriptionsService>(context.RemoteComponentId);
 
-			var request = new MessageSuscriptionsRequestMessage(context.ComponentId);
+			var request = new MessageSuscriptionsRequestMessage(context.RemoteComponentId);
 			var remoteSuscriptions = proxy.RequestSuscriptions(request);
 
 			//remote incomming is local outgoing
@@ -47,7 +47,7 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 			if (remoteSuscriptions.MyOutgoingSuscriptions != null)
 			{
 				var outgoingMessageSuscriptions =
-					remoteSuscriptions.MyOutgoingSuscriptions.Where(x => x.Component != context.ComponentId);
+					remoteSuscriptions.MyOutgoingSuscriptions.Where(x => x.Component != context.RemoteComponentId);
 				_outgoingMessagesSubscriptionsWritter.ImportFromOtherComponent(outgoingMessageSuscriptions);
 			}
 		}

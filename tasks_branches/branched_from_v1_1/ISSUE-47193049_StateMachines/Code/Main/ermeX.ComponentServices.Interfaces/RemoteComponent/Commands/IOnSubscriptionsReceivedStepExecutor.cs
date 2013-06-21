@@ -2,6 +2,6 @@
 {
 	internal interface IOnSubscriptionsReceivedStepExecutor
 	{
-		void SubscriptionsReceived();
+		void SubscriptionsReceived(IRemoteComponentStateMachineContext context);
 	}
 }

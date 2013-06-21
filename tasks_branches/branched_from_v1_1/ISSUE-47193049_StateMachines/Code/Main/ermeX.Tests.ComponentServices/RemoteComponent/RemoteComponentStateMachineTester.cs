@@ -167,7 +167,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public void VerifySubscriptionsReceptionExecutor(int times=1)
 			{
-				_onReceivedSubscriptionsStepExecutor.Verify(x => x.SubscriptionsReceived(), Times.Exactly(times));
+				_onReceivedSubscriptionsStepExecutor.Verify(x => x.SubscriptionsReceived(TODO), Times.Exactly(times));
 			}
 
 			public void VerifyServicesReceptionExecutor(int times=1)
@@ -218,7 +218,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public TestContext WithExceptionOnSubscriptionsReception()
 			{
-				_onReceivedSubscriptionsStepExecutor.Setup(x => x.SubscriptionsReceived()).Throws<Exception>();
+				_onReceivedSubscriptionsStepExecutor.Setup(x => x.SubscriptionsReceived(TODO)).Throws<Exception>();
 				return this;
 			}
 			public TestContext WithExceptionOnServicesReception()
