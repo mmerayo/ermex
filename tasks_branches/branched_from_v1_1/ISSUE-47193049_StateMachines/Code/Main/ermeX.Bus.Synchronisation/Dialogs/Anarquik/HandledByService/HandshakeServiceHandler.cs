@@ -27,6 +27,7 @@ using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
 using ermeX.ComponentServices.Interfaces;
+using ermeX.ComponentServices.Interfaces.RemoteComponent;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Component;
@@ -101,14 +102,16 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 				foreach (var appComponent in components)
 				{
+					var connectivityDetails = _connectivityReader.Fetch(appComponent.ComponentId);
+					Debug.Assert(connectivityDetails != null, "connectivity details cannot be null");
 					var tuple = new Tuple<AppComponent, ConnectivityDetails>(appComponent,
-					                                                         _connectivityReader.Fetch(appComponent.ComponentId));
+					                                                         connectivityDetails);
 					componentsDatas.Add(tuple);
 				}
 				var result = new MyComponentsResponseMessage(message.SourceComponentId, componentsDatas);
 
 				_componentManager.AddRemoteComponent(message.SourceComponentId, IPAddress.Parse(message.SourceIp),
-				                                     (ushort) message.SourcePort,true);//TODO: VERIFY TRUE IS NEEDED as the components could be starting at the same time
+				                                     (ushort) message.SourcePort,false);
 
 
 				Logger.Trace(x => x("RequestJoinNetwork HANDLED on {0} from {1}", Settings.ComponentId,
@@ -123,6 +126,20 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 			}
 		}
 
+		public void HandshakeCompleted(Guid componentId)
+		{
+			try
+			{
+				Logger.DebugFormat("HandshakeCompleted - ComponentId:{0}", componentId);
+				var remoteComponent = _componentManager.GetRemoteComponent(componentId);
+				remoteComponent.JoinedRemotely();
+			}
+			catch (Exception ex)
+			{
+				Logger.Error(x => x("HandshakeCompleted: Error while handling request. Exception: {0}", ex));
+				throw ex;
+			}
+		}
 
 		#endregion
 	}

@@ -8,5 +8,6 @@ namespace ermeX.ComponentServices.Interfaces.RemoteComponent
 		void Join();
 		void Create(Guid componentId, IPAddress ipAddress, ushort port);
 		void Stop();
+		void JoinedRemotely();
 	}
 }

@@ -34,6 +34,18 @@ namespace ermeX.ComponentServices.RemoteComponent
 				});
 		}
 
+		public void JoinedRemotely()
+		{
+			try
+			{
+				_stateMachine.Joined();
+			}
+			catch (Exception ex)
+			{
+				Logger.ErrorFormat("JoinedRemotely -Component:{0}, Exception:{1}", _stateMachine.Context.ComponentId, ex.ToString());
+			}
+		}
+
 		public void Create(Guid componentId, IPAddress ipAddress, ushort port)
 		{
 			_stateMachine.Create(componentId,ipAddress,port);
@@ -43,5 +55,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 		{
 			_stateMachine.Stop();
 		}
+
+		
 	}
 }
