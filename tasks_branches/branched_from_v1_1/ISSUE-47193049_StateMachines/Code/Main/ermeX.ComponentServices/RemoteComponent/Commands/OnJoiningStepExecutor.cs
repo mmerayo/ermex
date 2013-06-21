@@ -5,8 +5,10 @@ using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.Bus.Synchronisation.Messages;
+using ermeX.Common;
 using ermeX.ComponentServices.Interfaces.RemoteComponent;
 using ermeX.ComponentServices.Interfaces.RemoteComponent.Commands;
+using ermeX.ConfigurationManagement.Settings;
 
 namespace ermeX.ComponentServices.RemoteComponent.Commands
 {
@@ -15,11 +17,15 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 		private static readonly ILog Logger = LogManager.GetLogger<OnJoiningStepExecutor>();
 
 		private readonly IMessagePublisher _publisher;
+		private readonly IComponentSettings _settings;
+		private readonly IBizSettings _bizSettings;
 
 		[Inject]
-		public OnJoiningStepExecutor(IMessagePublisher publisher)
+		public OnJoiningStepExecutor(IMessagePublisher publisher,IComponentSettings settings,IBizSettings bizSettings)
 		{
 			_publisher = publisher;
+			_settings = settings;
+			_bizSettings = bizSettings;
 		}
 
 		public void Join(IRemoteComponentStateMachineContext context)
@@ -27,7 +33,9 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 			Logger.DebugFormat("Join- Component:", context.RemoteComponentId);
 
 			var handshakeService = _publisher.GetServiceProxy<IHandshakeService>(context.RemoteComponentId);
-			var message = new JoinRequestMessage(context.RemoteComponentId, context.RemoteIpAddress.ToString(), context.RemotePort);
+			var message = new JoinRequestMessage(_settings.ComponentId,
+			                                     Networking.GetLocalhostIp(),//TODO: CHECK THE CORRECTNESS OF THIS WHEN WORKING BEHIND A ROUTER
+			                                     _bizSettings.TcpPort);
 			MyComponentsResponseMessage response = null;
 			try
 			{
