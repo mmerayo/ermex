@@ -83,6 +83,8 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		public void AddSuscription(IncomingMessageSuscription request)
 		{
+			Logger.DebugFormat("AddSubscription - HandlerType: {0}, BizMessageFullTypeName={1}", request.HandlerType, request.BizMessageFullTypeName);
+
 			if(!_componentManager.LocalComponent.IsRunning())
 				throw new ermeXComponentNotStartedException(Settings.ComponentId);
 			

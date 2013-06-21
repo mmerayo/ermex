@@ -86,14 +86,21 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		public MyComponentsResponseMessage RequestJoinNetwork(JoinRequestMessage message)
 		{
-			if (!_componentManager.LocalComponent.IsRunning())
-				throw new ermeXComponentNotStartedException(Settings.ComponentId);
+			//if (!_componentManager.LocalComponent.IsRunning())
+			//    throw new ermeXComponentNotStartedException(Settings.ComponentId);
+
+			if(Settings.ComponentId==message.SourceComponentId)
+				throw new InvalidOperationException("Cannot request join to itself");
+
 			try
 			{
 				Logger.Trace(x => x("RequestJoinNetwork RECEIVED on {0} from {1}", Settings.ComponentId,
 				                    message.SourceComponentId));
 
-				_componentsRegistrator.CreateRemoteComponent(message.SourceComponentId, message.SourceIp, message.SourcePort);
+				_componentManager.AddRemoteComponent(message.SourceComponentId, IPAddress.Parse(message.SourceIp),
+													 (ushort)message.SourcePort, false);
+
+				//TODO: THIS WAS REMOVED _componentsRegistrator.CreateRemoteComponent(message.SourceComponentId, message.SourceIp, message.SourcePort);
 
 				//prepare result
 				var componentsDatas = new List<Tuple<AppComponent, ConnectivityDetails>>();
@@ -109,9 +116,6 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 					componentsDatas.Add(tuple);
 				}
 				var result = new MyComponentsResponseMessage(message.SourceComponentId, componentsDatas);
-
-				_componentManager.AddRemoteComponent(message.SourceComponentId, IPAddress.Parse(message.SourceIp),
-				                                     (ushort) message.SourcePort,false);
 
 
 				Logger.Trace(x => x("RequestJoinNetwork HANDLED on {0} from {1}", Settings.ComponentId,

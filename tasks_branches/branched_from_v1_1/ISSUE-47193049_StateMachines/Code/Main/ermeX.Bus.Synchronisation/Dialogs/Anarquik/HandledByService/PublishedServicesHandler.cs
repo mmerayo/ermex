@@ -70,53 +70,80 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		public PublishedServicesResponseMessage RequestDefinitions(PublishedServicesRequestMessage request)
 		{
-			if (!_componentManager.LocalComponent.IsRunning())
-				throw new ermeXComponentNotStartedException(Settings.ComponentId);
-			if (request == null) throw new ArgumentNullException("request");
+			try
+			{
+				Logger.DebugFormat("RequestDefinitions - InterfaceName: {0}, MethodName={1}", request.InterfaceName,
+				                   request.MethodName);
+
+				if (!_componentManager.LocalComponent.IsRunning())
+					throw new ermeXComponentNotStartedException(Settings.ComponentId);
+				if (request == null) throw new ArgumentNullException("request");
 
 
-			IEnumerable<ServiceDetails> localServiceDefinitions;
-			if (request.IsSingleResult)
-			{
-				localServiceDefinitions = new List<ServiceDetails>
-					{
-						_serviceDetailsReader.GetByMethodName(request.InterfaceName, request.MethodName, Settings.ComponentId)
-					};
-			}
-			else
-			{
-				localServiceDefinitions = _serviceDetailsReader.GetLocalCustomServices();
-			}
-			var result = new PublishedServicesResponseMessage(Settings.ComponentId, request.CorrelationId)
+				IEnumerable<ServiceDetails> localServiceDefinitions;
+				if (request.IsSingleResult)
 				{
-					LocalServiceDefinitions = localServiceDefinitions
-				};
-			Logger.Trace(
-				x =>
-				x("RequestDefinitions: Handled server Component:{0} client Component:{1} Results #: {2}", Settings.ComponentId,
-				  request.SourceComponentId, result.LocalServiceDefinitions.Count()));
-			return result;
+					localServiceDefinitions = new List<ServiceDetails>
+						{
+							_serviceDetailsReader.GetByMethodName(request.InterfaceName, request.MethodName, Settings.ComponentId)
+						};
+				}
+				else
+				{
+					localServiceDefinitions = _serviceDetailsReader.GetLocalCustomServices();
+				}
+				var result = new PublishedServicesResponseMessage(Settings.ComponentId, request.CorrelationId)
+					{
+						LocalServiceDefinitions = localServiceDefinitions
+					};
+				Logger.Trace(
+					x =>
+					x("RequestDefinitions: Handled server Component:{0} client Component:{1} Results #: {2}", Settings.ComponentId,
+					  request.SourceComponentId, result.LocalServiceDefinitions.Count()));
+
+				return result;
+			}
+			catch (Exception ex)
+			{
+				Logger.Error("RequestDefinitions - Exception: {0}",ex);
+				throw;
+			}
 		}
 
 		public void AddServices(IList<ServiceDetails> services)
 		{
-			//TODO: LOGS
-			if (!_componentManager.LocalComponent.IsRunning())
-				throw new ermeXComponentNotStartedException(Settings.ComponentId);
-			foreach (var serviceDetails in services)
+			try
 			{
-				AddService(serviceDetails);
+				Logger.DebugFormat("AddServices - services.Count: {0}", services.Count);
+				if (!_componentManager.LocalComponent.IsRunning())
+					throw new ermeXComponentNotStartedException(Settings.ComponentId);
+				foreach (var serviceDetails in services)
+				{
+					AddService(serviceDetails);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logger.Error("AddService - Exception: {0}", ex);
+				throw;
 			}
 		}
 
 		public void AddService(ServiceDetails service)
 		{
-			//TODO:LOGS	
-			if (!_componentManager.LocalComponent.IsRunning())
-				throw new ermeXComponentNotStartedException(Settings.ComponentId);
-			_serviceDetailsWritter.ImportFromOtherComponent(service);
-
-			//TODO: TEST THIS as is saving it from the other component
+			try
+			{
+				Logger.DebugFormat("AddService - : {1}.{2}::{0}", service.Publisher, service.ServiceInterfaceTypeName,
+				                   service.ServiceImplementationMethodName);
+				if (!_componentManager.LocalComponent.IsRunning())
+					throw new ermeXComponentNotStartedException(Settings.ComponentId);
+				_serviceDetailsWritter.ImportFromOtherComponent(service);
+			}
+			catch (Exception ex)
+			{
+				Logger.Error("AddService - Exception: {0}", ex);
+				throw;
+			}
 		}
 
 		#endregion

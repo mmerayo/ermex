@@ -94,7 +94,7 @@ namespace ermeX.ComponentServices
 			get
 			{
 				if(!IsRunning()) throw new InvalidOperationException();
-
+				
 				if(_friendComponent==null)
 					lock(_syncLock)
 						if (_friendComponent == null)
@@ -131,7 +131,8 @@ namespace ermeX.ComponentServices
 
 		public bool AddRemoteComponent(Guid componentId, IPAddress address, ushort port,bool joinIfCreated=false)
 		{
-
+			if(_settings.GetSettings<IComponentSettings>().ComponentId==componentId)
+				throw new InvalidOperationException("The local component cannot be added as remote");
 			if(!_remoteComponents.ContainsKey(componentId))
 				lock(_syncLock)
 					if (!_remoteComponents.ContainsKey(componentId))

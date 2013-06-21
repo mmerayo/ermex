@@ -38,7 +38,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 		{
 			try
 			{
-				_stateMachine.Joined();
+				_stateMachine.Joined(true);
 			}
 			catch (Exception ex)
 			{

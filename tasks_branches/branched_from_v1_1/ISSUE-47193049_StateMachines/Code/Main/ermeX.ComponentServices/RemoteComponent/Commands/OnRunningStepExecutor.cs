@@ -18,8 +18,8 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 
 		public void OnRunning(IRemoteComponentStateMachineContext context)
 		{
-			Logger.DebugFormat("OnRunning- Component:{0}" ,context.RemoteComponentId);
-			if (context.RemoteExecutesJoin)
+			Logger.DebugFormat("OnRunning- RemoteComponent:{1}" ,context.RemoteComponentId);
+			if (!context.RemoteExecutesJoin)
 			{
 				var handshakeService = _publisher.GetServiceProxy<IHandshakeService>(context.RemoteComponentId);
 				handshakeService.HandshakeCompleted(context.RemoteComponentId);
