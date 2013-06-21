@@ -129,7 +129,8 @@ namespace ermeX.ComponentServices.RemoteComponent
 			_machine.Configure(RemoteComponentState.Stopped)
 			        .OnEntry(OnStopped)
 			        .Permit(RemoteComponentEvent.ToError, RemoteComponentState.Errored)
-			        .Permit(RemoteComponentEvent.Join, RemoteComponentState.Joining);
+			        .Permit(RemoteComponentEvent.Join, RemoteComponentState.Joining)
+					.Permit(RemoteComponentEvent.Joined, RemoteComponentState.Running);
 
 			_machine.Configure(RemoteComponentState.Joining)
 			        .OnEntry(OnJoining)
@@ -216,7 +217,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			Logger.DebugFormat("OnSubscriptionsReceived-{0}", obj.Trigger);
 			try
 			{
-				_subscriptionsReceivedHandler.SubscriptionsReceived();
+				_subscriptionsReceivedHandler.SubscriptionsReceived(_context);
 			}
 			catch (Exception ex)
 			{

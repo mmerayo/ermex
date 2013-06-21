@@ -18,6 +18,7 @@
 // /*---------------------------------------------------------------------------------------*/
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Sockets;
 using Common.Logging;
 using ermeX.Common;
@@ -83,11 +84,10 @@ namespace ermeX.Transport
 
 		public IEndPoint GetClientProxy(Guid destinationComponent)
 		{
-			Es null cuando se va a publicar
 			var connectivityDetails = ConnectivityDetailsReader.Fetch(destinationComponent);
+
 			var serverInfos = new List<ServerInfo>();
-
-
+			
 			serverInfos.Add(new ServerInfo
 				{
 					Ip = connectivityDetails.Ip,
