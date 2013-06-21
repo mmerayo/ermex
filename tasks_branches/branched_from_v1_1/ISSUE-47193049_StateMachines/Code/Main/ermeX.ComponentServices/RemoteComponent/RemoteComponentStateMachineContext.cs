@@ -13,5 +13,6 @@ namespace ermeX.ComponentServices.RemoteComponent
 		public Guid ComponentId { get; set; }
 		public IPAddress IpAddress { get; set; }
 		public ushort Port { get; set; }
+		public bool ExecutesJoin { get; set; }
 	}
 }
