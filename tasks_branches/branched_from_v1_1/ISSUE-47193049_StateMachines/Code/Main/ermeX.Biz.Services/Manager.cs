@@ -17,7 +17,7 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Biz.Interfaces;
 using ermeX.Bus.Interfaces;
@@ -39,7 +39,7 @@ namespace ermeX.Biz.Services
 
         private IMessagePublisher Publisher { get; set; }
         private IMessageListener Listener { get; set; }
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(Manager).FullName);
+        private static readonly ILogger Logger = LogManager.GetLogger(typeof(Manager).FullName);
 
         #region IServicesManager Members
 

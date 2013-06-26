@@ -2,7 +2,8 @@
 {
 	public enum LogComponent
 	{
-		DataServices = 1,
+		Undefined = 0,
+		DataServices,
 		Messaging,
 		Services,
 		Transport,

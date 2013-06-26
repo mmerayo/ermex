@@ -1,4 +1,4 @@
-﻿using Common.Logging;
+﻿
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
@@ -15,7 +15,7 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 		private readonly IMessagePublisher _publisher;
 		private readonly IComponentSettings _settings;
 		private readonly ICanWriteServiceDetails _serviceDetailsWritter;
-		private static readonly ILog Logger = LogManager.GetLogger<OnRequestingServicesStepExecutor>();
+		private static readonly ILogger Logger = LogManager.GetLogger<OnRequestingServicesStepExecutor>();
 
 		[Inject]
 		public OnRequestingServicesStepExecutor(IMessagePublisher publisher,

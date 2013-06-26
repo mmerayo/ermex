@@ -19,7 +19,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Common.Caching;
 using ermeX.ConfigurationManagement.Settings;
@@ -57,7 +57,7 @@ namespace ermeX.Transport.Publish
         private ICacheProvider CacheProvider { get; set; }
         private IConnectivityManager ConnectivityManager { get; set; }
         private ITransportSettings Settings { get; set; }
-	    private static readonly ILog Logger = LogManager.GetLogger(typeof (ServiceProxy).FullName);
+	    private static readonly ILogger Logger = LogManager.GetLogger(typeof (ServiceProxy).FullName);
 
         #region IServiceProxy Members
 

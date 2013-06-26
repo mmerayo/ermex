@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
@@ -14,7 +14,7 @@ namespace ermeX.DAL.Commands.Connectivity
 {
 	internal sealed class ConnectivityDetailsWritter : ICanWriteConnectivityDetails
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(ConnectivityDetailsWritter).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ConnectivityDetailsWritter).FullName);
 		private readonly IPersistRepository<ConnectivityDetails> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;

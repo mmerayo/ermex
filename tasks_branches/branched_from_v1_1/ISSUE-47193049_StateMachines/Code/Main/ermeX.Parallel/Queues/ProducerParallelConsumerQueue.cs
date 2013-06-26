@@ -20,7 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Common.Logging;
+
+using ermeX.Logging;
 
 namespace ermeX.Parallel.Queues
 {
@@ -44,7 +45,7 @@ namespace ermeX.Parallel.Queues
 		/// </summary>
 		protected abstract Func<TQueueItem, bool> RunActionOnDequeue { get; }
 
-		protected ILog Logger
+		protected ILogger Logger
 		{
 			get { return _logger; }
 			set { _logger = value; }
@@ -130,7 +131,7 @@ namespace ermeX.Parallel.Queues
 		}
 
 		private bool _shuttingDown = false;
-		private static ILog _logger = LogManager.GetLogger<ProducerParallelConsumerQueue<TQueueItem>>();
+		private static ILogger _logger = LogManager.GetNonQualifiedLogger<ProducerParallelConsumerQueue<TQueueItem>>();
 
 		private void Shutdown(bool waitForWorkers)
 		{
@@ -188,10 +189,7 @@ namespace ermeX.Parallel.Queues
 				catch (Exception ex)
 				{
 					EnqueueItem(item);
-					Logger.Error(
-						x =>
-						x("An unhandled exception happened in the queue listener, the item has been reenqueued. Details --> {0}",
-						  ex.ToString()));
+					Logger.Error("An unhandled exception happened in the queue listener, the item has been reenqueued. ",ex);
 				}
 				finally
 				{

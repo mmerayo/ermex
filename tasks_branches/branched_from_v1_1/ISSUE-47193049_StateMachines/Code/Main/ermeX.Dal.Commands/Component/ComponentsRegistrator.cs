@@ -1,6 +1,6 @@
 using System;
 using System.Threading;
-using Common.Logging;
+
 using NHibernate;
 using Ninject;
 using ermeX.Common;
@@ -20,7 +20,7 @@ namespace ermeX.DAL.Commands.Component
 	//TODO: MOVE TO THE COMPONENTS UPDATER
 	internal sealed class ComponentsRegistrator : IRegisterComponents
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(ComponentsRegistrator).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ComponentsRegistrator).FullName);
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IPersistRepository<AppComponent> _componentsRepository;
 		private readonly IPersistRepository<ConnectivityDetails> _connectivityRepository;

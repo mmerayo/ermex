@@ -21,7 +21,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
@@ -64,7 +64,7 @@ namespace ermeX.Transport.Reception
         }
 
         public ServerInfo ServerInfo { get; set; }
-		protected static readonly ILog Logger = LogManager.GetLogger(typeof(ServerBase).FullName);
+		protected static readonly ILogger Logger = LogManager.GetLogger(typeof(ServerBase).FullName);
 
         #region IDisposable
 

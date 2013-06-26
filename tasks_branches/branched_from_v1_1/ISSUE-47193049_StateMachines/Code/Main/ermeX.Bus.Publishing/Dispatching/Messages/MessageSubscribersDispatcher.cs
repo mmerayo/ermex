@@ -19,7 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Logging;
+
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;

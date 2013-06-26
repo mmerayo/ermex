@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
@@ -78,7 +78,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		private IComponentSettings Settings { get; set; }
 		private ICanReadComponents ComponentReader { get; set; }
 
-		private static readonly ILog Logger = LogManager.GetLogger(typeof (HandshakeServiceHandler).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof (HandshakeServiceHandler).FullName);
 
 		//this handler id is static
 

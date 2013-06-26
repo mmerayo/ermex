@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Interfaces.Dispatching;
@@ -98,7 +98,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
 		private IBusSettings Settings { get; set; }
 		private IMessageDistributor MessageDistributor { get; set; }
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(MessageCollector).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(MessageCollector).FullName);
 		private int _dispatchedItems = 0;
 
 		#region IMessagePublisherDispatcherStrategy Members

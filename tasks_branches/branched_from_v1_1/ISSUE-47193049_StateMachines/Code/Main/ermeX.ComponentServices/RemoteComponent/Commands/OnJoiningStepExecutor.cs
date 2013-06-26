@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Net;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
@@ -14,7 +14,7 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 {
 	class OnJoiningStepExecutor : IOnJoiningStepExecutor
 	{
-		private static readonly ILog Logger = LogManager.GetLogger<OnJoiningStepExecutor>();
+		private static readonly ILogger Logger = LogManager.GetLogger<OnJoiningStepExecutor>();
 
 		private readonly IMessagePublisher _publisher;
 		private readonly IComponentSettings _settings;

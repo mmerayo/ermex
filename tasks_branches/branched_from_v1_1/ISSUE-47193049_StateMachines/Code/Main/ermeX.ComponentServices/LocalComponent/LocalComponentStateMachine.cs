@@ -1,5 +1,5 @@
 ﻿using System;
-using Common.Logging;
+
 using Ninject;
 using Stateless;
 using ermeX.ComponentServices.ComponentSetup;
@@ -37,7 +37,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Error
 		}
 
-		private static readonly ILog Logger = LogManager.GetLogger<LocalComponentStateMachine>();
+		private static readonly ILogger Logger = LogManager.GetLogger<LocalComponentStateMachine>();
 
 		private readonly StateMachine<LocalComponentState, LocalComponentEvent> _machine =
 			new StateMachine<LocalComponentState, LocalComponentEvent>(LocalComponentState.Stopped);

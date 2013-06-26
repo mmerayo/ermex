@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Biz.Interfaces;
 using ermeX.Bus.Interfaces;
@@ -29,7 +29,7 @@ namespace ermeX.ComponentServices.LocalComponent
 		private  IServicesManager _servicesManager;
 
 		private  ICanReadIncommingMessagesSubscriptions _incommingMessagesSubscriptionsReader;
-		private static readonly ILog Logger = LogManager.GetLogger<LocalComponent>();
+		private static readonly ILogger Logger = LogManager.GetLogger<LocalComponent>();
 		private readonly LocalComponentStateMachine _stateMachine;
 
 		[Inject]

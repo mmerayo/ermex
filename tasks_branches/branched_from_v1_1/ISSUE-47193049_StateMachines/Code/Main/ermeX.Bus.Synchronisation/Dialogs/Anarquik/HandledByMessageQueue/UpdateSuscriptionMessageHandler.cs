@@ -17,7 +17,7 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByMessageQueue;
@@ -28,7 +28,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByMessageQueue
 {
     internal sealed class UpdateSuscriptionMessageHandler : IUpdateSuscriptionMessageHandler
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(UpdateSuscriptionMessageHandler).FullName);
+        private static readonly ILogger Logger = LogManager.GetLogger(typeof(UpdateSuscriptionMessageHandler).FullName);
         
         [Inject]
         public UpdateSuscriptionMessageHandler(IMessagePublisher publisher, IMessageListener listener)

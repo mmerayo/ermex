@@ -19,7 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Biz.Interfaces;
 using ermeX.Bus.Interfaces;
@@ -53,7 +53,7 @@ namespace ermeX.Biz.Subscriptions
 
         private IMessagePublisher Publisher { get; set; }
         private IMessageListener Listener { get; set; }
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(SubscriptionsManager).FullName);
+        private static readonly ILogger Logger = LogManager.GetLogger(typeof(SubscriptionsManager).FullName);
 
         #region ISubscriptionsManager Members
 

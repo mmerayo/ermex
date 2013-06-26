@@ -1,4 +1,4 @@
-﻿using Common.Logging;
+﻿
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
 using ermeX.ComponentServices.Interfaces.RemoteComponent;
@@ -9,7 +9,7 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 	class OnRunningStepExecutor : IOnRunningStepExecutor
 	{
 		private readonly IMessagePublisher _publisher;
-		private static readonly ILog Logger = LogManager.GetLogger<OnRunningStepExecutor>();
+		private static readonly ILogger Logger = LogManager.GetLogger<OnRunningStepExecutor>();
 
 		public OnRunningStepExecutor(IMessagePublisher publisher)
 		{

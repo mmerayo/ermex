@@ -19,7 +19,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Common.Logging;
+
 using ermeX.Bus.Interfaces;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;

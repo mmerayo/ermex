@@ -23,7 +23,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
-using Common.Logging;
+
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.Schemas;
@@ -37,7 +37,7 @@ namespace ermeX.DAL.Helpers
 	/// </summary>
 	internal abstract class QueryHelper : IQueryHelper
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(QueryHelper).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(QueryHelper).FullName);
 		private readonly string _connectionString;
 
 		protected QueryHelper(string connectionString)

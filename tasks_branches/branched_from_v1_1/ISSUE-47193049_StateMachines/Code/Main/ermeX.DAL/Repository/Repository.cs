@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
-using Common.Logging;
+
 using NHibernate.Criterion;
 using NHibernate.Exceptions;
 using NHibernate.Linq;
@@ -22,7 +22,7 @@ namespace ermeX.DAL.Repository
 		private readonly Guid _localComponentId;
 		private readonly IExpressionHelper<TEntity> _expressionHelper;
 		private readonly IUnitOfWorkFactory _implicitFactory;
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(Repository<TEntity>).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(Repository<TEntity>).FullName);
 
 		[Inject]
 		public Repository(IComponentSettings settings, 

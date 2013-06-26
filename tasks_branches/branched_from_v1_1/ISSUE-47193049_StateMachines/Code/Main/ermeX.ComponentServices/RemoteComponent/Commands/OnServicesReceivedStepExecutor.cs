@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
@@ -12,7 +12,7 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 {
 	class OnServicesReceivedStepExecutor : IOnServicesReceivedStepExecutor
 	{
-		private static readonly ILog Logger = LogManager.GetLogger<OnServicesReceivedStepExecutor>();
+		private static readonly ILogger Logger = LogManager.GetLogger<OnServicesReceivedStepExecutor>();
 	
 
 		

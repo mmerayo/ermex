@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Repository;
@@ -13,7 +13,7 @@ namespace ermeX.DAL.Commands.Services
 {
 	class ServiceDetailsWriter : ICanWriteServiceDetails
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(ServiceDetailsWriter).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ServiceDetailsWriter).FullName);
 
 		private readonly IPersistRepository<ServiceDetails> _repository;
 		private readonly IUnitOfWorkFactory _factory;

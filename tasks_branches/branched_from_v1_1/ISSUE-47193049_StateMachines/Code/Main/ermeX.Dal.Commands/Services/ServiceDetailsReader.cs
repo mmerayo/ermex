@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Commands.Queues;
@@ -15,7 +15,7 @@ namespace ermeX.DAL.Commands.Services
 {
 	class ServiceDetailsReader : ICanReadServiceDetails
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(ServiceDetailsReader).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ServiceDetailsReader).FullName);
 		private readonly IReadOnlyRepository<ServiceDetails> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;

@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Sockets;
-using Common.Logging;
+
 using ermeX.Common;
 using ermeX.Common.Caching;
 using ermeX.ConfigurationManagement.Settings;
@@ -55,7 +55,7 @@ namespace ermeX.Transport
 		protected ICanReadConnectivityDetails ConnectivityDetailsReader { get; set; }
 		private ICanWriteConnectivityDetails ConnectivityDetailsWritter { get; set; }
 		protected ICacheProvider CacheProvider { get; set; }
-		protected static readonly ILog Logger = LogManager.GetLogger(typeof(LoaderBase).FullName);
+		protected static readonly ILogger Logger = LogManager.GetLogger(typeof(LoaderBase).FullName);
 
 		#region IConcreteServiceLoader Members
 

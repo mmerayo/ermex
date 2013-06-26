@@ -21,7 +21,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX;
@@ -70,7 +70,7 @@ namespace ermeX.Bus.Listening
 
 		private IComponentSettings ComponentSettings { get; set; }
 		private IListeningManager ListeningManager { get; set; }
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(MessageListeningManager).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(MessageListeningManager).FullName);
 
 		#region IMessageListener Members
 

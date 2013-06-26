@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Common.Logging;
+
 using NUnit.Framework;
 using ermeX.Parallel.Queues;
 

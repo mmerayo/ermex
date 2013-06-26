@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Common.Logging;
+
 using NHibernate;
 
 namespace ermeX.DAL.Transactions
@@ -9,7 +9,7 @@ namespace ermeX.DAL.Transactions
 	//used toghether with system.data.sqlite
 	public sealed class MutexedTransaction : ErmexTransaction
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(MutexedTransaction).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(MutexedTransaction).FullName);
 		private Mutex _mutex;
 		private static readonly TimeSpan WaitForMutexTimeSpan= TimeSpan.FromSeconds(10);
 

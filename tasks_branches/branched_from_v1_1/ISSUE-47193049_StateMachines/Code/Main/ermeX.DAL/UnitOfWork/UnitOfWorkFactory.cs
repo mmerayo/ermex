@@ -3,7 +3,7 @@ using System.Data.Common;
 using System.Data.SQLite;
 using System.Data.SqlClient;
 using System.Threading;
-using Common.Logging;
+
 using NHibernate;
 using NHibernate.Exceptions;
 using Ninject;
@@ -16,7 +16,7 @@ namespace ermeX.DAL.UnitOfWork
 {
 	internal class UnitOfWorkFactory : IUnitOfWorkFactory
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof (UnitOfWorkFactory).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof (UnitOfWorkFactory).FullName);
 		private ISessionProvider _sessionFactory;
 		private IStorageOperationRetryStrategy _retryStrategy;
 

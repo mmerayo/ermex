@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Repository;
@@ -13,7 +13,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 {
 	internal class CanUpdateIncommingMessagesSubscriptions : ICanUpdateIncommingMessagesSubscriptions
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(CanUpdateIncommingMessagesSubscriptions).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(CanUpdateIncommingMessagesSubscriptions).FullName);
 
 		private readonly IPersistRepository<IncomingMessageSuscription> _incomingRepository;
 		private readonly IPersistRepository<OutgoingMessageSuscription> _outgoingRepository;

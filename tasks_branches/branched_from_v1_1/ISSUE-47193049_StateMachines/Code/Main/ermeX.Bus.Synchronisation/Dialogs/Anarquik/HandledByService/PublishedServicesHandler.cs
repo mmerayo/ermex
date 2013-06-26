@@ -19,7 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByService;
@@ -64,7 +64,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		private IMessageListener Listener { get; set; }
 		private IComponentSettings Settings { get; set; }
-		private static readonly ILog Logger = LogManager.GetLogger(typeof (PublishedServicesHandler).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof (PublishedServicesHandler).FullName);
 
 		#region IPublishedServicesDefinitionsService Members
 

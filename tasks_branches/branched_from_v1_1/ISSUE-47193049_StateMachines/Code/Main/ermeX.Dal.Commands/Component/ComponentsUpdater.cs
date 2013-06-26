@@ -1,6 +1,6 @@
 using System;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 
 using ermeX.DAL.Interfaces.Component;
@@ -12,7 +12,7 @@ namespace ermeX.DAL.Commands.Component
 {
 	internal sealed class ComponentsUpdater : ICanWriteComponents
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(ComponentsUpdater).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ComponentsUpdater).FullName);
 
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IPersistRepository<AppComponent> _repository;

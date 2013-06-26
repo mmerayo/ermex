@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Commands.Connectivity;
@@ -14,7 +14,7 @@ namespace ermeX.DAL.Commands.Queues
 {
 	class IncommingQueueWriter : IWriteIncommingQueue
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(IncommingQueueWriter).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(IncommingQueueWriter).FullName);
 
 		private readonly IPersistRepository<IncomingMessage> _repository;
 		private readonly IUnitOfWorkFactory _factory;

@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
-using Common.Logging;
+
 using Common.Logging.Simple;
 using NUnit.Framework;
 using ermeX.Configuration;
