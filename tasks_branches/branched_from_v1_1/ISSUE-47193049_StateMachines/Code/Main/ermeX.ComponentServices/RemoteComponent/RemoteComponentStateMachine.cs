@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
-using Common.Logging;
+
 using Ninject;
 using Stateless;
 using ermeX.ComponentServices.Interfaces.RemoteComponent;
@@ -69,7 +69,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			get { return _context; }
 		}
 
-		private static readonly ILog Logger = LogManager.GetLogger<RemoteComponentStateMachine>();
+		private static readonly ILogger Logger = LogManager.GetLogger<RemoteComponentStateMachine>();
 
 		private readonly StateMachine<RemoteComponentState, RemoteComponentEvent> _machine =
 			new StateMachine<RemoteComponentState, RemoteComponentEvent>(RemoteComponentState.NotStarted);

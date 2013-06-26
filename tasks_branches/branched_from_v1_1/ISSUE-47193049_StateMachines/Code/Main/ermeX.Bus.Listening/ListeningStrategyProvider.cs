@@ -17,7 +17,7 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling;
 using ermeX.ConfigurationManagement.Settings;
@@ -50,7 +50,7 @@ namespace ermeX.Bus.Listening
 
         private ReceptionMessageHandler InternalMessageHandler { get; set; }
         private IConnectivityManager ConnectivityManager { get; set; }
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(ListeningStrategyProvider).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ListeningStrategyProvider).FullName);
         #region IListeningStrategyProvider Members
 
         public void Initialize()

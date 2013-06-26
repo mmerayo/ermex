@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
 using ermeX.Common;
@@ -97,7 +97,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
 		private IReceptionMessageDistributor ReceptionMessageDistributor { get; set; }
 		private IBusSettings Settings { get; set; }
 		private IQueueDispatcherManager QueueDispatcherManager { get; set; }
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(ReceptionMessageHandler).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ReceptionMessageHandler).FullName);
 
 		public override object Handle(TransportMessage message)
 		{

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using Common.Logging;
+
 using Stateless;
 using ermeX.ComponentServices.Interfaces.ComponentSetup;
 using ermeX.Exceptions;
@@ -9,7 +9,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 {
 	internal sealed class SetupMachine
 	{
-		private static readonly ILog Logger = LogManager.GetLogger<SetupMachine>();
+		private static readonly ILogger Logger = LogManager.GetLogger<SetupMachine>();
 
 		private enum SetupEvent
 		{

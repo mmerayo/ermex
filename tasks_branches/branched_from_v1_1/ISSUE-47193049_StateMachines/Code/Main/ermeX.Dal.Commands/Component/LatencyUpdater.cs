@@ -1,6 +1,6 @@
 using System;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Repository;
@@ -11,7 +11,7 @@ namespace ermeX.DAL.Commands.Component
 {
 	internal sealed class LatencyUpdater : ICanUpdateLatency
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof (LatencyUpdater).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof (LatencyUpdater).FullName);
 
 		private readonly IUnitOfWorkFactory _factory;
 		private IPersistRepository<AppComponent> Repository { get; set; }

@@ -19,7 +19,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using Common.Logging;
+
 using Common.Logging.Simple;
 using Ninject;
 using ermeX.Common;
@@ -47,7 +47,7 @@ namespace ermeX.ermeX.Component
 #endif
         }
 
-		protected static readonly ILog Logger = LogManager.GetLogger(typeof(SoaComponent).FullName); 
+		protected static readonly ILogger Logger = LogManager.GetLogger(typeof(SoaComponent).FullName); 
 
        internal bool IsStarted
         {

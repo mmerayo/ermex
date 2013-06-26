@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using Common.Logging;
+
 using Ninject;
 using ermeX.ComponentServices.Interfaces;
 using ermeX.ComponentServices.Interfaces.ComponentSetup;
@@ -15,7 +15,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 {
 	internal sealed class SetupServiceInjector : ISetupServiceInjector
 	{
-		private static readonly ILog Logger = LogManager.GetLogger<SetupServiceInjector>();
+		private static readonly ILogger Logger = LogManager.GetLogger<SetupServiceInjector>();
 		private readonly Configurer _settings;
 
 		public SetupServiceInjector(Configurer settings)

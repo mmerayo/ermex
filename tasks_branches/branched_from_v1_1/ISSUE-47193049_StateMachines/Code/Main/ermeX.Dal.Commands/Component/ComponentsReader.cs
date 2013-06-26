@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Component;
@@ -14,7 +14,7 @@ namespace ermeX.DAL.Commands.Component
 {
 	internal sealed class ComponentsReader : ICanReadComponents
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof (ComponentsReader).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof (ComponentsReader).FullName);
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;
 		private IReadOnlyRepository<AppComponent> Repository { get; set; }

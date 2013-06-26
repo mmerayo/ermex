@@ -1,6 +1,6 @@
 using System;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Queues;
@@ -12,7 +12,7 @@ namespace ermeX.DAL.Commands.Queues
 {
 	internal class WriteOutgoingQueue : IWriteOutgoingQueue
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(WriteOutgoingQueue).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(WriteOutgoingQueue).FullName);
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IPersistRepository<OutgoingMessage> _repository;
 

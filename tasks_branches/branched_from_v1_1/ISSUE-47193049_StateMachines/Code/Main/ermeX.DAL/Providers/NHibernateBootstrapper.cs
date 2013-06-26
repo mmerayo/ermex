@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Common.Logging;
+
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Mapping;
@@ -37,7 +37,7 @@ namespace ermeX.DAL.Providers
 	//TODO: TO BE INJECTED
     internal static class NHibernateBootstrapper
     {
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(NHibernateBootstrapper).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(NHibernateBootstrapper).FullName);
 
 #if DEBUG
         public class LoggingInterceptor : EmptyInterceptor

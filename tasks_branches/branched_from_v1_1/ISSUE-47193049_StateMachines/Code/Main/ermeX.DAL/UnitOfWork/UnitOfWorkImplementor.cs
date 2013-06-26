@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Threading;
-using Common.Logging;
+
 using NHibernate;
 using ermeX.DAL.Transactions;
 
@@ -9,7 +9,7 @@ namespace ermeX.DAL.UnitOfWork
 {
 	internal class UnitOfWorkImplementor : IUnitOfWork
 	{
-		protected readonly ILog Logger = LogManager.GetLogger(typeof(UnitOfWorkImplementor).FullName);
+		protected readonly ILogger Logger = LogManager.GetLogger(typeof(UnitOfWorkImplementor).FullName);
 
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly ISession _session;

@@ -18,7 +18,8 @@
 // /*---------------------------------------------------------------------------------------*/
 
 using System;
-using Common.Logging;
+
+using ermeX.Logging;
 
 namespace ermeX.Parallel.Queues
 {
@@ -34,7 +35,7 @@ namespace ermeX.Parallel.Queues
 		private SystemTaskQueue()
 			: base(1, 64, 3, TimeSpan.FromSeconds(60))
 		{
-			Logger = LogManager.GetLogger<SystemTaskQueue>();
+			Logger = LogManager.GetNonQualifiedLogger<SystemTaskQueue>();
 		}
 
 		protected override Func<Action, bool> RunActionOnDequeue

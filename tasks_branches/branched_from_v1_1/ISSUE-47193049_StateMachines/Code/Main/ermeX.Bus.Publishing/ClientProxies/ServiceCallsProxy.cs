@@ -23,7 +23,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using Castle.DynamicProxy;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Common;
@@ -60,7 +60,7 @@ namespace ermeX.Bus.Publishing.ClientProxies
         private IBusSettings Settings { get; set; }
 	    private ICanReadComponents ComponentReader { get; set; }
 	    private ICanReadServiceDetails ServiceDetailsReader { get; set; }
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(ServiceCallsProxy).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ServiceCallsProxy).FullName);
 
         private Guid DestinationComponent { get; set; }
 

@@ -22,7 +22,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using Common.Logging;
+
+using ermeX.Logging;
 
 namespace ermeX.Parallel.Scheduling
 {
@@ -46,7 +47,7 @@ namespace ermeX.Parallel.Scheduling
         
         private const int MaxJobsToSchedulePerCheck = 128;
 
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(JobScheduler).FullName);
+        private readonly ILogger _logger ;
 
         public int Length
         {
@@ -59,8 +60,10 @@ namespace ermeX.Parallel.Scheduling
             }
         }
 
-        public JobScheduler()
+        public JobScheduler(ILogManager logManager)
         {
+	        _logger = logManager.GetLogger<JobScheduler>();
+
             _syncRoot = new object();
 
             _timer = new Timer(RunJobs);
@@ -119,7 +122,7 @@ namespace ermeX.Parallel.Scheduling
                     }
                     else
                     {
-                        Logger.Debug(x=>x("Wake up time changed. Next event in {0}", TimeSpan.FromTicks(delta)));
+                        _logger.Debug(string.Format("Wake up time changed. Next event in {0}", TimeSpan.FromTicks(delta)));
                         _timer.Change(delta/TimeSpan.TicksPerMillisecond, Timeout.Infinite);
                     }
                 }
@@ -199,19 +202,19 @@ namespace ermeX.Parallel.Scheduling
                         }
                         else
                         {
-                            Logger.Debug(x => x("Next event in {0}", TimeSpan.FromTicks(delta)));
+                            _logger.Debug(string.Format("Next event in {0}", TimeSpan.FromTicks(delta)));
                             _timer.Change(delta/TimeSpan.TicksPerMillisecond, Timeout.Infinite);
                         }
                     }
                     else
                     {
-                        Logger.Debug(x => x("Queue ends"));
+                        _logger.Debug(string.Format("Queue ends"));
                         Interlocked.CompareExchange(ref _queueRun, 0, 1);
                     }
                 }
             }catch(Exception ex)
             {
-                Logger.Warn(x=>x("{0}",ex.ToString()));
+				_logger.Warn("RunJobs", ex);
             }
         }
 

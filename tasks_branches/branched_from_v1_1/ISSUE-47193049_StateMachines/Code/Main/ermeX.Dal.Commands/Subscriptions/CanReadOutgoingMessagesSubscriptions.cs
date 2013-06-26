@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Repository;
@@ -14,7 +14,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 {
 	class CanReadOutgoingMessagesSubscriptions : ICanReadOutgoingMessagesSubscriptions
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(CanReadOutgoingMessagesSubscriptions).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(CanReadOutgoingMessagesSubscriptions).FullName);
 
 		private readonly IReadOnlyRepository<OutgoingMessageSuscription> _repository;
 		private readonly IUnitOfWorkFactory _factory;

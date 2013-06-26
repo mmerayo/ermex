@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
@@ -15,7 +15,7 @@ namespace ermeX.DAL.Commands.Queues
 {
 	internal class ReaderOutgoingQueue : IReadOutgoingQueue
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(ReaderOutgoingQueue).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ReaderOutgoingQueue).FullName);
 
 		private readonly IReadOnlyRepository<OutgoingMessage> _repository;
 		private readonly IUnitOfWorkFactory _factory;

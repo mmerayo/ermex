@@ -1,6 +1,6 @@
 using System;
 using System.Threading;
-using Common.Logging;
+
 using Ninject;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
@@ -11,7 +11,7 @@ namespace ermeX.DAL.Commands.Connectivity
 {
 	internal class ConnectivityDetailsReader : ICanReadConnectivityDetails
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(ConnectivityDetailsReader).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ConnectivityDetailsReader).FullName);
 		private readonly IReadOnlyRepository<ConnectivityDetails> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 

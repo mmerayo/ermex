@@ -1,4 +1,4 @@
-﻿using Common.Logging;
+﻿
 using Ninject;
 using ermeX.Bus.Interfaces;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers;
@@ -11,7 +11,7 @@ namespace ermeX.ComponentServices.LocalComponent.Commands
 {
 	internal class OnStartStepExecutor : IOnStartStepExecutor
 	{
-		private static readonly ILog Logger = LogManager.GetLogger<OnStartStepExecutor>();
+		private static readonly ILogger Logger = LogManager.GetLogger<OnStartStepExecutor>();
 
 		private readonly IBizSettings _bizSettings;
 		private readonly IRegisterComponents _componentsRegister;

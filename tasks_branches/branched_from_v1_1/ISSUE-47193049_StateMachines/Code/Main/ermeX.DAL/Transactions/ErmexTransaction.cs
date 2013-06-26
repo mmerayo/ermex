@@ -1,12 +1,12 @@
 ﻿using System;
-using Common.Logging;
+
 using NHibernate;
 
 namespace ermeX.DAL.Transactions
 {
 	public class ErmexTransaction : IErmexTransaction
 	{
-		private static readonly ILog Logger = LogManager.GetLogger(typeof(ErmexTransaction).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ErmexTransaction).FullName);
 		private readonly ITransaction _transaction;
 
 		public ErmexTransaction(ITransaction transaction)
