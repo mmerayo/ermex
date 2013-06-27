@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging">
+      <HintPath>..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
     </Reference>
@@ -68,6 +71,10 @@
     <ProjectReference Include="..\ermeX.Logging\ermeX.Logging.csproj">
       <Project>{9DB79424-4537-4A46-BD7C-972E3B2F284D}</Project>
       <Name>ermeX.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Tests.Common\ermeX.Tests.Common.csproj">
+      <Project>{7E841F70-E81D-4AB8-B387-DD7383202915}</Project>
+      <Name>ermeX.Tests.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
