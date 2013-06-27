@@ -1,4 +1,5 @@
 ﻿using System;
+using Ninject;
 
 namespace ermeX.Logging
 {
@@ -6,7 +7,8 @@ namespace ermeX.Logging
 	{
 		private readonly Guid _componentId;
 		private readonly LogComponent _logComponent;
-		//TODO: INJECT
+
+		[Inject]
 		public LogManager(Guid componentId,LogComponent logComponent)
 		{
 			_componentId = componentId;
@@ -15,7 +17,12 @@ namespace ermeX.Logging
 
 		public ILogger GetLogger<TType>()
 		{
-			return new Logger(typeof(TType),_componentId,_logComponent);
+			return GetLogger(typeof(TType));
+		}
+
+		public ILogger GetLogger(Type type)
+		{
+			return new Logger(type, _componentId, _logComponent);
 		}
 
 		public static ILogger GetNonQualifiedLogger<TType>()
@@ -23,4 +30,6 @@ namespace ermeX.Logging
 			return new Logger(typeof(TType));
 		}
 	}
+	
+	
 }

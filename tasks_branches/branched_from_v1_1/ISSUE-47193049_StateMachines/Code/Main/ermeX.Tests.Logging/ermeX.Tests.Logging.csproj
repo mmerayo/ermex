@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9DB79424-4537-4A46-BD7C-972E3B2F284D}</ProjectGuid>
+    <ProjectGuid>{F58FC0A8-B31D-497E-AC25-033463CF684E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ermeX.Logging</RootNamespace>
-    <AssemblyName>ermeX.Logging</AssemblyName>
+    <RootNamespace>ermeX.Tests.Logging</RootNamespace>
+    <AssemblyName>ermeX.Tests.Logging</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,11 +31,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.Logging">
-      <HintPath>..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject">
-      <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\..\Build\Packages\nUnit\NUnit-2.5.6.10205\nunitbin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture">
+      <HintPath>..\packages\AutoFixture.3.4.1\lib\net40\Ploeh.AutoFixture.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,21 +55,20 @@
     <Compile Include="..\ermeX\Properties\ProjectInfo.cs">
       <Link>Properties\ProjectInfo.cs</Link>
     </Compile>
-    <Compile Include="..\ermeX\Properties\TestVisibilityInfo.cs">
-      <Link>Properties\TestVisibilityInfo.cs</Link>
-    </Compile>
-    <Compile Include="ILogManager.cs" />
-    <Compile Include="ILogger.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="LogManager.cs" />
+    <Compile Include="LoggerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="LogComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ermeX\KeyFile.snk">
       <Link>KeyFile.snk</Link>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ermeX.Logging\ermeX.Logging.csproj">
+      <Project>{9DB79424-4537-4A46-BD7C-972E3B2F284D}</Project>
+      <Name>ermeX.Logging</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

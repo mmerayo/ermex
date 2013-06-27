@@ -5,17 +5,20 @@ using NHibernate;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
+using ermeX.Logging;
 
 namespace ermeX.DAL.Transactions
 {
 	//due to sqlite issues when multithreading and parallel connections
 	internal sealed class MutexedTransactionProvider : IWriteTransactionProvider
 	{
+		private readonly ILogManager _logManager;
 		private string _dbName;
 
 		[Inject]
-		public MutexedTransactionProvider(IDalSettings settings )
+		public MutexedTransactionProvider(IDalSettings settings ,ILogManager logManager)
 		{
+			_logManager = logManager;
 			string connStr = settings.ConfigurationConnectionString;
 
 			switch (settings.ConfigurationSourceType)
@@ -52,7 +55,7 @@ namespace ermeX.DAL.Transactions
 
 		public IErmexTransaction BeginTransaction(ITransaction innerTransaction)
 		{
-			return new MutexedTransaction(_dbName,innerTransaction);
+			return new MutexedTransaction(_dbName,innerTransaction,_logManager);
 		}
 	}
 }
