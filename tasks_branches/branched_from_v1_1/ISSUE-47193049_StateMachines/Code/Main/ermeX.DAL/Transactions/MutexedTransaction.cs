@@ -2,24 +2,25 @@
 using System.Threading;
 
 using NHibernate;
+using ermeX.Logging;
 
 namespace ermeX.DAL.Transactions
 {
 	//justified until this is investigated http://www.sqlite.org/cvstrac/wiki?p=MultiThreading
 	//used toghether with system.data.sqlite
-	public sealed class MutexedTransaction : ErmexTransaction
+	internal sealed class MutexedTransaction : ErmexTransaction
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(MutexedTransaction).FullName);
 		private Mutex _mutex;
 		private static readonly TimeSpan WaitForMutexTimeSpan= TimeSpan.FromSeconds(10);
 
-		public MutexedTransaction(string namedMutexName, ITransaction transaction):base(transaction)
+		public MutexedTransaction(string namedMutexName, ITransaction transaction, ILogManager logManager)
+			:base(transaction,logManager)
 		{
 			_mutex = new Mutex(false, namedMutexName);
-			Logger.DebugFormat("cctor. Waiting for mutex={2}. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId, namedMutexName);
+			Logger.Debug(string.Format("cctor. Waiting for mutex={0}.", namedMutexName));
 			if(!_mutex.WaitOne(WaitForMutexTimeSpan))
 				throw new TransactionException("Could not obtain mutex on time"); //TODO: THROW custom transaction
-			Logger.DebugFormat("cctor. Start critical section mutex={2}. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId,namedMutexName);
+			Logger.Debug(string.Format("cctor. Start critical section mutex={0}.", namedMutexName));
 		}
 
 		public override void Commit()

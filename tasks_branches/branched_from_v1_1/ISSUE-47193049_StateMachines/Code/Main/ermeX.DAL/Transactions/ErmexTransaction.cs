@@ -1,36 +1,38 @@
 ﻿using System;
 
 using NHibernate;
+using ermeX.Logging;
 
 namespace ermeX.DAL.Transactions
 {
-	public class ErmexTransaction : IErmexTransaction
+	internal class ErmexTransaction : IErmexTransaction
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ErmexTransaction).FullName);
+		protected ILogger Logger { get; private set; }
 		private readonly ITransaction _transaction;
 
-		public ErmexTransaction(ITransaction transaction)
+		public ErmexTransaction(ITransaction transaction,ILogManager logManager)
 		{
-			Logger.DebugFormat("cctor thread {0} ",System.Threading.Thread.CurrentThread.ManagedThreadId);
+			Logger=logManager.GetLogger(GetType());
+			Logger.Debug("cctor");
 			if (transaction == null) throw new ArgumentNullException("transaction");
 			_transaction = transaction;
 		}
 
 		public virtual void Commit()
 		{
-			Logger.DebugFormat("Commit thread={0} ", System.Threading.Thread.CurrentThread.ManagedThreadId);
+			Logger.Debug("Commit");
 			_transaction.Commit();
 		}
 
 		public virtual void Rollback()
 		{
-			Logger.WarnFormat("Rollback thread={0} ", System.Threading.Thread.CurrentThread.ManagedThreadId);
+			Logger.Warn("Rollback");
 			_transaction.Rollback();
 		}
 
 		public void Dispose()
 		{
-			Logger.DebugFormat("Dispose thread={0} ", System.Threading.Thread.CurrentThread.ManagedThreadId);
+			Logger.Debug("Dispose");
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
