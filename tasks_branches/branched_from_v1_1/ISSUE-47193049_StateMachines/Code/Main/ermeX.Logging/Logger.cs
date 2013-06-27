@@ -7,7 +7,7 @@ namespace ermeX.Logging
 	internal sealed class Logger : ILogger
 	{
 
-		private readonly ILog _innerLogger;
+		private ILog _innerLogger;
 		private readonly string _logPrefix;
 
 

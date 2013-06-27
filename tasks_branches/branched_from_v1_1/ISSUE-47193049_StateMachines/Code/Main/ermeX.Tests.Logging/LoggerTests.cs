@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Common.Logging;
+using Moq;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
 using ermeX.Logging;
+using ermeX.Tests.Common.Reflection;
 
 namespace ermeX.Tests.Logging
 {
@@ -14,6 +17,7 @@ namespace ermeX.Tests.Logging
 		private class TestContext
 		{
 			Fixture _fixture;
+			Mock<ILog> _innerLoggerMock;
 
 			public TestContext()
 			{
@@ -22,9 +26,10 @@ namespace ermeX.Tests.Logging
 				TheComponentId = Guid.NewGuid();
 				TheLogComponent= _fixture.Create<LogComponent>();
 
-				mock inner logger
-
 				Sut= new Logger(TheType, TheComponentId, TheLogComponent);
+
+				_innerLoggerMock = new Mock<ILog>();
+				PrivateInspector.SetPrivateVariable(Sut, "_innerLogger",_innerLoggerMock.Object);
 			}
 
 			public Type TheType { get; private set; }
@@ -53,6 +58,33 @@ namespace ermeX.Tests.Logging
 						throw new ArgumentOutOfRangeException("logLevel");
 				}
 			}
+
+			public void VerifyObjectLoggerWasCalled(TestLogLevel logLevel, string theObject)
+			{
+				switch (logLevel)
+				{
+					case TestLogLevel.Trace:
+						_innerLoggerMock.Verify(x=>x.Trace(It.IsAny<Action<FormatMessageHandler>>()),Times.Exactly(1));
+						break;
+					case TestLogLevel.Debug:
+						_innerLoggerMock.Verify(x => x.Debug(It.IsAny<Action<FormatMessageHandler>>()), Times.Exactly(1));
+						break;
+					case TestLogLevel.Info:
+						_innerLoggerMock.Verify(x => x.Info(It.IsAny<Action<FormatMessageHandler>>()), Times.Exactly(1));
+						break;
+					case TestLogLevel.Warn:
+						_innerLoggerMock.Verify(x => x.Warn(It.IsAny<Action<FormatMessageHandler>>()), Times.Exactly(1));
+						break;
+					case TestLogLevel.Error:
+						_innerLoggerMock.Verify(x => x.Error(It.IsAny<Action<FormatMessageHandler>>()), Times.Exactly(1));
+						break;
+					case TestLogLevel.Fatal:
+						_innerLoggerMock.Verify(x => x.Fatal(It.IsAny<Action<FormatMessageHandler>>()), Times.Exactly(1));
+						break;
+					default:
+						throw new ArgumentOutOfRangeException("logLevel");
+				}
+			}
 		}
 
 		public enum TestLogLevel
@@ -69,6 +101,8 @@ namespace ermeX.Tests.Logging
 
 			var logger = testContext.GetObjectLogger(logLevel);
 			logger(theObject);
+
+			testContext.VerifyObjectLoggerWasCalled(logLevel,theObject);
 		}
 	}
 }
