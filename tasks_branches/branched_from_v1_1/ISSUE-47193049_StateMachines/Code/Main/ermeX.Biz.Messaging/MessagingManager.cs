@@ -25,46 +25,49 @@ using ermeX.ConfigurationManagement.Settings;
 
 
 using ermeX.LayerMessages;
+using ermeX.Logging;
 
 namespace ermeX.Biz.Messaging
 {
-    internal class MessagingManager : IMessagingManager
-    {
-        [Inject]
-		public MessagingManager(IBusSettings settings, IMessagePublisher publisher, IMessageListener listener)
-        {
-            if (settings == null) throw new ArgumentNullException("settings");
-            if (publisher == null) throw new ArgumentNullException("publisher");
-            if (listener == null) throw new ArgumentNullException("listener");
-            Settings = settings;
-            Publisher = publisher;
-            Listener = listener;
-        }
+	internal class MessagingManager : IMessagingManager
+	{
+		[Inject]
+		public MessagingManager(IBusSettings settings,
+		                        IMessagePublisher publisher,
+		                        IMessageListener listener,
+		                        ILogManager logger)
+		{
+			if (settings == null) throw new ArgumentNullException("settings");
+			if (publisher == null) throw new ArgumentNullException("publisher");
+			if (listener == null) throw new ArgumentNullException("listener");
+			_logger = logger.GetLogger<MessagingManager>();
+			Settings = settings;
+			Publisher = publisher;
+			Listener = listener;
+		}
 
-        private IBusSettings Settings { get; set; }
-        private IMessagePublisher Publisher { get; set; }
-        private IMessageListener Listener { get; set; }
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(MessagingManager).FullName);
+		private IBusSettings Settings { get; set; }
+		private IMessagePublisher Publisher { get; set; }
+		private IMessageListener Listener { get; set; }
+		private readonly ILogger _logger;
 
-        #region IMessagingManager Members
+		#region IMessagingManager Members
 
-        public void PublishMessage(BizMessage message)
-        {
-            try
-            {
-                var busMessage = new BusMessage(Settings.ComponentId, message);
-                Logger.Trace(x=>x("{0} - Created BusMessage", busMessage.MessageId));
-                Publisher.PublishMessage(busMessage);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(x=>x( "PublishMessage. {0}", ex));
-                throw ex;
-            }
-        }
+		public void PublishMessage(BizMessage message)
+		{
+			try
+			{
+				var busMessage = new BusMessage(Settings.ComponentId, message);
+				_logger.Trace(x => x("{0} - Created BusMessage", busMessage.MessageId));
+				Publisher.PublishMessage(busMessage);
+			}
+			catch (Exception ex)
+			{
+				_logger.Error("PublishMessage.", ex);
+				throw ex;
+			}
+		}
 
-        #endregion
-
-        
-    }
+		#endregion
+	}
 }

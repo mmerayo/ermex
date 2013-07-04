@@ -29,6 +29,11 @@ namespace ermeX.Logging
 		{
 			return new Logger(typeof(TType));
 		}
+
+		public static ILogger GetNonQualifiedLogger(Type type)
+		{
+			return new Logger(type);
+		}
 	}
 	
 	

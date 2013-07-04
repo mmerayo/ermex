@@ -31,13 +31,14 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.Mappings;
+using ermeX.Logging;
 
 namespace ermeX.DAL.Providers
 {
 	//TODO: TO BE INJECTED
     internal static class NHibernateBootstrapper
     {
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(NHibernateBootstrapper).FullName);
+		private static readonly ILogger Logger = LogManager.GetNonQualifiedLogger(typeof(NHibernateBootstrapper));
 
 #if DEBUG
         public class LoggingInterceptor : EmptyInterceptor
@@ -46,7 +47,7 @@ namespace ermeX.DAL.Providers
             {
                 try
                 {
-                    Logger.DebugFormat("DomainId: {0} - ThreadId: {1} - SQL: {2}",AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId, sql);
+	                Logger.Debug("SQL: " + sql);
                 }
                 catch
                 {

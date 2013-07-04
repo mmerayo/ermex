@@ -22,6 +22,7 @@ using Ninject;
 using ermeX.Bus.Listening.Handlers.InternalMessagesHandling;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
+using ermeX.Logging;
 using ermeX.Transport.Interfaces;
 
 namespace ermeX.Bus.Listening
@@ -50,7 +51,7 @@ namespace ermeX.Bus.Listening
 
         private ReceptionMessageHandler InternalMessageHandler { get; set; }
         private IConnectivityManager ConnectivityManager { get; set; }
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ListeningStrategyProvider).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ListeningStrategyProvider));
         #region IListeningStrategyProvider Members
 
         public void Initialize()
