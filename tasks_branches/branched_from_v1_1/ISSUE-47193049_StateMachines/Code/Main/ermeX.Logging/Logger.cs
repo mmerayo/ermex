@@ -30,6 +30,11 @@ namespace ermeX.Logging
 			return m => m(string.Format("{0} - {1}", _logPrefix, callback));
 		}
 
+		private Action<FormatMessageHandler> GetMessageCallback(string format, params object[] args)
+		{
+			return m => m(_logPrefix+" - " +string.Format(format, args));
+		}
+
 
 		public void Trace(object message)
 		{
@@ -39,6 +44,11 @@ namespace ermeX.Logging
 		public void Trace(object message, Exception exception)
 		{
 			_innerLogger.Trace(GetMessageCallback(message.ToString()), exception);
+		}
+
+		public void TraceFormat(string format, params object[] args)
+		{
+			_innerLogger.Trace(GetMessageCallback(format,args));
 		}
 
 		public void Trace(Action<FormatMessageHandler> callback)
@@ -56,6 +66,11 @@ namespace ermeX.Logging
 			_innerLogger.Debug(GetMessageCallback(message.ToString()), exception);
 		}
 
+		public void DebugFormat(string format, params object[] args)
+		{
+			_innerLogger.Debug(GetMessageCallback(format, args));
+		}
+
 		public void Debug(Action<FormatMessageHandler> callback)
 		{
 			_innerLogger.Debug(GetMessageCallback(callback));
@@ -69,6 +84,11 @@ namespace ermeX.Logging
 		public void Info(object message, Exception exception)
 		{
 			_innerLogger.Info(GetMessageCallback(message.ToString()), exception);
+		}
+
+		public void InfoFormat(string format, params object[] args)
+		{
+			_innerLogger.Info(GetMessageCallback(format, args));
 		}
 
 		public void Info(Action<FormatMessageHandler> callback)
@@ -86,6 +106,11 @@ namespace ermeX.Logging
 			_innerLogger.Warn(GetMessageCallback(message.ToString()), exception);
 		}
 
+		public void WarnFormat(string format, params object[] args)
+		{
+			_innerLogger.Warn(GetMessageCallback(format, args));
+		}
+
 		public void Warn(Action<FormatMessageHandler> callback)
 		{
 			_innerLogger.Warn(GetMessageCallback(callback));
@@ -101,6 +126,11 @@ namespace ermeX.Logging
 			_innerLogger.Error(GetMessageCallback(message.ToString()), exception);
 		}
 
+		public void ErrorFormat(string format, params object[] args)
+		{
+			_innerLogger.Error(GetMessageCallback(format, args));
+		}
+
 		public void Error(Action<FormatMessageHandler> callback)
 		{
 			_innerLogger.Error(GetMessageCallback(callback));
@@ -114,6 +144,11 @@ namespace ermeX.Logging
 		public void Fatal(object message, Exception exception)
 		{
 			_innerLogger.Fatal(GetMessageCallback(message.ToString()), exception);
+		}
+
+		public void FatalFormat(string format, params object[] args)
+		{
+			_innerLogger.Fatal(GetMessageCallback(format, args));
 		}
 
 		public void Fatal(Action<FormatMessageHandler> callback)

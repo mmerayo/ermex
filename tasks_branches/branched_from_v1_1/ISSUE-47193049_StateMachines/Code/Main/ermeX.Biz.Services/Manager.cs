@@ -22,58 +22,61 @@ using Ninject;
 using ermeX.Biz.Interfaces;
 using ermeX.Bus.Interfaces;
 using ermeX.ConfigurationManagement.Settings;
+using ermeX.Logging;
 
 
 namespace ermeX.Biz.Services
 {
-    internal class Manager : IServicesManager
-    {
-        [Inject]
-        public Manager(IMessagePublisher publisher, IMessageListener listener)
-        {
-            if (publisher == null) throw new ArgumentNullException("publisher");
-            if (listener == null) throw new ArgumentNullException("listener");
-            Publisher = publisher;
-            Listener = listener;
-        }
+	internal class Manager : IServicesManager
+	{
+		[Inject]
+		public Manager(IMessagePublisher publisher, IMessageListener listener, ILogManager logger)
+		{
+			if (publisher == null) throw new ArgumentNullException("publisher");
+			if (listener == null) throw new ArgumentNullException("listener");
+			Logger = logger.GetLogger<Manager>();
+			Publisher = publisher;
+			Listener = listener;
+		}
 
-        private IMessagePublisher Publisher { get; set; }
-        private IMessageListener Listener { get; set; }
-        private static readonly ILogger Logger = LogManager.GetLogger(typeof(Manager).FullName);
+		private IMessagePublisher Publisher { get; set; }
+		private IMessageListener Listener { get; set; }
+		private readonly ILogger Logger;
 
-        #region IServicesManager Members
+		#region IServicesManager Members
 
-        public TServiceInterface GetServiceProxy<TServiceInterface>() where TServiceInterface : IService
-        {
-            try
-            {
-                return Publisher.GetServiceProxy<TServiceInterface>();
-            }catch(Exception ex)
-            {
-                Logger.Error(x=>x( "GetServiceProxy", ex));
-                throw ex;
-            }
-        }
+		public TServiceInterface GetServiceProxy<TServiceInterface>() where TServiceInterface : IService
+		{
+			try
+			{
+				return Publisher.GetServiceProxy<TServiceInterface>();
+			}
+			catch (Exception ex)
+			{
+				Logger.Error(x => x("GetServiceProxy", ex));
+				throw ex;
+			}
+		}
 
-        /// <summary>
-        ///   When there are several components publishing the same sevice, i.e. system services it specifies concretely which component to get the proxy for
-        /// </summary>
-        /// <typeparam name="TServiceInterface"> </typeparam>
-        /// <param name="componentId"> </param>
-        /// <returns> </returns>
-        public TServiceInterface GetServiceProxy<TServiceInterface>(Guid componentId) where TServiceInterface : IService
-        {
-            try
-            {
-                return Publisher.GetServiceProxy<TServiceInterface>(componentId);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(x=>x( "GetServiceProxy", ex));
-                throw ex;
-            }
-        }
+		/// <summary>
+		///   When there are several components publishing the same sevice, i.e. system services it specifies concretely which component to get the proxy for
+		/// </summary>
+		/// <typeparam name="TServiceInterface"> </typeparam>
+		/// <param name="componentId"> </param>
+		/// <returns> </returns>
+		public TServiceInterface GetServiceProxy<TServiceInterface>(Guid componentId) where TServiceInterface : IService
+		{
+			try
+			{
+				return Publisher.GetServiceProxy<TServiceInterface>(componentId);
+			}
+			catch (Exception ex)
+			{
+				Logger.Error(x => x("GetServiceProxy", ex));
+				throw ex;
+			}
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

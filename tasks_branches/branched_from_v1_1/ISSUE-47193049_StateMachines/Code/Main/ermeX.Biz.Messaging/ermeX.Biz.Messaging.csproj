@@ -31,7 +31,6 @@
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <ItemGroup>
-   
     <Reference Include="Ninject, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
@@ -83,6 +82,10 @@
     <ProjectReference Include="..\ermeX.LayerMessages\ermeX.LayerMessages.csproj">
       <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
       <Name>ermeX.LayerMessages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Logging\ermeX.Logging.csproj">
+      <Project>{9DB79424-4537-4A46-BD7C-972E3B2F284D}</Project>
+      <Name>ermeX.Logging</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
