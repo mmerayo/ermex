@@ -30,11 +30,12 @@ namespace ermeX.Biz.Services
 	internal class Manager : IServicesManager
 	{
 		[Inject]
-		public Manager(IMessagePublisher publisher, IMessageListener listener, ILogManager logger)
+		public Manager(IMessagePublisher publisher, IMessageListener listener,IComponentSettings settings)
 		{
+			Logger = LogManager.GetLogger<Manager>(settings.ComponentId,LogComponent.Messaging);
+
 			if (publisher == null) throw new ArgumentNullException("publisher");
 			if (listener == null) throw new ArgumentNullException("listener");
-			Logger = logger.GetLogger<Manager>();
 			Publisher = publisher;
 			Listener = listener;
 		}

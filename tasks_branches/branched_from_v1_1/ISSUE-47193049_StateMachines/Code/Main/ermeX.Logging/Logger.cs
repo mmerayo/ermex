@@ -1,5 +1,6 @@
 ﻿using System;
 using Common.Logging;
+using Common.Logging.Simple;
 
 
 namespace ermeX.Logging
@@ -11,6 +12,10 @@ namespace ermeX.Logging
 		
 		public Logger(Type type, Guid componentId, LogComponent logComponent)
 		{
+#if DEBUG //TODO: MOVE TO THE TESTFIXTURESETUPS
+			if (Common.Logging.LogManager.Adapter is NoOpLoggerFactoryAdapter)
+				Common.Logging.LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
+#endif
 			_logPrefix = string.Format(" - AppDomainId: {0} - ComponentId: {1} - SubComponent: {2}", AppDomain.CurrentDomain.Id,componentId==Guid.Empty?"NOT SET":componentId.ToString(), logComponent.ToString());
 
 			_innerLogger = Common.Logging.LogManager.GetLogger(type);

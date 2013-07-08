@@ -44,7 +44,6 @@ namespace ermeX.Transport.Publish
 
         [Inject]
         internal ServiceProxy(
-			ILogManager logManager,
 			ICacheProvider cacheProvider,
                               IConnectivityManager connectivityManager,
 			ITransportSettings settings)
@@ -52,7 +51,7 @@ namespace ermeX.Transport.Publish
             if (cacheProvider == null) throw new ArgumentNullException("cacheProvider");
             if (connectivityManager == null) throw new ArgumentNullException("connectivityManager");
             if (settings == null) throw new ArgumentNullException("settings");
-	        _logger=logManager.GetLogger<ServiceProxy>();
+	        _logger=LogManager.GetLogger<ServiceProxy>(settings.ComponentId,LogComponent.Transport);
             CacheProvider = cacheProvider;
             ConnectivityManager = connectivityManager;
             Settings = settings;

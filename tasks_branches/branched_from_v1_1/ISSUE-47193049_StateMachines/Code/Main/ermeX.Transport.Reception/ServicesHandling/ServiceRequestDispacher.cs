@@ -38,13 +38,12 @@ namespace ermeX.Transport.Reception.ServicesHandling
         private readonly Dictionary<Guid, MethodInfo> Operations = new Dictionary<Guid, MethodInfo>();
 
         public ServiceRequestDispacher(
-			ILogManager logManager,
 			IService realHandlerInstance, 
 			ICanReadServiceDetails dataSource)
         {
             if (realHandlerInstance == null) throw new ArgumentNullException("realHandlerInstance");
             if (dataSource == null) throw new ArgumentNullException("dataSource");
-	        _logger= logManager.GetLogger<ServiceRequestDispacher>();
+	        _logger= LogManager.GetLogger<ServiceRequestDispacher>(LogComponent.Services);
             RealHandlerInstance = realHandlerInstance;
             DataSource = dataSource;
         }

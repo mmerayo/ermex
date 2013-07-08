@@ -32,6 +32,7 @@ using ermeX.DAL.Interfaces.Services;
 using ermeX.Exceptions;
 
 using ermeX.LayerMessages;
+using ermeX.Logging;
 using ermeX.Transport.Interfaces;
 using ermeX.Transport.Interfaces.Entities;
 using ermeX.Transport.Interfaces.Messages;
@@ -54,7 +55,8 @@ namespace ermeX.Transport.Reception
 			ICanReadServiceDetails serviceDetailsReader,
 			ICanReadChunkedMessages chunkedMessagesReader,
 			ICanWriteChunkedMessages chunkedMessagesWritter)
-        {
+		{
+			Logger = LogManager.GetLogger<ServerBase>(LogComponent.Transport);
 			_serviceDetailsReader = serviceDetailsReader;
 			_chunkedMessagesReader = chunkedMessagesReader;
 			_chunkedMessagesWritter = chunkedMessagesWritter;
@@ -64,7 +66,7 @@ namespace ermeX.Transport.Reception
         }
 
         public ServerInfo ServerInfo { get; set; }
-		protected static readonly ILogger Logger = LogManager.GetLogger(typeof(ServerBase).FullName);
+		protected readonly ILogger Logger ;
 
         #region IDisposable
 

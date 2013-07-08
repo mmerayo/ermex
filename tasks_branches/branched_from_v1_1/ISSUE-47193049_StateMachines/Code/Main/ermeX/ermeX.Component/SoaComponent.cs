@@ -20,13 +20,12 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
-using Common.Logging.Simple;
 using Ninject;
 using ermeX.Common;
 using ermeX.ComponentServices;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
-
+using ermeX.Logging;
 using ermeX.NonMerged;
 using ermeX.Parallel.Queues;
 
@@ -41,13 +40,10 @@ namespace ermeX.ermeX.Component
         static SoaComponent()
         {
             ResolveUnmerged.Init();
-#if DEBUG //TODO: MOVE TO THE TESTFIXTURESETUPS
-            if(LogManager.Adapter is NoOpLoggerFactoryAdapter)
-                LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
-#endif
+
         }
 
-		protected static readonly ILogger Logger = LogManager.GetLogger(typeof(SoaComponent).FullName); 
+		internal static readonly ILogger Logger = LogManager.GetLogger(typeof(SoaComponent)); 
 
        internal bool IsStarted
         {

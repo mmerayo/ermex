@@ -26,6 +26,7 @@ using ermeX.Common.Caching;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Connectivity;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 using ermeX.Transport.Interfaces.Entities;
 using ermeX.Transport.Interfaces.Receiving.Server;
@@ -45,6 +46,7 @@ namespace ermeX.Transport
 		{
 			if (settings == null) throw new ArgumentNullException("settings");
 			if (cacheProvider == null) throw new ArgumentNullException("cacheProvider");
+			Logger = LogManager.GetLogger(typeof (LoaderBase), settings.ComponentId, LogComponent.Transport);
 			Settings = settings;
 			ConnectivityDetailsReader = connectivityReader;
 			ConnectivityDetailsWritter = connectivityWritter;
@@ -55,7 +57,7 @@ namespace ermeX.Transport
 		protected ICanReadConnectivityDetails ConnectivityDetailsReader { get; set; }
 		private ICanWriteConnectivityDetails ConnectivityDetailsWritter { get; set; }
 		protected ICacheProvider CacheProvider { get; set; }
-		protected static readonly ILogger Logger = LogManager.GetLogger(typeof(LoaderBase).FullName);
+		protected readonly ILogger Logger ;
 
 		#region IConcreteServiceLoader Members
 
