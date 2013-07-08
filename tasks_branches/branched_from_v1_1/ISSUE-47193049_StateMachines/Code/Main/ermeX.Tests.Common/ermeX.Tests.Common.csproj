@@ -31,7 +31,6 @@
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <ItemGroup>
-   
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\Build\Packages\nUnit\NUnit-2.5.6.10205\nunitbin\nunit.framework.dll</HintPath>
     </Reference>
@@ -127,6 +126,10 @@
     <ProjectReference Include="..\ermeX.LayerMessages\ermeX.LayerMessages.csproj">
       <Project>{26F55E96-54A0-4B3C-AA1D-7FF13CD7D12E}</Project>
       <Name>ermeX.LayerMessages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Logging\ermeX.Logging.csproj">
+      <Project>{9DB79424-4537-4A46-BD7C-972E3B2F284D}</Project>
+      <Name>ermeX.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Models\ermeX.Models.csproj">
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>

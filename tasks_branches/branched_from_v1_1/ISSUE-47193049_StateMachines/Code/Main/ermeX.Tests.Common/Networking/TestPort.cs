@@ -28,6 +28,7 @@ using System.Threading;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.Commands.QueryDatabase;
 using ermeX.DAL.Interfaces.QueryDatabase;
+using ermeX.Logging;
 using ermeX.NonMerged;
 using ermeX.Tests.Common.DataAccess;
 using Network = ermeX.Common.Networking;
@@ -36,7 +37,6 @@ namespace ermeX.Tests.Common.Networking
     //todo: REWRITE THIS CLASS ISOLATING IT FROM THE QUERYHELPER
     public sealed class TestPort : IDisposable
     {
-    	private ILogger _logger = LogManager.GetCurrentClassLogger();
 		
         private const string DbName = "PortBooking";
         private const string LockDbCreationMutexName = "ermeX.Tests.Common.Networking.SharedPorts";
