@@ -47,7 +47,7 @@ namespace ermeX.Parallel.Scheduling
         
         private const int MaxJobsToSchedulePerCheck = 128;
 
-        private readonly ILogger _logger ;
+        private static readonly ILogger Logger=LogManager.GetLogger<JobScheduler>() ;
 
         public int Length
         {
@@ -60,10 +60,8 @@ namespace ermeX.Parallel.Scheduling
             }
         }
 
-        public JobScheduler(ILogManager logManager)
+        public JobScheduler()
         {
-	        _logger = logManager.GetLogger<JobScheduler>();
-
             _syncRoot = new object();
 
             _timer = new Timer(RunJobs);
@@ -122,7 +120,7 @@ namespace ermeX.Parallel.Scheduling
                     }
                     else
                     {
-                        _logger.Debug(string.Format("Wake up time changed. Next event in {0}", TimeSpan.FromTicks(delta)));
+                        Logger.Debug(string.Format("Wake up time changed. Next event in {0}", TimeSpan.FromTicks(delta)));
                         _timer.Change(delta/TimeSpan.TicksPerMillisecond, Timeout.Infinite);
                     }
                 }
@@ -202,19 +200,19 @@ namespace ermeX.Parallel.Scheduling
                         }
                         else
                         {
-                            _logger.Debug(string.Format("Next event in {0}", TimeSpan.FromTicks(delta)));
+                            Logger.Debug(string.Format("Next event in {0}", TimeSpan.FromTicks(delta)));
                             _timer.Change(delta/TimeSpan.TicksPerMillisecond, Timeout.Infinite);
                         }
                     }
                     else
                     {
-                        _logger.Debug(string.Format("Queue ends"));
+                        Logger.Debug(string.Format("Queue ends"));
                         Interlocked.CompareExchange(ref _queueRun, 0, 1);
                     }
                 }
             }catch(Exception ex)
             {
-				_logger.Warn("RunJobs", ex);
+				Logger.Warn("RunJobs", ex);
             }
         }
 

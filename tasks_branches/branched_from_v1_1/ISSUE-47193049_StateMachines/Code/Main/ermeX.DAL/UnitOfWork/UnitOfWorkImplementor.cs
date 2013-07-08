@@ -4,12 +4,13 @@ using System.Threading;
 
 using NHibernate;
 using ermeX.DAL.Transactions;
+using ermeX.Logging;
 
 namespace ermeX.DAL.UnitOfWork
 {
 	internal class UnitOfWorkImplementor : IUnitOfWork
 	{
-		protected readonly ILogger Logger = LogManager.GetLogger(typeof(UnitOfWorkImplementor).FullName);
+		protected readonly ILogger Logger = LogManager.GetLogger<UnitOfWorkImplementor>(Guid.Empty,LogComponent.DataServices);
 
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly ISession _session;
@@ -17,7 +18,11 @@ namespace ermeX.DAL.UnitOfWork
 		private readonly IErmexTransaction _transaction;
 
 		private readonly Guid _id = Guid.NewGuid();
-		public UnitOfWorkImplementor(IUnitOfWorkFactory factory, ISession session, ITransactionProvider transactionProvider, bool autoCommitWhenDispose=false)
+		public UnitOfWorkImplementor(
+			IUnitOfWorkFactory factory, 
+			ISession session, 
+			ITransactionProvider transactionProvider, 
+			bool autoCommitWhenDispose=false)
 		{
 			Logger.DebugFormat("cctor. Thread={0} - Id: {1}", Thread.CurrentThread.ManagedThreadId,_id);
 			_factory = factory;

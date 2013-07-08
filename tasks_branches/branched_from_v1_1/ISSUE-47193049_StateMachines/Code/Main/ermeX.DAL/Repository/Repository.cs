@@ -12,6 +12,7 @@ using Remotion.Linq.Utilities;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.UnitOfWork;
 using Ninject;
+using ermeX.Logging;
 using ermeX.Models.Base;
 
 namespace ermeX.DAL.Repository
@@ -22,12 +23,13 @@ namespace ermeX.DAL.Repository
 		private readonly Guid _localComponentId;
 		private readonly IExpressionHelper<TEntity> _expressionHelper;
 		private readonly IUnitOfWorkFactory _implicitFactory;
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(Repository<TEntity>).FullName);
+		private readonly ILogger Logger;
 
 		[Inject]
 		public Repository(IComponentSettings settings, 
 			IExpressionHelper<TEntity> expressionHelper, IUnitOfWorkFactory implicitFactory )
 		{
+			Logger = LogManager.GetLogger<Repository<TEntity>>(settings.ComponentId,LogComponent.DataServices);
 			Logger.DebugFormat("cctor. Thread={0}", Thread.CurrentThread.ManagedThreadId);
 			if (settings.ComponentId==Guid.Empty)
 				throw new ArgumentEmptyException("localComponentId");

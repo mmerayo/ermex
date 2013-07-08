@@ -9,13 +9,14 @@ using ermeX.DAL.Commands.Services;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Subscriptions;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Subscriptions
 {
 	class CanReadIncommingMessagesSubscriptions : ICanReadIncommingMessagesSubscriptions
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(CanReadIncommingMessagesSubscriptions).FullName);
+		private  readonly ILogger Logger ;
 		private readonly IReadOnlyRepository<IncomingMessageSuscription> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;
@@ -25,6 +26,8 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IUnitOfWorkFactory factory,
 			IComponentSettings settings)
 		{
+			Logger = LogManager.GetLogger(typeof (CanReadIncommingMessagesSubscriptions), settings.ComponentId,
+			                              LogComponent.DataServices);
 			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_repository = repository;
 			_factory = factory;

@@ -38,7 +38,8 @@ namespace ermeX.DAL.Providers
 	//TODO: TO BE INJECTED
     internal static class NHibernateBootstrapper
     {
-		private static readonly ILogger Logger = LogManager.GetNonQualifiedLogger(typeof(NHibernateBootstrapper));
+	    private static readonly ILogger Logger = LogManager.GetLogger(typeof(NHibernateBootstrapper),Guid.Empty,
+	                                                                                          LogComponent.DataServices);
 
 #if DEBUG
         public class LoggingInterceptor : EmptyInterceptor

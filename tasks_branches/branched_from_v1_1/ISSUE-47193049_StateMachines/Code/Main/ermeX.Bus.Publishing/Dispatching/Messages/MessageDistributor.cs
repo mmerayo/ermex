@@ -30,6 +30,7 @@ using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.LayerMessages;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 using ermeX.Parallel.Queues;
 
@@ -67,7 +68,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 		                          IMessageSubscribersDispatcher dispatcher)
 			: base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
 		{
-			Logger = LogManager.GetLogger<MessageDistributor>();
+			Logger = LogManager.GetLogger<MessageDistributor>(LogComponent.Messaging);
 			_outgoingMessagesSubscriptionsReader = outgoingMessagesSubscriptionsReader;
 			_outgoingQueueReader = outgoingQueueReader;
 			_outgoingQueueWritter = outgoingQueueWritter;

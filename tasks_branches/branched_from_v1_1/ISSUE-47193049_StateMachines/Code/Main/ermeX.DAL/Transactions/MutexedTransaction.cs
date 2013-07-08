@@ -13,8 +13,8 @@ namespace ermeX.DAL.Transactions
 		private Mutex _mutex;
 		private static readonly TimeSpan WaitForMutexTimeSpan= TimeSpan.FromSeconds(10);
 
-		public MutexedTransaction(string namedMutexName, ITransaction transaction, ILogManager logManager)
-			:base(transaction,logManager)
+		public MutexedTransaction(string namedMutexName, ITransaction transaction)
+			:base(transaction)
 		{
 			_mutex = new Mutex(false, namedMutexName);
 			Logger.Debug(string.Format("cctor. Waiting for mutex={0}.", namedMutexName));

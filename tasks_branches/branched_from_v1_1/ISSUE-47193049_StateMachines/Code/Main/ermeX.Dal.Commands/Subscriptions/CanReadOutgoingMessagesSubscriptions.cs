@@ -8,27 +8,28 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Subscriptions;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Subscriptions
 {
 	class CanReadOutgoingMessagesSubscriptions : ICanReadOutgoingMessagesSubscriptions
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(CanReadOutgoingMessagesSubscriptions).FullName);
+		private readonly ILogger Logger;
 
 		private readonly IReadOnlyRepository<OutgoingMessageSuscription> _repository;
 		private readonly IUnitOfWorkFactory _factory;
-		private readonly IComponentSettings _settings;
 
 		[Inject]
 		public CanReadOutgoingMessagesSubscriptions(IReadOnlyRepository<OutgoingMessageSuscription> repository,
 			IUnitOfWorkFactory factory,
 			IComponentSettings settings)
 		{
+			Logger = LogManager.GetLogger(typeof (CanReadOutgoingMessagesSubscriptions), settings.ComponentId,
+			                              LogComponent.DataServices);
 			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_repository = repository;
 			_factory = factory;
-			_settings = settings;
 		}
 
 		public IEnumerable<OutgoingMessageSuscription> GetByMessageType(string bizMessageType)

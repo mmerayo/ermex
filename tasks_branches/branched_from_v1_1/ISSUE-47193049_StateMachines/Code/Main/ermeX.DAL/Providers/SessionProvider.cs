@@ -23,13 +23,14 @@ using System.Data.SQLite;
 using NHibernate;
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
+using ermeX.Logging;
 
 namespace ermeX.DAL.Providers
 {
 	//TODO: ISSUE-281 --> MAKE THIS internal and injected
 	public sealed class SessionProvider : ISessionProvider
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof (SessionProvider).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger<SessionProvider>(Guid.Empty,LogComponent.DataServices);
 
 		private readonly IDalSettings _settings;
 

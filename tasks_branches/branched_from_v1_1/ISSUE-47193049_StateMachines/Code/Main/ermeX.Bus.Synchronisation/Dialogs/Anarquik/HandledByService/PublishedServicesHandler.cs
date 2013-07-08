@@ -31,6 +31,7 @@ using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.Exceptions;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
@@ -49,6 +50,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		                                IComponentSettings settings,
 		                                IComponentManager componentManager)
 		{
+			Logger = LogManager.GetLogger(typeof (PublishedServicesHandler), settings.ComponentId, LogComponent.Services);
 			_serviceDetailsReader = serviceDetailsReader;
 			_serviceDetailsWritter = serviceDetailsWritter;
 			_componentManager = componentManager;
@@ -64,7 +66,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		private IMessageListener Listener { get; set; }
 		private IComponentSettings Settings { get; set; }
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof (PublishedServicesHandler).FullName);
+		private readonly ILogger Logger;
 
 		#region IPublishedServicesDefinitionsService Members
 

@@ -36,6 +36,7 @@ using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Connectivity;
 using ermeX.Exceptions;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
@@ -56,6 +57,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		                               IComponentManager componentManager, IRegisterComponents componentsRegistrator,
 		                               ICanReadConnectivityDetails connectivityReader)
 		{
+			Logger = LogManager.GetLogger(typeof (HandshakeServiceHandler), settings.ComponentId, LogComponent.Handshake);
 			_componentsWritter = componentsWritter;
 			_componentsRegistrator = componentsRegistrator;
 			_connectivityReader = connectivityReader;
@@ -78,7 +80,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		private IComponentSettings Settings { get; set; }
 		private ICanReadComponents ComponentReader { get; set; }
 
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof (HandshakeServiceHandler).FullName);
+		private readonly ILogger Logger;
 
 		//this handler id is static
 

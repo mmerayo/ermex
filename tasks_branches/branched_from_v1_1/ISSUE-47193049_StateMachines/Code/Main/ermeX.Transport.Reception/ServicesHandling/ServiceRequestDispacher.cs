@@ -27,6 +27,7 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Services;
+using ermeX.Logging;
 using ermeX.Transport.Interfaces;
 using ermeX.Transport.Interfaces.Messages;
 
@@ -36,11 +37,14 @@ namespace ermeX.Transport.Reception.ServicesHandling
     {
         private readonly Dictionary<Guid, MethodInfo> Operations = new Dictionary<Guid, MethodInfo>();
 
-        public ServiceRequestDispacher(IService realHandlerInstance, ICanReadServiceDetails dataSource)
+        public ServiceRequestDispacher(
+			ILogManager logManager,
+			IService realHandlerInstance, 
+			ICanReadServiceDetails dataSource)
         {
             if (realHandlerInstance == null) throw new ArgumentNullException("realHandlerInstance");
             if (dataSource == null) throw new ArgumentNullException("dataSource");
-
+	        _logger= logManager.GetLogger<ServiceRequestDispacher>();
             RealHandlerInstance = realHandlerInstance;
             DataSource = dataSource;
         }
@@ -50,7 +54,7 @@ namespace ermeX.Transport.Reception.ServicesHandling
 		//TODO: ISSUE-281: EVERYTHING MUST BE VBLES
         private IService RealHandlerInstance { get; set; }
 		private ICanReadServiceDetails DataSource { get; set; }
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ServiceRequestDispacher).FullName);
+		private  readonly ILogger _logger;
 
         #region IServiceHandler Members
 
@@ -63,7 +67,7 @@ namespace ermeX.Transport.Reception.ServicesHandling
 
         public object Handle(object message)
         {
-            Logger.Debug(x=>x("Handling {0}",((ServiceRequestMessage)message).Operation));
+            _logger.Debug(x=>x("Handling {0}",((ServiceRequestMessage)message).Operation));
             var request = EnsureParametersTypeAfterSerialization((ServiceRequestMessage) message);
             if (!Operations.ContainsKey(request.Operation))
                 lock (SyncLock)
@@ -83,7 +87,7 @@ namespace ermeX.Transport.Reception.ServicesHandling
                                       ? request.Parameters.Values.Select(x => x.ParameterValue).ToArray()
                                       : new object[0];
             var result =TypesHelper.InvokeFast(Operations[request.Operation],RealHandlerInstance, parameters);
-            Logger.Debug(x=>x("Handled {0} with result:{1}", ((ServiceRequestMessage)message).Operation, result));
+            _logger.Debug(x=>x("Handled {0} with result:{1}", ((ServiceRequestMessage)message).Operation, result));
             return result;
         }
 

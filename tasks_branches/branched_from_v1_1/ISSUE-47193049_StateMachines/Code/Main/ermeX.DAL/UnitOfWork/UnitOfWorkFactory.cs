@@ -11,21 +11,24 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
 using ermeX.DAL.Providers;
 using ermeX.DAL.Transactions;
+using ermeX.Logging;
 
 namespace ermeX.DAL.UnitOfWork
 {
 	internal class UnitOfWorkFactory : IUnitOfWorkFactory
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof (UnitOfWorkFactory).FullName);
+		private static readonly ILogger Logger=LogManager.GetLogger<UnitOfWorkFactory>(Guid.Empty,LogComponent.DataServices);
 		private ISessionProvider _sessionFactory;
 		private IStorageOperationRetryStrategy _retryStrategy;
 
 		[Inject]
-		public UnitOfWorkFactory(ISessionProvider sessionProvider, IDalSettings settings,
-			IReadTransactionProvider readTransactionsProvider,IWriteTransactionProvider writeTransactionProvider)
+		public UnitOfWorkFactory(
+			ISessionProvider sessionProvider,
+			IDalSettings settings,
+			IReadTransactionProvider readTransactionsProvider,
+			IWriteTransactionProvider writeTransactionProvider)
 		{
 			Logger.DebugFormat("cctor: thread={0}", Thread.CurrentThread.ManagedThreadId);
-			
 			ReadOnlyTransactionsProvider = readTransactionsProvider;
 			WrittableTransactionsProvider = writeTransactionProvider;
 			_sessionFactory = sessionProvider;

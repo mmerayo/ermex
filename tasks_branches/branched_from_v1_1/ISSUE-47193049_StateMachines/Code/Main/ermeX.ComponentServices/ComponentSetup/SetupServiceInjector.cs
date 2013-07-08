@@ -8,18 +8,19 @@ using ermeX.Configuration;
 using ermeX.ConfigurationManagement;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
-
+using ermeX.Logging;
 using ermeX.Parallel.Queues;
 
 namespace ermeX.ComponentServices.ComponentSetup
 {
 	internal sealed class SetupServiceInjector : ISetupServiceInjector
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger<SetupServiceInjector>();
+		private readonly ILogger Logger ;
 		private readonly Configurer _settings;
 
 		public SetupServiceInjector(Configurer settings)
 		{
+			Logger = LogManager.GetLogger<SetupServiceInjector>(settings.GetSettings<IComponentSettings>().ComponentId);
 			if (settings == null) throw new ArgumentNullException("settings");
 
 			_settings = settings;

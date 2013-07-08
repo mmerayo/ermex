@@ -9,13 +9,14 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Queues
 {
 	internal class ReaderOutgoingQueue : IReadOutgoingQueue
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ReaderOutgoingQueue).FullName);
+		private readonly ILogger Logger;
 
 		private readonly IReadOnlyRepository<OutgoingMessage> _repository;
 		private readonly IUnitOfWorkFactory _factory;
@@ -26,6 +27,7 @@ namespace ermeX.DAL.Commands.Queues
 		                           IUnitOfWorkFactory factory,
 		                           IComponentSettings settings)
 		{
+			Logger = LogManager.GetLogger(typeof(ReaderOutgoingQueue),settings.ComponentId,LogComponent.DataServices);
 			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_repository = repository;
 			_factory = factory;

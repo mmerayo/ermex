@@ -1,12 +1,13 @@
 ﻿
 using ermeX.ComponentServices.Interfaces.RemoteComponent;
 using ermeX.ComponentServices.Interfaces.RemoteComponent.Commands;
+using ermeX.Logging;
 
 namespace ermeX.ComponentServices.RemoteComponent.Commands
 {
 	class OnSubscriptionsReceivedStepExecutor : IOnSubscriptionsReceivedStepExecutor
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger<OnSubscriptionsReceivedStepExecutor>();
+		private readonly ILogger Logger = LogManager.GetLogger<OnSubscriptionsReceivedStepExecutor>(LogComponent.Handshake);
 		public void SubscriptionsReceived(IRemoteComponentStateMachineContext context)
 		{
 			Logger.DebugFormat("SubscriptionsReceived- Component:{0}", context.RemoteComponentId);

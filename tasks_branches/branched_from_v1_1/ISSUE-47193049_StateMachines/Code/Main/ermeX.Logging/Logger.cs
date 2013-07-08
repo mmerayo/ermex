@@ -6,14 +6,12 @@ namespace ermeX.Logging
 {
 	internal sealed class Logger : ILogger
 	{
-
-		private ILog _innerLogger;
+		private readonly ILog _innerLogger;
 		private readonly string _logPrefix;
-
-
+		
 		public Logger(Type type, Guid componentId, LogComponent logComponent)
 		{
-			_logPrefix = string.Format(" - AppDomainId: {0} - ComponentId: {1} - SubComponent: {2}", AppDomain.CurrentDomain.Id,componentId, logComponent.ToString());
+			_logPrefix = string.Format(" - AppDomainId: {0} - ComponentId: {1} - SubComponent: {2}", AppDomain.CurrentDomain.Id,componentId==Guid.Empty?"NOT SET":componentId.ToString(), logComponent.ToString());
 
 			_innerLogger = Common.Logging.LogManager.GetLogger(type);
 		}
@@ -32,9 +30,8 @@ namespace ermeX.Logging
 
 		private Action<FormatMessageHandler> GetMessageCallback(string format, params object[] args)
 		{
-			return m => m(_logPrefix+" - " +string.Format(format, args));
+			return m => m(string.Format("{0} - {1}", _logPrefix, string.Format(format, args)));
 		}
-
 
 		public void Trace(object message)
 		{
@@ -54,6 +51,11 @@ namespace ermeX.Logging
 		public void Trace(Action<FormatMessageHandler> callback)
 		{
 			_innerLogger.Trace(GetMessageCallback(callback));
+		}
+
+		public void Trace(Action<FormatMessageHandler> callback, Exception exception)
+		{
+			_innerLogger.Trace(GetMessageCallback(callback),exception);
 		}
 
 		public void Debug(object message)
@@ -76,6 +78,11 @@ namespace ermeX.Logging
 			_innerLogger.Debug(GetMessageCallback(callback));
 		}
 
+		public void Debug(Action<FormatMessageHandler> callback, Exception exception)
+		{
+			_innerLogger.Debug(GetMessageCallback(callback), exception);
+		}
+
 		public void Info(object message)
 		{
 			_innerLogger.Info(GetMessageCallback(message.ToString()));
@@ -94,6 +101,11 @@ namespace ermeX.Logging
 		public void Info(Action<FormatMessageHandler> callback)
 		{
 			_innerLogger.Info(GetMessageCallback(callback));
+		}
+
+		public void Info(Action<FormatMessageHandler> callback, Exception exception)
+		{
+			_innerLogger.Info(GetMessageCallback(callback), exception);
 		}
 
 		public void Warn(object message)
@@ -116,6 +128,11 @@ namespace ermeX.Logging
 			_innerLogger.Warn(GetMessageCallback(callback));
 		}
 
+		public void Warn(Action<FormatMessageHandler> callback, Exception exception)
+		{
+			_innerLogger.Warn(GetMessageCallback(callback), exception);
+		}
+
 		public void Error(object message)
 		{
 			_innerLogger.Error(GetMessageCallback(message.ToString()));
@@ -136,6 +153,11 @@ namespace ermeX.Logging
 			_innerLogger.Error(GetMessageCallback(callback));
 		}
 
+		public void Error(Action<FormatMessageHandler> callback, Exception exception)
+		{
+			_innerLogger.Error(GetMessageCallback(callback), exception);
+		}
+
 		public void Fatal(object message)
 		{
 			_innerLogger.Fatal(GetMessageCallback(message.ToString()));
@@ -154,6 +176,11 @@ namespace ermeX.Logging
 		public void Fatal(Action<FormatMessageHandler> callback)
 		{
 			_innerLogger.Fatal(GetMessageCallback(callback));
+		}
+
+		public void Fatal(Action<FormatMessageHandler> callback, Exception exception)
+		{
+			_innerLogger.Fatal(GetMessageCallback(callback), exception);
 		}
 
 		public bool IsTraceEnabled

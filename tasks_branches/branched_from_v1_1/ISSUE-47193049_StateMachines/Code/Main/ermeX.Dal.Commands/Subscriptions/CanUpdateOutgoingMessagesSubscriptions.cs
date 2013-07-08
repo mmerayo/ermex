@@ -12,13 +12,14 @@ using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Observer;
 using ermeX.DAL.Interfaces.Observers;
 using ermeX.DAL.Interfaces.Subscriptions;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Subscriptions
 {
 	class CanUpdateOutgoingMessagesSubscriptions : ICanUpdateOutgoingMessagesSubscriptions
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(CanUpdateOutgoingMessagesSubscriptions).FullName);
+		private readonly ILogger Logger;
 		private readonly IPersistRepository<OutgoingMessageSuscription> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;
@@ -32,6 +33,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IComponentSettings settings, IDomainObservable domainNotifier,
 			IExpressionHelper<OutgoingMessageSuscription> findByBizKeyExpression)
 		{
+			Logger = LogManager.GetLogger(typeof(CanUpdateOutgoingMessagesSubscriptions),settings.ComponentId,LogComponent.DataServices);
 			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_repository = repository;
 			_factory = factory;

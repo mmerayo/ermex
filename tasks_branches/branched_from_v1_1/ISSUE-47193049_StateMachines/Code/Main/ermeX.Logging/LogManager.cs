@@ -3,38 +3,38 @@ using Ninject;
 
 namespace ermeX.Logging
 {
-	internal sealed class LogManager : ILogManager
+	internal static class LogManager
 	{
-		private readonly Guid _componentId;
-		private readonly LogComponent _logComponent;
-
-		[Inject]
-		public LogManager(Guid componentId,LogComponent logComponent)
+		[Obsolete()]
+		public static ILogger GetLogger<TType>()
 		{
-			_componentId = componentId;
-			_logComponent = logComponent;
+			return GetLogger<TType>(Guid.Empty, LogComponent.Undefined);
 		}
 
-		public ILogger GetLogger<TType>()
+		[Obsolete()]
+		public static ILogger GetLogger(Type type)
 		{
-			return GetLogger(typeof(TType));
+			return GetLogger(type, Guid.Empty, LogComponent.Undefined);
 		}
 
-		public ILogger GetLogger(Type type)
+		public static ILogger GetLogger<TType>(Guid componentId, LogComponent logComponent)
 		{
-			return new Logger(type, _componentId, _logComponent);
+			return GetLogger(typeof (TType), componentId, logComponent);
 		}
 
-		public static ILogger GetNonQualifiedLogger<TType>()
+		public static ILogger GetLogger(Type type, Guid componentId, LogComponent logComponent)
 		{
-			return new Logger(typeof(TType));
+			return new Logger(type, componentId, logComponent);
 		}
 
-		public static ILogger GetNonQualifiedLogger(Type type)
+		public static ILogger GetLogger<TType>(LogComponent logComponent)
 		{
-			return new Logger(type);
+			return GetLogger<TType>(Guid.Empty, logComponent);
+		}
+
+		public static ILogger GetLogger<TType>(Guid componentId)
+		{
+			return GetLogger<TType>(componentId, LogComponent.Undefined);
 		}
 	}
-	
-	
 }
