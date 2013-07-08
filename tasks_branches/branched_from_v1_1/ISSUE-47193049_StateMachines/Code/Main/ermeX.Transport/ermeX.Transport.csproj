@@ -31,7 +31,6 @@
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -66,6 +65,10 @@
     <ProjectReference Include="..\ermeX.DAL.Interfaces\ermeX.DAL.Interfaces.csproj">
       <Project>{54018AEE-9ED4-4D55-ADBD-EA8F44601F97}</Project>
       <Name>ermeX.DAL.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Logging\ermeX.Logging.csproj">
+      <Project>{9DB79424-4537-4A46-BD7C-972E3B2F284D}</Project>
+      <Name>ermeX.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Models\ermeX.Models.csproj">
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>

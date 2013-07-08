@@ -34,13 +34,12 @@ namespace ermeX.Biz.Messaging
 		[Inject]
 		public MessagingManager(IBusSettings settings,
 		                        IMessagePublisher publisher,
-		                        IMessageListener listener,
-		                        ILogManager logger)
+		                        IMessageListener listener)
 		{
 			if (settings == null) throw new ArgumentNullException("settings");
 			if (publisher == null) throw new ArgumentNullException("publisher");
 			if (listener == null) throw new ArgumentNullException("listener");
-			_logger = logger.GetLogger<MessagingManager>();
+			_logger = LogManager.GetLogger<MessagingManager>(settings.ComponentId,LogComponent.Messaging);
 			Settings = settings;
 			Publisher = publisher;
 			Listener = listener;

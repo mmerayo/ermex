@@ -28,6 +28,7 @@ using ermeX.Common;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Subscriptions;
+using ermeX.Logging;
 
 
 namespace ermeX.Biz.Subscriptions
@@ -42,7 +43,8 @@ namespace ermeX.Biz.Subscriptions
 			IMessageListener listener,
 			ICanReadComponents componentsReader,
 			ICanReadIncommingMessagesSubscriptions incommingSubscriptionsReader)
-        {
+	    {
+		    Logger = LogManager.GetLogger<SubscriptionsManager>(LogComponent.Messaging);
 	        _componentsReader = componentsReader;
 		    _incommingSubscriptionsReader = incommingSubscriptionsReader;
 		    if (publisher == null) throw new ArgumentNullException("publisher");
@@ -53,7 +55,7 @@ namespace ermeX.Biz.Subscriptions
 
         private IMessagePublisher Publisher { get; set; }
         private IMessageListener Listener { get; set; }
-        private static readonly ILogger Logger = LogManager.GetLogger(typeof(SubscriptionsManager).FullName);
+        private readonly ILogger Logger ;
 
         #region ISubscriptionsManager Members
 
