@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 
-using Common.Logging.Simple;
 using NUnit.Framework;
 using ermeX.Common;
 using ermeX.ConfigurationManagement.IoC;
@@ -214,8 +213,8 @@ namespace ermeX.Tests.Common.DataAccess
 		[SetUp]
 		public virtual void OnStartUp()
 		{
-			if (LogManager.Adapter is NoOpLoggerFactoryAdapter)
-				LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
+			//if (LogManager.Adapter is NoOpLoggerFactoryAdapter)
+			//    LogManager.Adapter = new ConsoleOutLoggerFactoryAdapter(LogLevel.All, true, true, true, "yyyy/MM/dd HH:mm:ss:fff");
 		}
 
 		[TestFixtureSetUp]
@@ -252,7 +251,7 @@ namespace ermeX.Tests.Common.DataAccess
 		protected ICanUpdateLatency GetLatenciesWritter(IUnitOfWorkFactory factory)
 		{
 			var dataSource = GetRepository<Repository<AppComponent>>(factory);
-			return new LatencyUpdater(dataSource, factory);
+			return new LatencyUpdater(dataSource, factory,GetComponentSettings());
 		}
 
 		protected ICanReadLatency GetLatenciesReader(IUnitOfWorkFactory factory)

@@ -8,6 +8,8 @@ using NUnit.Framework;
 using Ploeh.AutoFixture;
 using ermeX.Logging;
 using ermeX.Tests.Common.Reflection;
+using FormatMessageHandler = ermeX.Logging.FormatMessageHandler;
+
 
 namespace ermeX.Tests.Logging
 {
