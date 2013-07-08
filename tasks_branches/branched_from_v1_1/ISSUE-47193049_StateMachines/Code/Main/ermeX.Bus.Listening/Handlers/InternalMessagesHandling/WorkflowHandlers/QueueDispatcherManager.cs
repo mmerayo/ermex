@@ -30,6 +30,7 @@ using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.LayerMessages;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 using ermeX.Parallel.Queues;
 using ermeX.Parallel.Scheduling;
@@ -92,7 +93,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
 		                              ICanUpdateLatency latenciesUpdater)
 			: base(new QueueComparer())
 		{
-			Logger = LogManager.GetLogger<QueueDispatcherManager>();
+			Logger = LogManager.GetLogger<QueueDispatcherManager>(settings.ComponentId,LogComponent.Queues);
 			if (settings == null) throw new ArgumentNullException("settings");
 			Settings = settings;
 			IncommingQueueWriter = incommingQueueWriter;

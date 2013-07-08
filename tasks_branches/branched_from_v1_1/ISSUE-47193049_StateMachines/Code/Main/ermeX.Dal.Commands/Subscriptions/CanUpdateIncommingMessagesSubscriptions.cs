@@ -4,16 +4,18 @@ using System.Threading;
 
 using Ninject;
 using ermeX.ConfigurationManagement.Settings;
+using ermeX.DAL.Commands.Services;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Subscriptions;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Subscriptions
 {
 	internal class CanUpdateIncommingMessagesSubscriptions : ICanUpdateIncommingMessagesSubscriptions
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(CanUpdateIncommingMessagesSubscriptions).FullName);
+		private readonly ILogger Logger;
 
 		private readonly IPersistRepository<IncomingMessageSuscription> _incomingRepository;
 		private readonly IPersistRepository<OutgoingMessageSuscription> _outgoingRepository;
@@ -26,6 +28,7 @@ namespace ermeX.DAL.Commands.Subscriptions
 			IUnitOfWorkFactory factory,
 			IComponentSettings settings)
 		{
+			Logger = LogManager.GetLogger<CanUpdateIncommingMessagesSubscriptions>(settings.ComponentId, LogComponent.DataServices);
 			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_incomingRepository = incommingRepository;
 			_outgoingRepository = outgoingRepository;

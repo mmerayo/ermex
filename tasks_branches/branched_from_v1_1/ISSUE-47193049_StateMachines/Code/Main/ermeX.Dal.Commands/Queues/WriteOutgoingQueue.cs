@@ -6,13 +6,14 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Queues
 {
 	internal class WriteOutgoingQueue : IWriteOutgoingQueue
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(WriteOutgoingQueue).FullName);
+		private readonly ILogger _logger;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IPersistRepository<OutgoingMessage> _repository;
 
@@ -21,14 +22,15 @@ namespace ermeX.DAL.Commands.Queues
 			IUnitOfWorkFactory factory, 
 			IComponentSettings settings)
 		{
-			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
+			_logger = LogManager.GetLogger<WriteOutgoingQueue>(settings.ComponentId, LogComponent.DataServices);
+			_logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_factory = factory;
 			_repository = repository;
 		}
 
 		public void RemoveExpiredMessages(TimeSpan expirationTime)
 		{
-			Logger.TraceFormat("RemoveExpiredMessages. expirationTime={0} - AppDomain={1} - Thread={2}", expirationTime,AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId);
+			_logger.TraceFormat("RemoveExpiredMessages. expirationTime={0} - AppDomain={1} - Thread={2}", expirationTime,AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId);
 			_factory.ExecuteInUnitOfWork(false, uow =>
 				{
 					DateTime dateTime = DateTime.UtcNow - expirationTime;
@@ -38,10 +40,10 @@ namespace ermeX.DAL.Commands.Queues
 
 		public void Save(OutgoingMessage message)
 		{
-			Logger.TraceFormat("Save.AppDomain={0} - Thread={1} -  message={2}",AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId, message);
+			_logger.TraceFormat("Save.AppDomain={0} - Thread={1} -  message={2}",AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId, message);
 			if (message.Status == Message.MessageStatus.NotSet)
 			{
-				Logger.Fatal("Save: message status wasnt set");
+				_logger.Fatal("Save: message status wasnt set");
 				throw new InvalidOperationException("Must set the status");
 			}
 

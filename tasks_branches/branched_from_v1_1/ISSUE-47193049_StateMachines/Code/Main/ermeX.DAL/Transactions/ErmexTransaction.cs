@@ -7,12 +7,12 @@ namespace ermeX.DAL.Transactions
 {
 	internal class ErmexTransaction : IErmexTransaction
 	{
-		protected ILogger Logger { get; private set; }
+		protected readonly ILogger Logger ;
 		private readonly ITransaction _transaction;
 
-		public ErmexTransaction(ITransaction transaction,ILogManager logManager)
+		public ErmexTransaction(ITransaction transaction)
 		{
-			Logger=logManager.GetLogger(GetType());
+			Logger = Logger = LogManager.GetLogger(this.GetType());
 			Logger.Debug("cctor");
 			if (transaction == null) throw new ArgumentNullException("transaction");
 			_transaction = transaction;

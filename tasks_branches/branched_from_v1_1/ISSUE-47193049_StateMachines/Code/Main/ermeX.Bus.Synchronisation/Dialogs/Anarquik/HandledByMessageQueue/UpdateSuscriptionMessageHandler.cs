@@ -23,16 +23,20 @@ using ermeX.Bus.Interfaces;
 using ermeX.Bus.Synchronisation.Dialogs.HandledByMessageQueue;
 using ermeX.Bus.Synchronisation.Messages;
 using ermeX.ConfigurationManagement.Settings;
+using ermeX.Logging;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByMessageQueue
 {
     internal sealed class UpdateSuscriptionMessageHandler : IUpdateSuscriptionMessageHandler
     {
-        private static readonly ILogger Logger = LogManager.GetLogger(typeof(UpdateSuscriptionMessageHandler).FullName);
+        private readonly ILogger Logger ;
         
         [Inject]
-        public UpdateSuscriptionMessageHandler(IMessagePublisher publisher, IMessageListener listener)
+        public UpdateSuscriptionMessageHandler(IMessagePublisher publisher, 
+			IMessageListener listener,IComponentSettings settings)
         {
+	        Logger = LogManager.GetLogger(typeof (UpdateSuscriptionMessageHandler), settings.ComponentId,
+	                                      LogComponent.Handshake);
             if (publisher == null) throw new ArgumentNullException("publisher");
             if (listener == null) throw new ArgumentNullException("listener");
             Publisher = publisher;

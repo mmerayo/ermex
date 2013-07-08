@@ -7,6 +7,7 @@
 		Messaging,
 		Services,
 		Transport,
-		Queues
+		Queues,
+		Handshake
 	}
 }

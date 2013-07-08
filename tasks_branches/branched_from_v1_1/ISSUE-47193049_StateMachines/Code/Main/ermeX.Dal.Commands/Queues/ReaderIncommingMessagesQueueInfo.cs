@@ -9,13 +9,14 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Queues
 {
 	class ReaderIncommingQueue : IReadIncommingQueue
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ReaderIncommingQueue).FullName);
+		private  readonly ILogger _logger;
 		private readonly IReadOnlyRepository<IncomingMessage> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 
@@ -23,15 +24,16 @@ namespace ermeX.DAL.Commands.Queues
 		public ReaderIncommingQueue(IReadOnlyRepository<IncomingMessage> repository,
 			IUnitOfWorkFactory factory,
 			IComponentSettings settings)
-        {
-			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
+		{
+			_logger = LogManager.GetLogger(typeof (ReaderIncommingQueue), settings.ComponentId, LogComponent.DataServices);
+			_logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 	        _repository = repository;
 	        _factory = factory;
         }
 
 		public IncomingMessage GetNextDispatchableItem(int maxLatency)
 		{
-			Logger.TraceFormat("GetNextDispatchableItem. maxLatency={0} - AppDomain={1} - Thread={2} ", maxLatency,AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId);
+			_logger.TraceFormat("GetNextDispatchableItem. maxLatency={0} - AppDomain={1} - Thread={2} ", maxLatency,AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId);
 			
 			IncomingMessage result = null;
 			_factory.ExecuteInUnitOfWork(true, uow =>
@@ -55,7 +57,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public IEnumerable<IncomingMessage> GetMessagesToDispatch()
 		{
-			Logger.TraceFormat("GetMessagesToDispatch. - AppDomain={0} - Thread={1}",AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId);
+			_logger.TraceFormat("GetMessagesToDispatch. - AppDomain={0} - Thread={1}",AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId);
 			IEnumerable<IncomingMessage> result = null;
 			_factory.ExecuteInUnitOfWork(true,uow =>
 			{
@@ -69,7 +71,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public IEnumerable<IncomingMessage> GetByStatus(params Message.MessageStatus[] status)
 		{
-			Logger.TraceFormat("GetByStatus. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
+			_logger.TraceFormat("GetByStatus. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 
 			IEnumerable<IncomingMessage> result = null;
 			_factory.ExecuteInUnitOfWork(true, uow => result = _repository
@@ -80,7 +82,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public bool ContainsMessageFor(Guid messageId, Guid destinationComponent)
 		{
-			Logger.TraceFormat("ContainsMessageFor. messageId={0}, destinationComponent={1}- AppDomain={2} - Thread={3}", messageId, destinationComponent,AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId);
+			_logger.TraceFormat("ContainsMessageFor. messageId={0}, destinationComponent={1}- AppDomain={2} - Thread={3}", messageId, destinationComponent,AppDomain.CurrentDomain.Id,Thread.CurrentThread.ManagedThreadId);
 
 			if (messageId.IsEmpty() || destinationComponent.IsEmpty())
 				throw new ArgumentException("the arguments cannot be empty");
@@ -97,7 +99,7 @@ namespace ermeX.DAL.Commands.Queues
 
 		public IEnumerable<IncomingMessage> GetNonDistributedMessages()
 		{
-			Logger.TraceFormat("GetNonDistributedMessages. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
+			_logger.TraceFormat("GetNonDistributedMessages. AppDomain={0} - Thread={1}", AppDomain.CurrentDomain.Id, Thread.CurrentThread.ManagedThreadId);
 
 			IEnumerable<IncomingMessage> result = null;
 			_factory.ExecuteInUnitOfWork(true,

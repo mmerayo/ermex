@@ -33,6 +33,7 @@ using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.Exceptions;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 using ermeX.Transport.Interfaces;
 using ermeX.Transport.Interfaces.ServiceOperations;
@@ -47,6 +48,7 @@ namespace ermeX.Bus.Publishing.ClientProxies
 			ICanReadComponents componentReader,
 			ICanReadServiceDetails serviceDetailsReader)
         {
+	        Logger = LogManager.GetLogger(typeof (ServiceCallsProxy), settings.ComponentId, LogComponent.Services);
             if (settings == null) throw new ArgumentNullException("settings");
 
             if (serviceRequestsManager == null) throw new ArgumentNullException("serviceRequestsManager");
@@ -60,7 +62,7 @@ namespace ermeX.Bus.Publishing.ClientProxies
         private IBusSettings Settings { get; set; }
 	    private ICanReadComponents ComponentReader { get; set; }
 	    private ICanReadServiceDetails ServiceDetailsReader { get; set; }
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ServiceCallsProxy).FullName);
+		private  readonly ILogger Logger;
 
         private Guid DestinationComponent { get; set; }
 

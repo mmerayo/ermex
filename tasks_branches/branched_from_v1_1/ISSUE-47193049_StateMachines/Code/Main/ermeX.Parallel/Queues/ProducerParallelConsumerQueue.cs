@@ -131,7 +131,7 @@ namespace ermeX.Parallel.Queues
 		}
 
 		private bool _shuttingDown = false;
-		private static ILogger _logger = LogManager.GetNonQualifiedLogger<ProducerParallelConsumerQueue<TQueueItem>>();
+		private static ILogger _logger = LogManager.GetLogger<ProducerParallelConsumerQueue<TQueueItem>>();
 
 		private void Shutdown(bool waitForWorkers)
 		{

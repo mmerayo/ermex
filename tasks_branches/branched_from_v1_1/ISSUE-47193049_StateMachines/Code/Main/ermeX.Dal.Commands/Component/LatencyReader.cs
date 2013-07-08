@@ -5,13 +5,14 @@ using Ninject;
 using ermeX.DAL.Interfaces.Component;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Component
 {
 	internal sealed class LatencyReader : ICanReadLatency
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof (LatencyReader).FullName);
+		private static readonly ILogger Logger = LogManager.GetLogger(typeof (LatencyReader),Guid.Empty,LogComponent.DataServices);
 		private readonly IUnitOfWorkFactory _factory;
 		private IReadOnlyRepository<AppComponent> Repository { get; set; }
 

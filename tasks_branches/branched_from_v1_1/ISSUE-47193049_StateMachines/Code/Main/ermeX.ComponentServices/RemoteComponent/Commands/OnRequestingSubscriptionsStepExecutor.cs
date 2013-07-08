@@ -8,6 +8,7 @@ using ermeX.ComponentServices.Interfaces.RemoteComponent;
 using ermeX.ComponentServices.Interfaces.RemoteComponent.Commands;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Subscriptions;
+using ermeX.Logging;
 
 namespace ermeX.ComponentServices.RemoteComponent.Commands
 {
@@ -16,13 +17,14 @@ namespace ermeX.ComponentServices.RemoteComponent.Commands
 		private readonly IMessagePublisher _publisher;
 		private readonly IComponentSettings _settings;
 		private readonly ICanUpdateOutgoingMessagesSubscriptions _outgoingMessagesSubscriptionsWritter;
-		private static readonly ILogger Logger = LogManager.GetLogger<OnRequestingSubscriptionsStepExecutor>();
+		private readonly ILogger Logger;
 
 		[Inject]
 		public OnRequestingSubscriptionsStepExecutor(IMessagePublisher publisher,
 		                                        IComponentSettings settings,
 			ICanUpdateOutgoingMessagesSubscriptions outgoingMessagesSubscriptionsWritter )
 		{
+			Logger = LogManager.GetLogger<OnRequestingSubscriptionsStepExecutor>(settings.ComponentId, LogComponent.Handshake);
 			_publisher = publisher;
 			_settings = settings;
 			_outgoingMessagesSubscriptionsWritter = outgoingMessagesSubscriptionsWritter;

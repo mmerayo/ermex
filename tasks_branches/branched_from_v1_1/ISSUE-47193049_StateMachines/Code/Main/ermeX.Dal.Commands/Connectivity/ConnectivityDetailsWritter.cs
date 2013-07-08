@@ -8,13 +8,14 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
 using ermeX.DAL.Interfaces.Connectivity;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Connectivity
 {
 	internal sealed class ConnectivityDetailsWritter : ICanWriteConnectivityDetails
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ConnectivityDetailsWritter).FullName);
+		private readonly ILogger Logger;
 		private readonly IPersistRepository<ConnectivityDetails> _repository;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IComponentSettings _settings;
@@ -24,6 +25,7 @@ namespace ermeX.DAL.Commands.Connectivity
 		public ConnectivityDetailsWritter(IPersistRepository<ConnectivityDetails> repository,
 			IUnitOfWorkFactory factory,IComponentSettings settings)
 		{
+			Logger = LogManager.GetLogger(typeof (ConnectivityDetailsWritter), settings.ComponentId, LogComponent.DataServices);
 			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_repository = repository;
 			_factory = factory;

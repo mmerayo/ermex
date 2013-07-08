@@ -23,10 +23,12 @@ using System.Linq;
 
 using Ninject;
 using ermeX.Common;
+using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.LayerMessages;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 using ermeX.Parallel.Queues;
 
@@ -55,10 +57,10 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling.WorkflowHandlers
         public ReceptionMessageDistributor(ICanReadIncommingMessagesSubscriptions incommingSubscriptionsReader,
 			IReadIncommingQueue queueReader,
 			IWriteIncommingQueue queueWritter,
-                                   IQueueDispatcherManager dispatcher)
+                                   IQueueDispatcherManager dispatcher,IComponentSettings settings)
             : base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
         {
-			Logger = LogManager.GetLogger<ReceptionMessageDistributor>();
+			Logger = LogManager.GetLogger<ReceptionMessageDistributor>(settings.ComponentId,LogComponent.Messaging);
 	        _incommingSubscriptionsReader = incommingSubscriptionsReader;
 	        _queueReader = queueReader;
 	        _queueWritter = queueWritter;

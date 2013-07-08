@@ -32,6 +32,7 @@ using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.DAL.Interfaces.Subscriptions;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 
@@ -53,24 +54,28 @@ namespace ermeX.Bus.Listening
 			ICanUpdateIncommingMessagesSubscriptions incommingMessagesSubscriptionsWritter,
 			ICanReadServiceDetails serviceDetailsReader,
 			ICanWriteServiceDetails serviceDetailsWritter,
-			IComponentSettings componentSettings, IListeningManager listeningManager
-
-			)
+			IComponentSettings componentSettings, 
+			IListeningManager listeningManager)
 		{
+			_logger = LogManager.GetLogger<MessageListeningManager>(componentSettings.ComponentId, LogComponent.Messaging);
+			if (componentSettings == null) throw new ArgumentNullException("componentSettings");
+			if (listeningManager == null) throw new ArgumentNullException("listeningManager");
+			_logger= LogManager.GetLogger<MessageListeningManager>(componentSettings.ComponentId,LogComponent.Messaging);
+
 			_incommingMessagesSubscriptionsReader = incommingMessagesSubscriptionsReader;
 			_incommingMessagesSubscriptionsWritter = incommingMessagesSubscriptionsWritter;
 			_serviceDetailsReader = serviceDetailsReader;
 			_serviceDetailsWritter = serviceDetailsWritter;
-			if (componentSettings == null) throw new ArgumentNullException("componentSettings");
-			if (listeningManager == null) throw new ArgumentNullException("listeningManager");
+			
 			ComponentSettings = componentSettings;
 			ListeningManager = listeningManager;
+
 		}
 
 
 		private IComponentSettings ComponentSettings { get; set; }
 		private IListeningManager ListeningManager { get; set; }
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(MessageListeningManager).FullName);
+		private readonly ILogger _logger;
 
 		#region IMessageListener Members
 
@@ -139,7 +144,7 @@ namespace ermeX.Bus.Listening
 			SavePublishedService(serviceInterface, serviceImplementation);
 
 			//TODO: send events
-			Logger.Trace(x => x("Published Service:{0} Component:{1}", serviceInterface.FullName, ComponentSettings.ComponentId));
+			_logger.Trace(x => x("Published Service:{0} Component:{1}", serviceInterface.FullName, ComponentSettings.ComponentId));
 
 		}
 
@@ -183,7 +188,7 @@ namespace ermeX.Bus.Listening
 		private void OnDispatchMessage(Guid suscriptionId, object message)
 		{
 			if (message == null) throw new ArgumentNullException("message");
-			Logger.Trace("MessageListeningManager.OnDispatchMessage");
+			_logger.Trace("MessageListeningManager.OnDispatchMessage");
 
 			try
 			{
@@ -207,7 +212,7 @@ namespace ermeX.Bus.Listening
 
 					if (dispatchMethodInfo == null)
 					{
-						Logger.Error(
+						_logger.Error(
 							x =>
 							x(
 								"MessageListeningManager:Couldnt find any public instance method called [{0}] in type [{1}] to handle message of type[{2}]",
@@ -218,7 +223,7 @@ namespace ermeX.Bus.Listening
 					var parameters = new[] {message};
 
 					TypesHelper.InvokeFast(dispatchMethodInfo, handler, parameters);
-					Logger.Trace(
+					_logger.Trace(
 						x =>
 						x("MessageListeningManager: Invoked {0} passing argument {1}", dispatchMethodInfo.Name,
 						  message));
@@ -227,13 +232,13 @@ namespace ermeX.Bus.Listening
 				{
 					//if it doesnt exist, means its from previous sessions and then removes it
 					_incommingMessagesSubscriptionsWritter.RemoveByHandlerId(suscriptionId);
-					Logger.Trace(x => x("MessageListeningManager: Removed subscriptionId {0}", suscriptionId));
+					_logger.Trace(x => x("MessageListeningManager: Removed subscriptionId {0}", suscriptionId));
 
 				}
 			}
 			catch (Exception ex)
 			{
-				Logger.Error(ex);
+				_logger.Error(ex);
 				throw;
 			}
 		}

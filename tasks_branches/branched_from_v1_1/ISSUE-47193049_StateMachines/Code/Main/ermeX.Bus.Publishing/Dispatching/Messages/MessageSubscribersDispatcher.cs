@@ -26,6 +26,7 @@ using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.Exceptions;
 using ermeX.LayerMessages;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 using ermeX.Parallel.Queues;
 using ermeX.Parallel.Scheduling;
@@ -67,7 +68,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 		                                    IServiceProxy service)
 			: base(_initialWorkerCount, _maxThreadsNum, _queueSizeToCreateNewThread, TimeSpan.FromSeconds(60))
 		{
-			Logger = LogManager.GetLogger<MessageSubscribersDispatcher>();
+			Logger = LogManager.GetLogger<MessageSubscribersDispatcher>(LogComponent.Messaging);
 			_outgoingQueueReader = outgoingQueueReader;
 			_outgoingQueueWritter = outgoingQueueWritter;
 			if (settings == null) throw new ArgumentNullException("settings");

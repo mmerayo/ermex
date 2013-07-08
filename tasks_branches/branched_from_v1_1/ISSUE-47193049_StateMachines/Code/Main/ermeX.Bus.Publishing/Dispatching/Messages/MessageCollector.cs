@@ -32,6 +32,7 @@ using ermeX.DAL.Interfaces.Observer;
 using ermeX.DAL.Interfaces.Observers;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.LayerMessages;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 using ermeX.Parallel.Queues;
 
@@ -55,6 +56,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 		                        IWriteOutgoingQueue outgoingWritter,
 								IDomainObservable domainNotifier)
 		{
+			Logger = LogManager.GetLogger(typeof (MessageCollector), settings.ComponentId, LogComponent.Messaging);
 			_outgoingReader = outgoingReader;
 			_outgoingWritter = outgoingWritter;
 			_domainNotifier = domainNotifier;
@@ -98,7 +100,7 @@ namespace ermeX.Bus.Publishing.Dispatching.Messages
 
 		private IBusSettings Settings { get; set; }
 		private IMessageDistributor MessageDistributor { get; set; }
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(MessageCollector).FullName);
+		private readonly ILogger Logger;
 		private int _dispatchedItems = 0;
 
 		#region IMessagePublisherDispatcherStrategy Members

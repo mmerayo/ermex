@@ -13,6 +13,7 @@ using ermeX.ComponentServices.RemoteComponent.Commands;
 using ermeX.ConfigurationManagement.IoC;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.Exceptions;
+using ermeX.Logging;
 
 namespace ermeX.ComponentServices.RemoteComponent
 {
@@ -69,7 +70,7 @@ namespace ermeX.ComponentServices.RemoteComponent
 			get { return _context; }
 		}
 
-		private static readonly ILogger Logger = LogManager.GetLogger<RemoteComponentStateMachine>();
+		private readonly ILogger Logger ;
 
 		private readonly StateMachine<RemoteComponentState, RemoteComponentEvent> _machine =
 			new StateMachine<RemoteComponentState, RemoteComponentEvent>(RemoteComponentState.NotStarted);
@@ -79,8 +80,9 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 
 		[Inject]
-		public RemoteComponentStateMachine(IRemoteComponentStateMachineContext context)
+		public RemoteComponentStateMachine(IRemoteComponentStateMachineContext context,IComponentSettings settings)
 		{
+			Logger = LogManager.GetLogger<RemoteComponentStateMachine>(settings.ComponentId, LogComponent.Handshake);
 			_context = context;
 			_context.StateMachine = this;
 			

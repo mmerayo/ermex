@@ -31,7 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-   
     <Reference Include="Iesi.Collections">
       <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
@@ -112,6 +111,10 @@
     <ProjectReference Include="..\ermeX.DAL\ermeX.DAL.csproj">
       <Project>{588A3C5F-C021-480E-B413-AEF2DEC4F97F}</Project>
       <Name>ermeX.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ermeX.Logging\ermeX.Logging.csproj">
+      <Project>{9DB79424-4537-4A46-BD7C-972E3B2F284D}</Project>
+      <Name>ermeX.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\ermeX.Models\ermeX.Models.csproj">
       <Project>{A32D1859-83FC-43B8-A66D-E7F8A80772B1}</Project>

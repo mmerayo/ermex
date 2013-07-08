@@ -11,6 +11,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Services;
 using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.LayerMessages;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.ComponentServices.LocalComponent
@@ -29,12 +30,13 @@ namespace ermeX.ComponentServices.LocalComponent
 		private  IServicesManager _servicesManager;
 
 		private  ICanReadIncommingMessagesSubscriptions _incommingMessagesSubscriptionsReader;
-		private static readonly ILogger Logger = LogManager.GetLogger<LocalComponent>();
+		private readonly ILogger Logger;
 		private readonly LocalComponentStateMachine _stateMachine;
 
 		[Inject]
-		public LocalComponent(LocalComponentStateMachine stateMachine)
+		public LocalComponent(LocalComponentStateMachine stateMachine,IComponentSettings settings)
 		{
+			Logger = LogManager.GetLogger<LocalComponent>(settings.ComponentId, LogComponent.Handshake);
 			_stateMachine = stateMachine;
 		}
 

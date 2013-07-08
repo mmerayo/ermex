@@ -4,12 +4,13 @@ using System.Diagnostics;
 using Stateless;
 using ermeX.ComponentServices.Interfaces.ComponentSetup;
 using ermeX.Exceptions;
+using ermeX.Logging;
 
 namespace ermeX.ComponentServices.ComponentSetup
 {
 	internal sealed class SetupMachine
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger<SetupMachine>();
+		private  readonly ILogger Logger;
 
 		private enum SetupEvent
 		{
@@ -44,6 +45,7 @@ namespace ermeX.ComponentServices.ComponentSetup
 		public SetupMachine(ISetupServiceInjector serviceInjector,
 		                    ISetupVersionUpgradeRunner versionUpgrader)
 		{
+			Logger = LogManager.GetLogger<SetupMachine>(LogComponent.Handshake);
 			Logger.Debug("cctor");
 			_serviceInjector = serviceInjector;
 			_versionUpgrader = versionUpgrader;

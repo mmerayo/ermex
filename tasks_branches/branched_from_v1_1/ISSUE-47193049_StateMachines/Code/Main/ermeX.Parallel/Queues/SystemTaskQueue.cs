@@ -35,7 +35,7 @@ namespace ermeX.Parallel.Queues
 		private SystemTaskQueue()
 			: base(1, 64, 3, TimeSpan.FromSeconds(60))
 		{
-			Logger = LogManager.GetNonQualifiedLogger<SystemTaskQueue>();
+			Logger = LogManager.GetLogger<SystemTaskQueue>();
 		}
 
 		protected override Func<Action, bool> RunActionOnDequeue

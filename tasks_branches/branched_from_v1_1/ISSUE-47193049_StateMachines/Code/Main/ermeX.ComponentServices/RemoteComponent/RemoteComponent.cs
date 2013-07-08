@@ -4,18 +4,22 @@ using System.Threading;
 
 using Ninject;
 using ermeX.ComponentServices.Interfaces.RemoteComponent;
+using ermeX.ConfigurationManagement.Settings;
+using ermeX.Logging;
 using ermeX.Parallel.Queues;
 
 namespace ermeX.ComponentServices.RemoteComponent
 {
 	internal class RemoteComponent : IRemoteComponent
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger<RemoteComponent>();
+		private readonly ILogger Logger;
 		private readonly IRemoteComponentStateMachine _stateMachine;
 
 		[Inject]
-		public RemoteComponent(IRemoteComponentStateMachine stateMachine)
+		public RemoteComponent(IRemoteComponentStateMachine stateMachine,IComponentSettings settings)
 		{
+			Logger = LogManager.GetLogger<RemoteComponent>(settings.ComponentId, LogComponent.Handshake);
+
 			_stateMachine = stateMachine;
 		}
 

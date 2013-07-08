@@ -7,7 +7,9 @@ using ermeX.ComponentServices.Interfaces.LocalComponent;
 using ermeX.ComponentServices.Interfaces.LocalComponent.Commands;
 using ermeX.ComponentServices.LocalComponent.Commands;
 using ermeX.ConfigurationManagement.IoC;
+using ermeX.ConfigurationManagement.Settings;
 using ermeX.Exceptions;
+using ermeX.Logging;
 
 namespace ermeX.ComponentServices.LocalComponent
 {
@@ -37,7 +39,7 @@ namespace ermeX.ComponentServices.LocalComponent
 			Error
 		}
 
-		private static readonly ILogger Logger = LogManager.GetLogger<LocalComponentStateMachine>();
+		private readonly ILogger Logger;
 
 		private readonly StateMachine<LocalComponentState, LocalComponentEvent> _machine =
 			new StateMachine<LocalComponentState, LocalComponentEvent>(LocalComponentState.Stopped);
@@ -53,8 +55,9 @@ namespace ermeX.ComponentServices.LocalComponent
 		private IOnErrorStepExecutor _errorExecutor;
 
 		[Inject]
-		public LocalComponentStateMachine()
+		public LocalComponentStateMachine(IComponentSettings settings)
 		{
+			Logger = LogManager.GetLogger<LocalComponentStateMachine>(settings.ComponentId, LogComponent.Handshake);
 			DefineStateMachineTransitions();
 		}
 

@@ -31,6 +31,7 @@ using ermeX.ConfigurationManagement.Settings.Component;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Subscriptions;
 using ermeX.Exceptions;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
@@ -51,6 +52,8 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 		                                                IComponentSettings settings,
 			IComponentManager componentManager)
 		{
+			Logger = LogManager.GetLogger(typeof (MessageSuscriptionsRequestMessageHandler), settings.ComponentId,
+			                              LogComponent.Handshake);
 			_incommingSubscriptionsReader = incommingSubscriptionsReader;
 			_outgoingSubscriptionsReader = outgoingSubscriptionsReader;
 			_outgoingSubscriptionsWritter = outgoingSubscriptionsWritter;
@@ -64,7 +67,7 @@ namespace ermeX.Bus.Synchronisation.Dialogs.Anarquik.HandledByService
 
 		private IMessageListener Listener { get; set; }
 		private IComponentSettings Settings { get; set; }
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(MessageSuscriptionsRequestMessageHandler).FullName);
+		private readonly ILogger Logger;
 
 		#region IMessageSuscriptionsService Members
 

@@ -12,6 +12,7 @@ using ermeX.DAL.Interfaces.Connectivity;
 using ermeX.DAL.Repository;
 using ermeX.DAL.UnitOfWork;
 using ermeX.ConfigurationManagement.IoC;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 
 namespace ermeX.DAL.Commands.Component
@@ -20,7 +21,7 @@ namespace ermeX.DAL.Commands.Component
 	//TODO: MOVE TO THE COMPONENTS UPDATER
 	internal sealed class ComponentsRegistrator : IRegisterComponents
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ComponentsRegistrator).FullName);
+		private readonly ILogger Logger;
 		private readonly IUnitOfWorkFactory _factory;
 		private readonly IPersistRepository<AppComponent> _componentsRepository;
 		private readonly IPersistRepository<ConnectivityDetails> _connectivityRepository;
@@ -36,6 +37,7 @@ namespace ermeX.DAL.Commands.Component
 		                             IComponentSettings settings,
 			ICanWriteConnectivityDetails connectivityDetailsWritter)
 		{
+			Logger = LogManager.GetLogger(typeof (ComponentsRegistrator), settings.ComponentId, LogComponent.DataServices);
 			Logger.DebugFormat("cctor. Thread={0}",Thread.CurrentThread.ManagedThreadId);
 			_factory = factory;
 			_componentsRepository = componentsRepository;

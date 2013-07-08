@@ -28,6 +28,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.DAL.Interfaces.Queues;
 using ermeX.LayerMessages;
+using ermeX.Logging;
 using ermeX.Models.Entities;
 using ermeX.Parallel.Queues;
 using ermeX.Parallel.Scheduling;
@@ -82,11 +83,14 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
 			IReceptionMessageDistributor receptionMessageDistributor,
 			IBusSettings settings, IQueueDispatcherManager queueDispatcherManager)
 		{
-			_queueReader = queueReader;
-			_queueWritter = queueWritter;
+			_logger = LogManager.GetLogger<ReceptionMessageHandler>(settings.ComponentId, LogComponent.Queues);
 			if (receptionMessageDistributor == null) throw new ArgumentNullException("receptionMessageDistributor");
 			if (settings == null) throw new ArgumentNullException("settings");
 			if (queueDispatcherManager == null) throw new ArgumentNullException("queueDispatcherManager");
+
+			_queueReader = queueReader;
+			_queueWritter = queueWritter;
+			
 			ReceptionMessageDistributor = receptionMessageDistributor;
 			Settings = settings;
 			QueueDispatcherManager = queueDispatcherManager;
@@ -97,11 +101,11 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
 		private IReceptionMessageDistributor ReceptionMessageDistributor { get; set; }
 		private IBusSettings Settings { get; set; }
 		private IQueueDispatcherManager QueueDispatcherManager { get; set; }
-		private static readonly ILogger Logger = LogManager.GetLogger(typeof(ReceptionMessageHandler).FullName);
+		private readonly ILogger _logger;
 
 		public override object Handle(TransportMessage message)
 		{
-			Logger.DebugFormat("Handle: Start MessageId: {0}",message.MessageId);
+			_logger.DebugFormat("Handle: Start MessageId: {0}",message.MessageId);
 			BusMessage busMessage = message.Data;
 
 			var incomingMessage = new IncomingMessage(BusMessage.Clone(busMessage))
@@ -119,7 +123,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
 			//this must be done on-line in case of errors so it returns an exception to the caller
 			_queueWritter.Save(incomingMessage);
 			ReceptionMessageDistributor.EnqueueItem(new ReceptionMessageDistributor.MessageDistributorMessage(incomingMessage));
-			Logger.Trace(x => x("Handle.{0} - Message received ", incomingMessage.MessageId));
+			_logger.Trace(x => x("Handle.{0} - Message received ", incomingMessage.MessageId));
 			return null; //Check the correctness of this null
 		}
 
@@ -140,7 +144,7 @@ namespace ermeX.Bus.Listening.Handlers.InternalMessagesHandling
 			//TODO: THIS IS A bootch and it must be refactored
 		{
 			if (onMessageReceived == null) throw new ArgumentNullException("onMessageReceived");
-			Logger.Trace("InternalMessageHandler.RegisterSuscriber");
+			_logger.Trace("InternalMessageHandler.RegisterSuscriber");
 
 			QueueDispatcherManager.DispatchMessage += onMessageReceived;
 		}

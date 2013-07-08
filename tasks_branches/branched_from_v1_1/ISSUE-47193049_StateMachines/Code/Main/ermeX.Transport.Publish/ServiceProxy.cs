@@ -26,6 +26,7 @@ using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces;
 using ermeX.Exceptions;
 using ermeX.LayerMessages;
+using ermeX.Logging;
 using ermeX.Transport.Interfaces;
 using ermeX.Transport.Interfaces.Messages;
 using ermeX.Transport.Interfaces.Messages.ServiceOperations;
@@ -42,13 +43,16 @@ namespace ermeX.Transport.Publish
         private readonly object _cacheProviderLocker = new object();
 
         [Inject]
-        internal ServiceProxy(ICacheProvider cacheProvider,
-                              IConnectivityManager connectivityManager, ITransportSettings settings)
+        internal ServiceProxy(
+			ILogManager logManager,
+			ICacheProvider cacheProvider,
+                              IConnectivityManager connectivityManager,
+			ITransportSettings settings)
         {
             if (cacheProvider == null) throw new ArgumentNullException("cacheProvider");
             if (connectivityManager == null) throw new ArgumentNullException("connectivityManager");
             if (settings == null) throw new ArgumentNullException("settings");
-            
+	        _logger=logManager.GetLogger<ServiceProxy>();
             CacheProvider = cacheProvider;
             ConnectivityManager = connectivityManager;
             Settings = settings;
@@ -57,13 +61,13 @@ namespace ermeX.Transport.Publish
         private ICacheProvider CacheProvider { get; set; }
         private IConnectivityManager ConnectivityManager { get; set; }
         private ITransportSettings Settings { get; set; }
-	    private static readonly ILogger Logger = LogManager.GetLogger(typeof (ServiceProxy).FullName);
+	    private readonly ILogger _logger ;
 
         #region IServiceProxy Members
 
         public ServiceResult Send(TransportMessage message)
         {
-			Logger.TraceFormat("Send. message: {0}",message.Data.Data.JsonMessage);
+			_logger.TraceFormat("Send. message: {0}",message.Data.Data.JsonMessage);
 
             var realMsg =
                 ServiceRequestMessage.GetForMessagePublishing(message);
@@ -74,7 +78,7 @@ namespace ermeX.Transport.Publish
 
         public ServiceOperationResult<TResult> SendServiceRequestSync<TResult>(IOperationServiceRequestData request)
         {
-            Logger.Info(x=>x("Sending Sync service request {0}",request.Operation));
+            _logger.Info(x=>x("Sending Sync service request {0}",request.Operation));
             var partialResult = DoSend(request.ServerId, request as ServiceRequestMessage);
             var result = new ServiceOperationResult<TResult>(partialResult);
             //TODO:remove this conversion and unify types from ServiceResult to ServiceOperationResult
@@ -84,7 +88,7 @@ namespace ermeX.Transport.Publish
         public void SendServiceRequestAsync<TResult>(IOperationServiceRequestData request,
                                                      Action<IServiceOperationResult<TResult>> responseHandler)
         {
-            Logger.Info(x=>x("Sending Async service request {0}", request.Operation));
+            _logger.Info(x=>x("Sending Async service request {0}", request.Operation));
             DoSend(request.ServerId, request as ServiceRequestMessage, responseHandler);
         }
 

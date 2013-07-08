@@ -6,12 +6,13 @@ using ermeX.Bus.Publishing.Dispatching.Messages;
 using ermeX.ComponentServices.Interfaces.LocalComponent.Commands;
 using ermeX.ConfigurationManagement.Settings;
 using ermeX.DAL.Interfaces.Component;
+using ermeX.Logging;
 
 namespace ermeX.ComponentServices.LocalComponent.Commands
 {
 	internal class OnStartStepExecutor : IOnStartStepExecutor
 	{
-		private static readonly ILogger Logger = LogManager.GetLogger<OnStartStepExecutor>();
+		private readonly ILogger Logger;
 
 		private readonly IBizSettings _bizSettings;
 		private readonly IRegisterComponents _componentsRegister;
@@ -28,8 +29,9 @@ namespace ermeX.ComponentServices.LocalComponent.Commands
 		                                IMessagePublisher messagePublisher, 
 		                                IReceptionMessageDistributor receptionMessageDistributor,
 		                                IMessageSubscribersDispatcher messageSubscribersDispatcher, 
-		                                IMessageDistributor messageDistributor)
+		                                IMessageDistributor messageDistributor,IComponentSettings settings)
 		{
+			Logger = LogManager.GetLogger<OnStartStepExecutor>(settings.ComponentId, LogComponent.Handshake);
 			_bizSettings = bizSettings;
 			_componentsRegister = componentsRegister;
 			_messageListener = messageListener;
