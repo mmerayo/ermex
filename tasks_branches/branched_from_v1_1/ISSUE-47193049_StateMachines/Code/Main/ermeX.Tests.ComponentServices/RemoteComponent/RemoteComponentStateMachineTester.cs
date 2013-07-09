@@ -218,7 +218,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public TestContext WithExceptionOnSubscriptionsReception()
 			{
-				_onReceivedSubscriptionsStepExecutor.Setup(x => x.SubscriptionsReceived(TODO)).Throws<Exception>();
+				_onReceivedSubscriptionsStepExecutor.Setup(x => x.SubscriptionsReceived(DataContext)).Throws<Exception>();
 				return this;
 			}
 			public TestContext WithExceptionOnServicesReception()

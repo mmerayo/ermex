@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Threading;
 
 using NUnit.Framework;
+using ermeX.Logging;
 using ermeX.Parallel.Queues;
 
 namespace ermeX.Tests.Parallel.Queues
