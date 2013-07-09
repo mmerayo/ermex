@@ -17,17 +17,10 @@
 //        under the License.
 // /*---------------------------------------------------------------------------------------*/
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
-using Common.Logging.Simple;
 using NUnit.Framework;
-using ermeX.ConfigurationManagement;
-using ermeX.ConfigurationManagement.Settings;
 using ermeX.ConfigurationManagement.Settings.Data.DbEngines;
-using ermeX.ConfigurationManagement.Settings.Data.Schemas;
-using ermeX.Tests.Common;
 using ermeX.Tests.Common.DataAccess;
 using ermeX.Tests.Common.Dummies;
 using ermeX.Tests.Common.RandomValues;
