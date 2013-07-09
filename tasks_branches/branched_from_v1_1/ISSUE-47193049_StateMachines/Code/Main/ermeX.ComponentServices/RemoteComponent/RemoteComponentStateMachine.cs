@@ -80,9 +80,11 @@ namespace ermeX.ComponentServices.RemoteComponent
 
 
 		[Inject]
-		public RemoteComponentStateMachine(IRemoteComponentStateMachineContext context,IComponentSettings settings)
+		public RemoteComponentStateMachine(IRemoteComponentStateMachineContext context,IComponentSettings settings=null)
 		{
-			Logger = LogManager.GetLogger<RemoteComponentStateMachine>(settings.ComponentId, LogComponent.Handshake);
+			Logger = settings != null
+				         ? LogManager.GetLogger<RemoteComponentStateMachine>(settings.ComponentId, LogComponent.Handshake)
+				         : LogManager.GetLogger<RemoteComponentStateMachine>(LogComponent.Handshake);
 			_context = context;
 			_context.StateMachine = this;
 			

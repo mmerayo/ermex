@@ -167,7 +167,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 
 			public void VerifySubscriptionsReceptionExecutor(int times=1)
 			{
-				_onReceivedSubscriptionsStepExecutor.Verify(x => x.SubscriptionsReceived(TODO), Times.Exactly(times));
+				_onReceivedSubscriptionsStepExecutor.Verify(x => x.SubscriptionsReceived(DataContext), Times.Exactly(times));
 			}
 
 			public void VerifyServicesReceptionExecutor(int times=1)
@@ -281,7 +281,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
-			target.Joined(TODO);
+			target.Joined(false);
 			target.ServicesReceived();
 			target.SubscriptionsReceived();
 			
@@ -299,7 +299,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
-			target.Joined(TODO);
+			target.Joined(false);
 			Assert.IsTrue(target.IsRunning());
 			_context.VerifyRunningHandlerWasCalled();
 			Assert.IsTrue(target.IsRequestingServices());
@@ -315,7 +315,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
-			target.Joined(TODO);
+			target.Joined(false);
 			Assert.IsTrue(target.IsRunning());
 			_context.VerifyRunningHandlerWasCalled();
 
@@ -332,7 +332,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			var target = _context.Sut;
 			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
-			target.Joined(TODO);
+			target.Joined(false);
 
 			Assert.IsTrue(target.IsRequestingServices());
 			_context.VerifyRequestingServicesHandlerWasCalled();
@@ -345,7 +345,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			var target = _context.Sut;
 			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
-			target.Joined(TODO);
+			target.Joined(false);
 			target.ServicesReceived();
 			Assert.IsTrue(target.IsRequestingSubscriptions());
 			_context.VerifyRequestingSubscriptionsHandlerWasCalled();
@@ -357,7 +357,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			var target = _context.Sut;
 			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
-			target.Joined(TODO);
+			target.Joined(false);
 
 			_context.VerifyStoppedHandlerWasCalled(1);
 
@@ -417,7 +417,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
-			target.Joined(TODO);
+			target.Joined(false);
 			Assert.IsTrue(target.IsStopped());
 			Assert.IsFalse(target.IsErrored());
 			Assert.IsTrue(target.WasCreated());
@@ -433,7 +433,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			var target = _context.Sut;
 			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
-			target.Joined(TODO);
+			target.Joined(false);
 			target.ServicesReceived();
 			Assert.IsTrue(target.IsStopped());
 			Assert.IsFalse(target.IsErrored());
@@ -451,7 +451,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
-			target.Joined(TODO);
+			target.Joined(false);
 			Assert.IsTrue(target.IsStopped());
 			Assert.IsFalse(target.IsErrored());
 			Assert.IsTrue(target.WasCreated());
@@ -467,7 +467,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			var target = _context.Sut;
 			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
-			target.Joined(TODO);
+			target.Joined(false);
 			
 			target.ServicesReceived();
 
@@ -487,7 +487,7 @@ namespace ermeX.Tests.ComponentServices.RemoteComponent
 			target.Create(_context.ComponentId,_context.IPAddress,_context.Port);
 			target.Join();
 
-			target.Joined(TODO);
+			target.Joined(false);
 			target.ServicesReceived();
 			target.SubscriptionsReceived();
 			Assert.IsTrue(target.IsStopped());
