@@ -55,9 +55,11 @@ namespace ermeX.ComponentServices.LocalComponent
 		private IOnErrorStepExecutor _errorExecutor;
 
 		[Inject]
-		public LocalComponentStateMachine(IComponentSettings settings)
+		public LocalComponentStateMachine(IComponentSettings settings=null)
 		{
-			Logger = LogManager.GetLogger<LocalComponentStateMachine>(settings.ComponentId, LogComponent.Handshake);
+			Logger = settings != null
+				         ? LogManager.GetLogger<LocalComponentStateMachine>(settings.ComponentId, LogComponent.Handshake)
+				         : LogManager.GetLogger<LocalComponentStateMachine>(LogComponent.Handshake);
 			DefineStateMachineTransitions();
 		}
 
