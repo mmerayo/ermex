@@ -54,7 +54,7 @@ namespace ermeX.Tests.Bus.Listening.Handlers.InternalMessageHandling.WorkflowHan
 
 		    var result = new ReceptionMessageDistributor(GetIncommingMessageSubscriptionsReader(factory),
 		                                                                      GetIncommingQueueReader(factory), GetIncommingQueueWritter(factory),
-		                                                                      mockedDispatcher);
+		                                                                      mockedDispatcher,GetComponentSettings());
             result.Start();
 		    return result;
 		}
